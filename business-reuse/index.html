@@ -153,6 +153,17 @@ html.intro-pending body::before{content:"";position:fixed;inset:0;z-index:9998;b
 #intro .skip-btn{position:absolute;right:clamp(14px,3vw,32px);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:3;font:inherit;font-size:.86rem;letter-spacing:.12em;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(233,199,126,.6);border-radius:999px;padding:8px 20px;cursor:pointer;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 #intro .skip-btn:hover{background:rgba(255,255,255,.18)}
 #intro .skip-btn:focus-visible{outline:2px solid #E9C77E;outline-offset:3px}
+#intro .tap-music{position:absolute;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:3;margin:0;font-size:.8rem;letter-spacing:.14em;color:#E9C77E;opacity:.9;animation:tapblink 1.6s ease-in-out infinite;pointer-events:none;white-space:nowrap}
+#intro.music .tap-music{display:none}
+@keyframes tapblink{50%{opacity:.35}}
+#bgm-btn{position:fixed;right:clamp(12px,2vw,24px);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:66;display:flex;align-items:center;gap:8px;padding:8px 14px 8px 10px;border-radius:999px;border:1px solid rgba(199,154,74,.6);background:rgba(255,255,255,.92);box-shadow:0 8px 22px rgba(14,42,82,.18);color:#0E2A52;font:700 .78rem/1 "Zen Kaku Gothic New","Hiragino Sans",sans-serif;letter-spacing:.06em;cursor:pointer;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#bgm-btn:focus-visible{outline:2px solid #C79A4A;outline-offset:3px}
+#bgm-btn .eq{display:flex;align-items:flex-end;gap:2px;height:14px}
+#bgm-btn .eq i{width:3px;height:4px;border-radius:1px;background:#C79A4A}
+#bgm-btn.on .eq i{animation:eqb .9s ease-in-out infinite}
+#bgm-btn.on .eq i:nth-child(2){animation-delay:-.3s}#bgm-btn.on .eq i:nth-child(3){animation-delay:-.6s}#bgm-btn.on .eq i:nth-child(4){animation-delay:-.15s}
+@keyframes eqb{0%,100%{height:4px}50%{height:14px}}
+@media (prefers-reduced-motion:reduce){#bgm-btn.on .eq i{animation:none;height:10px}}
 </style>
 <meta name="description" content="眠っている資産を、次の価値へつなぐ。株式会社GLOVEは買取専門店「買取大吉 大阪勝山南店」を運営しています。店舗運営で培った査定の知見をもとに、法人が保有する在庫・備品などの買取相談、商業施設や異業種店舗での買取催事、整理業務と組み合">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1188,6 +1199,36 @@ select.flash{animation:flash 1s ease}
   <div class="copy"><span>© <span id="year"></span> 株式会社GLOVE</span><span id="f-kobutsu">古物商許可　株式会社グローブ　大阪府公安委員会 第62102R050377号</span></div>
 </div></footer>
 <script>
+/* ===== テーマ曲（オリジナル）：トップ到着時に再生を試み、ブラウザが止めた場合は最初のタップで開始。ボタンでいつでも停止 ===== */
+(function () {
+  var KEY = "glove-bgm", TKEY = "glove-bgm-t", pref = null;
+  try { pref = localStorage.getItem(KEY); } catch (e) {}
+  var a = new Audio("audio/glove-theme.mp3"); a.loop = true; a.preload = "auto"; a.volume = 0;
+  try { var tt = parseFloat(sessionStorage.getItem(TKEY) || ""); if (tt > 0) a.currentTime = tt; } catch (e) {}
+  var want = pref !== "off", fadeT;
+  function fade(to, ms, done) { clearInterval(fadeT); var from = a.volume, n = Math.max(1, Math.round(ms / 50)), k = 0;
+    fadeT = setInterval(function () { k++; a.volume = Math.max(0, Math.min(1, from + (to - from) * k / n)); if (k >= n) { clearInterval(fadeT); done && done(); } }, 50); }
+  var btn = document.createElement("button"); btn.type = "button"; btn.id = "bgm-btn";
+  btn.innerHTML = '<span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lb">音楽</span>';
+  document.body.appendChild(btn);
+  function ui() { var on = !a.paused; btn.classList.toggle("on", on); btn.setAttribute("aria-pressed", on); btn.setAttribute("aria-label", on ? "音楽を止める" : "音楽を流す");
+    btn.querySelector(".lb").textContent = on ? "音楽 ON" : "音楽 OFF"; var it = document.getElementById("intro"); if (it) it.classList.toggle("music", on); }
+  function play() { var p = a.play(); if (p && p.then) return p.then(function () { fade(.5, 1800); ui(); return true; }, function () { ui(); return false; }); ui(); return Promise.resolve(true); }
+  function stop() { fade(0, 450, function () { a.pause(); ui(); }); }
+  function save(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
+  btn.addEventListener("click", function () { if (a.paused) { want = true; save("on"); play(); } else { want = false; save("off"); stop(); } });
+  a.addEventListener("play", ui); a.addEventListener("pause", ui);
+  function gesture(e) { if (e && e.target && e.target.closest && e.target.closest("#bgm-btn")) { off(); return; } off(); if (want && a.paused) play(); }
+  function off() { removeEventListener("pointerdown", gesture, true); removeEventListener("keydown", gesture, true); }
+  addEventListener("pagehide", function () { try { sessionStorage.setItem(TKEY, a.paused ? "0" : String(a.currentTime)); } catch (e) {} });
+  var home = document.documentElement.classList.contains("intro-pending");
+  if (want && (home || (function () { try { return parseFloat(sessionStorage.getItem(TKEY) || "0") > 0; } catch (e) { return false; } })())) {
+    play(); addEventListener("pointerdown", gesture, true); addEventListener("keydown", gesture, true);
+  }
+  ui(); window.GLOVE_BGM = { audio: a, play: play };
+})();
+</script>
+<script>
 /* ===== Opening v2（トップ初回のみ・約5.5秒・スキップ可） ===== */
 (function () {
   var html = document.documentElement; if (!html.classList.contains("intro-pending")) return;
@@ -1199,8 +1240,8 @@ select.flash{animation:flash 1s ease}
   for (var j = 0; j < t2.length; j++) ttl += '<i class="g">' + t2[j] + "</i>";
   el.innerHTML = '<canvas></canvas><div class="words">' + WORDS.map(function (w) { return '<span class="w">' + w + "</span>"; }).join("") + "</div>"
     + '<p class="ttl" aria-label="可能性を、繋ぐ。">' + ttl + '</p><div class="brand2"><img src="images/logo.png" alt=""><span>株式会社 GLOVE<small>つながる力で、社会に新たな価値を。</small></span></div>'
-    + '<button type="button" class="skip-btn">スキップ ›</button>';
-  document.body.appendChild(el); html.classList.remove("intro-pending");
+    + '<p class="tap-music" aria-hidden="true">♪ 画面をタップすると音楽が流れます</p><button type="button" class="skip-btn">スキップ ›</button>';
+  document.body.appendChild(el); html.classList.remove("intro-pending"); if (window.GLOVE_BGM && !window.GLOVE_BGM.audio.paused) el.classList.add("music");
   var cv = el.querySelector("canvas"), g = cv.getContext("2d"), W = 0, H = 0, D = 1;
   var small = matchMedia("(max-width: 760px)").matches;
   function size() { D = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight; cv.width = W * D; cv.height = H * D; g.setTransform(D, 0, 0, D, 0, 0); }

@@ -7,7 +7,7 @@ app = open(SRC, encoding='utf8').read()
 shell = app.replace('<meta name="viewport"', f'<base href="{BASE_PATH}" data-site>\n<meta name="viewport"', 1)
 assert 'data-site' in shell
 shutil.rmtree(OUT, ignore_errors=True); os.makedirs(OUT)
-for d in ('images', 'videos'): shutil.copytree(os.path.join(os.path.dirname(SRC), d), os.path.join(OUT, d))
+for d in ('images', 'videos', 'audio'): shutil.copytree(os.path.join(os.path.dirname(SRC), d), os.path.join(OUT, d))
 open(os.path.join(OUT, '.nojekyll'), 'w').close()
 nf = shell.replace('<meta name="theme-color"', '<meta name="robots" content="noindex">\n<meta name="theme-color"', 1)
 open(os.path.join(OUT, '404.html'), 'w', encoding='utf8').write(nf)
