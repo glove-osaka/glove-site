@@ -1152,7 +1152,7 @@ select.flash{animation:flash 1s ease}
 @media (prefers-reduced-motion:reduce){.cmap-lines line,.cnd.core{animation:none}}
 @media (max-width:600px){.cmap{height:600px}.cnd{padding:6px 10px;font-size:.68rem;max-width:44vw}.cnd.core{width:92px;height:92px;font-size:.74rem}.cmap-info{font-size:.78rem}}
 </style>
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://glove-osaka.github.io/glove-site/#org", "name": "株式会社グローブ", "alternateName": ["GLOVE", "株式会社GLOVE"], "url": "https://glove-osaka.github.io/glove-site/", "logo": "https://glove-osaka.github.io/glove-site/images/logo.png", "telephone": "+81-6-6355-0779", "foundingDate": "2023-08-10", "address": {"@type": "PostalAddress", "postalCode": "544-0033", "addressRegion": "大阪府", "addressLocality": "大阪市生野区", "streetAddress": "勝山南2-2-7", "addressCountry": "JP"}, "contactPoint": [{"@type": "ContactPoint", "telephone": "+81-120-933-496", "contactType": "customer service", "areaServed": "JP", "availableLanguage": "ja"}]}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://glove-osaka.github.io/glove-site/"}, {"@type": "ListItem", "position": 2, "name": "会社概要", "item": "https://glove-osaka.github.io/glove-site/company/"}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://glove-osaka.github.io/glove-site/#org", "name": "株式会社グローブ", "alternateName": ["GLOVE", "株式会社GLOVE"], "url": "https://glove-osaka.github.io/glove-site/", "logo": "https://glove-osaka.github.io/glove-site/images/logo.png", "telephone": "+81-6-6355-0779", "foundingDate": "2023-08-10", "address": {"@type": "PostalAddress", "postalCode": "544-0033", "addressRegion": "大阪府", "addressLocality": "大阪市生野区", "streetAddress": "勝山南2-2-7", "addressCountry": "JP"}, "email": "info@kaitori-d.com", "faxNumber": "+81-6-6355-0800", "contactPoint": [{"@type": "ContactPoint", "telephone": "+81-120-933-496", "contactType": "customer service", "areaServed": "JP", "availableLanguage": "ja"}], "department": [{"@type": "Store", "name": "買取大吉 大阪勝山南店", "url": "https://www.kaitori-daikichi.jp/store/katsuyamaminami/", "telephone": "+81-120-933-496", "address": {"@type": "PostalAddress", "postalCode": "544-0033", "addressRegion": "大阪府", "addressLocality": "大阪市生野区", "streetAddress": "勝山南2-2-7", "addressCountry": "JP"}, "geo": {"@type": "GeoCoordinates", "latitude": 34.65416, "longitude": 135.53221}, "openingHours": "Mo-Su 10:00-19:00", "hasMap": "https://www.google.com/maps/search/?api=1&query=%E8%B2%B7%E5%8F%96%E5%A4%A7%E5%90%89+%E5%A4%A7%E9%98%AA%E5%8B%9D%E5%B1%B1%E5%8D%97%E5%BA%97"}]}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://glove-osaka.github.io/glove-site/"}, {"@type": "ListItem", "position": 2, "name": "会社概要", "item": "https://glove-osaka.github.io/glove-site/company/"}]}]}</script>
 <script type="application/ld+json" id="ld">{}</script>
 
 
@@ -1181,6 +1181,25 @@ select.flash{animation:flash 1s ease}
   .sitemap a,.ftr li a,.crumb a{display:inline-block;padding:7px 0;min-height:36px}
 }
 </style>
+<style id="fix-c">
+.co-map{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--line);aspect-ratio:16/9;background:#E8EEF5}
+.co-map iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+@media (max-width:600px){.co-map{aspect-ratio:4/3}}
+.case-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:900px){.case-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){.case-grid{grid-template-columns:1fr}}
+.case{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:10px;align-content:start;box-shadow:0 6px 20px rgba(14,42,82,.06)}
+.case-tag{justify-self:start;font-size:.78rem;font-weight:700;color:#0E2A52;background:#EEF4FA;border:1px solid #CFDCEA;border-radius:999px;padding:2px 12px}
+.case dl{margin:0;display:grid;gap:4px}
+.case dt{font-size:.74rem;font-weight:700;color:var(--gold-ink);margin-top:6px}
+.case dd{margin:0;font-size:.9rem;line-height:1.8}
+.tel-box{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:26px}
+.tel-box>div{background:#fff;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:16px 18px}
+.tel-box b{display:block;margin-bottom:6px;color:#0E2A52}
+.tel-box p{margin:0;font-size:.92rem;line-height:1.9}
+.tel-box a{color:#0E2A52;font-weight:700}
+@media (max-width:700px){.tel-box{grid-template-columns:1fr}}
+</style>
 </head><body>
 <a class="skip" href="#view">本文へスキップ</a>
 <div id="glow" aria-hidden="true"></div><div id="scene" aria-hidden="true"><div class="ly space"><canvas id="stars"></canvas></div><div class="ly earth"></div><div class="ly city"></div></div>
@@ -1197,8 +1216,16 @@ select.flash{animation:flash 1s ease}
   <div class="en">会社情報</div><h1>会社概要</h1>
 </div></header>
 <section class="page"><div class="wrap" style="max-width:960px">
+  <div class="blk co-greet"><h2>代表あいさつ</h2>
+    <div class="panel" style="display:grid;gap:14px;line-height:2">
+      <p style="margin:0">株式会社グローブは、2023年8月、大阪市生野区で設立しました。買取専門店「買取大吉 大阪勝山南店」の運営から始まり、日々お客様の大切なお品物と向き合うなかで、一つのご相談の裏には、片付け、住まい、相続、事業の引き継ぎなど、いくつもの課題がつながっていることを学びました。</p>
+      <p style="margin:0">一社だけで解決できることには限りがあります。だからこそ私たちは、企業・人・商材・専門家・物・地域・事業・企画・世界の9つを「繋ぐ」ことを、会社の役割と定めました。自社でできることは責任をもって行い、専門の知識や許可が必要なことは、信頼できる提携先・専門家と力を合わせて進めます。</p>
+      <p style="margin:0">お客様にとって、最初に相談できる窓口であり続けること。そして、つながりから新しい価値を生み出し、地域と社会に還元していくこと。それが私たちの目指す姿です。どうぞお気軽にご相談ください。</p>
+      <p style="margin:0;text-align:right;font-family:var(--f-display);font-weight:700">株式会社グローブ　代表取締役　藤原 重郎</p>
+    </div></div>
+  <div class="blk"><h2>会社情報</h2>
   <div class="since"><div class="sonar" aria-hidden="true"><i></i><i></i><i></i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21.5s-7-6.6-7-12a7 7 0 0 1 14 0c0 5.4-7 12-7 12z"></path><circle cx="12" cy="9.5" r="2.6"></circle></svg></div>
-    <div><h2>2023年8月10日の設立から</h2><div class="since-n" aria-live="off"><span><b id="sd">1,163</b><small>日</small></span><span><b id="sh">05</b><small>時間</small></span><span><b id="sm">42</b><small>分</small></span><span><b id="ss">24</b><small>秒</small></span></div><p class="since-geo">本社 大阪・生野　北緯34.656° 東経135.534°</p></div></div><table class="tbl"><tbody><tr style="animation-delay: 0ms;"><th scope="row">会社名</th><td style="white-space:pre-line">株式会社グローブ</td></tr><tr style="animation-delay: 60ms;"><th scope="row">英文表記</th><td style="white-space:pre-line">GLOVE</td></tr><tr style="animation-delay: 120ms;"><th scope="row">所在地</th><td style="white-space:pre-line">〒544-0033 大阪府大阪市生野区勝山南2-2-7</td></tr><tr style="animation-delay: 180ms;"><th scope="row">代表者</th><td style="white-space:pre-line">代表取締役 藤原 重郎</td></tr><tr style="animation-delay: 240ms;"><th scope="row">設立年月日</th><td style="white-space:pre-line">2023年8月10日</td></tr><tr style="animation-delay: 300ms;"><th scope="row">事業内容</th><td style="white-space:pre-line">企業支援・経営サポート
+    <div><h2>2023年8月10日の設立から</h2><div class="since-n" aria-live="off"><span><b id="sd">1,163</b><small>日</small></span><span><b id="sh">05</b><small>時間</small></span><span><b id="sm">48</b><small>分</small></span><span><b id="ss">38</b><small>秒</small></span></div><p class="since-geo">本社 大阪・生野　北緯34.656° 東経135.534°</p></div></div><table class="tbl"><tbody><tr style="animation-delay: 0ms;"><th scope="row">会社名</th><td style="white-space:pre-line">株式会社グローブ</td></tr><tr style="animation-delay: 60ms;"><th scope="row">英文表記</th><td style="white-space:pre-line">GLOVE</td></tr><tr style="animation-delay: 120ms;"><th scope="row">所在地</th><td style="white-space:pre-line">〒544-0033 大阪府大阪市生野区勝山南2-2-7</td></tr><tr style="animation-delay: 180ms;"><th scope="row">代表者</th><td style="white-space:pre-line">代表取締役 藤原 重郎</td></tr><tr style="animation-delay: 240ms;"><th scope="row">設立年月日</th><td style="white-space:pre-line">2023年8月10日</td></tr><tr style="animation-delay: 300ms;"><th scope="row">事業内容</th><td style="white-space:pre-line">企業支援・経営サポート
 医療・介護 総合支援
 リユース・買取事業
 許認可・補助金申請サポート
@@ -1215,8 +1242,14 @@ select.flash{animation:flash 1s ease}
 行政書士×事業支援
 家じまい相談窓口</td></tr><tr style="animation-delay: 420ms;"><th scope="row">連絡先</th><td style="white-space:pre-line">電話 06-6355-0779
 FAX 06-6355-0800
-フリーダイヤル 0120-933-496</td></tr><tr style="animation-delay: 480ms;"><th scope="row">営業時間</th><td style="white-space:pre-line">10:00〜19:00 年中無休（買取大吉 大阪勝山南店）</td></tr><tr style="animation-delay: 540ms;"><th scope="row">法人番号</th><td style="white-space:pre-line">1120001257469</td></tr><tr style="animation-delay: 600ms;"><th scope="row">適格請求書発行事業者登録番号</th><td style="white-space:pre-line">T1120001257469</td></tr><tr style="animation-delay: 660ms;"><th scope="row">古物商許可</th><td style="white-space:pre-line">大阪府公安委員会 第62102R050377号</td></tr></tbody></table>
-  <p style="margin-top:18px"><a class="btn btn-ghost btn-sm" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%A4%A7%E9%98%AA%E5%B8%82%E7%94%9F%E9%87%8E%E5%8C%BA%E5%8B%9D%E5%B1%B1%E5%8D%972-2-7" target="_blank" rel="noopener">Googleマップで見る</a></p>
+フリーダイヤル 0120-933-496
+メール info@kaitori-d.com</td></tr><tr style="animation-delay: 480ms;"><th scope="row">営業時間</th><td style="white-space:pre-line">10:00〜19:00 年中無休（買取大吉 大阪勝山南店）</td></tr><tr style="animation-delay: 540ms;"><th scope="row">法人番号</th><td style="white-space:pre-line">1120001257469</td></tr><tr style="animation-delay: 600ms;"><th scope="row">適格請求書発行事業者登録番号</th><td style="white-space:pre-line">T1120001257469</td></tr><tr style="animation-delay: 660ms;"><th scope="row">古物商許可</th><td style="white-space:pre-line">大阪府公安委員会 第62102R050377号</td></tr><tr style="animation-delay: 720ms;"><th scope="row">アクセス</th><td style="white-space:pre-line">JR大阪環状線「桃谷駅」南口から徒歩約13分（勝山通り沿い、桃谷高校の向かい）
+近隣に有料駐車場あり（APパーク勝山南・徒歩1分）</td></tr></tbody></table></div>
+  <div class="blk"><h2>所在地・アクセス</h2>
+    <div class="co-map"><iframe title="株式会社グローブ・買取大吉 大阪勝山南店の地図" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3282.0215739945393!2d135.52963297631027!3d34.65415808570783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6000df47e95dfd91%3A0x3d03a50c011b5ac5!2z6LK35Y-W5aSn5ZCJIOWkp-mYquWLneWxseWNl-W6lw!5e0!3m2!1sja!2sjp!4v1746500047292!5m2!1sja!2sjp" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen=""></iframe></div>
+    <p style="margin:0">〒544-0033 大阪府大阪市生野区勝山南2-2-7（買取大吉 大阪勝山南店と同じ所在地です）</p>
+    <p style="margin:0;display:flex;flex-wrap:wrap;gap:10px"><a class="btn btn-ghost btn-sm" href="https://www.google.com/maps/search/?api=1&amp;query=%E8%B2%B7%E5%8F%96%E5%A4%A7%E5%90%89%20%E5%A4%A7%E9%98%AA%E5%8B%9D%E5%B1%B1%E5%8D%97%E5%BA%97%20%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%A4%A7%E9%98%AA%E5%B8%82%E7%94%9F%E9%87%8E%E5%8C%BA%E5%8B%9D%E5%B1%B1%E5%8D%972-2-7" target="_blank" rel="noopener">Googleマップで開く</a><a class="btn btn-ghost btn-sm" href="https://www.kaitori-daikichi.jp/store/katsuyamaminami/" target="_blank" rel="noopener">買取大吉 大阪勝山南店の店舗ページ</a></p></div>
+  <div class="blk co-cases"><h2>ご支援の例</h2><p class="muted" style="margin:0">当社がどのようにお手伝いするかを分かりやすくお伝えするための、想定の事例です。実在の取引先や実績の数値を示すものではありません。</p><div class="case-grid"><div class="case"><span class="case-tag">リユース・買取</span><dl><dt>ご相談</dt><dd>事務所の移転で、使わなくなった備品や在庫の扱いに困っていた</dd><dt>当社の対応</dt><dd>査定・買取と、買取できない物の処分業者の手配を一つの窓口でまとめて進めた</dd><dt>結果</dt><dd>片付けと現金化を同じ日程で終えられ、移転の段取りが軽くなった</dd></dl></div><div class="case"><span class="case-tag">家じまい・不動産</span><dl><dt>ご相談</dt><dd>親の住んでいた家の片付けと、その後の売却をどう進めればよいか分からなかった</dd><dt>当社の対応</dt><dd>品物の買取、遺品整理の業者、不動産会社と連携し、順番と役割を整理してご案内した</dd><dt>結果</dt><dd>相談先を探し回らずに、片付けから売却の相談まで進められた</dd></dl></div><div class="case"><span class="case-tag">医療・介護</span><dl><dt>ご相談</dt><dd>介護事業所で、職員の採用と日々の経費の両方に悩んでいた</dd><dt>当社の対応</dt><dd>経費の見直しを当社が支援し、採用は許可を持つ提携事業者と連携して進めた</dd><dt>結果</dt><dd>経費の見直しと採用の相談を、一つの窓口で同時に進められた</dd></dl></div><div class="case"><span class="case-tag">許認可・補助金</span><dl><dt>ご相談</dt><dd>新しい事業を始めるにあたり、使える補助金や必要な許可が分からなかった</dd><dt>当社の対応</dt><dd>事業計画を一緒に整理したうえで、申請手続きは行政書士へおつなぎした</dd><dt>結果</dt><dd>準備すべき書類と進める順番がはっきりし、申請までの道筋が見えた</dd></dl></div><div class="case"><span class="case-tag">海外・輸出</span><dl><dt>ご相談</dt><dd>買い取った中古品を、海外で販売できないか検討していた</dd><dt>当社の対応</dt><dd>対象の品目と国の規制を確認し、輸出の実績を持つ提携事業者と販路を検討した</dd><dt>結果</dt><dd>国内だけでなく、海外も視野に入れた販売の選択肢ができた</dd></dl></div><div class="case"><span class="case-tag">企画・地域</span><dl><dt>ご相談</dt><dd>商業施設で、集客につながる催しを探していた</dd><dt>当社の対応</dt><dd>施設と相談しながら、買取の催事を企画し、当日の運営まで行った</dd><dt>結果</dt><dd>来場のきっかけとなる新しい催しとして、施設の企画に加わった</dd></dl></div></div></div>
   <div class="blk" style="margin-top:44px"><h2>法令に基づく表示</h2>
     <div class="panel" style="font-size:.92rem">古物営業法に基づく表示：株式会社グローブ　大阪府公安委員会 第62102R050377号　／　買取大吉 大阪勝山南店の営業所情報は店舗窓口でご確認ください</div></div>
 </div></section></main>
@@ -1438,18 +1471,18 @@ const COMPANY_DEFAULT = {
   tel: "06-6355-0779",
   fax: "06-6355-0800",
   freeDial: "0120-933-496",
-  email: "",
+  email: "info@kaitori-d.com",
   hours: "10:00〜19:00 年中無休（買取大吉 大阪勝山南店）",
   bank: "",
   corpNo: "1120001257469",
   invoice: "T1120001257469",
   kobutsu: "大阪府公安委員会 第62102R050377号",
-  access: "",
-  mapQuery: "大阪府大阪市生野区勝山南2-2-7"
+  access: "JR大阪環状線「桃谷駅」南口から徒歩約13分（勝山通り沿い、桃谷高校の向かい）\n近隣に有料駐車場あり（APパーク勝山南・徒歩1分）",
+  mapQuery: "買取大吉 大阪勝山南店 大阪府大阪市生野区勝山南2-2-7"
 };
 
 const RELATED_DEFAULT = [
-  { name: "買取大吉 大阪勝山南店", relation: "株式会社グローブが運営する買取専門店（買取大吉フランチャイズ加盟店）", url: "", published: true },
+  { name: "買取大吉 大阪勝山南店", relation: "株式会社グローブが運営する買取専門店（買取大吉フランチャイズ加盟店）", url: "https://www.kaitori-daikichi.jp/store/katsuyamaminami/", published: true },
   { name: "医療介護総合支援会", relation: "", url: "", published: true },
   { name: "行政書士×事業支援", relation: "", url: "", published: true },
   { name: "家じまい相談窓口", relation: "", url: "", published: true }
@@ -2355,17 +2388,29 @@ function pageCompany() {
   const rel = S.related.filter(r => r.published !== false);
   const rows = [
     ["会社名", c.name + (c.nameJa && c.nameJa !== c.name ? `（${c.nameJa}）` : "")], ["英文表記", c.nameEn], ["所在地", c.address], ["代表者", c.representative],
-    ["設立年月日", c.founded], ["資本金", c.capital],
+    ["設立年月日", c.founded],
     ["事業内容", BUSINESSES.filter(b => S.biz[b.id].published !== false).map(b => b.ja).join("\n")],
     ["関連事業", rel.map(r => r.name + (r.relation ? `\n　${r.relation}` : "")).join("\n")],
-    ["連絡先", [c.tel && "TEL " + c.tel, c.fax && "FAX " + c.fax, c.freeDial && "フリーダイヤル " + c.freeDial, c.email && "Email " + c.email].filter(Boolean).join("\n")],
+    ["連絡先", [c.tel && "TEL " + c.tel, c.fax && "FAX " + c.fax, c.freeDial && "フリーダイヤル " + c.freeDial, c.email && "メール " + c.email].filter(Boolean).join("\n")],
     ["営業時間", c.hours], ["取引先金融機関", c.bank], ["法人番号", c.corpNo], ["適格請求書発行事業者登録番号", c.invoice],
     ["古物商許可", c.kobutsu], ["アクセス", c.access]
   ].filter(r => r[1]);
   return `${phead("COMPANY", "会社概要", "", [[null, "会社概要"]])}
 <section class="page"><div class="wrap" style="max-width:960px">
-  <table class="tbl"><tbody>${rows.map(([k, v]) => `<tr><th scope="row">${k}</th><td style="white-space:pre-line">${esc(v)}</td></tr>`).join("")}</tbody></table>
-  ${c.mapQuery ? `<p style="margin-top:18px"><a class="btn btn-ghost btn-sm" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.mapQuery)}" target="_blank" rel="noopener">Googleマップで見る</a></p>` : ""}
+  <div class="blk co-greet"><h2>代表あいさつ</h2>
+    <div class="panel" style="display:grid;gap:14px;line-height:2">
+      <p style="margin:0">株式会社グローブは、2023年8月、大阪市生野区で設立しました。買取専門店「買取大吉 大阪勝山南店」の運営から始まり、日々お客様の大切なお品物と向き合うなかで、一つのご相談の裏には、片付け、住まい、相続、事業の引き継ぎなど、いくつもの課題がつながっていることを学びました。</p>
+      <p style="margin:0">一社だけで解決できることには限りがあります。だからこそ私たちは、企業・人・商材・専門家・物・地域・事業・企画・世界の9つを「繋ぐ」ことを、会社の役割と定めました。自社でできることは責任をもって行い、専門の知識や許可が必要なことは、信頼できる提携先・専門家と力を合わせて進めます。</p>
+      <p style="margin:0">お客様にとって、最初に相談できる窓口であり続けること。そして、つながりから新しい価値を生み出し、地域と社会に還元していくこと。それが私たちの目指す姿です。どうぞお気軽にご相談ください。</p>
+      <p style="margin:0;text-align:right;font-family:var(--f-display);font-weight:700">株式会社グローブ　代表取締役　藤原 重郎</p>
+    </div></div>
+  <div class="blk"><h2>会社情報</h2>
+  <table class="tbl"><tbody>${rows.map(([k, v]) => `<tr><th scope="row">${k}</th><td style="white-space:pre-line">${esc(v)}</td></tr>`).join("")}</tbody></table></div>
+  <div class="blk"><h2>所在地・アクセス</h2>
+    <div class="co-map"><iframe title="株式会社グローブ・買取大吉 大阪勝山南店の地図" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3282.0215739945393!2d135.52963297631027!3d34.65415808570783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6000df47e95dfd91%3A0x3d03a50c011b5ac5!2z6LK35Y-W5aSn5ZCJIOWkp-mYquWLneWxseWNl-W6lw!5e0!3m2!1sja!2sjp!4v1746500047292!5m2!1sja!2sjp" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>
+    <p style="margin:0">〒544-0033 大阪府大阪市生野区勝山南2-2-7（買取大吉 大阪勝山南店と同じ所在地です）</p>
+    <p style="margin:0;display:flex;flex-wrap:wrap;gap:10px">${c.mapQuery ? `<a class="btn btn-ghost btn-sm" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.mapQuery)}" target="_blank" rel="noopener">Googleマップで開く</a>` : ""}<a class="btn btn-ghost btn-sm" href="https://www.kaitori-daikichi.jp/store/katsuyamaminami/" target="_blank" rel="noopener">買取大吉 大阪勝山南店の店舗ページ</a></p></div>
+  <div class="blk co-cases"><h2>ご支援の例</h2><p class="muted" style="margin:0">当社がどのようにお手伝いするかを分かりやすくお伝えするための、想定の事例です。実在の取引先や実績の数値を示すものではありません。</p><div class="case-grid"><div class="case"><span class="case-tag">リユース・買取</span><dl><dt>ご相談</dt><dd>事務所の移転で、使わなくなった備品や在庫の扱いに困っていた</dd><dt>当社の対応</dt><dd>査定・買取と、買取できない物の処分業者の手配を一つの窓口でまとめて進めた</dd><dt>結果</dt><dd>片付けと現金化を同じ日程で終えられ、移転の段取りが軽くなった</dd></dl></div><div class="case"><span class="case-tag">家じまい・不動産</span><dl><dt>ご相談</dt><dd>親の住んでいた家の片付けと、その後の売却をどう進めればよいか分からなかった</dd><dt>当社の対応</dt><dd>品物の買取、遺品整理の業者、不動産会社と連携し、順番と役割を整理してご案内した</dd><dt>結果</dt><dd>相談先を探し回らずに、片付けから売却の相談まで進められた</dd></dl></div><div class="case"><span class="case-tag">医療・介護</span><dl><dt>ご相談</dt><dd>介護事業所で、職員の採用と日々の経費の両方に悩んでいた</dd><dt>当社の対応</dt><dd>経費の見直しを当社が支援し、採用は許可を持つ提携事業者と連携して進めた</dd><dt>結果</dt><dd>経費の見直しと採用の相談を、一つの窓口で同時に進められた</dd></dl></div><div class="case"><span class="case-tag">許認可・補助金</span><dl><dt>ご相談</dt><dd>新しい事業を始めるにあたり、使える補助金や必要な許可が分からなかった</dd><dt>当社の対応</dt><dd>事業計画を一緒に整理したうえで、申請手続きは行政書士へおつなぎした</dd><dt>結果</dt><dd>準備すべき書類と進める順番がはっきりし、申請までの道筋が見えた</dd></dl></div><div class="case"><span class="case-tag">海外・輸出</span><dl><dt>ご相談</dt><dd>買い取った中古品を、海外で販売できないか検討していた</dd><dt>当社の対応</dt><dd>対象の品目と国の規制を確認し、輸出の実績を持つ提携事業者と販路を検討した</dd><dt>結果</dt><dd>国内だけでなく、海外も視野に入れた販売の選択肢ができた</dd></dl></div><div class="case"><span class="case-tag">企画・地域</span><dl><dt>ご相談</dt><dd>商業施設で、集客につながる催しを探していた</dd><dt>当社の対応</dt><dd>施設と相談しながら、買取の催事を企画し、当日の運営まで行った</dd><dt>結果</dt><dd>来場のきっかけとなる新しい催しとして、施設の企画に加わった</dd></dl></div></div></div>
   <div class="blk" style="margin-top:44px"><h2>法令に基づく表示<small>LEGAL</small></h2>
     <div class="panel" style="font-size:.92rem">古物営業法に基づく表示：${esc(c.nameJa || c.name)}　${esc(c.kobutsu || "")}　／　買取大吉 大阪勝山南店の営業所情報は店舗窓口でご確認ください</div></div>
 </div></section>`;
@@ -2418,8 +2463,12 @@ function pageContact(r) {
   const m = r.match(/^contact-(service|corporate|partner)(?:-([a-z]+))?$/);
   if (m) { entry = m[1]; bizPre = m[2] || ""; }
   const bizOpts = BUSINESSES.map(b => `<option value="${b.id}" ${b.id === bizPre ? "selected" : ""}>${esc(b.ja)}</option>`).join("");
-  const html = `${phead("CONTACT", "お問い合わせ", "法人・事業者・専門家の方専用の窓口です。個人向けのお問い合わせは各事業サイトをご利用ください。", [[null, "お問い合わせ"]])}
+  const html = `${phead("CONTACT", "お問い合わせ", "法人・事業者・専門家の方の窓口です。お品物の買取・査定など個人のお客様のご相談は、買取大吉 大阪勝山南店で承ります。", [[null, "お問い合わせ"]])}
 <section class="page"><div class="wrap" style="max-width:920px">
+  <div class="tel-box">
+    <div><b>お電話でのご相談</b><p>電話 <a href="tel:0663550779">06-6355-0779</a>　／　フリーダイヤル <a href="tel:0120933496">0120-933-496</a><br>FAX 06-6355-0800　／　メール <a href="mailto:info@kaitori-d.com">info@kaitori-d.com</a><br><small>受付時間 10:00〜19:00（年中無休）</small></p></div>
+    <div><b>個人のお客様（お品物の買取・査定）</b><p>買取大吉 大阪勝山南店で承ります。<br><a href="https://www.kaitori-daikichi.jp/store/katsuyamaminami/" target="_blank" rel="noopener">店舗ページを見る →</a></p></div>
+  </div>
   <div class="entry-tabs" role="group" aria-label="お問い合わせの種類">${entries.map(([k, t, s], i) => `<button type="button" class="entry" data-entry="${k}" aria-pressed="${k === entry}"><span style="font-family:var(--f-latin);color:var(--gold-ink);letter-spacing:.2em;font-size:.72rem">ENTRY ${i + 1}</span><b>${t}</b><small>${s}</small></button>`).join("")}</div>
   <div id="fwrap" class="panel">
     <div id="fstate"></div>
@@ -2558,14 +2607,14 @@ function pagePrivacy() {
 <h2>4. 第三者提供</h2><p>当社は、次の場合を除き、あらかじめご本人の同意を得ることなく個人情報を第三者に提供しません。</p><ul><li>法令に基づく場合</li><li>人の生命、身体または財産の保護のために必要がある場合であって、ご本人の同意を得ることが困難な場合</li><li>その他、個人情報の保護に関する法律で認められている場合</li></ul>
 <p>ご相談内容に応じて提携事業者・専門家をご紹介する場合は、提供先と提供する情報の範囲について、ご本人の同意を得たうえで、必要な範囲に限って提供します。フォームで「提携先への情報提供」に同意されなかった場合は、ご紹介の前に改めて確認します。</p>
 <h2>5. 外部サービスの利用</h2><p>当社は、フォームでお送りいただいた内容の保存と担当者への通知のために、Google LLCが提供するクラウドサービス（Googleスプレッドシート、Gmail等）を利用しています。これらのサービスは、日本国外（米国等）のサーバーで運用されている場合があります。Googleにおける情報の取扱いは、同社のプライバシーポリシー（<a href="https://policies.google.com/privacy?hl=ja" target="_blank" rel="noopener">https://policies.google.com/privacy</a>）をご確認ください。</p>
-<p>また、本サイトは文字の表示にGoogle Fontsを利用しており、ページを表示する際に、閲覧者のIPアドレス等がGoogleに送信されます。</p>
+<p>また、本サイトは文字の表示にGoogle Fontsを、会社概要ページの地図の表示にGoogleマップを利用しており、これらを表示する際に、閲覧者のIPアドレス等がGoogleに送信されます。</p>
 <h2>6. ブラウザへの保存について</h2><p>本サイトの「事業スタンプラリー」は、閲覧した事業ページの記録を閲覧者のブラウザ内にのみ保存します。この記録は当社に送信されず、個人を特定する情報も含みません。ブラウザの設定から削除できます。本サイトはアクセス解析ツールを使用していません。</p>
 <h2>7. 保存期間</h2><p>取得した個人情報は、利用目的の達成に必要な期間保存し、不要となったものは速やかに削除します。</p>
 <h2>8. 安全管理</h2><p>当社は、個人情報の漏えい・滅失・毀損を防止するため、保存先の閲覧・編集の権限を担当者に限定するなど、必要かつ適切な安全管理措置を講じます。</p>
 <h2>9. 開示・訂正・利用停止等</h2><p>ご本人から個人情報の開示・訂正・追加・削除・利用停止等のご請求があった場合は、ご本人であることを確認のうえ、法令に従い対応します。下記の窓口までご連絡ください。</p>
-<h2>10. お問い合わせ窓口</h2><p>${nm}　${esc(c.address)}<br>TEL ${esc(c.tel)}${c.email ? "　Email " + esc(c.email) : ""}（${esc(c.hours)}）</p>
+<h2>10. お問い合わせ窓口</h2><p>${nm}　${esc(c.address)}<br>TEL ${esc(c.tel)}${c.email ? "　メール " + esc(c.email) : ""}（${esc(c.hours)}）</p>
 <h2>11. 改定</h2><p>本方針は、法令の改正等に応じて改定することがあります。改定後の内容は本ページに掲載した時点から効力を生じます。</p>
-<p class="muted" style="text-align:right">最終更新日：2026年10月13日</p>
+<p class="muted" style="text-align:right">最終更新日：2026年10月16日</p>
 </div></div></section>`;
 }
 function pageTerms() {

@@ -47,7 +47,7 @@ if data['errs']: print('page errors:', data['errs'])
 ORG = {"@type":"Organization","@id":SITE+"#org","name":"株式会社グローブ","alternateName":["GLOVE","株式会社GLOVE"],"url":SITE,"logo":SITE+"images/logo.png",
        "telephone":"+81-6-6355-0779","foundingDate":"2023-08-10",
        "address":{"@type":"PostalAddress","postalCode":"544-0033","addressRegion":"大阪府","addressLocality":"大阪市生野区","streetAddress":"勝山南2-2-7","addressCountry":"JP"},
-       "contactPoint":[{"@type":"ContactPoint","telephone":"+81-120-933-496","contactType":"customer service","areaServed":"JP","availableLanguage":"ja"}]}
+       "email":"info@kaitori-d.com","faxNumber":"+81-6-6355-0800","contactPoint":[{"@type":"ContactPoint","telephone":"+81-120-933-496","contactType":"customer service","areaServed":"JP","availableLanguage":"ja"}],"department":[{"@type":"Store","name":"買取大吉 大阪勝山南店","url":"https://www.kaitori-daikichi.jp/store/katsuyamaminami/","telephone":"+81-120-933-496","address":{"@type":"PostalAddress","postalCode":"544-0033","addressRegion":"大阪府","addressLocality":"大阪市生野区","streetAddress":"勝山南2-2-7","addressCountry":"JP"},"geo":{"@type":"GeoCoordinates","latitude":34.65416,"longitude":135.53221},"openingHours":"Mo-Su 10:00-19:00","hasMap":"https://www.google.com/maps/search/?api=1&query=%E8%B2%B7%E5%8F%96%E5%A4%A7%E5%90%89+%E5%A4%A7%E9%98%AA%E5%8B%9D%E5%B1%B1%E5%8D%97%E5%BA%97"}]}
 today = datetime.date.today().isoformat()
 def url_of(r): return SITE + ('' if r == 'home' else r + '/')
 for r, name in ROUTES:
