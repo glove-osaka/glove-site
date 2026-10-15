@@ -44,7 +44,7 @@ srv.kill()
 data = json.loads(res.stdout.strip().splitlines()[-1]); snaps = data['out']
 if data['errs']: print('page errors:', data['errs'])
 # 3) 書き出し
-ORG = {"@type":"Organization","@id":SITE+"#org","name":"株式会社GLOVE","alternateName":["株式会社グローブ","GLOVE"],"url":SITE,"logo":SITE+"images/logo.png",
+ORG = {"@type":"Organization","@id":SITE+"#org","name":"株式会社グローブ","alternateName":["GLOVE","株式会社GLOVE"],"url":SITE,"logo":SITE+"images/logo.png",
        "telephone":"+81-6-6355-0779","foundingDate":"2023-08-10",
        "address":{"@type":"PostalAddress","postalCode":"544-0033","addressRegion":"大阪府","addressLocality":"大阪市生野区","streetAddress":"勝山南2-2-7","addressCountry":"JP"},
        "contactPoint":[{"@type":"ContactPoint","telephone":"+81-120-933-496","contactType":"customer service","areaServed":"JP","availableLanguage":"ja"}]}
@@ -61,7 +61,7 @@ for r, name in ROUTES:
     page = re.sub(r'<meta property="og:url" content="[^"]*">', f'<meta property="og:url" content="{u}">', page, count=1)
     page = re.sub(r'<link rel="canonical" href="[^"]*">', f'<link rel="canonical" href="{u}">', page, count=1)
     graph = [ORG]
-    if r == 'home': graph.append({"@type":"WebSite","@id":SITE+"#site","url":SITE,"name":"株式会社GLOVE 公式サイト","inLanguage":"ja","publisher":{"@id":SITE+"#org"}})
+    if r == 'home': graph.append({"@type":"WebSite","@id":SITE+"#site","url":SITE,"name":"株式会社グローブ 公式サイト","inLanguage":"ja","publisher":{"@id":SITE+"#org"}})
     else:
         crumbs = [("ホーム", SITE)] + ([("事業領域", url_of('business'))] if r.startswith('business-') else []) + [(name, u)]
         graph.append({"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":i+1,"name":n,"item":x} for i,(n,x) in enumerate(crumbs)]})
