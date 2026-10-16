@@ -485,6 +485,23 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 .tiles-h{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:1.3rem;margin:34px 0 16px}.tiles-h:first-child{margin-top:0}.tiles-h .ic{font-size:1.7rem;color:var(--pine)}.tiles-h small{font-size:1rem;font-weight:400;color:var(--muted);width:100%}
 .omoi{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}.omoi.one{grid-template-columns:1fr}.omoi-col h3{display:flex;align-items:center;gap:10px;font-size:1.15rem;margin:0 0 12px;color:var(--pine)}.omoi-col h3 .ic{font-size:1.5rem}
 @media (max-width:820px){.omoi{grid-template-columns:1fr}}
+.acc{background:var(--surface);border:2px solid var(--line);border-radius:16px;margin-bottom:16px;overflow:hidden}
+.acc[open]{border-color:var(--pine)}
+.acc>summary{list-style:none;display:flex;align-items:center;gap:18px;min-height:88px;padding:16px 22px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.acc>summary::-webkit-details-marker{display:none}
+.acc>summary:hover{background:var(--pine-soft)}
+.acc>summary:focus-visible{outline:3px solid var(--gold-bright);outline-offset:-3px}
+.acc>summary .t{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
+.acc>summary .t b{font-size:1.3rem;color:var(--ink)}
+.acc>summary .t small{font-size:1rem;color:var(--muted)}
+.acc>summary .st{display:inline-flex;align-items:center;gap:8px;flex-shrink:0;min-height:48px;padding:0 18px;border-radius:999px;background:var(--pine);color:var(--on-pine);font-weight:700}
+.acc>summary .st i{width:12px;height:12px;border-right:3px solid currentColor;border-bottom:3px solid currentColor;transform:rotate(45deg) translateY(-3px);transition:transform .2s}
+.acc[open]>summary .st i{transform:rotate(-135deg) translate(-2px,-2px)}
+.acc .cl-l,.acc[open] .op-l{display:none}.acc[open] .cl-l{display:inline}
+.acc>.tiles,.acc>.grid{padding:6px 22px 24px}
+.acc-hint{font-weight:700;margin:0 0 16px}
+@media (max-width:560px){.acc>summary{gap:12px;padding:14px 16px}.acc>summary .emb{display:none}.acc>summary .st{padding:0 14px}.acc>.tiles,.acc>.grid{padding:4px 14px 18px}}
+@media print{.acc>*{display:block!important}}
 .util-tel{display:none;align-items:center;gap:8px;min-height:44px;color:#fff;text-decoration:none;font-weight:700}.util-tel .ic{font-size:1.3rem;color:var(--gold-bright)}.util-tel b{font-size:1.25rem;letter-spacing:.05em;color:#fff}.util-tel small{font-size:.9rem;color:#E9F0EC;font-weight:400}
 @media (min-width:1241px){.util-tel{display:inline-flex}}
 @media (max-width:1599px){.util .op.has-tel{display:none}}
