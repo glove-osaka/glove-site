@@ -121,7 +121,7 @@
 <script>/* オープニング：トップを最初に開いたときだけ、読み込み中の画面を空色で覆う */
 (function(){try{var b=document.querySelector('base[data-site]'),p=location.pathname,home;
 if(b){var bp=new URL(b.href).pathname;home=(p===bp||p===bp+'index.html');}else{home=(!location.hash||location.hash==='#home');}
-var at=0;try{at=+localStorage.getItem('glove-intro-at')||0}catch(e){}if(home&&Date.now()-at>6048e5&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('intro-pending');}catch(e){}})();</script>
+if(home&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('intro-pending');}catch(e){}})();</script>
 <style id="intro-css">
 /* Opening v2: warp → particle globe → arcs & nine words → title slam → white flash */
 html.intro-pending body::before{content:"";position:fixed;inset:0;z-index:9998;background:radial-gradient(80% 70% at 50% 50%,#0B2242,#030A16);animation:coverout .4s 8s forwards}
@@ -1225,7 +1225,7 @@ select.flash{animation:flash 1s ease}
     </div></div>
   <div class="blk"><h2>会社情報</h2>
   <div class="since"><div class="sonar" aria-hidden="true"><i></i><i></i><i></i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21.5s-7-6.6-7-12a7 7 0 0 1 14 0c0 5.4-7 12-7 12z"></path><circle cx="12" cy="9.5" r="2.6"></circle></svg></div>
-    <div><h2>2023年8月10日の設立から</h2><div class="since-n" aria-live="off"><span><b id="sd">1,163</b><small>日</small></span><span><b id="sh">05</b><small>時間</small></span><span><b id="sm">48</b><small>分</small></span><span><b id="ss">38</b><small>秒</small></span></div><p class="since-geo">本社 大阪・生野　北緯34.656° 東経135.534°</p></div></div><table class="tbl"><tbody><tr style="animation-delay: 0ms;"><th scope="row">会社名</th><td style="white-space:pre-line">株式会社グローブ</td></tr><tr style="animation-delay: 60ms;"><th scope="row">英文表記</th><td style="white-space:pre-line">GLOVE</td></tr><tr style="animation-delay: 120ms;"><th scope="row">所在地</th><td style="white-space:pre-line">〒544-0033 大阪府大阪市生野区勝山南2-2-7</td></tr><tr style="animation-delay: 180ms;"><th scope="row">代表者</th><td style="white-space:pre-line">代表取締役 藤原 重郎</td></tr><tr style="animation-delay: 240ms;"><th scope="row">設立年月日</th><td style="white-space:pre-line">2023年8月10日</td></tr><tr style="animation-delay: 300ms;"><th scope="row">事業内容</th><td style="white-space:pre-line">企業支援・経営サポート
+    <div><h2>2023年8月10日の設立から</h2><div class="since-n" aria-live="off"><span><b id="sd">1,163</b><small>日</small></span><span><b id="sh">12</b><small>時間</small></span><span><b id="sm">21</b><small>分</small></span><span><b id="ss">18</b><small>秒</small></span></div><p class="since-geo">本社 大阪・生野　北緯34.656° 東経135.534°</p></div></div><table class="tbl"><tbody><tr style="animation-delay: 0ms;"><th scope="row">会社名</th><td style="white-space:pre-line">株式会社グローブ</td></tr><tr style="animation-delay: 60ms;"><th scope="row">英文表記</th><td style="white-space:pre-line">GLOVE</td></tr><tr style="animation-delay: 120ms;"><th scope="row">所在地</th><td style="white-space:pre-line">〒544-0033 大阪府大阪市生野区勝山南2-2-7</td></tr><tr style="animation-delay: 180ms;"><th scope="row">代表者</th><td style="white-space:pre-line">代表取締役 藤原 重郎</td></tr><tr style="animation-delay: 240ms;"><th scope="row">設立年月日</th><td style="white-space:pre-line">2023年8月10日</td></tr><tr style="animation-delay: 300ms;"><th scope="row">事業内容</th><td style="white-space:pre-line">企業支援・経営サポート
 医療・介護 総合支援
 リユース・買取事業
 許認可・補助金申請サポート
