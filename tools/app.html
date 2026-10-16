@@ -1290,7 +1290,7 @@ select.flash{animation:flash 1s ease}
     var PEN = [440, 523.25, 587.33, 659.25, 783.99, 880, 1046.5, 1174.66, 1318.51];
     function safe(fn) { return function () { if (!ok) return; try { fn.apply(null, arguments); } catch (e) {} }; }
     return { init: init, on: function () { return ok; },
-      warp: safe(function () { nz("bandpass", 180, 5200, 2.5, .95, .4, .2, .25); tone(38, "sine", .95, .55, .3, 0, 0, 150); nz("highpass", 2500, 10000, .7, .85, .07, .35, .35); }),
+      warp: safe(function () { nz("bandpass", 160, 5200, 2.5, 1.6, .4, .25, .25); tone(36, "sine", 1.6, .55, .35, 0, 0, 150); nz("highpass", 2200, 10000, .7, 1.45, .07, .4, .35); }),
       bloom: safe(function () { tone(72, "sine", .005, .75, 1, 0, 0, 36); nz("lowpass", 7000, 260, .5, .004, .3, .8, .5); [880, 1318.51, 1760, 2637].forEach(function (f, i) { tone(f, "sine", .01, .07, 1.8, .9, i * .035); }); }),
       twinkle: safe(function () { var f = PEN[(Math.random() * PEN.length) | 0] * (Math.random() < .5 ? 2 : 1); tone(f, "sine", .003, .035, .4, .9); }),
       arc: safe(function () { var n = ctx.currentTime; if (n - lastArc < .14) return; lastArc = n; var f = 520 + Math.random() * 420; tone(f, "triangle", .02, .03, .45, .7, 0, f * 2.3); }),
@@ -1322,16 +1322,20 @@ select.flash{animation:flash 1s ease}
   var gate = el.querySelector(".gate");
   function start(withSound) { if (started) return; started = true; t0 = performance.now(); gate.classList.add("hide"); clearTimeout(autoT);
     if (withSound) { SFX.init(); if (window.GLOVE_BGM) { window.GLOVE_BGM.level(.28); window.GLOVE_BGM.play(); } } else el.classList.add("silent");
-    SFX.warp(); safety = setTimeout(finish, 9000); }
+    SFX.warp(); safety = setTimeout(finish, 12500); }
   gate.querySelector(".go").addEventListener("click", function () { start(true); });
   gate.querySelector(".quiet").addEventListener("click", function () { start(false); });
   el.addEventListener("pointerdown", function (e) { if (started && !SFX.on() && !e.target.closest(".skip-btn")) { SFX.init(); el.classList.remove("silent"); if (window.GLOVE_BGM) { window.GLOVE_BGM.level(.28); window.GLOVE_BGM.play(); } } });
   autoT = setTimeout(function () { start(false); }, 8000);
   function once(key, fn) { if (!fired[key]) { fired[key] = 1; fn(); } }
   function proj(x, y, z, rot, R, cx, cy) { var c = Math.cos(rot), s = Math.sin(rot), X = x * c - z * s, Z = x * s + z * c; var tl = -.35, Y = y * Math.cos(tl) - Z * Math.sin(tl), Z2 = y * Math.sin(tl) + Z * Math.cos(tl); return [cx + X * R, cy - Y * R, Z2]; }
+  /* 実時間→演出の時間（約8.6秒に伸ばす。題字の場面はゆっくり見せる） */
+  var TK = [[0, 0], [1.7, 1.3], [4.85, 3.4], [6.2, 4.5], [8.0, 4.85], [8.6, 5.3]];
+  function tmap(T) { for (var i = 1; i < TK.length; i++) { if (T <= TK[i][0]) { var a = TK[i - 1], b = TK[i]; return a[1] + (b[1] - a[1]) * (T - a[0]) / (b[0] - a[0]); } }
+    var L = TK[TK.length - 1]; return L[1] + (T - L[0]); }
   function frame(now) {
     if (done) return; raf = requestAnimationFrame(frame);
-    var t = started ? (now - t0) / 1000 : -1, cx = W / 2, cy = H / 2;
+    var t = started ? tmap((now - t0) / 1000) : -1, cx = W / 2, cy = H / 2;
     var bg = g.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * .7);
     bg.addColorStop(0, "#0E2A52"); bg.addColorStop(1, "#02070F"); g.fillStyle = bg; g.fillRect(0, 0, W, H);
     if (!started) { var Fq = Math.min(W, H) * .6; for (var gi = 0; gi < stars.length; gi++) { var s0 = stars[gi]; s0.z -= .0015; if (s0.z <= .02) { s0.x = (rnd() - .5) * 2; s0.y = (rnd() - .5) * 2; s0.z = 1; }
