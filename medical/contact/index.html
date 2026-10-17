@@ -708,7 +708,7 @@ function receipt(){var d=new Date(),p=function(n){return String(n).padStart(2,'0
 f.addEventListener('submit',function(e){e.preventDefault();if(sending||st!==6)return;
  if(document.getElementById('hpf').value){need('送信できませんでした。メールでご連絡ください。');return}
  sending=true;var b=document.getElementById('send');b.disabled=true;b.textContent='送信しています…';
- var rec={no:receipt(),ts:new Date().toISOString(),entry:D.site,name:anon()?'（名前を伏せた相談）':v('nm'),company:anon()?'':v('co'),email:v('mail'),tel:v('tel'),cat:'medical',method:'メール',body:txt(),agree:true,share:false,status:'新規受付',memo:''};
+ var rec={no:receipt(),ts:new Date().toISOString(),entry:D.site,name:anon()?'（名前を伏せた相談）':v('nm'),company:anon()?'':v('co'),email:v('mail'),tel:v('tel')||'（未入力）',cat:'medical',method:'メール',body:txt(),agree:true,share:false,status:'新規受付',memo:''};
  fetch(D.endpoint,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({kind:'inbox'},rec,{elapsed:Date.now()-t0,catLabel:D.site+'：'+roleName()+'／'+purpName()}))})
  .then(function(r){return r.json()}).then(function(j){if(!j||j.ok!==true)throw new Error('not_saved');
   f.hidden=true;document.getElementById('steps').hidden=true;var d=document.getElementById('done');d.hidden=false;
