@@ -10,6 +10,8 @@ shutil.rmtree(OUT, ignore_errors=True); os.makedirs(OUT)
 for d in ('images', 'videos', 'audio'): shutil.copytree(os.path.join(os.path.dirname(SRC), d), os.path.join(OUT, d))
 open(os.path.join(OUT, '.nojekyll'), 'w').close()
 nf = shell.replace('<meta name="theme-color"', '<meta name="robots" content="noindex">\n<meta name="theme-color"', 1)
+# 医療介護総合支援会（/medical/）の存在しないURLは、支援会の案内ページへ（MEDICAL_404）
+nf = nf.replace('<meta name="robots" content="noindex">', '<meta name="robots" content="noindex">\n'+"<script>if(/^\\/glove-site\\/medical\\//.test(location.pathname)&&!/404\\.html$/.test(location.pathname))location.replace('/glove-site/medical/404.html')</script>", 1)
 open(os.path.join(OUT, '404.html'), 'w', encoding='utf8').write(nf)
 open(os.path.join(OUT, 'index.html'), 'w', encoding='utf8').write(shell)
 BIZ = re.findall(r'\{ id:"([a-z]+)", no:"(\d\d)", en:"[^"]*", ja:"([^"]+)"', app)

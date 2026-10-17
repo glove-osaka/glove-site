@@ -1475,9 +1475,9 @@ const COMPANY_DEFAULT = {
 
 const RELATED_DEFAULT = [
   { name: "買取大吉 大阪勝山南店", relation: "株式会社グローブが運営する買取専門店（買取大吉フランチャイズ加盟店）", url: "https://www.kaitori-daikichi.jp/store/katsuyamaminami/", published: true },
-  { name: "医療介護総合支援会", relation: "", url: "", published: true },
+  { name: "医療介護総合支援会", relation: "医療・介護に関わる企業・働く方・ご本人・ご家族の総合窓口", url: "https://glove-osaka.github.io/glove-site/medical/", published: true },
   { name: "行政書士×事業支援", relation: "", url: "", published: true },
-  { name: "家じまい相談窓口", relation: "", url: "", published: true }
+  { name: "家じまい相談窓口", relation: "家財・住まい・相続・身元保証の総合相談", url: "https://glove-osaka.github.io/glove-site/iejimai/", published: true }
 ];
 
 /* groups: [中分類, [[service, provider], ...]] */
@@ -1503,7 +1503,7 @@ const BUSINESSES = [
            ["人材",[["採用支援","S"],["共同求人","P"],["福利厚生","D"],["研修・定着支援","P"]]],
            ["連携",[["共同購入","D"],["介護施設・住まいの紹介連携","P"],["退院後の生活支援連携","P"],["専門家紹介","R"]]]],
    notice:"医療行為・介護サービスは当社では提供しません。共同求人・人材紹介・人材派遣は、厚生労働大臣の許可を持つ提携事業者が行います。そのほかのサービスも、許認可・資格が必要なものは提携事業者が提供します。",
-   extLinkLabel:"医療介護総合支援会のサイトへ" },
+   extLinkLabel:"医療介護総合支援会のサイトへ", extUrl:"https://glove-osaka.github.io/glove-site/medical/" },
  { id:"reuse", no:"03", en:"REUSE & BUYBACK", ja:"リユース・買取事業", icon:"ring",
    lead:"眠っている資産を、次の価値へつなぐ。",
    overview:"株式会社グローブは買取専門店「買取大吉 大阪勝山南店」を運営しています。店舗運営で培った査定の知見をもとに、法人が保有する在庫・備品などの買取相談、商業施設や異業種店舗での買取催事、整理業務と組み合わせた買取に対応します。個人のお客様の査定・買取は店舗が窓口です。",
@@ -1930,7 +1930,7 @@ const S = {
   company: clone(COMPANY_DEFAULT), related: clone(RELATED_DEFAULT), services: buildDefaultServices(),
   biz: {}, logo: LOGO_DEFAULT, db: null, user: null, uid: null, canEdit: false, ready: false
 };
-BUSINESSES.forEach(b => S.biz[b.id] = { lead: b.lead, overview: b.overview, published: true, extUrl: "", image: "" });
+BUSINESSES.forEach(b => S.biz[b.id] = { lead: b.lead, overview: b.overview, published: true, extUrl: b.extUrl || "", image: "" });
 const bizById = id => BUSINESSES.find(b => b.id === id);
 const bizView = b => Object.assign({}, b, S.biz[b.id] || {});
 const pubServices = () => S.services.filter(s => s.status !== "非公開" && (S.biz[s.big] || {}).published !== false && CORPORATE_ONLY(s));
