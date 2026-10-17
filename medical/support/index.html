@@ -566,6 +566,16 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 .done-box b{font-size:1.25rem;color:var(--pine)}
 .warn-inline{color:#7A2115;font-weight:700;font-size:1rem;margin-top:8px}
 .h-nb{white-space:nowrap}
+.acc>.acc-body{padding:4px 22px 24px}
+.acc>.acc-body>p:first-child{margin-bottom:12px}
+.acc .vals{margin-top:6px}
+.block>.acc{margin-bottom:0}
+.acc-group .acc{margin-bottom:12px}
+.acc .contact-box{margin:0;border:0;padding:0;background:none;box-shadow:none}
+.fcol>summary{list-style:none;cursor:pointer}
+.fcol>summary::-webkit-details-marker{display:none}
+.fcol>summary h4{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;margin:0}
+@media (max-width:760px){.acc>.acc-body{padding:2px 14px 18px}.fcol{border-bottom:1px solid rgba(255,255,255,.14)}.fcol>summary h4::after{content:"";width:9px;height:9px;border-right:2px solid #E2B868;border-bottom:2px solid #E2B868;transform:rotate(45deg);transition:transform .2s}.fcol[open]>summary h4::after{transform:rotate(-135deg)}.fcol>ul{padding-bottom:12px}}
 .cats.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
 .stmt-img{aspect-ratio:4/3}
 .hero-media img{object-position:62% center}
@@ -620,11 +630,11 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 <footer class="ft"><div class="wrap ft-in">
 <div><a class="brand" href="../index.html"><svg class="ic brand-mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 4h7v8.5H28v7h-8.5V28h-7v-8.5H4v-7h8.5z"/><path class="ac" d="M16 23.5s-4-2.4-4-5.2a2.2 2.2 0 0 1 4-1.3 2.2 2.2 0 0 1 4 1.3c0 2.8-4 5.2-4 5.2z"/></svg><span><b>医療介護総合支援会</b><small>みんなで使い、みんなで育てる</small></span></a>
 <div class="co"><span>運営会社　株式会社グローブ</span><span>大阪府大阪市生野区勝山南2-2-7</span><span>メール　info@kaitori-d.com</span><span>対応地域　大阪府を中心に、関西全域</span></div></div>
-<div><h4>支援会について</h4><ul>
-<li><a href="../about/index.html">支援会とは</a></li><li><a href="../status/index.html">提供状況</a></li><li><a href="../flow/index.html">相談の流れ・費用</a></li><li><a href="../faq/index.html">よくある質問</a></li><li><a href="../kyoryoku/index.html">協力・提携・要望</a></li><li><a href="../soudan/index.html">緊急時・公的な相談窓口</a></li><li><a href="../company/index.html">運営会社</a></li><li><a href="../contact/index.html">相談・要望を送る</a></li><li><a href="../privacy/index.html">個人情報の取り扱い</a></li><li><a href="../terms/index.html">利用規約・免責事項</a></li></ul></div>
-<div><h4>立場から選ぶ</h4><ul><li><a href="../roles/kigyo.html">企業・事業者</a></li><li><a href="../roles/hataraku.html">医療・介護で働く方</a></li><li><a href="../roles/honnin.html">利用者・ご本人</a></li><li><a href="../roles/kazoku.html">ご家族</a></li><li><a href="../roles/index.html">4つの立場の一覧</a></li></ul></div>
-<div><h4>支援メニュー</h4><ul><li><a href="../support/index.html#keiei-shien">経営・運営の支援</a></li><li><a href="../support/index.html#hataraku-shien">働く方の支援</a></li><li><a href="../support/index.html#kurashi-shien">医療・介護と暮らしの支援</a></li><li><a href="../support/index.html">すべての支援メニュー</a></li></ul>
-<h4 style="margin-top:22px">関連する窓口</h4><ul><li><a href="https://glove-osaka.github.io/glove-site/iejimai/">家じまい相談窓口</a></li><li><a href="https://glove-osaka.github.io/glove-site/kigyo/">企業支援 総合相談窓口</a></li><li><a href="https://glove-osaka.github.io/glove-site/">株式会社グローブ</a></li></ul></div>
+<details class="fcol" open><summary><h4>支援会について</h4></summary><ul>
+<li><a href="../about/index.html">支援会とは</a></li><li><a href="../status/index.html">提供状況</a></li><li><a href="../flow/index.html">相談の流れ・費用</a></li><li><a href="../faq/index.html">よくある質問</a></li><li><a href="../kyoryoku/index.html">協力・提携・要望</a></li><li><a href="../soudan/index.html">緊急時・公的な相談窓口</a></li><li><a href="../company/index.html">運営会社</a></li><li><a href="../contact/index.html">相談・要望を送る</a></li><li><a href="../privacy/index.html">個人情報の取り扱い</a></li><li><a href="../terms/index.html">利用規約・免責事項</a></li></ul></details>
+<details class="fcol" open><summary><h4>立場から選ぶ</h4></summary><ul><li><a href="../roles/kigyo.html">企業・事業者</a></li><li><a href="../roles/hataraku.html">医療・介護で働く方</a></li><li><a href="../roles/honnin.html">利用者・ご本人</a></li><li><a href="../roles/kazoku.html">ご家族</a></li><li><a href="../roles/index.html">4つの立場の一覧</a></li></ul></details>
+<details class="fcol" open><summary><h4>支援メニュー</h4></summary><ul><li><a href="../support/index.html#keiei-shien">経営・運営の支援</a></li><li><a href="../support/index.html#hataraku-shien">働く方の支援</a></li><li><a href="../support/index.html#kurashi-shien">医療・介護と暮らしの支援</a></li><li><a href="../support/index.html">すべての支援メニュー</a></li></ul>
+<h4 style="margin-top:22px">関連する窓口</h4><ul><li><a href="https://glove-osaka.github.io/glove-site/iejimai/">家じまい相談窓口</a></li><li><a href="https://glove-osaka.github.io/glove-site/kigyo/">企業支援 総合相談窓口</a></li><li><a href="https://glove-osaka.github.io/glove-site/">株式会社グローブ</a></li></ul></details>
 </div><div class="ft-bottom"><div class="wrap"><span>© 株式会社グローブ</span><a class="replay" href="../privacy/index.html">個人情報の取り扱い</a></div></div></footer>
 <a class="telbar" href="../contact/index.html"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 6h22v15H14l-6 5v-5H5z"/><path class="ac" d="M10 12h12M10 16h8"/></svg>相談・要望を送る（ウェブ受付）</a><script>document.body.classList.add("has-telbar")</script>
 <script>
@@ -634,6 +644,9 @@ var root=document.documentElement,bs=document.querySelectorAll('.fs button');
 function set(v){if(v)root.setAttribute('data-fs',v);else root.removeAttribute('data-fs');bs.forEach(function(x){x.setAttribute('aria-pressed',String(x.dataset.fs===v))});try{localStorage.setItem('iryo-fs',v)}catch(e){}}
 var saved='';try{saved=localStorage.getItem('iryo-fs')||''}catch(e){}
 if(saved)set(saved);bs.forEach(function(x){x.addEventListener('click',function(){set(x.dataset.fs)})});
+var fc=document.querySelectorAll('.fcol'),narrow=window.matchMedia&&matchMedia('(max-width:760px)').matches;
+fc.forEach(function(d){if(narrow)d.removeAttribute('open');else d.querySelector('summary').addEventListener('click',function(e){e.preventDefault()})});
+if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t&&t.tagName==='DETAILS')t.open=true}
 var v=document.getElementById('heroV'),c=document.getElementById('vctl');
 if(v&&c){function st(p){c.classList.toggle('paused',p);c.querySelector('span').textContent=p?'動画を再生する':'動画を止める'}
 if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){v.removeAttribute('autoplay');try{v.pause()}catch(e){}st(true)}
