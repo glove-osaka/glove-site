@@ -568,6 +568,7 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 .h-nb{white-space:nowrap}
 .cats.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
 .stmt-img{aspect-ratio:4/3}
+.hero-media img{object-position:62% center}
 .telbar{background:#0A2E33;box-shadow:0 -2px 0 var(--gold-bright)}
 .ft-bottom .replay{min-height:44px;display:inline-flex;align-items:center}
 @media (max-width:1000px){.cats.c3{grid-template-columns:1fr}}
@@ -606,8 +607,7 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 </nav></div></header>
 <main id="main">
 <section class="hero">
-<div class="hero-media"><video id="heroV" autoplay muted loop playsinline preload="auto" poster="assets/hero-poster.jpg" aria-hidden="true"><source src="assets/hero.webm" type="video/webm"><source src="assets/hero.mp4" type="video/mp4"></video></div>
-<button class="vctl" id="vctl" type="button"><i aria-hidden="true"></i><span>動画を止める</span></button>
+<div class="hero-media"><picture><source srcset="assets/hero.webp" type="image/webp"><img src="assets/hero.jpg" alt="" width="1920" height="1072" fetchpriority="high" decoding="async"></picture></div>
 <div class="wrap hero-in"><div class="hero-copy">
 <span class="lbl">みんなで使い、みんなで育てる総合支援会</span>
 <h1>医療・介護に関わる<br>すべての人を、<br><span class="h-nb">応援し、</span><span class="h-nb">支え、</span><span class="h-nb">つなぐ。</span></h1>
@@ -635,7 +635,7 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 </div></section>
 
 <section class="sec"><div class="wrap stmt">
-<div class="stmt-img"><img src="assets/statement.jpg" alt="明るい介護施設の共用スペースで、車いすの方と職員が過ごしている様子" loading="lazy"><span class="vt">声から、<br>支援を育てる。</span></div>
+<div class="stmt-img"><img src="assets/statement.jpg" alt="明るい施設の通路で、車いすの方に職員が付き添い、ご夫婦が並んで歩いている様子" loading="lazy"><span class="vt">声から、<br>支援を育てる。</span></div>
 <div><span class="eyebrow">成長型の支援会</span><h2>完成したサービスを<br>並べるだけではありません。</h2>
 <div class="body"><p>皆さまの困りごとと「こんな支援がほしい」という声を集め、いまある支援へつなぎ、足りないものは補い、まだないものは協力者とつくります。</p><p>できた支援は、4つの立場すべてへ還元します。</p></div>
 <ul class="pledges">
