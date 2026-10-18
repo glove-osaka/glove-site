@@ -566,6 +566,25 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 .done-box b{font-size:1.25rem;color:var(--pine)}
 .warn-inline{color:#7A2115;font-weight:700;font-size:1rem;margin-top:8px}
 .h-nb{white-space:nowrap}
+#gyakutai{scroll-margin-top:90px}
+.gy-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:8px}
+.gy-form .fld{margin:0}
+.gy-out{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 24px}
+.gy-h{font-size:1.3rem;margin-bottom:12px}
+.gy-sub{font-weight:700;margin:18px 0 8px;color:var(--gold)}
+.gy-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.gy-c{display:grid;gap:4px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.gy-c b{font-size:1.05rem}
+.gy-c small{color:var(--muted);font-size:.95rem}
+.gy-tels{display:flex;flex-wrap:wrap;gap:6px 18px}
+.gy-tel{display:inline-flex;align-items:center;min-height:44px;font-family:var(--f-display);font-size:1.45rem;font-weight:700;color:var(--pine);text-decoration:none;letter-spacing:.04em;user-select:all}
+.gy-tel:hover{text-decoration:underline}
+.gy-src{margin-top:16px}
+.gy-src a{display:inline-flex;align-items:center;min-height:44px}
+.gy-notes{display:grid;gap:10px;margin-top:20px}
+.gy-notes p{display:flex;gap:10px;align-items:flex-start}
+.gy-notes .ic{font-size:1.5rem;color:var(--pine);margin-top:3px}
+@media (max-width:760px){.gy-form{grid-template-columns:1fr}.gy-out{padding:16px}}
 .acc>.acc-body{padding:4px 22px 24px}
 .acc>.acc-body>p:first-child{margin-bottom:12px}
 .acc .vals{margin-top:6px}
@@ -620,7 +639,20 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 <a class="cta" href="../contact/index.html"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 6h22v15H14l-6 5v-5H5z"/><path class="ac" d="M10 12h12M10 16h8"/></svg>相談・要望を送る</a>
 </nav></div></header>
 <main id="main"><section class="ph"><img class="bg" src="../assets/head-5.jpg" alt=""><div class="wrap"><span class="emb lg"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="16" cy="16" r="12"/><path class="ac" d="M16 9v8M16 21.5v.5"/></svg></span><div><nav aria-label="現在地"><ol class="crumbs"><li><a href="../index.html">トップ</a></li><li aria-current="page">緊急時・公的な相談窓口</li></ol></nav><h1>緊急時・公的な相談窓口</h1><p>この窓口で待たず、すぐに専門の窓口へご連絡ください。</p></div></div></section>
-<section class="sec"><div class="wrap" style="max-width:1000px"><div class="alert-red" role="note">この窓口は緊急の対応を行っていません。命や体に関わるときは<b>119番</b>、事件・事故は<b>110番</b>へ。救急車を呼ぶか迷うときは、大阪府内では救急安心センターおおさか（<b>#7119</b>）へご相談ください。<a href="../soudan/index.html">ほかの公的な相談窓口</a></div><div class="sos" style="margin-top:26px"><div class="card"><b>命や体に関わるとき</b><span class="num-big">119</span><p>救急・消防は119番。事件・事故は110番へ。</p></div><div class="card"><b>救急車を呼ぶか迷うとき（大阪府内）</b><span class="num-big">#7119</span><p>救急安心センターおおさかで、看護師などが助言します。</p></div><div class="card"><b>死にたい・消えたいほどつらいとき</b><p>厚生労働省「まもろうよ こころ」で、電話・SNSの相談窓口を探せます。</p><p><a href="https://www.mhlw.go.jp/mamorouyokokoro/soudan/tel/" target="_blank" rel="noopener">窓口を見る（別の画面で開きます）</a></p></div><div class="card"><b>職場・労働の問題</b><p>総合労働相談コーナー（各都道府県の労働局）で、労働者・事業主のどちらからも無料で相談できます。</p><p><a href="https://www.mhlw.go.jp/general/seido/chihou/kaiketu/soudan.html" target="_blank" rel="noopener">窓口を見る（別の画面で開きます）</a></p></div><div class="card"><b>高齢者の介護・虐待が心配なとき</b><p>お住まいの市区町村の高齢者担当窓口、または地域包括支援センターへ。</p></div><div class="card"><b>契約・訪問販売などのトラブル</b><span class="num-big">188</span><p>消費者ホットライン（188）で、身近な消費生活センターにつながります。</p></div></div></div></section></main>
+<section class="sec"><div class="wrap" style="max-width:1000px"><div class="alert-red" role="note">この窓口は緊急の対応を行っていません。命や体に関わるときは<b>119番</b>、事件・事故は<b>110番</b>へ。救急車を呼ぶか迷うときは、大阪府内では救急安心センターおおさか（<b>#7119</b>）へご相談ください。<a href="../soudan/index.html">ほかの公的な相談窓口</a></div><div class="sos" style="margin-top:26px"><div class="card"><b>命や体に関わるとき</b><span class="num-big">119</span><p>救急・消防は119番。事件・事故は110番へ。</p></div><div class="card"><b>救急車を呼ぶか迷うとき（大阪府内）</b><span class="num-big">#7119</span><p>救急安心センターおおさかで、看護師などが助言します。</p></div><div class="card"><b>死にたい・消えたいほどつらいとき</b><p>厚生労働省「まもろうよ こころ」で、電話・SNSの相談窓口を探せます。</p><p><a href="https://www.mhlw.go.jp/mamorouyokokoro/soudan/tel/" target="_blank" rel="noopener">窓口を見る（別の画面で開きます）</a></p></div><div class="card"><b>職場・労働の問題</b><p>総合労働相談コーナー（各都道府県の労働局）で、労働者・事業主のどちらからも無料で相談できます。</p><p><a href="https://www.mhlw.go.jp/general/seido/chihou/kaiketu/soudan.html" target="_blank" rel="noopener">窓口を見る（別の画面で開きます）</a></p></div><div class="card"><b>高齢者の介護・虐待が心配なとき</b><p>お住まいの市区町村の高齢者担当窓口、または地域包括支援センターへ。下の「地域の窓口を探す」で連絡先を調べられます。</p><p><a href="#gyakutai">地域の窓口を探す ↓</a></p></div><div class="card"><b>契約・訪問販売などのトラブル</b><span class="num-big">188</span><p>消費者ホットライン（188）で、身近な消費生活センターにつながります。</p></div></div></div></section>
+<section class="sec band" id="gyakutai"><div class="wrap" style="max-width:1000px">
+<div class="sec-h"><span class="eyebrow">高齢者の介護・虐待が心配なとき</span><h2>お住まいの地域の窓口を探す</h2><p>府県と市区町村を選ぶと、高齢者虐待の相談・通報の窓口が出ます。ご本人・ご家族・近所の方・介護に関わる方、どなたからでも相談できます。</p></div>
+<div class="gy-form">
+<div class="fld"><label for="gyPref">府県</label><select id="gyPref"><option value="">選んでください</option></select></div>
+<div class="fld"><label for="gyMuni">市区町村</label><select id="gyMuni" disabled><option value="">先に府県を選んでください</option></select></div>
+<div class="fld" id="gyAreaWrap" hidden><label for="gyArea">区・地域</label><select id="gyArea"></select></div>
+</div>
+<div id="gyOut" class="gy-out" aria-live="polite"><p class="fine">対応地域：大阪府・京都府・兵庫県・奈良県・滋賀県・和歌山県（各府県が公開している一覧から作成）</p></div>
+<div class="gy-notes">
+<p><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4l10 4v7c0 6.5-4.3 11-10 13-5.7-2-10-6.5-10-13V8z"/><path class="ac" d="M11.5 16l3 3 6-6.5"/></svg><span>通報した人が誰かは、法律で守られます（高齢者虐待防止法）。虐待かどうかはっきりしなくても、相談できます。</span></p>
+<p><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4l13 23H3z"/><path class="ac" d="M16 13v7M16 23.5v.5"/></svg><span>命や体に危険が迫っているときは、迷わず<b>110番</b>・<b>119番</b>へ。</span></p>
+</div>
+</div></section></main>
 <section class="cta-band"><img class="bg" src="../assets/head-5.jpg" alt="" loading="lazy"><div class="wrap">
 <div><h2>相談内容が決まっていなくても、<br>だいじょうぶです。</h2><p>立場と目的を選ぶだけで、受付の内容がまとまります。<br>名前を伏せた相談もできます。</p></div>
 <a class="btn btn-g" href="../contact/index.html"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 6h22v15H14l-6 5v-5H5z"/><path class="ac" d="M10 12h12M10 16h8"/></svg>相談・要望を送る</a>
@@ -650,6 +682,32 @@ if(v&&c){function st(p){c.classList.toggle('paused',p);c.querySelector('span').t
 if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){v.removeAttribute('autoplay');try{v.pause()}catch(e){}st(true)}
 c.addEventListener('click',function(){if(v.paused){var q=v.play();if(q&&q.catch)q.catch(function(){});st(false)}else{v.pause();st(true)}})}
 })();
+</script><script src="../assets/gyakutai.js" defer></script><script>
+document.addEventListener('DOMContentLoaded',function(){
+var D=window.GYAKUTAI;if(!D)return;
+var P=document.getElementById('gyPref'),M=document.getElementById('gyMuni'),A=document.getElementById('gyArea'),AW=document.getElementById('gyAreaWrap'),O=document.getElementById('gyOut');
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function opt(sel,list,ph){sel.innerHTML='<option value="">'+ph+'</option>'+list.map(function(k){return '<option>'+esc(k)+'</option>'}).join('')}
+function save(){try{localStorage.setItem('iryo-gy',JSON.stringify([P.value,M.value,A.value]))}catch(e){}}
+opt(P,Object.keys(D),'選んでください');
+function card(c){var t=c.t.split(' / ');return '<li class="gy-c"><b>'+esc(c.l)+'</b><span class="gy-tels">'+t.map(function(x){return '<a class="gy-tel" href="tel:'+x.replace(/-/g,'')+'">'+esc(x)+'</a>'}).join('')+'</span>'+(c.n?'<small>'+esc(c.n)+'</small>':'')+'</li>'}
+function show(){var p=D[P.value];if(!p||!M.value){O.innerHTML='<p class="fine">市区町村を選んでください。</p>';return}
+ var m=p.m[M.value],h='',list=[];
+ if(m.areas){if(!A.value){O.innerHTML='<p class="fine">区・地域を選んでください。</p>';return}list=m.areas[A.value]||[]}else list=m.list||[];
+ h+='<h3 class="gy-h">'+esc(P.value+' '+M.value+(A.value?' '+A.value:''))+'の窓口</h3><ul class="gy-list">'+list.map(card).join('')+'</ul>';
+ if(m.all&&m.all.length)h+='<p class="gy-sub">夜間・休日など</p><ul class="gy-list">'+m.all.map(card).join('')+'</ul>';
+ if(p.note)h+='<p class="note-box" style="margin-top:16px">'+esc(p.note)+'</p>';
+ h+='<p class="fine gy-src">出典：<a href="'+esc(m.src||p.src.url)+'" target="_blank" rel="noopener">'+esc(m.src?M.value+'の公式ページ':p.src.label)+'（別の画面で開きます）</a>　'+'情報の時点：'+esc(p.src.asof)+'。番号が変わっている場合があります。つながらないときは、市区町村の代表番号へおかけください。</p>';
+ O.innerHTML=h}
+P.addEventListener('change',function(){var p=D[P.value];AW.hidden=true;A.innerHTML='';
+ if(p){opt(M,Object.keys(p.m),'選んでください');M.disabled=false}else{M.innerHTML='<option value="">先に府県を選んでください</option>';M.disabled=true}
+ save();show()});
+M.addEventListener('change',function(){var p=D[P.value],m=p&&p.m[M.value];
+ if(m&&m.areas){opt(A,Object.keys(m.areas),'選んでください');AW.hidden=false}else{AW.hidden=true;A.innerHTML=''}
+ save();show()});
+A.addEventListener('change',function(){save();show()});
+try{var s=JSON.parse(localStorage.getItem('iryo-gy')||'[]');if(s[0]&&D[s[0]]){P.value=s[0];P.dispatchEvent(new Event('change'));if(s[1]&&D[s[0]].m[s[1]]){M.value=s[1];M.dispatchEvent(new Event('change'));if(s[2]){A.value=s[2];show()}}}}catch(e){}
+});
 </script>
 </body>
 </html>

@@ -566,6 +566,25 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 .done-box b{font-size:1.25rem;color:var(--pine)}
 .warn-inline{color:#7A2115;font-weight:700;font-size:1rem;margin-top:8px}
 .h-nb{white-space:nowrap}
+#gyakutai{scroll-margin-top:90px}
+.gy-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:8px}
+.gy-form .fld{margin:0}
+.gy-out{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 24px}
+.gy-h{font-size:1.3rem;margin-bottom:12px}
+.gy-sub{font-weight:700;margin:18px 0 8px;color:var(--gold)}
+.gy-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.gy-c{display:grid;gap:4px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.gy-c b{font-size:1.05rem}
+.gy-c small{color:var(--muted);font-size:.95rem}
+.gy-tels{display:flex;flex-wrap:wrap;gap:6px 18px}
+.gy-tel{display:inline-flex;align-items:center;min-height:44px;font-family:var(--f-display);font-size:1.45rem;font-weight:700;color:var(--pine);text-decoration:none;letter-spacing:.04em;user-select:all}
+.gy-tel:hover{text-decoration:underline}
+.gy-src{margin-top:16px}
+.gy-src a{display:inline-flex;align-items:center;min-height:44px}
+.gy-notes{display:grid;gap:10px;margin-top:20px}
+.gy-notes p{display:flex;gap:10px;align-items:flex-start}
+.gy-notes .ic{font-size:1.5rem;color:var(--pine);margin-top:3px}
+@media (max-width:760px){.gy-form{grid-template-columns:1fr}.gy-out{padding:16px}}
 .acc>.acc-body{padding:4px 22px 24px}
 .acc>.acc-body>p:first-child{margin-bottom:12px}
 .acc .vals{margin-top:6px}
