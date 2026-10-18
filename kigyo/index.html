@@ -583,6 +583,23 @@ details[open]>summary .fold-k{background:var(--navy);color:var(--on-navy)}
 @media (max-width:960px){.scene{grid-template-columns:1fr;gap:28px}.scene-fig{position:relative;top:auto;order:-1;aspect-ratio:16/9}.scene-fig figcaption{padding:18px 20px}.scene-fig figcaption b{font-size:1.1rem}}
 @media (max-width:560px){.scene-fig figcaption span{display:none}}
 .scene-fig figcaption b,.entry-fig figcaption b{word-break:keep-all;overflow-wrap:anywhere}
+
+/* TOP-04 申請で終わらない支援 */
+.stmt-photo{margin:0;background-image:none}
+.stmt-photo::after{display:none}
+.stmt-photo picture,.stmt-photo img{position:absolute;inset:0;width:100%;height:100%}
+.stmt-photo img{object-fit:cover;object-position:60% 50%;display:block}
+.stmt-photo::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(5,11,25,.82) 0%,rgba(5,11,25,.45) 30%,rgba(5,11,25,0) 55%),linear-gradient(0deg,rgba(5,11,25,.8) 0%,rgba(5,11,25,0) 32%)}
+.stmt-photo .vt{z-index:2;right:auto;left:30px;margin:0;text-shadow:0 2px 18px rgba(0,0,0,.6)}
+.stmt-photo .cap{position:absolute;z-index:2;left:28px;right:28px;bottom:22px;color:#E8EDF5;font-size:.95rem;font-weight:700;letter-spacing:.06em;word-break:keep-all;overflow-wrap:anywhere}
+.stmt-photo .cap::before{content:"";display:inline-block;width:22px;height:2px;background:#E8B46A;vertical-align:middle;margin-right:10px}
+@media (max-width:900px){
+  .stmt-photo{aspect-ratio:16/9;min-height:0;padding:0}
+  .stmt-photo::before{background:linear-gradient(0deg,rgba(5,11,25,.88) 0%,rgba(5,11,25,.35) 50%,rgba(5,11,25,0) 75%)}
+  .stmt-photo .vt{position:absolute;left:20px;right:20px;top:auto;bottom:18px;max-width:none;font-size:1.25rem}
+  .stmt-photo .cap{display:none}
+}
+@media (max-width:420px){.stmt-photo{aspect-ratio:4/3}}
 </style>
 </head><body>
 <div class="opn" id="op" hidden role="dialog" aria-modal="true" aria-label="オープニング映像"><canvas id="opC" aria-hidden="true"></canvas><div class="op-start" id="opStart"><div class="op-start-in"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="3" y="3" width="42" height="42" rx="9" stroke="currentColor" stroke-width="2"/><path d="M14 13h13l7 7v16H14z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M27 13v7h7" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="30" cy="31" r="5.5" fill="var(--amber-b)" stroke="none"/><path d="M18.5 23h8M18.5 27.5h5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><p class="op-start-t">企業支援 総合相談窓口</p><p class="op-start-s">はじめに、短い映像（約13秒）をご覧ください。</p><div class="op-start-b"><button type="button" class="op-sb on" id="opSound">音ありで見る</button><button type="button" class="op-sb" id="opMute">音なしで見る</button></div><button type="button" class="op-sk" id="opSkip0">映像をとばして、ホームページへ</button></div></div><div class="op-text"><p class="ln ln1">許可、補助金、資金、人。</p><p class="ln ln2">会社の困りごとを、<br>ひとつの窓口で。</p></div><div class="op-foot"><div class="op-brand"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="3" y="3" width="42" height="42" rx="9" stroke="currentColor" stroke-width="2"/><path d="M14 13h13l7 7v16H14z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M27 13v7h7" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="30" cy="31" r="5.5" fill="var(--amber-b)" stroke="none"/><path d="M18.5 23h8M18.5 27.5h5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><div><b>企業支援 総合相談窓口</b><small>運営　株式会社グローブ</small></div></div><button class="op-go" id="opGo" type="button">ホームページへ進む</button></div><button class="op-skip" id="opSkip" type="button">とばす</button></div><a class="skip" href="#main">本文へ移動</a>
@@ -632,7 +649,7 @@ details[open]>summary .fold-k{background:var(--navy);color:var(--on-navy)}
 <figcaption><b>期限のある手続きほど、早めのご相談を。</b><span>許可の更新、補助金の締切、資金の支払い。順番を決めるところからお手伝いします。</span></figcaption></figure></div>
 </div></section>
 <section class="sec"><div class="wrap stmt">
-<div class="stmt-art" aria-hidden="true"><span class="vt">申請で終わらない。<br>成長まで支える。</span></div>
+<figure class="stmt-art stmt-photo"><picture><source srcset="top-04.webp" type="image/webp"><img src="top-04.jpg" width="1600" height="893" alt="工場で、導入した工作機械の前に立ち、記録を確かめる従業員" loading="lazy" decoding="async"></picture><figcaption class="vt">申請で終わらない。<br>成長まで支える。</figcaption><span class="cap">補助金で入れた設備が、現場で動き出すまで。</span></figure>
 <div><span class="eyebrow">私たちの考え</span><h2>手続きは、会社が前に進むための入り口です。</h2>
 <div class="body"><p>許可を取る、補助金を申請する。その先には、設備を入れる、人を雇う、新しいお客様に届けるという本来の目的があります。</p><p>窓口は、目の前の手続きだけでなく、その先の目的まで見渡して、必要な専門家と提携先を順番に組み合わせます。</p></div>
 <ul class="pledges">
