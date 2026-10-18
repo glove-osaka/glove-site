@@ -508,7 +508,17 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
  .card,.checks li,.dots li,.who>div{break-inside:avoid;border-color:#999}.sec{padding-block:18px}a{color:#000}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
+.news{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.news li{display:grid;grid-template-columns:9.5em 1fr;gap:4px 18px;padding:14px 4px;border-bottom:1px solid var(--line)}
+.news time{color:var(--muted);font-variant-numeric:tabular-nums}
+.news a{color:var(--pine);display:block;min-height:44px}
+@media (max-width:560px){.news li{grid-template-columns:1fr}}
+
+/* トップをスマホで短く */
+@media (max-width:560px){.trust-in{grid-template-columns:1fr 1fr}.trust-in>div{padding:14px 12px;gap:8px;flex-direction:column;align-items:flex-start;border-right:1px solid var(--line);border-bottom:0}.trust-in>div:nth-child(2n){border-right:0}.trust-in>div:nth-child(-n+2){border-bottom:1px solid var(--line)}.trust p b{font-size:1.1rem}.trust p span{font-size:.88rem;line-height:1.5}
+.stmt>.stmt-img{display:none}.news li{padding:10px 4px}.cta-band .wrap{padding-block:40px;gap:18px}.cta-band p{font-size:1rem}.sec{padding-block:52px}}
 /* オープニング */
+.op-sos{display:inline-flex;align-items:center;margin-top:0;color:#fff;font-weight:700}
 .op-replay{margin:10px 0 0}.op-replay a{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:inherit;text-decoration:underline;text-underline-offset:.25em}
 .opn{position:fixed;inset:0;z-index:200;background:#071a1e;overflow:hidden;transition:opacity 1.4s ease}
 .opn.out{opacity:0;pointer-events:none}
@@ -662,7 +672,7 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 <details class="fcol" open><summary><h4>立場から選ぶ</h4></summary><ul><li><a href="https://glove-osaka.github.io/glove-site/medical/roles/kigyo.html">企業・事業者</a></li><li><a href="https://glove-osaka.github.io/glove-site/medical/roles/hataraku.html">医療・介護で働く方</a></li><li><a href="https://glove-osaka.github.io/glove-site/medical/roles/honnin.html">利用者・ご本人</a></li><li><a href="https://glove-osaka.github.io/glove-site/medical/roles/kazoku.html">ご家族</a></li><li><a href="https://glove-osaka.github.io/glove-site/medical/roles/index.html">4つの立場の一覧</a></li></ul></details>
 <details class="fcol" open><summary><h4>支援メニュー</h4></summary><ul><li><a href="https://glove-osaka.github.io/glove-site/medical/support/index.html#keiei-shien">経営・運営の支援</a></li><li><a href="https://glove-osaka.github.io/glove-site/medical/support/index.html#hataraku-shien">働く方の支援</a></li><li><a href="https://glove-osaka.github.io/glove-site/medical/support/index.html#kurashi-shien">医療・介護と暮らしの支援</a></li><li><a href="https://glove-osaka.github.io/glove-site/medical/support/index.html">すべての支援メニュー</a></li></ul>
 <h4 style="margin-top:22px">関連する窓口</h4><ul><li><a href="https://glove-osaka.github.io/glove-site/iejimai/">家じまい相談窓口</a></li><li><a href="https://glove-osaka.github.io/glove-site/kigyo/">企業支援 総合相談窓口</a></li><li><a href="https://glove-osaka.github.io/glove-site/">株式会社グローブ</a></li></ul></details>
-</div><div class="ft-bottom"><div class="wrap"><span>© 株式会社グローブ</span><a class="replay" href="https://glove-osaka.github.io/glove-site/medical/privacy/index.html">個人情報の取り扱い</a></div></div></footer>
+</div><div class="ft-bottom"><div class="wrap"><span>© 株式会社グローブ</span><span class="ft-img">掲載の写真・映像はイメージです</span><a class="replay" href="https://glove-osaka.github.io/glove-site/medical/privacy/index.html">個人情報の取り扱い</a></div></div></footer>
 <a class="telbar" href="https://glove-osaka.github.io/glove-site/medical/contact/index.html"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 6h22v15H14l-6 5v-5H5z"/><path class="ac" d="M10 12h12M10 16h8"/></svg>相談・要望を送る（ウェブ受付）</a><script>document.body.classList.add("has-telbar")</script>
 <script>
 (function(){var b=document.getElementById('menuBtn'),n=document.getElementById('gnav');
