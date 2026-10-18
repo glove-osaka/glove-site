@@ -74,8 +74,16 @@ for r, name in ROUTES:
     dest = OUT if r == 'home' else os.path.join(OUT, r); os.makedirs(dest, exist_ok=True)
     open(os.path.join(dest, 'index.html'), 'w', encoding='utf8').write(page)
     print(f'{r:24s} {snap["title"][:40]}  h1={snap["h1"][:20]}')
+# 同じ公開場所にある専用サイト（作り直しても検索用の一覧から消さない）。
+# 4番目の引数に今の sitemap.xml を渡すと、そこにある他サイトの行もそのまま残す。
+_ours = {url_of(r) for r, _ in ROUTES}
+_extra = [SITE + d for d in ('medical/', 'iejimai/', 'kigyo/')]
+if len(sys.argv) > 4 and os.path.exists(sys.argv[4]):
+    for u in re.findall(r'<loc>([^<]+)</loc>', open(sys.argv[4], encoding='utf8').read()):
+        if u not in _ours and u not in _extra: _extra.append(u)
+SUBSITES = ''.join(f'  <url><loc>{u}</loc><lastmod>{today}</lastmod><priority>0.7</priority></url>\n' for u in _extra)
 pri = {'home':'1.0','business':'0.9','philosophy':'0.8','company':'0.8','contact':'0.7','partnership':'0.7','finder':'0.6'}
 sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(
-    f'  <url><loc>{url_of(r)}</loc><lastmod>{today}</lastmod><priority>{pri.get(r, "0.8" if r.startswith("business-") else "0.3")}</priority></url>\n' for r,_ in ROUTES) + '</urlset>\n'
+    f'  <url><loc>{url_of(r)}</loc><lastmod>{today}</lastmod><priority>{pri.get(r, "0.8" if r.startswith("business-") else "0.3")}</priority></url>\n' for r,_ in ROUTES) + SUBSITES + '</urlset>\n'
 open(os.path.join(OUT, 'sitemap.xml'), 'w').write(sm)
 print('pages', len(ROUTES))

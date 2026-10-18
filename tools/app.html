@@ -1249,6 +1249,20 @@ select.flash{animation:flash 1s ease}
   .co-info .tbl td{font-size:.88rem}
 }
 </style>
+<style id="desk-css">
+.desk-band{padding:clamp(36px,6vw,64px) 0;background:linear-gradient(180deg,#F4F8FC,#fff)}
+.desk-head{display:grid;gap:8px;margin-bottom:18px}
+.desk-head h2{font-size:clamp(1.15rem,2.4vw,1.6rem);color:#0E2A52;margin:0}
+.desk-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:1000px){.desk-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.desk-grid{grid-template-columns:1fr}}
+.desk{display:grid;gap:6px;align-content:start;padding:16px 18px;border-radius:12px;background:#fff;border:1px solid var(--line);border-top:3px solid var(--gold);text-decoration:none;color:#0E2A52;box-shadow:0 6px 18px rgba(14,42,82,.06);transition:transform .2s,border-color .2s}
+.desk:hover{transform:translateY(-3px);border-color:var(--gold)}
+.desk b{font-size:1.02rem}
+.desk span{font-size:.86rem;color:var(--mute);line-height:1.7}
+.desk i{font-style:normal;font-size:.82rem;font-weight:700;color:var(--gold-ink)}
+.case-link{justify-self:start;font-size:.84rem;font-weight:700;color:var(--gold-ink);text-decoration:none;border-bottom:1px solid currentColor}
+</style>
 </head><body>
 <a class="skip" href="#view">本文へスキップ</a>
 <div id="glow" aria-hidden="true"></div><div id="scene" aria-hidden="true"><div class="ly space"><canvas id="stars"></canvas></div><div class="ly earth"></div><div class="ly city"></div></div>
@@ -1495,7 +1509,7 @@ const COMPANY_DEFAULT = {
 const RELATED_DEFAULT = [
   { name: "買取大吉 大阪勝山南店", relation: "株式会社グローブが運営する買取専門店（買取大吉フランチャイズ加盟店）", url: "https://www.kaitori-daikichi.jp/store/katsuyamaminami/", published: true },
   { name: "医療介護総合支援会", relation: "医療・介護に関わる企業・働く方・ご本人・ご家族の総合窓口", url: "https://glove-osaka.github.io/glove-site/medical/", published: true },
-  { name: "行政書士×事業支援", relation: "", url: "", published: true },
+  { name: "企業支援 総合相談窓口", relation: "許認可・補助金・資金繰り・採用・承継など、会社の困りごとを提携行政書士・専門家と連携して整理する総合窓口", url: "https://glove-osaka.github.io/glove-site/kigyo/", published: true },
   { name: "家じまい相談窓口", relation: "家財・住まい・相続・身元保証の総合相談", url: "https://glove-osaka.github.io/glove-site/iejimai/", published: true }
 ];
 
@@ -1543,7 +1557,7 @@ const BUSINESSES = [
    groups:[["行政書士",[["許認可申請の取次","R"],["補助金・助成金申請の取次","R"],["各種届出・申請書類作成の取次","R"],["契約書作成の取次","R"]]],
            ["そのほかの専門家",[["税理士紹介","R"],["司法書士紹介","R"],["社会保険労務士紹介","R"],["弁護士紹介","R"],["中小企業診断士紹介","R"]]]],
    notice:"資格を必要とする業務は、すべて該当する資格を持つ専門家が担当します。当社は相談受付と専門家へのおつなぎを行います。",
-   relatedKey:"行政書士×事業支援" },
+   relatedKey:"企業支援 総合相談窓口", extLinkLabel:"企業支援 総合相談窓口のサイトへ", extUrl:"https://glove-osaka.github.io/glove-site/kigyo/" },
  { id:"shukatsu", no:"05", en:"HOME CLOSING & REAL ESTATE", ja:"家じまい・不動産支援", icon:"house",
    lead:"住まいと資産の整理を、ひとつの窓口でまとめて。",
    overview:"家じまい・相続・空き家・不動産売却には、整理、買取、清掃、解体、不動産、相続手続きと多くの事業者が関わります。株式会社グローブが運営する家じまい相談窓口を軸に、関連事業者が連携できる体制を整え、法人・事業者からの案件を適切な担い手へつなぎます。",
@@ -1555,7 +1569,7 @@ const BUSINESSES = [
            ["不動産・住まい",[["不動産売却相談","P"],["空き家管理","P"],["リフォーム・解体","P"]]],
            ["相続",[["相続手続き相談","R"],["相続不動産相談","P"]]]],
    notice:"不動産仲介・解体工事・廃棄物の収集運搬など許認可が必要な業務は、許認可を持つ提携事業者が行います。",
-   relatedKey:"家じまい相談窓口" },
+   relatedKey:"家じまい相談窓口", extLinkLabel:"家じまい相談窓口のサイトへ", extUrl:"https://glove-osaka.github.io/glove-site/iejimai/" },
  { id:"export", no:"06", en:"EXPORT & OVERSEAS SALES", ja:"海外・輸出事業", icon:"route",
    lead:"日本の優れた商材を、世界の市場へ。",
    overview:"リユース品・中古品をはじめ、日本の商材を海外へ販売したい企業を支援します。当社は商材の選定、販路の検討、取引先との調整を担当し、国際輸送・通関などの専門業務は、許可と実績を持つ提携事業者が担当します。取り扱える品目や対象国は、輸出入の規制を確認したうえで案件ごとにご案内します。",
@@ -2278,6 +2292,15 @@ function pageHome() {
     <span class="b12-t"><b>${no}</b><span>${esc(t)}</span><i aria-hidden="true">›</i></span>
     <dl><dt class="k0">大分類</dt><dd>${esc(k0)}</dd><dt class="k1">中分類</dt><dd>${esc(k1)}</dd><dt class="k2">小分類</dt><dd>${esc(k2)}</dd><dt class="k3">詳細</dt><dd>${esc(k3)}</dd></dl></a>`).join("")}</div>
 </div></section>
+<section class="desk-band" aria-labelledby="desk-h"><div class="wrap">
+  <div class="desk-head"><span class="eyebrow">専門の相談窓口</span><h2 id="desk-h">分野ごとの専門窓口も、<br><span style="white-space:nowrap">株式会社グローブ</span>が運営しています。</h2></div>
+  <div class="desk-grid">
+    <a class="desk" href="https://glove-osaka.github.io/glove-site/medical/" target="_blank" rel="noopener"><b>医療介護総合支援会</b><span>医療・介護に関わる事業者・働く方・ご本人・ご家族の総合窓口</span><i>サイトを見る →</i></a>
+    <a class="desk" href="https://glove-osaka.github.io/glove-site/iejimai/" target="_blank" rel="noopener"><b>家じまい相談窓口</b><span>家財整理・空き家・相続・身元保証まで、住まいの悩みを一つの窓口で</span><i>サイトを見る →</i></a>
+    <a class="desk" href="https://glove-osaka.github.io/glove-site/kigyo/" target="_blank" rel="noopener"><b>企業支援 総合相談窓口</b><span>許認可・補助金・資金繰り・採用・承継など、会社の困りごとを整理</span><i>サイトを見る →</i></a>
+    <a class="desk" href="https://www.kaitori-daikichi.jp/store/katsuyamaminami/" target="_blank" rel="noopener"><b>買取大吉 大阪勝山南店</b><span>ブランド品・貴金属・時計など、個人のお客様の買取・査定</span><i>店舗ページを見る →</i></a>
+  </div>
+</div></section>
 
 <section class="home-connect" aria-labelledby="home-connect-title"><div class="wrap">
   <div class="home-connect-heading rv"><div><span class="eyebrow">Our Philosophy</span><h2 id="home-connect-title">9つの「繋ぐ」が、<br>ビジネスの未来を拓く。</h2></div><p>企業、人、商材、専門家、物、地域、事業、企画、世界。<br>異なる強みや価値を結び、新しい取引・協業・事業創出の可能性を広げます。</p></div>
@@ -2529,7 +2552,7 @@ function pageCompany() {
     <div class="co-map"><iframe title="株式会社グローブ・買取大吉 大阪勝山南店の地図" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3282.0215739945393!2d135.52963297631027!3d34.65415808570783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6000df47e95dfd91%3A0x3d03a50c011b5ac5!2z6LK35Y-W5aSn5ZCJIOWkp-mYquWLneWxseWNl-W6lw!5e0!3m2!1sja!2sjp!4v1746500047292!5m2!1sja!2sjp" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>
     <p style="margin:0">〒544-0033 大阪府大阪市生野区勝山南2-2-7（買取大吉 大阪勝山南店と同じ所在地です）</p>
     <p style="margin:0;display:flex;flex-wrap:wrap;gap:10px">${c.mapQuery ? `<a class="btn btn-ghost btn-sm" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.mapQuery)}" target="_blank" rel="noopener">Googleマップで開く</a>` : ""}<a class="btn btn-ghost btn-sm" href="https://www.kaitori-daikichi.jp/store/katsuyamaminami/" target="_blank" rel="noopener">買取大吉 大阪勝山南店の店舗ページ</a></p></div>
-  <div class="blk co-cases"><h2>ご支援の例</h2><p class="muted" style="margin:0">当社がどのようにお手伝いするかを分かりやすくお伝えするための、想定の事例です。実在の取引先や実績の数値を示すものではありません。</p><div class="case-grid"><div class="case"><span class="case-tag">リユース・買取</span><dl><dt>ご相談</dt><dd>事務所の移転で、使わなくなった備品や在庫の扱いに困っていた</dd><dt>当社の対応</dt><dd>査定・買取と、買取できない物の処分業者の手配を一つの窓口でまとめて進めた</dd><dt>結果</dt><dd>片付けと現金化を同じ日程で終えられ、移転の段取りが軽くなった</dd></dl></div><div class="case"><span class="case-tag">家じまい・不動産</span><dl><dt>ご相談</dt><dd>親の住んでいた家の片付けと、その後の売却をどう進めればよいか分からなかった</dd><dt>当社の対応</dt><dd>品物の買取、遺品整理の業者、不動産会社と連携し、順番と役割を整理してご案内した</dd><dt>結果</dt><dd>相談先を探し回らずに、片付けから売却の相談まで進められた</dd></dl></div><div class="case"><span class="case-tag">医療・介護</span><dl><dt>ご相談</dt><dd>介護事業所で、職員の採用と日々の経費の両方に悩んでいた</dd><dt>当社の対応</dt><dd>経費の見直しを当社が支援し、採用は許可を持つ提携事業者と連携して進めた</dd><dt>結果</dt><dd>経費の見直しと採用の相談を、一つの窓口で同時に進められた</dd></dl></div><div class="case"><span class="case-tag">許認可・補助金</span><dl><dt>ご相談</dt><dd>新しい事業を始めるにあたり、使える補助金や必要な許可が分からなかった</dd><dt>当社の対応</dt><dd>事業計画を一緒に整理したうえで、申請手続きは行政書士へおつなぎした</dd><dt>結果</dt><dd>準備すべき書類と進める順番がはっきりし、申請までの道筋が見えた</dd></dl></div><div class="case"><span class="case-tag">海外・輸出</span><dl><dt>ご相談</dt><dd>買い取った中古品を、海外で販売できないか検討していた</dd><dt>当社の対応</dt><dd>対象の品目と国の規制を確認し、輸出の実績を持つ提携事業者と販路を検討した</dd><dt>結果</dt><dd>国内だけでなく、海外も視野に入れた販売の選択肢ができた</dd></dl></div><div class="case"><span class="case-tag">企画・地域</span><dl><dt>ご相談</dt><dd>商業施設で、集客につながる催しを探していた</dd><dt>当社の対応</dt><dd>施設と相談しながら、買取の催事を企画し、当日の運営まで行った</dd><dt>結果</dt><dd>来場のきっかけとなる新しい催しとして、施設の企画に加わった</dd></dl></div></div></div>
+  <div class="blk co-cases"><h2>ご支援の例</h2><p class="muted" style="margin:0">当社がどのようにお手伝いするかを分かりやすくお伝えするための、想定の事例です。実在の取引先や実績の数値を示すものではありません。</p><div class="case-grid"><div class="case"><span class="case-tag">リユース・買取</span><dl><dt>ご相談</dt><dd>事務所の移転で、使わなくなった備品や在庫の扱いに困っていた</dd><dt>当社の対応</dt><dd>査定・買取と、買取できない物の処分業者の手配を一つの窓口でまとめて進めた</dd><dt>結果</dt><dd>片付けと現金化を同じ日程で終えられ、移転の段取りが軽くなった</dd></dl><a class="case-link" href="https://www.kaitori-daikichi.jp/store/katsuyamaminami/" target="_blank" rel="noopener">買取大吉 大阪勝山南店へ →</a></div><div class="case"><span class="case-tag">家じまい・不動産</span><dl><dt>ご相談</dt><dd>親の住んでいた家の片付けと、その後の売却をどう進めればよいか分からなかった</dd><dt>当社の対応</dt><dd>品物の買取、遺品整理の業者、不動産会社と連携し、順番と役割を整理してご案内した</dd><dt>結果</dt><dd>相談先を探し回らずに、片付けから売却の相談まで進められた</dd></dl><a class="case-link" href="https://glove-osaka.github.io/glove-site/iejimai/" target="_blank" rel="noopener">家じまい相談窓口へ →</a></div><div class="case"><span class="case-tag">医療・介護</span><dl><dt>ご相談</dt><dd>介護事業所で、職員の採用と日々の経費の両方に悩んでいた</dd><dt>当社の対応</dt><dd>経費の見直しを当社が支援し、採用は許可を持つ提携事業者と連携して進めた</dd><dt>結果</dt><dd>経費の見直しと採用の相談を、一つの窓口で同時に進められた</dd></dl><a class="case-link" href="https://glove-osaka.github.io/glove-site/medical/" target="_blank" rel="noopener">医療介護総合支援会へ →</a></div><div class="case"><span class="case-tag">許認可・補助金</span><dl><dt>ご相談</dt><dd>新しい事業を始めるにあたり、使える補助金や必要な許可が分からなかった</dd><dt>当社の対応</dt><dd>事業計画を一緒に整理したうえで、申請手続きは行政書士へおつなぎした</dd><dt>結果</dt><dd>準備すべき書類と進める順番がはっきりし、申請までの道筋が見えた</dd></dl><a class="case-link" href="https://glove-osaka.github.io/glove-site/kigyo/" target="_blank" rel="noopener">企業支援 総合相談窓口へ →</a></div><div class="case"><span class="case-tag">海外・輸出</span><dl><dt>ご相談</dt><dd>買い取った中古品を、海外で販売できないか検討していた</dd><dt>当社の対応</dt><dd>対象の品目と国の規制を確認し、輸出の実績を持つ提携事業者と販路を検討した</dd><dt>結果</dt><dd>国内だけでなく、海外も視野に入れた販売の選択肢ができた</dd></dl></div><div class="case"><span class="case-tag">企画・地域</span><dl><dt>ご相談</dt><dd>商業施設で、集客につながる催しを探していた</dd><dt>当社の対応</dt><dd>施設と相談しながら、買取の催事を企画し、当日の運営まで行った</dd><dt>結果</dt><dd>来場のきっかけとなる新しい催しとして、施設の企画に加わった</dd></dl></div></div></div>
   <div class="blk" style="margin-top:44px"><h2>法令に基づく表示<small>LEGAL</small></h2>
     <div class="panel" style="font-size:.92rem">古物営業法に基づく表示：${esc(c.nameJa || c.name)}　${esc(c.kobutsu || "")}　／　買取大吉 大阪勝山南店の営業所情報は店舗窓口でご確認ください</div></div>
 </div></section>`;
