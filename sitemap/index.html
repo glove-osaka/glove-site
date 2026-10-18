@@ -1200,57 +1200,6 @@ select.flash{animation:flash 1s ease}
 .tel-box a{color:#0E2A52;font-weight:700}
 @media (max-width:700px){.tel-box{grid-template-columns:1fr}}
 </style>
-<style id="fold-ui">
-.sm-group{margin-bottom:10px}
-.sm-group>h3{font-size:.98rem;margin:0}
-</style>
-<style id="fold-css">
-.fold-head{margin:0}
-.fold-head>.fold-btn{flex:1 1 100%}
-.fold-btn>.fold-ic{align-self:center}
-.blk:has(>.fold-head){margin-bottom:14px!important}
-.blk:has(>.fold-head>.fold-btn[aria-expanded="true"]){margin-bottom:clamp(28px,4vw,44px)!important}
-.blk>.fold-head>.fold-btn,.svc-group>.fold-head>.fold-btn{border:0;box-shadow:none;background:transparent;padding:6px 0;border-radius:0}
-.svc-group>.fold-head{border-bottom:1px solid var(--line);padding-bottom:4px}
-.blk>.fold-head{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 16px!important;box-shadow:0 4px 14px rgba(14,42,82,.05);font-size:clamp(1.05rem,2vw,1.3rem)!important}
-.blk>.fold-head:hover{border-color:var(--gold)}
-.fold-btn{all:unset;box-sizing:border-box;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;color:inherit;box-shadow:0 4px 14px rgba(14,42,82,.05);transition:border-color .2s,box-shadow .2s}
-.fold-btn:hover{border-color:var(--gold)}
-.fold-btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-.fold-btn[aria-expanded="true"]{border-color:rgba(199,154,74,.6);border-bottom-left-radius:0;border-bottom-right-radius:0}
-.fold-ic{flex:none;width:26px;height:26px;border-radius:50%;background:#EEF4FA;position:relative}
-.fold-ic::before,.fold-ic::after{content:"";position:absolute;left:50%;top:50%;width:11px;height:2px;margin:-1px 0 0 -5.5px;background:#0E2A52;border-radius:2px;transition:transform .25s}
-.fold-ic::after{transform:rotate(90deg)}
-[aria-expanded="true"]>.fold-ic::after{transform:rotate(0)}
-.fold-body{padding:16px 4px 4px;animation:foldin .3s ease}
-@keyframes foldin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
-.prose .fold-head{font-size:.98rem;border:0!important;padding:0!important;margin:6px 0 0!important}
-.prose .fold-btn{padding:9px 12px;box-shadow:none}
-.prose .fold-ic{width:22px;height:22px}
-.fold-all{margin:0 0 6px auto;display:block}
-.more-hide{display:none!important}
-.gl-more{all:unset;box-sizing:border-box;display:block;margin:16px auto 0;padding:11px 26px;border-radius:999px;border:1px solid var(--gold);color:#0E2A52;font-weight:700;font-size:.9rem;cursor:pointer;background:#fff;text-align:center;box-shadow:0 4px 14px rgba(14,42,82,.06)}
-.gl-more:hover{background:#FBF6EC}
-.gl-more:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-.co-greet .gl-more{margin:0;justify-self:start}
-.ff-btn{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:10px;font:inherit;color:inherit;letter-spacing:inherit}
-.ff-btn .fold-ic{display:none}
-@media (max-width:700px){
-  .ff-col{border-top:1px solid rgba(255,255,255,.1)}
-  .ff-col>h4{margin:0!important}
-  .ff-btn{display:flex;width:100%;justify-content:space-between;padding:14px 0}
-  .ff-btn .fold-ic{display:block;background:rgba(255,255,255,.12)}
-  .ff-btn .fold-ic::before,.ff-btn .fold-ic::after{background:#fff}
-  .ff-col>ul{display:none!important}
-  .ff-col.ff-open>ul{display:grid!important;padding-bottom:12px}
-  .ftr .cols{gap:0!important}
-  .ftr .cols>div:first-child{padding-bottom:18px}
-  /* 会社情報の表：見出しと内容を横に並べて短くする */
-  .co-info .tbl th,.co-info .tbl td{display:table-cell!important;padding:10px 12px!important}
-  .co-info .tbl th{width:6.5em!important;font-size:.8rem!important;border-bottom:1px solid var(--line)!important}
-  .co-info .tbl td{font-size:.88rem}
-}
-</style>
 </head><body>
 <a class="skip" href="#view">本文へスキップ</a>
 <div id="glow" aria-hidden="true"></div><div id="scene" aria-hidden="true"><div class="ly space"><canvas id="stars"></canvas></div><div class="ly earth"></div><div class="ly city"></div></div>
@@ -1266,7 +1215,7 @@ select.flash{animation:flash 1s ease}
   <nav class="crumb" aria-label="パンくずリスト"><a href="/glove-site/" data-r="home">ホーム</a> / サイトマップ</nav>
   <div class="en">サイトマップ</div><h1>サイトマップ</h1>
 </div></header><section class="page"><div class="wrap"><ul class="sitemap"><li><a href="/glove-site/" data-r="home">トップページ</a></li><li><a href="/glove-site/philosophy/" data-r="philosophy">企業理念</a></li><li><a href="/glove-site/business/" data-r="business">事業領域</a></li><li><a href="/glove-site/business-management/" data-r="business-management">　企業支援・経営サポート</a></li><li><a href="/glove-site/business-care/" data-r="business-care">　医療・介護 総合支援</a></li><li><a href="/glove-site/business-reuse/" data-r="business-reuse">　リユース・買取事業</a></li><li><a href="/glove-site/business-experts/" data-r="business-experts">　許認可・補助金申請サポート</a></li><li><a href="/glove-site/business-shukatsu/" data-r="business-shukatsu">　家じまい・不動産支援</a></li><li><a href="/glove-site/business-export/" data-r="business-export">　海外・輸出事業</a></li><li><a href="/glove-site/business-hr/" data-r="business-hr">　人材支援・採用支援</a></li><li><a href="/glove-site/business-planning/" data-r="business-planning">　企画・プロデュース事業</a></li><li><a href="/glove-site/business-region/" data-r="business-region">　地域活性化事業</a></li><li><a href="/glove-site/business-global/" data-r="business-global">　国際ネットワーク構築</a></li><li><a href="/glove-site/business-alliance/" data-r="business-alliance">　事業連携・協業支援</a></li><li><a href="/glove-site/business-newbiz/" data-r="business-newbiz">　新規事業開発</a></li><li><a href="/glove-site/finder/" data-r="finder">サービスを探す</a></li><li><a href="/glove-site/partnership/" data-r="partnership">提携企業募集</a></li><li><a href="/glove-site/company/" data-r="company">会社概要</a></li><li><a href="/glove-site/contact/" data-r="contact">お問い合わせ</a></li><li><a href="/glove-site/privacy/" data-r="privacy">プライバシーポリシー</a></li><li><a href="/glove-site/terms/" data-r="terms">利用規約</a></li><li><a href="/glove-site/disclaimer/" data-r="disclaimer">免責事項</a></li></ul>
-  <div class="blk" style="margin-top:36px"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-cwlrlc">サービス別ページ<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-cwlrlc" class="fold-body" hidden=""><div class="sm-group" data-fold="closed"><h3>01 企業支援・経営サポート（12件）</h3><ul class="sitemap"><li><a href="/glove-site/service-B01-01/" data-r="service-B01-01">経営相談</a></li><li><a href="/glove-site/service-B01-02/" data-r="service-B01-02">経営改善支援</a></li><li><a href="/glove-site/service-B01-03/" data-r="service-B01-03">事業計画作成支援</a></li><li><a href="/glove-site/service-B01-04/" data-r="service-B01-04">組織づくり支援</a></li><li><a href="/glove-site/service-B01-05/" data-r="service-B01-05">資金調達相談</a></li><li><a href="/glove-site/service-B01-06/" data-r="service-B01-06">補助金・助成金情報提供</a></li><li><a href="/glove-site/service-B01-07/" data-r="service-B01-07">M&amp;A・事業承継相談</a></li><li><a href="/glove-site/service-B01-08/" data-r="service-B01-08">財務・税務の専門家紹介</a></li><li><a href="/glove-site/service-B01-09/" data-r="service-B01-09">業務効率化支援</a></li><li><a href="/glove-site/service-B01-10/" data-r="service-B01-10">AI導入支援</a></li><li><a href="/glove-site/service-B01-11/" data-r="service-B01-11">業務自動化</a></li><li><a href="/glove-site/service-B01-12/" data-r="service-B01-12">経営管理システム</a></li></ul></div><div class="sm-group" data-fold="closed"><h3>02 医療・介護 総合支援（12件）</h3><ul class="sitemap"><li><a href="/glove-site/service-B02-01/" data-r="service-B02-01">経営相談</a></li><li><a href="/glove-site/service-B02-02/" data-r="service-B02-02">経費削減支援</a></li><li><a href="/glove-site/service-B02-03/" data-r="service-B02-03">補助金・助成金情報</a></li><li><a href="/glove-site/service-B02-04/" data-r="service-B02-04">業務効率化・ICT活用</a></li><li><a href="/glove-site/service-B02-05/" data-r="service-B02-05">採用支援</a></li><li><a href="/glove-site/service-B02-06/" data-r="service-B02-06">共同求人</a></li><li><a href="/glove-site/service-B02-07/" data-r="service-B02-07">福利厚生</a></li><li><a href="/glove-site/service-B02-08/" data-r="service-B02-08">研修・定着支援</a></li><li><a href="/glove-site/service-B02-09/" data-r="service-B02-09">共同購入</a></li><li><a href="/glove-site/service-B02-10/" data-r="service-B02-10">介護施設・住まいの紹介連携</a></li><li><a href="/glove-site/service-B02-11/" data-r="service-B02-11">退院後の生活支援連携</a></li><li><a href="/glove-site/service-B02-12/" data-r="service-B02-12">専門家紹介</a></li></ul></div><div class="sm-group" data-fold="closed"><h3>03 リユース・買取事業（7件）</h3><ul class="sitemap"><li><a href="/glove-site/service-B03-01/" data-r="service-B03-01">法人向け買取</a></li><li><a href="/glove-site/service-B03-02/" data-r="service-B03-02">在庫・備品の買取相談</a></li><li><a href="/glove-site/service-B03-03/" data-r="service-B03-03">ブランド品・貴金属・時計の買取</a></li><li><a href="/glove-site/service-B03-04/" data-r="service-B03-04">美術品・骨董品の買取</a></li><li><a href="/glove-site/service-B03-05/" data-r="service-B03-05">買取催事</a></li><li><a href="/glove-site/service-B03-06/" data-r="service-B03-06">提携店舗での買取相談会</a></li><li><a href="/glove-site/service-B03-07/" data-r="service-B03-07">整理業務と連携した買取</a></li></ul></div><div class="sm-group" data-fold="closed"><h3>04 許認可・補助金申請サポート（9件）</h3><ul class="sitemap"><li><a href="/glove-site/service-B04-01/" data-r="service-B04-01">許認可申請の取次</a></li><li><a href="/glove-site/service-B04-02/" data-r="service-B04-02">補助金・助成金申請の取次</a></li><li><a href="/glove-site/service-B04-03/" data-r="service-B04-03">各種届出・申請書類作成の取次</a></li><li><a href="/glove-site/service-B04-04/" data-r="service-B04-04">契約書作成の取次</a></li><li><a href="/glove-site/service-B04-05/" data-r="service-B04-05">税理士紹介</a></li><li><a href="/glove-site/service-B04-06/" data-r="service-B04-06">司法書士紹介</a></li><li><a href="/glove-site/service-B04-07/" data-r="service-B04-07">社会保険労務士紹介</a></li><li><a href="/glove-site/service-B04-08/" data-r="service-B04-08">弁護士紹介</a></li><li><a href="/glove-site/service-B04-09/" data-r="service-B04-09">中小企業診断士紹介</a></li></ul></div><div class="sm-group" data-fold="closed"><h3>05 家じまい・不動産支援（10件）</h3><ul class="sitemap"><li><a href="/glove-site/service-B05-01/" data-r="service-B05-01">家じまい相談</a></li><li><a href="/glove-site/service-B05-02/" data-r="service-B05-02">生前整理</a></li><li><a href="/glove-site/service-B05-03/" data-r="service-B05-03">遺品整理</a></li><li><a href="/glove-site/service-B05-04/" data-r="service-B05-04">空き家整理</a></li><li><a href="/glove-site/service-B05-05/" data-r="service-B05-05">不用品買取</a></li><li><a href="/glove-site/service-B05-06/" data-r="service-B05-06">不動産売却相談</a></li><li><a href="/glove-site/service-B05-07/" data-r="service-B05-07">空き家管理</a></li><li><a href="/glove-site/service-B05-08/" data-r="service-B05-08">リフォーム・解体</a></li><li><a href="/glove-site/service-B05-09/" data-r="service-B05-09">相続手続き相談</a></li><li><a href="/glove-site/service-B05-10/" data-r="service-B05-10">相続不動産相談</a></li></ul></div><div class="sm-group" data-fold="closed"><h3>06 海外・輸出事業（6件）</h3><ul class="sitemap"><li><a href="/glove-site/service-B06-01/" data-r="service-B06-01">海外販路開拓支援</a></li><li><a href="/glove-site/service-B06-02/" data-r="service-B06-02">リユース品・中古品の輸出</a></li><li><a href="/glove-site/service-B06-03/" data-r="service-B06-03">日本製品の海外販売支援</a></li><li><a href="/glove-site/service-B06-04/" data-r="service-B06-04">国際輸送の手配</a></li><li><a href="/glove-site/service-B06-05/" data-r="service-B06-05">通関手続きの取次</a></li><li><a href="/glove-site/service-B06-06/" data-r="service-B06-06">輸入相談</a></li></ul></div><div class="sm-group" data-fold="closed"><h3>07 人材支援・採用支援（7件）</h3><ul class="sitemap"><li><a href="/glove-site/service-B07-01/" data-r="service-B07-01">求人支援</a></li><li><a href="/glove-site/service-B07-02/" data-r="service-B07-02">採用広告</a></li><li><a href="/glove-site/service-B07-03/" data-r="service-B07-03">採用ホームページ制作</a></li><li><a href="/glove-site/service-B07-04/" data-r="service-B07-04">人材紹介事業者への取次</a></li><li><a href="/glove-site/service-B07-05/" data-r="service-B07-05">従業員研修</a></li><li><a href="/glove-site/service-B07-06/" data-r="service-B07-06">離職防止・職場環境改善</a></li><li><a href="/glove-site/service-B07-07/" data-r="service-B07-07">福利厚生の導入支援</a></li></ul></div><div class="sm-group" data-fold="closed"><h3>08 企画・プロデュース事業（8件）</h3><ul class="sitemap"><li><a href="/glove-site/service-B08-01/" data-r="service-B08-01">商品企画・サービス企画</a></li><li><a href="/glove-site/service-B08-02/" data-r="service-B08-02">ブランド開発</a></li><li><a href="/glove-site/service-B08-03/" data-r="service-B08-03">ビジネスモデル構築支援</a></li><li><a href="/glove-site/service-B08-04/" data-r="service-B08-04">ホームページ制作</a></li><li><a href="/glove-site/service-B08-05/" data-r="service-B08-05">広告・チラシ・パンフレット制作</a></li><li><a href="/glove-site/service-B08-06/" data-r="service-B08-06">動画制作</a></li><li><a href="/glove-site/service-B08-07/" data-r="service-B08-07">LINE公式アカウント構築</a></li><li><a href="/glove-site/service-B08-08/" data-r="service-B08-08">OEM商品開発の取次</a></li></ul></div><div class="sm-group" data-fold="closed"><h3>09 地域活性化事業（5件）</h3><ul class="sitemap"><li><a href="/glove-site/service-B09-01/" data-r="service-B09-01">地域企業の販路拡大支援</a></li><li><a href="/glove-site/service-B09-02/" data-r="service-B09-02">地域資源の商品化支援</a></li><li><a href="/glove-site/service-B09-03/" data-r="service-B09-03">観光・地域産業の振興企画</a></li><li><a href="/glove-site/service-B09-04/" data-r="service-B09-04">自治体・地域団体との連携企画</a></li><li><a href="/glove-site/service-B09-05/" data-r="service-B09-05">地域企業間のマッチング</a></li></ul></div><div class="sm-group" data-fold="closed"><h3>10 国際ネットワーク構築（5件）</h3><ul class="sitemap"><li><a href="/glove-site/service-B10-01/" data-r="service-B10-01">海外企業とのマッチング</a></li><li><a href="/glove-site/service-B10-02/" data-r="service-B10-02">海外市場調査支援</a></li><li><a href="/glove-site/service-B10-03/" data-r="service-B10-03">海外技術・商材の導入支援</a></li><li><a href="/glove-site/service-B10-04/" data-r="service-B10-04">海外パートナー網の構築</a></li><li><a href="/glove-site/service-B10-05/" data-r="service-B10-05">国際取引の専門家紹介</a></li></ul></div><div class="sm-group" data-fold="closed"><h3>11 事業連携・協業支援（7件）</h3><ul class="sitemap"><li><a href="/glove-site/service-B11-01/" data-r="service-B11-01">ビジネスマッチング</a></li><li><a href="/glove-site/service-B11-02/" data-r="service-B11-02">企業間取引支援</a></li><li><a href="/glove-site/service-B11-03/" data-r="service-B11-03">業務提携の支援</a></li><li><a href="/glove-site/service-B11-04/" data-r="service-B11-04">共同事業の企画</a></li><li><a href="/glove-site/service-B11-05/" data-r="service-B11-05">販売代理店開拓</a></li><li><a href="/glove-site/service-B11-06/" data-r="service-B11-06">販売代理店支援</a></li><li><a href="/glove-site/service-B11-07/" data-r="service-B11-07">販路の共有・相互送客</a></li></ul></div><div class="sm-group" data-fold="closed"><h3>12 新規事業開発（7件）</h3><ul class="sitemap"><li><a href="/glove-site/service-B12-01/" data-r="service-B12-01">新規事業の構想支援</a></li><li><a href="/glove-site/service-B12-02/" data-r="service-B12-02">事業計画作成支援</a></li><li><a href="/glove-site/service-B12-03/" data-r="service-B12-03">市場調査</a></li><li><a href="/glove-site/service-B12-04/" data-r="service-B12-04">実証（テスト販売）の設計</a></li><li><a href="/glove-site/service-B12-05/" data-r="service-B12-05">資金調達・補助金活用の相談</a></li><li><a href="/glove-site/service-B12-06/" data-r="service-B12-06">事業立ち上げ支援</a></li><li><a href="/glove-site/service-B12-07/" data-r="service-B12-07">事業投資・共同出資の相談</a></li></ul></div></div></div></div></section></main>
+  <div class="blk" style="margin-top:36px"><h2>サービス別ページ</h2><ul class="sitemap"><li><a href="/glove-site/service-B01-01/" data-r="service-B01-01">B01-01 経営相談</a></li><li><a href="/glove-site/service-B01-02/" data-r="service-B01-02">B01-02 経営改善支援</a></li><li><a href="/glove-site/service-B01-03/" data-r="service-B01-03">B01-03 事業計画作成支援</a></li><li><a href="/glove-site/service-B01-04/" data-r="service-B01-04">B01-04 組織づくり支援</a></li><li><a href="/glove-site/service-B01-05/" data-r="service-B01-05">B01-05 資金調達相談</a></li><li><a href="/glove-site/service-B01-06/" data-r="service-B01-06">B01-06 補助金・助成金情報提供</a></li><li><a href="/glove-site/service-B01-07/" data-r="service-B01-07">B01-07 M&amp;A・事業承継相談</a></li><li><a href="/glove-site/service-B01-08/" data-r="service-B01-08">B01-08 財務・税務の専門家紹介</a></li><li><a href="/glove-site/service-B01-09/" data-r="service-B01-09">B01-09 業務効率化支援</a></li><li><a href="/glove-site/service-B01-10/" data-r="service-B01-10">B01-10 AI導入支援</a></li><li><a href="/glove-site/service-B01-11/" data-r="service-B01-11">B01-11 業務自動化</a></li><li><a href="/glove-site/service-B01-12/" data-r="service-B01-12">B01-12 経営管理システム</a></li><li><a href="/glove-site/service-B02-01/" data-r="service-B02-01">B02-01 経営相談</a></li><li><a href="/glove-site/service-B02-02/" data-r="service-B02-02">B02-02 経費削減支援</a></li><li><a href="/glove-site/service-B02-03/" data-r="service-B02-03">B02-03 補助金・助成金情報</a></li><li><a href="/glove-site/service-B02-04/" data-r="service-B02-04">02-04 業務効率化・ICT活用</a></li><li><a href="/glove-site/service-B02-05/" data-r="service-B02-05">B02-05 採用支援</a></li><li><a href="/glove-site/service-B02-06/" data-r="service-B02-06">B02-06 共同求人</a></li><li><a href="/glove-site/service-B02-07/" data-r="service-B02-07">B02-07 福利厚生</a></li><li><a href="/glove-site/service-B02-08/" data-r="service-B02-08">B02-08 研修・定着支援</a></li><li><a href="/glove-site/service-B02-09/" data-r="service-B02-09">B02-09 共同購入</a></li><li><a href="/glove-site/service-B02-10/" data-r="service-B02-10">B02-10 介護施設・住まいの紹介連携</a></li><li><a href="/glove-site/service-B02-11/" data-r="service-B02-11">B02-11 退院後の生活支援連携</a></li><li><a href="/glove-site/service-B02-12/" data-r="service-B02-12">B02-12 専門家紹介</a></li><li><a href="/glove-site/service-B03-01/" data-r="service-B03-01">B03-01 法人向け買取</a></li><li><a href="/glove-site/service-B03-02/" data-r="service-B03-02">B03-02 在庫・備品の買取相談</a></li><li><a href="/glove-site/service-B03-03/" data-r="service-B03-03">B03-03 ブランド品・貴金属・時計の買取</a></li><li><a href="/glove-site/service-B03-04/" data-r="service-B03-04">B03-04 美術品・骨董品の買取</a></li><li><a href="/glove-site/service-B03-05/" data-r="service-B03-05">B03-05 買取催事</a></li><li><a href="/glove-site/service-B03-06/" data-r="service-B03-06">B03-06 提携店舗での買取相談会</a></li><li><a href="/glove-site/service-B03-07/" data-r="service-B03-07">B03-07 整理業務と連携した買取</a></li><li><a href="/glove-site/service-B04-01/" data-r="service-B04-01">B04-01 許認可申請の取次</a></li><li><a href="/glove-site/service-B04-02/" data-r="service-B04-02">B04-02 補助金・助成金申請の取次</a></li><li><a href="/glove-site/service-B04-03/" data-r="service-B04-03">B04-03 各種届出・申請書類作成の取次</a></li><li><a href="/glove-site/service-B04-04/" data-r="service-B04-04">B04-04 契約書作成の取次</a></li><li><a href="/glove-site/service-B04-05/" data-r="service-B04-05">B04-05 税理士紹介</a></li><li><a href="/glove-site/service-B04-06/" data-r="service-B04-06">B04-06 司法書士紹介</a></li><li><a href="/glove-site/service-B04-07/" data-r="service-B04-07">B04-07 社会保険労務士紹介</a></li><li><a href="/glove-site/service-B04-08/" data-r="service-B04-08">B04-08 弁護士紹介</a></li><li><a href="/glove-site/service-B04-09/" data-r="service-B04-09">B04-09 中小企業診断士紹介</a></li><li><a href="/glove-site/service-B05-01/" data-r="service-B05-01">B05-01 家じまい相談</a></li><li><a href="/glove-site/service-B05-02/" data-r="service-B05-02">B05-02 生前整理</a></li><li><a href="/glove-site/service-B05-03/" data-r="service-B05-03">B05-03 遺品整理</a></li><li><a href="/glove-site/service-B05-04/" data-r="service-B05-04">B05-04 空き家整理</a></li><li><a href="/glove-site/service-B05-05/" data-r="service-B05-05">B05-05 不用品買取</a></li><li><a href="/glove-site/service-B05-06/" data-r="service-B05-06">B05-06 不動産売却相談</a></li><li><a href="/glove-site/service-B05-07/" data-r="service-B05-07">B05-07 空き家管理</a></li><li><a href="/glove-site/service-B05-08/" data-r="service-B05-08">B05-08 リフォーム・解体</a></li><li><a href="/glove-site/service-B05-09/" data-r="service-B05-09">B05-09 相続手続き相談</a></li><li><a href="/glove-site/service-B05-10/" data-r="service-B05-10">B05-10 相続不動産相談</a></li><li><a href="/glove-site/service-B06-01/" data-r="service-B06-01">B06-01 海外販路開拓支援</a></li><li><a href="/glove-site/service-B06-02/" data-r="service-B06-02">B06-02 リユース品・中古品の輸出</a></li><li><a href="/glove-site/service-B06-03/" data-r="service-B06-03">B06-03 日本製品の海外販売支援</a></li><li><a href="/glove-site/service-B06-04/" data-r="service-B06-04">B06-04 国際輸送の手配</a></li><li><a href="/glove-site/service-B06-05/" data-r="service-B06-05">B06-05 通関手続きの取次</a></li><li><a href="/glove-site/service-B06-06/" data-r="service-B06-06">B06-06 輸入相談</a></li><li><a href="/glove-site/service-B07-01/" data-r="service-B07-01">B07-01 求人支援</a></li><li><a href="/glove-site/service-B07-02/" data-r="service-B07-02">B07-02 採用広告</a></li><li><a href="/glove-site/service-B07-03/" data-r="service-B07-03">B07-03 採用ホームページ制作</a></li><li><a href="/glove-site/service-B07-04/" data-r="service-B07-04">B07-04 人材紹介事業者への取次</a></li><li><a href="/glove-site/service-B07-05/" data-r="service-B07-05">B07-05 従業員研修</a></li><li><a href="/glove-site/service-B07-06/" data-r="service-B07-06">B07-06 離職防止・職場環境改善</a></li><li><a href="/glove-site/service-B07-07/" data-r="service-B07-07">B07-07 福利厚生の導入支援</a></li><li><a href="/glove-site/service-B08-01/" data-r="service-B08-01">B08-01 商品企画・サービス企画</a></li><li><a href="/glove-site/service-B08-02/" data-r="service-B08-02">B08-02 ブランド開発</a></li><li><a href="/glove-site/service-B08-03/" data-r="service-B08-03">B08-03 ビジネスモデル構築支援</a></li><li><a href="/glove-site/service-B08-04/" data-r="service-B08-04">B08-04 ホームページ制作</a></li><li><a href="/glove-site/service-B08-05/" data-r="service-B08-05">B08-05 広告・チラシ・パンフレット制作</a></li><li><a href="/glove-site/service-B08-06/" data-r="service-B08-06">B08-06 動画制作</a></li><li><a href="/glove-site/service-B08-07/" data-r="service-B08-07">08-07 LINE公式アカウント構築</a></li><li><a href="/glove-site/service-B08-08/" data-r="service-B08-08">08-08 OEM商品開発の取次</a></li><li><a href="/glove-site/service-B09-01/" data-r="service-B09-01">B09-01 地域企業の販路拡大支援</a></li><li><a href="/glove-site/service-B09-02/" data-r="service-B09-02">B09-02 地域資源の商品化支援</a></li><li><a href="/glove-site/service-B09-03/" data-r="service-B09-03">B09-03 観光・地域産業の振興企画</a></li><li><a href="/glove-site/service-B09-04/" data-r="service-B09-04">B09-04 自治体・地域団体との連携企画</a></li><li><a href="/glove-site/service-B09-05/" data-r="service-B09-05">B09-05 地域企業間のマッチング</a></li><li><a href="/glove-site/service-B10-01/" data-r="service-B10-01">B10-01 海外企業とのマッチング</a></li><li><a href="/glove-site/service-B10-02/" data-r="service-B10-02">B10-02 海外市場調査支援</a></li><li><a href="/glove-site/service-B10-03/" data-r="service-B10-03">B10-03 海外技術・商材の導入支援</a></li><li><a href="/glove-site/service-B10-04/" data-r="service-B10-04">B10-04 海外パートナー網の構築</a></li><li><a href="/glove-site/service-B10-05/" data-r="service-B10-05">B10-05 国際取引の専門家紹介</a></li><li><a href="/glove-site/service-B11-01/" data-r="service-B11-01">B11-01 ビジネスマッチング</a></li><li><a href="/glove-site/service-B11-02/" data-r="service-B11-02">B11-02 企業間取引支援</a></li><li><a href="/glove-site/service-B11-03/" data-r="service-B11-03">B11-03 業務提携の支援</a></li><li><a href="/glove-site/service-B11-04/" data-r="service-B11-04">B11-04 共同事業の企画</a></li><li><a href="/glove-site/service-B11-05/" data-r="service-B11-05">B11-05 販売代理店開拓</a></li><li><a href="/glove-site/service-B11-06/" data-r="service-B11-06">B11-06 販売代理店支援</a></li><li><a href="/glove-site/service-B11-07/" data-r="service-B11-07">B11-07 販路の共有・相互送客</a></li><li><a href="/glove-site/service-B12-01/" data-r="service-B12-01">B12-01 新規事業の構想支援</a></li><li><a href="/glove-site/service-B12-02/" data-r="service-B12-02">B12-02 事業計画作成支援</a></li><li><a href="/glove-site/service-B12-03/" data-r="service-B12-03">B12-03 市場調査</a></li><li><a href="/glove-site/service-B12-04/" data-r="service-B12-04">B12-04 実証（テスト販売）の設計</a></li><li><a href="/glove-site/service-B12-05/" data-r="service-B12-05">B12-05 資金調達・補助金活用の相談</a></li><li><a href="/glove-site/service-B12-06/" data-r="service-B12-06">B12-06 事業立ち上げ支援</a></li><li><a href="/glove-site/service-B12-07/" data-r="service-B12-07">B12-07 事業投資・共同出資の相談</a></li></ul></div></div></section></main>
 <footer class="ftr"><div class="wrap">
   <div class="cols">
     <div style="display:grid;gap:12px;align-content:start">
@@ -1972,57 +1921,6 @@ function corporateBiz(b) {
 }
 
 
-
-/* ===== 縦に長くなりすぎないよう、タップで開く仕組み ===== */
-const FOLD_CLOSED = ["つながりマップ", "企業との連携領域", "法人連携の特長"];
-function foldHead(h, box, open) {
-  if (h.classList.contains("fold-head")) return;
-  h.classList.add("fold-head"); h.setAttribute("role", "button"); h.tabIndex = 0;
-  const ic = document.createElement("span"); ic.className = "fold-ic"; ic.setAttribute("aria-hidden", "true"); h.appendChild(ic);
-  const set = o => { box.classList.toggle("fx-closed", !o); h.setAttribute("aria-expanded", o); if (o) setTimeout(() => dispatchEvent(new Event("resize")), 30); };
-  set(open);
-  const tog = () => set(box.classList.contains("fx-closed"));
-  h.addEventListener("click", tog);
-  h.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tog(); } });
-}
-function moreList(el, nSp, nPc, unit) {
-  if (!el || el.dataset.more) return; const items = [...el.children]; el.dataset.more = "1";
-  const btn = document.createElement("button"); btn.type = "button"; btn.className = "more-btn"; el.after(btn);
-  el.classList.add("mw");
-  const paint = () => { const n = matchMedia("(max-width: 700px)").matches ? nSp : nPc, rest = items.length - n;
-    items.forEach((it, i) => it.classList.toggle("mx", i >= n));
-    btn.hidden = rest <= 0; const open = el.classList.contains("open");
-    btn.textContent = open ? "閉じる ▲" : `もっと見る（あと${rest}${unit}） ▼`; btn.setAttribute("aria-expanded", open); };
-  btn.addEventListener("click", () => { const was = el.classList.contains("open"); el.classList.toggle("open"); paint();
-    if (was) el.scrollIntoView({ block: "start", behavior: "smooth" }); else setTimeout(() => dispatchEvent(new Event("resize")), 30); });
-  addEventListener("resize", () => { if (el.isConnected) paint(); }); paint();
-}
-function foldUI(root) {
-  if (!root) return;
-  /* 一覧：最初の数件だけ見せる */
-  moreList($(".b12-grid", root), 4, 6, "件");
-  moreList($(".fld-grid", root), 3, 9, "件");
-  const panels = [...root.querySelectorAll(".wrap > div")].find(d => d.children.length > 6 && [...d.children].every(c => c.matches("a.panel")));
-  moreList(panels, 4, 6, "件");
-  moreList($(".philosophy-axis-grid", root), 3, 9, "件");
-  moreList($(".case-grid", root), 2, 3, "件");
-  /* 見出しを押すと開く */
-  $$(".blk", root).forEach(b => { const h = b.querySelector(":scope > h2"); if (h && FOLD_CLOSED.some(t => h.textContent.trim().startsWith(t))) foldHead(h, b, false); });
-  $$(".svc-group", root).forEach((g, i) => { const h = g.querySelector(":scope > h3"); if (h) foldHead(h, g, i === 0); });
-  $$(".sm-group", root).forEach(g => { const h = g.querySelector(":scope > h3"); if (h) foldHead(h, g, false); });
-  /* 規約・個人情報など：見出しごとに区切って、たたむ */
-  $$(".prose", root).forEach(pr => {
-    const hs = [...pr.children].filter(c => c.tagName === "H2"); if (hs.length < 3 || pr.dataset.folded) return; pr.dataset.folded = "1";
-    hs.forEach((h, i) => { const sec = document.createElement("div"); sec.className = "fold-sec"; h.before(sec); sec.appendChild(h);
-      let n = sec.nextSibling; while (n && !(n.nodeType === 1 && n.tagName === "H2")) { const nx = n.nextSibling; sec.appendChild(n); n = nx; }
-      foldHead(h, sec, i === 0); });
-  });
-  /* 代表あいさつ：最初の段落だけ見せる */
-  const gp = $(".co-greet .panel", root);
-  if (gp && !gp.dataset.more) { gp.dataset.more = "1"; gp.classList.add("greet-short");
-    const b = document.createElement("button"); b.type = "button"; b.className = "more-btn"; b.textContent = "続きを読む ▼"; gp.after(b);
-    b.addEventListener("click", () => { const o = gp.classList.toggle("greet-short"); b.textContent = o ? "続きを読む ▼" : "閉じる ▲"; }); }
-}
 /* ===== 英語の見出しを日本語に置き換える（表示の直後に実行） ===== */
 const JA_LABEL = { "SERVICES": "サービス", "OVERVIEW": "概要", "COLLABORATION": "連携", "CONNECTION MAP": "つながり図", "BENEFITS": "特長", "BUSINESS DIAL": "事業ダイヤル",
   "CONNECT": "つなぐ", "CREATE": "創る", "EVOLVE": "進化する", "RELATED": "関連", "OUR PHILOSOPHY": "企業理念", "SERVICE FINDER": "サービス検索", "PARTNERSHIP": "提携",
@@ -2049,62 +1947,6 @@ function jaLabels(root) {
 let jaTimer = 0;
 new MutationObserver(ms => { if (ms.some(m => m.addedNodes.length)) { clearTimeout(jaTimer); jaTimer = setTimeout(() => jaLabels(document.body), 30); } })
   .observe(document.documentElement, { childList: true, subtree: true });
-
-/* ===== 縦長を抑える：タップで開く仕組み ===== */
-const FOLD_SKIP = "iframe,form,.dial,.dial-wrap,.co-map,.bdv-video,video,.stampcard";
-function foldBtn(label, open) { return `<span class="fold-ic" aria-hidden="true"></span>`; }
-function makeFold(head, body, open) {
-  const id = "fold-" + Math.random().toString(36).slice(2, 8);
-  body.id = id; body.classList.add("fold-body"); body.hidden = !open;
-  const btn = document.createElement("button"); btn.type = "button"; btn.className = "fold-btn"; btn.setAttribute("aria-expanded", open); btn.setAttribute("aria-controls", id);
-  while (head.firstChild) btn.appendChild(head.firstChild);
-  btn.insertAdjacentHTML("beforeend", '<span class="fold-ic" aria-hidden="true"></span>');
-  head.appendChild(btn); head.classList.add("fold-head");
-  btn.addEventListener("click", () => { const o = btn.getAttribute("aria-expanded") !== "true"; btn.setAttribute("aria-expanded", o); body.hidden = !o; if (o) { body.querySelectorAll(".rv.pre").forEach(e => e.classList.remove("pre")); setTimeout(() => dispatchEvent(new Event("resize")), 30); } });
-}
-function moreGrid(grid, keep, label) {
-  if (!grid || grid.dataset.more) return; const kids = [...grid.children]; if (kids.length <= keep) return;
-  grid.dataset.more = "1"; kids.slice(keep).forEach(k => k.classList.add("more-hide"));
-  const b = document.createElement("button"); b.type = "button"; b.className = "gl-more"; b.textContent = label.replace("{n}", kids.length - keep);
-  b.addEventListener("click", () => { kids.forEach(k => { k.classList.remove("more-hide"); k.classList.remove("pre"); }); b.remove(); });
-  grid.after(b);
-}
-function foldPage(r) {
-  const v = $("#view"); if (!v || r === "admin" || r === "admin-login") return;
-  const phone = matchMedia("(max-width:700px)").matches;
-  // 1) 見出しのある区切り（最初の区切り・動く仕掛けを含む区切りは開いたまま）
-  const blks = $$(".page .blk", v).filter(b => b.querySelector(":scope > h2") && !b.closest(".fold-body"));
-  blks.forEach((b, i) => {
-    if ((i === 0 && r !== "sitemap") || b.querySelector(FOLD_SKIP) || b.classList.contains("co-greet") || b.classList.contains("no-fold")) return;
-    const h = b.querySelector(":scope > h2"); const body = document.createElement("div");
-    [...b.children].filter(c => c !== h).forEach(c => body.appendChild(c)); b.appendChild(body); makeFold(h, body, false);
-  });
-  // 2) 規約・方針の本文は、見出しごとに開閉
-  $$(".prose", v).forEach(pr => {
-    const hs = $$(":scope > h2", pr); if (hs.length < 3) return;
-    hs.forEach(h => { const body = document.createElement("div"); let n = h.nextElementSibling;
-      while (n && n.tagName !== "H2") { const nx = n.nextElementSibling; body.appendChild(n); n = nx; }
-      h.after(body); makeFold(h, body, false); });
-    const all = document.createElement("button"); all.type = "button"; all.className = "gl-more fold-all"; all.textContent = "すべて開く";
-    all.addEventListener("click", () => { const open = all.textContent === "すべて開く"; $$(".fold-btn", pr).forEach(bt => { if ((bt.getAttribute("aria-expanded") === "true") !== open) bt.click(); }); all.textContent = open ? "すべて閉じる" : "すべて開く"; });
-    pr.prepend(all);
-  });
-  // 3) 代表あいさつは最初の段落だけ見せる
-  const g = $(".co-greet .panel", v);
-  if (g) { const ps = $$(":scope > p", g); const rest = ps.slice(1); if (rest.length) { rest.forEach(x => x.classList.add("more-hide"));
-    const b = document.createElement("button"); b.type = "button"; b.className = "gl-more"; b.textContent = "続きを読む";
-    b.addEventListener("click", () => { rest.forEach(x => x.classList.remove("more-hide")); b.remove(); }); ps[0].after(b); } }
-  // 4) スマホでは、事業の一覧を途中まで表示
-  $$(".svc-group", v).forEach((g, i) => { const h = g.querySelector(":scope > h3"); if (!h || h.querySelector(".fold-btn")) return; const body = document.createElement("div"); [...g.children].filter(c => c !== h).forEach(c => body.appendChild(c)); g.appendChild(body); makeFold(h, body, i === 0); });
-  if (phone) { moreGrid($(".fld-grid", v), 3, "残り{n}領域を見る"); moreGrid($(".philosophy-axis-grid", v), 3, "残り{n}つを見る"); moreGrid($(".b12-grid", v), 3, "残り{n}事業を見る"); moreGrid($(".biz-all", v), 3, "残り{n}事業を見る"); moreGrid($(".case-grid", v), 2, "ほかの例を見る（{n}件）"); }
-}
-function foldFooter() {
-  $$(".ftr .cols > div").forEach(col => { const h = col.querySelector(":scope > h4"), ul = col.querySelector(":scope > ul"); if (!h || !ul || h.querySelector("button")) return;
-    const id = "ff-" + Math.random().toString(36).slice(2, 7); ul.id = id;
-    const b = document.createElement("button"); b.type = "button"; b.className = "ff-btn"; b.setAttribute("aria-expanded", "false"); b.setAttribute("aria-controls", id);
-    while (h.firstChild) b.appendChild(h.firstChild); b.insertAdjacentHTML("beforeend", '<span class="fold-ic" aria-hidden="true"></span>'); h.appendChild(b); col.classList.add("ff-col");
-    b.addEventListener("click", () => { const o = b.getAttribute("aria-expanded") !== "true"; b.setAttribute("aria-expanded", o); col.classList.toggle("ff-open", o); }); });
-}
 /* ---------- routes ---------- */
 const NAV = [["philosophy", "企業理念"], ["business", "事業領域"], ["finder", "サービスを探す"], ["partnership", "提携企業募集"], ["company", "会社概要"]];
 const META = {
@@ -2199,7 +2041,6 @@ function render() {
   window.scrollTo({ top: 0, behavior: "auto" });
   if (after) after();
   try { pageFx(r); } catch (e) { console.warn(e); }
-  try { foldPage(r); } catch (e) { console.warn(e); }
   jaLabels(document.body);
   setupReveal();
 }
@@ -2385,7 +2226,7 @@ function pageBusinessTop() {
   ${fieldGrid()}
   <div class="sec-head biz-more-head rv"><span class="eyebrow">Business &amp; Services</span><h2>12の事業・連携領域</h2><p>9つの事業領域を、具体的な事業・サービスとしてご案内します。</p></div>
   <div style="margin-bottom:24px">${legend()}</div>
-  <div class="biz-all" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px">${items}</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px">${items}</div>
 </div></section>${ctaBand()}`;
 }
 
@@ -2530,7 +2371,7 @@ function pageCompany() {
       <p style="margin:0">お客様にとって、最初に相談できる窓口であり続けること。そして、つながりから新しい価値を生み出し、地域と社会に還元していくこと。それが私たちの目指す姿です。どうぞお気軽にご相談ください。</p>
       <p style="margin:0;text-align:right;font-family:var(--f-display);font-weight:700">株式会社グローブ　代表取締役　藤原 重郎</p>
     </div></div>
-  <div class="blk co-info no-fold"><h2>会社情報</h2>
+  <div class="blk"><h2>会社情報</h2>
   <table class="tbl"><tbody>${rows.map(([k, v]) => `<tr><th scope="row">${k}</th><td style="white-space:pre-line">${esc(v)}</td></tr>`).join("")}</tbody></table></div>
   <div class="blk"><h2>所在地・アクセス</h2>
     <div class="co-map"><iframe title="株式会社グローブ・買取大吉 大阪勝山南店の地図" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3282.0215739945393!2d135.52963297631027!3d34.65415808570783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6000df47e95dfd91%3A0x3d03a50c011b5ac5!2z6LK35Y-W5aSn5ZCJIOWkp-mYquWLneWxseWNl-W6lw!5e0!3m2!1sja!2sjp!4v1746500047292!5m2!1sja!2sjp" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>
@@ -2767,7 +2608,7 @@ function pageDisclaimer() {
 function pageSitemap() {
   const L = [["home", "トップページ"], ["philosophy", "企業理念"], ["business", "事業領域"], ...BUSINESSES.map(b => ["business-" + b.id, "　" + b.ja]), ["finder", "サービスを探す"], ["partnership", "提携企業募集"], ["company", "会社概要"], ["contact", "お問い合わせ"], ["privacy", "プライバシーポリシー"], ["terms", "利用規約"], ["disclaimer", "免責事項"], ...(PATH_MODE ? [] : [["admin-login", "管理者ログイン"]])];
   return `${phead("SITEMAP", "サイトマップ", "", [[null, "サイトマップ"]])}<section class="page"><div class="wrap"><ul class="sitemap">${L.map(([h, t]) => `<li><a href="#${h}">${esc(t)}</a></li>`).join("")}</ul>
-  <div class="blk" style="margin-top:36px"><h2>サービス別ページ</h2>${BUSINESSES.filter(b => S.biz[b.id].published !== false).map(b => { const sv = pubServices().filter(s => s.big === b.id); return sv.length ? `<div class="sm-group" data-fold="closed"><h3>${esc(b.no)} ${esc(b.ja)}（${sv.length}件）</h3><ul class="sitemap">${sv.map(s => `<li><a href="#service-${s.id}">${esc(s.name)}</a></li>`).join("")}</ul></div>` : ""; }).join("")}</div></div></section>`;
+  <div class="blk" style="margin-top:36px"><h2>サービス別ページ<small>SERVICES</small></h2><ul class="sitemap">${pubServices().map(s => `<li><a href="#service-${s.id}">${esc(s.id)} ${esc(s.name)}</a></li>`).join("")}</ul></div></div></section>`;
 }
 function pageNotFound() {
   return `${phead("NOT FOUND", "ページが見つかりません", "お探しのページは移動または非公開になった可能性があります。")}<section class="page"><div class="wrap"><a class="btn btn-navy" href="#home">トップページへ</a></div></section>`;
@@ -3318,7 +3159,7 @@ $("#menu-btn").addEventListener("click", () => { const n = $("#gnav"); n.classLi
 addEventListener("hashchange", () => { if (globeStop && route() !== "home") { globeStop(); globeStop = null; } render(); });
 $("#year").textContent = new Date().getFullYear();
 if (PATH_MODE) $$('footer a[href="#admin-login"], footer a[data-r="admin-login"]').forEach(a => (a.closest("li") || a).remove());
-fixLinks(document); jaLabels(document.body); foldFooter(); initScene(); paintLogo(); paintFooter(); render(); boot();
+fixLinks(document); jaLabels(document.body); initScene(); paintLogo(); paintFooter(); render(); boot();
 </script>
 
 </body></html>
