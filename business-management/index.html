@@ -1200,6 +1200,57 @@ select.flash{animation:flash 1s ease}
 .tel-box a{color:#0E2A52;font-weight:700}
 @media (max-width:700px){.tel-box{grid-template-columns:1fr}}
 </style>
+<style id="fold-ui">
+.sm-group{margin-bottom:10px}
+.sm-group>h3{font-size:.98rem;margin:0}
+</style>
+<style id="fold-css">
+.fold-head{margin:0}
+.fold-head>.fold-btn{flex:1 1 100%}
+.fold-btn>.fold-ic{align-self:center}
+.blk:has(>.fold-head){margin-bottom:14px!important}
+.blk:has(>.fold-head>.fold-btn[aria-expanded="true"]){margin-bottom:clamp(28px,4vw,44px)!important}
+.blk>.fold-head>.fold-btn,.svc-group>.fold-head>.fold-btn{border:0;box-shadow:none;background:transparent;padding:6px 0;border-radius:0}
+.svc-group>.fold-head{border-bottom:1px solid var(--line);padding-bottom:4px}
+.blk>.fold-head{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 16px!important;box-shadow:0 4px 14px rgba(14,42,82,.05);font-size:clamp(1.05rem,2vw,1.3rem)!important}
+.blk>.fold-head:hover{border-color:var(--gold)}
+.fold-btn{all:unset;box-sizing:border-box;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;color:inherit;box-shadow:0 4px 14px rgba(14,42,82,.05);transition:border-color .2s,box-shadow .2s}
+.fold-btn:hover{border-color:var(--gold)}
+.fold-btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.fold-btn[aria-expanded="true"]{border-color:rgba(199,154,74,.6);border-bottom-left-radius:0;border-bottom-right-radius:0}
+.fold-ic{flex:none;width:26px;height:26px;border-radius:50%;background:#EEF4FA;position:relative}
+.fold-ic::before,.fold-ic::after{content:"";position:absolute;left:50%;top:50%;width:11px;height:2px;margin:-1px 0 0 -5.5px;background:#0E2A52;border-radius:2px;transition:transform .25s}
+.fold-ic::after{transform:rotate(90deg)}
+[aria-expanded="true"]>.fold-ic::after{transform:rotate(0)}
+.fold-body{padding:16px 4px 4px;animation:foldin .3s ease}
+@keyframes foldin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.prose .fold-head{font-size:.98rem;border:0!important;padding:0!important;margin:6px 0 0!important}
+.prose .fold-btn{padding:9px 12px;box-shadow:none}
+.prose .fold-ic{width:22px;height:22px}
+.fold-all{margin:0 0 6px auto;display:block}
+.more-hide{display:none!important}
+.gl-more{all:unset;box-sizing:border-box;display:block;margin:16px auto 0;padding:11px 26px;border-radius:999px;border:1px solid var(--gold);color:#0E2A52;font-weight:700;font-size:.9rem;cursor:pointer;background:#fff;text-align:center;box-shadow:0 4px 14px rgba(14,42,82,.06)}
+.gl-more:hover{background:#FBF6EC}
+.gl-more:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.co-greet .gl-more{margin:0;justify-self:start}
+.ff-btn{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:10px;font:inherit;color:inherit;letter-spacing:inherit}
+.ff-btn .fold-ic{display:none}
+@media (max-width:700px){
+  .ff-col{border-top:1px solid rgba(255,255,255,.1)}
+  .ff-col>h4{margin:0!important}
+  .ff-btn{display:flex;width:100%;justify-content:space-between;padding:14px 0}
+  .ff-btn .fold-ic{display:block;background:rgba(255,255,255,.12)}
+  .ff-btn .fold-ic::before,.ff-btn .fold-ic::after{background:#fff}
+  .ff-col>ul{display:none!important}
+  .ff-col.ff-open>ul{display:grid!important;padding-bottom:12px}
+  .ftr .cols{gap:0!important}
+  .ftr .cols>div:first-child{padding-bottom:18px}
+  /* 会社情報の表：見出しと内容を横に並べて短くする */
+  .co-info .tbl th,.co-info .tbl td{display:table-cell!important;padding:10px 12px!important}
+  .co-info .tbl th{width:6.5em!important;font-size:.8rem!important;border-bottom:1px solid var(--line)!important}
+  .co-info .tbl td{font-size:.88rem}
+}
+</style>
 </head><body>
 <a class="skip" href="#view">本文へスキップ</a>
 <div id="glow" aria-hidden="true"></div><div id="scene" aria-hidden="true"><div class="ly space"><canvas id="stars"></canvas></div><div class="ly earth"></div><div class="ly city"></div></div>
@@ -1225,16 +1276,16 @@ select.flash{animation:flash 1s ease}
     
     
   </div>
-  <div class="blk rv"><h2>企業との連携領域</h2>
-    <div class="panel"><ul class="ticks"><li>経営課題の整理と改善計画の策定</li><li>業務効率化・AI導入による生産性の向上</li><li>M&amp;A・事業承継に向けた専門家との連携</li></ul></div>
-    <p class="muted" style="font-size:.86rem;margin:0">連携内容・提供条件は個別に協議します。掲載は提携成立や提供開始を保証するものではありません。</p>
-  </div>
-  <div class="blk rv"><h2>つながりマップ</h2>
-    <p class="muted" style="margin:0;font-size:.88rem">丸をドラッグすると線がのび、押すと内容が表示されます。金は連携領域、水色は対象企業です。</p>
-    <div class="cmap" id="cmap"><svg class="cmap-lines" aria-hidden="true"><line class="g" x1="539" y1="224.1" x2="763.05809246711" y2="156.87"></line><line class="g" x1="539" y1="224.1" x2="539" y2="358.56"></line><line class="g" x1="539" y1="224.1" x2="314.94190753289" y2="156.86999999999998"></line><line class="c" x1="539" y1="224.1" x2="856.4156309950725" y2="313.73999999999995"></line><line class="c" x1="539" y1="224.1" x2="221.58436900492757" y2="313.74000000000007"></line><line class="c" x1="539" y1="224.1" x2="538.9999999999999" y2="44.820000000000014"></line><circle r="3" cx="651.029046233555" cy="190.485"></circle><circle r="3" cx="539" cy="291.33"></circle><circle r="3" cx="426.970953766445" cy="190.48499999999999"></circle><circle r="3" cx="697.7078154975362" cy="268.91999999999996"></circle><circle r="3" cx="380.2921845024638" cy="268.92"></circle><circle r="3" cx="539" cy="134.46"></circle></svg><div class="cmap-info" id="cmap-info" aria-live="polite">企業支援・経営サポートを中心に、連携の広がりを表しています。</div><button type="button" class="cnd core" style="left: 539px; top: 224.1px;">企業支援・経営サポート</button><button type="button" class="cnd g" style="left: 763.058px; top: 156.87px;">経営課題の整理と改善計画の策定</button><button type="button" class="cnd g" style="left: 539px; top: 358.56px;">業務効率化・AI導入による生産性の向上</button><button type="button" class="cnd g" style="left: 314.942px; top: 156.87px;">M&amp;A・事業承継に向けた専門家との連携</button><button type="button" class="cnd c" style="left: 856.416px; top: 313.74px;">中小企業の経営者・役員</button><button type="button" class="cnd c" style="left: 221.584px; top: 313.74px;">事業承継やM&amp;Aを検討する企業</button><button type="button" class="cnd c" style="left: 539px; top: 44.82px;">業務効率化・AI活用を進めたい企業</button></div>
-  </div>
-  <div class="blk"><h2>法人向け関連サービス</h2><div class="legend">提供方法：<span class="pv pv-s">自社サービス</span><span class="pv pv-p">提携サービス</span><span class="pv pv-r">専門家への取次</span><span class="pv pv-d">提供予定</span></div><div class="svc-groups"><div class="svc-group"><h3>経営</h3><div class="svc-list"><a class="svc" href="/glove-site/service-B01-01/" data-r="service-B01-01" style="animation-delay: 0ms;"><b>経営相談</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B01-02/" data-r="service-B01-02" style="animation-delay: 40ms;"><b>経営改善支援</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B01-03/" data-r="service-B01-03" style="animation-delay: 80ms;"><b>事業計画作成支援</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B01-04/" data-r="service-B01-04" style="animation-delay: 120ms;"><b>組織づくり支援</b><span class="pv pv-s">自社サービス</span></a></div></div><div class="svc-group"><h3>財務・承継</h3><div class="svc-list"><a class="svc" href="/glove-site/service-B01-05/" data-r="service-B01-05" style="animation-delay: 160ms;"><b>資金調達相談</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B01-06/" data-r="service-B01-06" style="animation-delay: 200ms;"><b>補助金・助成金情報提供</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B01-07/" data-r="service-B01-07" style="animation-delay: 240ms;"><b>M&amp;A・事業承継相談</b><span class="pv pv-r">専門家への取次</span></a><a class="svc" href="/glove-site/service-B01-08/" data-r="service-B01-08" style="animation-delay: 280ms;"><b>財務・税務の専門家紹介</b><span class="pv pv-r">専門家への取次</span></a></div></div><div class="svc-group"><h3>効率化・AI</h3><div class="svc-list"><a class="svc" href="/glove-site/service-B01-09/" data-r="service-B01-09" style="animation-delay: 320ms;"><b>業務効率化支援</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B01-10/" data-r="service-B01-10" style="animation-delay: 360ms;"><b>AI導入支援</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B01-11/" data-r="service-B01-11" style="animation-delay: 400ms;"><b>業務自動化</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B01-12/" data-r="service-B01-12" style="animation-delay: 440ms;"><b>経営管理システム</b><span class="pv pv-d">提供予定</span></a></div></div></div></div>
-  <div class="blk rv"><h2>法人連携の特長</h2><ul class="ticks"><li>相談窓口を一本化し、課題の全体像から整理します</li><li>資格を要する業務は専門家と役割分担して進めます</li><li>自社でも使うAI・業務改善の手法を、現場に合わせて提案します</li></ul></div>
+  <div class="blk rv"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-79akau">企業との連携領域<span class="fold-ic" aria-hidden="true"></span></button></h2>
+    
+    
+  <div id="fold-79akau" class="fold-body" hidden=""><div class="panel"><ul class="ticks"><li>経営課題の整理と改善計画の策定</li><li>業務効率化・AI導入による生産性の向上</li><li>M&amp;A・事業承継に向けた専門家との連携</li></ul></div><p class="muted" style="font-size:.86rem;margin:0">連携内容・提供条件は個別に協議します。掲載は提携成立や提供開始を保証するものではありません。</p></div></div>
+  <div class="blk rv"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-fznc86">つながりマップ<span class="fold-ic" aria-hidden="true"></span></button></h2>
+    
+    
+  <div id="fold-fznc86" class="fold-body" hidden=""><p class="muted" style="margin:0;font-size:.88rem">丸をドラッグすると線がのび、押すと内容が表示されます。金は連携領域、水色は対象企業です。</p><div class="cmap" id="cmap"><svg class="cmap-lines" aria-hidden="true"><line class="g" x1="NaN" y1="NaN" x2="NaN" y2="NaN"></line><line class="g" x1="NaN" y1="NaN" x2="NaN" y2="NaN"></line><line class="g" x1="NaN" y1="NaN" x2="NaN" y2="NaN"></line><line class="c" x1="NaN" y1="NaN" x2="NaN" y2="NaN"></line><line class="c" x1="NaN" y1="NaN" x2="NaN" y2="NaN"></line><line class="c" x1="NaN" y1="NaN" x2="NaN" y2="NaN"></line><circle r="3" cx="NaN" cy="NaN"></circle><circle r="3" cx="NaN" cy="NaN"></circle><circle r="3" cx="NaN" cy="NaN"></circle><circle r="3" cx="NaN" cy="NaN"></circle><circle r="3" cx="NaN" cy="NaN"></circle><circle r="3" cx="NaN" cy="NaN"></circle></svg><div class="cmap-info" id="cmap-info" aria-live="polite">企業支援・経営サポートを中心に、連携の広がりを表しています。</div><button type="button" class="cnd core" style="left: 539px; top: 224.1px;">企業支援・経営サポート</button><button type="button" class="cnd g" style="left: 763.058px; top: 156.87px;">経営課題の整理と改善計画の策定</button><button type="button" class="cnd g" style="left: 539px; top: 358.56px;">業務効率化・AI導入による生産性の向上</button><button type="button" class="cnd g" style="left: 314.942px; top: 156.87px;">M&amp;A・事業承継に向けた専門家との連携</button><button type="button" class="cnd c" style="left: 856.416px; top: 313.74px;">中小企業の経営者・役員</button><button type="button" class="cnd c" style="left: 221.584px; top: 313.74px;">事業承継やM&amp;Aを検討する企業</button><button type="button" class="cnd c" style="left: 539px; top: 44.82px;">業務効率化・AI活用を進めたい企業</button></div></div></div>
+  <div class="blk"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-d31prn">法人向け関連サービス<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-d31prn" class="fold-body" hidden=""><div class="legend">提供方法：<span class="pv pv-s">自社サービス</span><span class="pv pv-p">提携サービス</span><span class="pv pv-r">専門家への取次</span><span class="pv pv-d">提供予定</span></div><div class="svc-groups"><div class="svc-group"><h3 class="fold-head"><button type="button" class="fold-btn" aria-expanded="true" aria-controls="fold-5rpbjf">経営<span class="fold-ic" aria-hidden="true"></span></button></h3><div id="fold-5rpbjf" class="fold-body"><div class="svc-list"><a class="svc" href="/glove-site/service-B01-01/" data-r="service-B01-01" style="animation-delay: 0ms;"><b>経営相談</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B01-02/" data-r="service-B01-02" style="animation-delay: 40ms;"><b>経営改善支援</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B01-03/" data-r="service-B01-03" style="animation-delay: 80ms;"><b>事業計画作成支援</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B01-04/" data-r="service-B01-04" style="animation-delay: 120ms;"><b>組織づくり支援</b><span class="pv pv-s">自社サービス</span></a></div></div></div><div class="svc-group"><h3 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-sxrmtt">財務・承継<span class="fold-ic" aria-hidden="true"></span></button></h3><div id="fold-sxrmtt" class="fold-body" hidden=""><div class="svc-list"><a class="svc" href="/glove-site/service-B01-05/" data-r="service-B01-05" style="animation-delay: 160ms;"><b>資金調達相談</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B01-06/" data-r="service-B01-06" style="animation-delay: 200ms;"><b>補助金・助成金情報提供</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B01-07/" data-r="service-B01-07" style="animation-delay: 240ms;"><b>M&amp;A・事業承継相談</b><span class="pv pv-r">専門家への取次</span></a><a class="svc" href="/glove-site/service-B01-08/" data-r="service-B01-08" style="animation-delay: 280ms;"><b>財務・税務の専門家紹介</b><span class="pv pv-r">専門家への取次</span></a></div></div></div><div class="svc-group"><h3 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-s4wd7v">効率化・AI<span class="fold-ic" aria-hidden="true"></span></button></h3><div id="fold-s4wd7v" class="fold-body" hidden=""><div class="svc-list"><a class="svc" href="/glove-site/service-B01-09/" data-r="service-B01-09" style="animation-delay: 320ms;"><b>業務効率化支援</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B01-10/" data-r="service-B01-10" style="animation-delay: 360ms;"><b>AI導入支援</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B01-11/" data-r="service-B01-11" style="animation-delay: 400ms;"><b>業務自動化</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B01-12/" data-r="service-B01-12" style="animation-delay: 440ms;"><b>経営管理システム</b><span class="pv pv-d">提供予定</span></a></div></div></div></div></div></div>
+  <div class="blk rv"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-vfgovs">法人連携の特長<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-vfgovs" class="fold-body" hidden=""><ul class="ticks"><li>相談窓口を一本化し、課題の全体像から整理します</li><li>資格を要する業務は専門家と役割分担して進めます</li><li>自社でも使うAI・業務改善の手法を、現場に合わせて提案します</li></ul></div></div>
   
   
   <div class="blk rv"><h2>ほかの事業へ</h2><div class="dial-wrap" data-cur="management"><div class="dial" role="group" aria-label="事業ダイヤル（ドラッグで回転）"><div class="dial-ring" style="transform: rotate(0deg);"><span data-i="0" style="transform:rotate(0deg) translateY(calc(-1 * min(300px,78vw) / 2 + 30px)) rotate(0deg)" class="cur">01</span><span data-i="1" style="transform:rotate(30deg) translateY(calc(-1 * min(300px,78vw) / 2 + 30px)) rotate(-30deg)">02</span><span data-i="2" style="transform:rotate(60deg) translateY(calc(-1 * min(300px,78vw) / 2 + 30px)) rotate(-60deg)">03</span><span data-i="3" style="transform:rotate(90deg) translateY(calc(-1 * min(300px,78vw) / 2 + 30px)) rotate(-90deg)">04</span><span data-i="4" style="transform:rotate(120deg) translateY(calc(-1 * min(300px,78vw) / 2 + 30px)) rotate(-120deg)">05</span><span data-i="5" style="transform:rotate(150deg) translateY(calc(-1 * min(300px,78vw) / 2 + 30px)) rotate(-150deg)">06</span><span data-i="6" style="transform:rotate(180deg) translateY(calc(-1 * min(300px,78vw) / 2 + 30px)) rotate(-180deg)">07</span><span data-i="7" style="transform:rotate(210deg) translateY(calc(-1 * min(300px,78vw) / 2 + 30px)) rotate(-210deg)">08</span><span data-i="8" style="transform:rotate(240deg) translateY(calc(-1 * min(300px,78vw) / 2 + 30px)) rotate(-240deg)">09</span><span data-i="9" style="transform:rotate(270deg) translateY(calc(-1 * min(300px,78vw) / 2 + 30px)) rotate(-270deg)">10</span><span data-i="10" style="transform:rotate(300deg) translateY(calc(-1 * min(300px,78vw) / 2 + 30px)) rotate(-300deg)">11</span><span data-i="11" style="transform:rotate(330deg) translateY(calc(-1 * min(300px,78vw) / 2 + 30px)) rotate(-330deg)">12</span></div><div class="dial-hub">GLOVE</div></div>
@@ -1946,6 +1997,57 @@ function corporateBiz(b) {
 }
 
 
+
+/* ===== 縦に長くなりすぎないよう、タップで開く仕組み ===== */
+const FOLD_CLOSED = ["つながりマップ", "企業との連携領域", "法人連携の特長"];
+function foldHead(h, box, open) {
+  if (h.classList.contains("fold-head")) return;
+  h.classList.add("fold-head"); h.setAttribute("role", "button"); h.tabIndex = 0;
+  const ic = document.createElement("span"); ic.className = "fold-ic"; ic.setAttribute("aria-hidden", "true"); h.appendChild(ic);
+  const set = o => { box.classList.toggle("fx-closed", !o); h.setAttribute("aria-expanded", o); if (o) setTimeout(() => dispatchEvent(new Event("resize")), 30); };
+  set(open);
+  const tog = () => set(box.classList.contains("fx-closed"));
+  h.addEventListener("click", tog);
+  h.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tog(); } });
+}
+function moreList(el, nSp, nPc, unit) {
+  if (!el || el.dataset.more) return; const items = [...el.children]; el.dataset.more = "1";
+  const btn = document.createElement("button"); btn.type = "button"; btn.className = "more-btn"; el.after(btn);
+  el.classList.add("mw");
+  const paint = () => { const n = matchMedia("(max-width: 700px)").matches ? nSp : nPc, rest = items.length - n;
+    items.forEach((it, i) => it.classList.toggle("mx", i >= n));
+    btn.hidden = rest <= 0; const open = el.classList.contains("open");
+    btn.textContent = open ? "閉じる ▲" : `もっと見る（あと${rest}${unit}） ▼`; btn.setAttribute("aria-expanded", open); };
+  btn.addEventListener("click", () => { const was = el.classList.contains("open"); el.classList.toggle("open"); paint();
+    if (was) el.scrollIntoView({ block: "start", behavior: "smooth" }); else setTimeout(() => dispatchEvent(new Event("resize")), 30); });
+  addEventListener("resize", () => { if (el.isConnected) paint(); }); paint();
+}
+function foldUI(root) {
+  if (!root) return;
+  /* 一覧：最初の数件だけ見せる */
+  moreList($(".b12-grid", root), 4, 6, "件");
+  moreList($(".fld-grid", root), 3, 9, "件");
+  const panels = [...root.querySelectorAll(".wrap > div")].find(d => d.children.length > 6 && [...d.children].every(c => c.matches("a.panel")));
+  moreList(panels, 4, 6, "件");
+  moreList($(".philosophy-axis-grid", root), 3, 9, "件");
+  moreList($(".case-grid", root), 2, 3, "件");
+  /* 見出しを押すと開く */
+  $$(".blk", root).forEach(b => { const h = b.querySelector(":scope > h2"); if (h && FOLD_CLOSED.some(t => h.textContent.trim().startsWith(t))) foldHead(h, b, false); });
+  $$(".svc-group", root).forEach((g, i) => { const h = g.querySelector(":scope > h3"); if (h) foldHead(h, g, i === 0); });
+  $$(".sm-group", root).forEach(g => { const h = g.querySelector(":scope > h3"); if (h) foldHead(h, g, false); });
+  /* 規約・個人情報など：見出しごとに区切って、たたむ */
+  $$(".prose", root).forEach(pr => {
+    const hs = [...pr.children].filter(c => c.tagName === "H2"); if (hs.length < 3 || pr.dataset.folded) return; pr.dataset.folded = "1";
+    hs.forEach((h, i) => { const sec = document.createElement("div"); sec.className = "fold-sec"; h.before(sec); sec.appendChild(h);
+      let n = sec.nextSibling; while (n && !(n.nodeType === 1 && n.tagName === "H2")) { const nx = n.nextSibling; sec.appendChild(n); n = nx; }
+      foldHead(h, sec, i === 0); });
+  });
+  /* 代表あいさつ：最初の段落だけ見せる */
+  const gp = $(".co-greet .panel", root);
+  if (gp && !gp.dataset.more) { gp.dataset.more = "1"; gp.classList.add("greet-short");
+    const b = document.createElement("button"); b.type = "button"; b.className = "more-btn"; b.textContent = "続きを読む ▼"; gp.after(b);
+    b.addEventListener("click", () => { const o = gp.classList.toggle("greet-short"); b.textContent = o ? "続きを読む ▼" : "閉じる ▲"; }); }
+}
 /* ===== 英語の見出しを日本語に置き換える（表示の直後に実行） ===== */
 const JA_LABEL = { "SERVICES": "サービス", "OVERVIEW": "概要", "COLLABORATION": "連携", "CONNECTION MAP": "つながり図", "BENEFITS": "特長", "BUSINESS DIAL": "事業ダイヤル",
   "CONNECT": "つなぐ", "CREATE": "創る", "EVOLVE": "進化する", "RELATED": "関連", "OUR PHILOSOPHY": "企業理念", "SERVICE FINDER": "サービス検索", "PARTNERSHIP": "提携",
@@ -1972,6 +2074,62 @@ function jaLabels(root) {
 let jaTimer = 0;
 new MutationObserver(ms => { if (ms.some(m => m.addedNodes.length)) { clearTimeout(jaTimer); jaTimer = setTimeout(() => jaLabels(document.body), 30); } })
   .observe(document.documentElement, { childList: true, subtree: true });
+
+/* ===== 縦長を抑える：タップで開く仕組み ===== */
+const FOLD_SKIP = "iframe,form,.dial,.dial-wrap,.co-map,.bdv-video,video,.stampcard";
+function foldBtn(label, open) { return `<span class="fold-ic" aria-hidden="true"></span>`; }
+function makeFold(head, body, open) {
+  const id = "fold-" + Math.random().toString(36).slice(2, 8);
+  body.id = id; body.classList.add("fold-body"); body.hidden = !open;
+  const btn = document.createElement("button"); btn.type = "button"; btn.className = "fold-btn"; btn.setAttribute("aria-expanded", open); btn.setAttribute("aria-controls", id);
+  while (head.firstChild) btn.appendChild(head.firstChild);
+  btn.insertAdjacentHTML("beforeend", '<span class="fold-ic" aria-hidden="true"></span>');
+  head.appendChild(btn); head.classList.add("fold-head");
+  btn.addEventListener("click", () => { const o = btn.getAttribute("aria-expanded") !== "true"; btn.setAttribute("aria-expanded", o); body.hidden = !o; if (o) { body.querySelectorAll(".rv.pre").forEach(e => e.classList.remove("pre")); setTimeout(() => dispatchEvent(new Event("resize")), 30); } });
+}
+function moreGrid(grid, keep, label) {
+  if (!grid || grid.dataset.more) return; const kids = [...grid.children]; if (kids.length <= keep) return;
+  grid.dataset.more = "1"; kids.slice(keep).forEach(k => k.classList.add("more-hide"));
+  const b = document.createElement("button"); b.type = "button"; b.className = "gl-more"; b.textContent = label.replace("{n}", kids.length - keep);
+  b.addEventListener("click", () => { kids.forEach(k => { k.classList.remove("more-hide"); k.classList.remove("pre"); }); b.remove(); });
+  grid.after(b);
+}
+function foldPage(r) {
+  const v = $("#view"); if (!v || r === "admin" || r === "admin-login") return;
+  const phone = matchMedia("(max-width:700px)").matches;
+  // 1) 見出しのある区切り（最初の区切り・動く仕掛けを含む区切りは開いたまま）
+  const blks = $$(".page .blk", v).filter(b => b.querySelector(":scope > h2") && !b.closest(".fold-body"));
+  blks.forEach((b, i) => {
+    if ((i === 0 && r !== "sitemap") || b.querySelector(FOLD_SKIP) || b.classList.contains("co-greet") || b.classList.contains("no-fold")) return;
+    const h = b.querySelector(":scope > h2"); const body = document.createElement("div");
+    [...b.children].filter(c => c !== h).forEach(c => body.appendChild(c)); b.appendChild(body); makeFold(h, body, false);
+  });
+  // 2) 規約・方針の本文は、見出しごとに開閉
+  $$(".prose", v).forEach(pr => {
+    const hs = $$(":scope > h2", pr); if (hs.length < 3) return;
+    hs.forEach(h => { const body = document.createElement("div"); let n = h.nextElementSibling;
+      while (n && n.tagName !== "H2") { const nx = n.nextElementSibling; body.appendChild(n); n = nx; }
+      h.after(body); makeFold(h, body, false); });
+    const all = document.createElement("button"); all.type = "button"; all.className = "gl-more fold-all"; all.textContent = "すべて開く";
+    all.addEventListener("click", () => { const open = all.textContent === "すべて開く"; $$(".fold-btn", pr).forEach(bt => { if ((bt.getAttribute("aria-expanded") === "true") !== open) bt.click(); }); all.textContent = open ? "すべて閉じる" : "すべて開く"; });
+    pr.prepend(all);
+  });
+  // 3) 代表あいさつは最初の段落だけ見せる
+  const g = $(".co-greet .panel", v);
+  if (g) { const ps = $$(":scope > p", g); const rest = ps.slice(1); if (rest.length) { rest.forEach(x => x.classList.add("more-hide"));
+    const b = document.createElement("button"); b.type = "button"; b.className = "gl-more"; b.textContent = "続きを読む";
+    b.addEventListener("click", () => { rest.forEach(x => x.classList.remove("more-hide")); b.remove(); }); ps[0].after(b); } }
+  // 4) スマホでは、事業の一覧を途中まで表示
+  $$(".svc-group", v).forEach((g, i) => { const h = g.querySelector(":scope > h3"); if (!h || h.querySelector(".fold-btn")) return; const body = document.createElement("div"); [...g.children].filter(c => c !== h).forEach(c => body.appendChild(c)); g.appendChild(body); makeFold(h, body, i === 0); });
+  if (phone) { moreGrid($(".fld-grid", v), 3, "残り{n}領域を見る"); moreGrid($(".philosophy-axis-grid", v), 3, "残り{n}つを見る"); moreGrid($(".b12-grid", v), 3, "残り{n}事業を見る"); moreGrid($(".biz-all", v), 3, "残り{n}事業を見る"); moreGrid($(".case-grid", v), 2, "ほかの例を見る（{n}件）"); }
+}
+function foldFooter() {
+  $$(".ftr .cols > div").forEach(col => { const h = col.querySelector(":scope > h4"), ul = col.querySelector(":scope > ul"); if (!h || !ul || h.querySelector("button")) return;
+    const id = "ff-" + Math.random().toString(36).slice(2, 7); ul.id = id;
+    const b = document.createElement("button"); b.type = "button"; b.className = "ff-btn"; b.setAttribute("aria-expanded", "false"); b.setAttribute("aria-controls", id);
+    while (h.firstChild) b.appendChild(h.firstChild); b.insertAdjacentHTML("beforeend", '<span class="fold-ic" aria-hidden="true"></span>'); h.appendChild(b); col.classList.add("ff-col");
+    b.addEventListener("click", () => { const o = b.getAttribute("aria-expanded") !== "true"; b.setAttribute("aria-expanded", o); col.classList.toggle("ff-open", o); }); });
+}
 /* ---------- routes ---------- */
 const NAV = [["philosophy", "企業理念"], ["business", "事業領域"], ["finder", "サービスを探す"], ["partnership", "提携企業募集"], ["company", "会社概要"]];
 const META = {
@@ -2066,6 +2224,7 @@ function render() {
   window.scrollTo({ top: 0, behavior: "auto" });
   if (after) after();
   try { pageFx(r); } catch (e) { console.warn(e); }
+  try { foldPage(r); } catch (e) { console.warn(e); }
   jaLabels(document.body);
   setupReveal();
 }
@@ -2251,7 +2410,7 @@ function pageBusinessTop() {
   ${fieldGrid()}
   <div class="sec-head biz-more-head rv"><span class="eyebrow">Business &amp; Services</span><h2>12の事業・連携領域</h2><p>9つの事業領域を、具体的な事業・サービスとしてご案内します。</p></div>
   <div style="margin-bottom:24px">${legend()}</div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px">${items}</div>
+  <div class="biz-all" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px">${items}</div>
 </div></section>${ctaBand()}`;
 }
 
@@ -2396,7 +2555,7 @@ function pageCompany() {
       <p style="margin:0">お客様にとって、最初に相談できる窓口であり続けること。そして、つながりから新しい価値を生み出し、地域と社会に還元していくこと。それが私たちの目指す姿です。どうぞお気軽にご相談ください。</p>
       <p style="margin:0;text-align:right;font-family:var(--f-display);font-weight:700">株式会社グローブ　代表取締役　藤原 重郎</p>
     </div></div>
-  <div class="blk"><h2>会社情報</h2>
+  <div class="blk co-info no-fold"><h2>会社情報</h2>
   <table class="tbl"><tbody>${rows.map(([k, v]) => `<tr><th scope="row">${k}</th><td style="white-space:pre-line">${esc(v)}</td></tr>`).join("")}</tbody></table></div>
   <div class="blk"><h2>所在地・アクセス</h2>
     <div class="co-map"><iframe title="株式会社グローブ・買取大吉 大阪勝山南店の地図" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3282.0215739945393!2d135.52963297631027!3d34.65415808570783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6000df47e95dfd91%3A0x3d03a50c011b5ac5!2z6LK35Y-W5aSn5ZCJIOWkp-mYquWLneWxseWNl-W6lw!5e0!3m2!1sja!2sjp!4v1746500047292!5m2!1sja!2sjp" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>
@@ -2633,7 +2792,7 @@ function pageDisclaimer() {
 function pageSitemap() {
   const L = [["home", "トップページ"], ["philosophy", "企業理念"], ["business", "事業領域"], ...BUSINESSES.map(b => ["business-" + b.id, "　" + b.ja]), ["finder", "サービスを探す"], ["partnership", "提携企業募集"], ["company", "会社概要"], ["contact", "お問い合わせ"], ["privacy", "プライバシーポリシー"], ["terms", "利用規約"], ["disclaimer", "免責事項"], ...(PATH_MODE ? [] : [["admin-login", "管理者ログイン"]])];
   return `${phead("SITEMAP", "サイトマップ", "", [[null, "サイトマップ"]])}<section class="page"><div class="wrap"><ul class="sitemap">${L.map(([h, t]) => `<li><a href="#${h}">${esc(t)}</a></li>`).join("")}</ul>
-  <div class="blk" style="margin-top:36px"><h2>サービス別ページ<small>SERVICES</small></h2><ul class="sitemap">${pubServices().map(s => `<li><a href="#service-${s.id}">${esc(s.id)} ${esc(s.name)}</a></li>`).join("")}</ul></div></div></section>`;
+  <div class="blk" style="margin-top:36px"><h2>サービス別ページ</h2>${BUSINESSES.filter(b => S.biz[b.id].published !== false).map(b => { const sv = pubServices().filter(s => s.big === b.id); return sv.length ? `<div class="sm-group" data-fold="closed"><h3>${esc(b.no)} ${esc(b.ja)}（${sv.length}件）</h3><ul class="sitemap">${sv.map(s => `<li><a href="#service-${s.id}">${esc(s.name)}</a></li>`).join("")}</ul></div>` : ""; }).join("")}</div></div></section>`;
 }
 function pageNotFound() {
   return `${phead("NOT FOUND", "ページが見つかりません", "お探しのページは移動または非公開になった可能性があります。")}<section class="page"><div class="wrap"><a class="btn btn-navy" href="#home">トップページへ</a></div></section>`;
@@ -3184,7 +3343,7 @@ $("#menu-btn").addEventListener("click", () => { const n = $("#gnav"); n.classLi
 addEventListener("hashchange", () => { if (globeStop && route() !== "home") { globeStop(); globeStop = null; } render(); });
 $("#year").textContent = new Date().getFullYear();
 if (PATH_MODE) $$('footer a[href="#admin-login"], footer a[data-r="admin-login"]').forEach(a => (a.closest("li") || a).remove());
-fixLinks(document); jaLabels(document.body); initScene(); paintLogo(); paintFooter(); render(); boot();
+fixLinks(document); jaLabels(document.body); foldFooter(); initScene(); paintLogo(); paintFooter(); render(); boot();
 </script>
 
 </body></html>
