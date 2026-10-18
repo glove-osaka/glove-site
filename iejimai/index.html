@@ -740,9 +740,9 @@ window.playOpening=open;
 var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 var h=location.hash||'';
 if(h==='#op'||h==='#top--op'){open()}
-else if(!reduce&&!seen()&&(h===''||h==='#top')){open()}
+else if(h===''||h==='#top'){open()}
 window.addEventListener('hashchange',function(){if(location.hash==='#op')open()});
-document.addEventListener('pagechange',function(e){if(e.detail.page==='top'&&e.detail.sub==='op'&&(op.hidden||done))open()});
+var first=true;document.addEventListener('pagechange',function(e){if(first){first=false;return}if(e.detail.page==='top'&&(e.detail.sub==='op'||!e.detail.sub)&&(op.hidden||done))open()});
 })();</script>
 </body>
 </html>
