@@ -734,9 +734,28 @@ details[open]>summary .fold-k{background:var(--navy);color:var(--on-navy)}
 .send-done b{font-size:1.1rem}
 .send-done p{color:var(--ink);margin-top:6px}
 #cCopy{margin-top:4px}
+
+/* オープニングの締め：窓口名を中央に大きく、運営会社は右下に小さく */
+.op-dim{position:absolute;inset:0;z-index:2;background:radial-gradient(ellipse at 50% 50%,rgba(3,7,15,.84) 0%,rgba(3,7,15,.94) 65%);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;transition:opacity 1.6s ease;pointer-events:none}
+.opn.t3 .op-dim{opacity:1}
+.opn.t3 .op-text .ln{opacity:0;filter:blur(8px);transform:translateY(-12px);transition-duration:1.2s}
+.op-title{position:absolute;z-index:4;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,1100px);display:grid;justify-items:center;gap:clamp(14px,2.4vh,26px);text-align:center;pointer-events:none}
+.op-title .brand-mark{width:clamp(56px,7vw,92px);height:auto;aspect-ratio:1;color:#FBF6EA;opacity:0;transform:scale(.7);transition:opacity 1.2s ease .1s,transform 1.4s cubic-bezier(.2,.8,.2,1) .1s}
+.op-name{margin:0;font-family:var(--f-display);font-weight:800;color:#fff;line-height:1.25;display:flex;flex-wrap:wrap;justify-content:center;gap:0 .45em;font-size:clamp(2.3rem,7.2vw,5.6rem);letter-spacing:.32em;text-shadow:0 4px 40px rgba(0,0,0,.6),0 0 60px rgba(211,139,44,.25);opacity:0;filter:blur(14px);transition:opacity 1.8s ease .3s,filter 1.8s ease .3s,letter-spacing 2.6s cubic-bezier(.2,.8,.2,1) .3s}
+.op-name span{white-space:nowrap;margin-right:-.32em}
+.op-rule{display:block;height:2px;width:0;background:linear-gradient(90deg,transparent,#E8B46A,transparent);transition:width 1.6s ease .9s}
+.opn.t3 .op-title .brand-mark{opacity:1;transform:none}
+.opn.t3 .op-name{opacity:1;filter:none;letter-spacing:.12em}
+.opn.t3 .op-name span{margin-right:-.12em}
+.opn.t3 .op-rule{width:min(60vw,520px)}
+.op-title .op-go{margin-top:clamp(6px,1.4vh,14px)}
+.opn.t4 .op-title{pointer-events:auto}
+.op-corp{position:absolute;z-index:4;right:max(18px,env(safe-area-inset-right,0px));bottom:calc(6vh + 10px);margin:0;font-size:.78rem;letter-spacing:.14em;color:rgba(217,225,238,.6);opacity:0;transition:opacity 1.6s ease 1.2s}
+.opn.t3 .op-corp{opacity:1}
+@media (max-width:640px){.op-name{flex-direction:column;align-items:center;font-size:clamp(2.3rem,11vw,3.2rem)}.op-title .op-go{width:min(86vw,360px)}.op-corp{bottom:calc(9vh + 8px)}}
 </style>
 </head><body>
-<div class="opn" id="op" hidden role="dialog" aria-modal="true" aria-label="オープニング映像"><canvas id="opC" aria-hidden="true"></canvas><div class="op-start" id="opStart"><div class="op-start-in"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="3" y="3" width="42" height="42" rx="9" stroke="currentColor" stroke-width="2"/><path d="M14 13h13l7 7v16H14z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M27 13v7h7" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="30" cy="31" r="5.5" fill="var(--amber-b)" stroke="none"/><path d="M18.5 23h8M18.5 27.5h5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><p class="op-start-t">企業支援 総合相談窓口</p><p class="op-start-s">はじめに、短い映像（約13秒）をご覧ください。</p><div class="op-start-b"><button type="button" class="op-sb on" id="opSound">音ありで見る</button><button type="button" class="op-sb" id="opMute">音なしで見る</button></div><button type="button" class="op-sk" id="opSkip0">映像をとばして、ホームページへ</button></div></div><div class="op-text"><p class="ln ln1">許可、補助金、資金、人。</p><p class="ln ln2">会社の困りごとを、<br>ひとつの窓口で。</p></div><div class="op-foot"><div class="op-brand"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="3" y="3" width="42" height="42" rx="9" stroke="currentColor" stroke-width="2"/><path d="M14 13h13l7 7v16H14z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M27 13v7h7" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="30" cy="31" r="5.5" fill="var(--amber-b)" stroke="none"/><path d="M18.5 23h8M18.5 27.5h5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><div><b>企業支援 総合相談窓口</b><small>運営　株式会社グローブ</small></div></div><button class="op-go" id="opGo" type="button">ホームページへ進む</button></div><button class="op-skip" id="opSkip" type="button">とばす</button></div><a class="skip" href="#main">本文へ移動</a>
+<div class="opn" id="op" hidden role="dialog" aria-modal="true" aria-label="オープニング映像"><canvas id="opC" aria-hidden="true"></canvas><div class="op-start" id="opStart"><div class="op-start-in"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="3" y="3" width="42" height="42" rx="9" stroke="currentColor" stroke-width="2"/><path d="M14 13h13l7 7v16H14z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M27 13v7h7" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="30" cy="31" r="5.5" fill="var(--amber-b)" stroke="none"/><path d="M18.5 23h8M18.5 27.5h5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><p class="op-start-t">企業支援 総合相談窓口</p><p class="op-start-s">はじめに、短い映像（約13秒）をご覧ください。</p><div class="op-start-b"><button type="button" class="op-sb on" id="opSound">音ありで見る</button><button type="button" class="op-sb" id="opMute">音なしで見る</button></div><button type="button" class="op-sk" id="opSkip0">映像をとばして、ホームページへ</button></div></div><div class="op-text"><p class="ln ln1">許可、補助金、資金、人。</p><p class="ln ln2">会社の困りごとを、<br>ひとつの窓口で。</p></div><div class="op-dim" aria-hidden="true"></div><div class="op-title"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="3" y="3" width="42" height="42" rx="9" stroke="currentColor" stroke-width="2"/><path d="M14 13h13l7 7v16H14z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M27 13v7h7" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="30" cy="31" r="5.5" fill="var(--amber-b)" stroke="none"/><path d="M18.5 23h8M18.5 27.5h5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><p class="op-name"><span>企業支援</span><span>総合相談窓口</span></p><span class="op-rule" aria-hidden="true"></span><button class="op-go" id="opGo" type="button">ホームページへ進む</button></div><p class="op-corp">運営　株式会社グローブ</p><button class="op-skip" id="opSkip" type="button">とばす</button></div><a class="skip" href="#main">本文へ移動</a>
 <div class="util"><div class="wrap"><span class="op">運営：<b>株式会社グローブ</b>　資格が必要な業務は提携の専門家が担当します</span>
 <div class="fs" role="group" aria-label="文字の大きさ"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 25 10 8l6 17M6.2 19h7.6"/><path class="ac" d="M18 25l4.5-12L27 25M19.6 21h5.8"/></svg><span>文字の大きさ</span><button type="button" data-fs="" aria-pressed="true">標準</button><button type="button" data-fs="l" aria-pressed="false">大</button><button type="button" data-fs="xl" aria-pressed="false">特大</button></div></div></div>
 <header class="hd"><div class="wrap hd-in">
@@ -1395,7 +1414,7 @@ function draw(now){
   cx.fillStyle = v; cx.fillRect(0, 0, W, H);
 
   // 文字（DOM）とボタン
-  op.classList.toggle('t1', t > 7.4); op.classList.toggle('t2', t > 8.6); op.classList.toggle('t3', t > 9.8); op.classList.toggle('t4', t > 11);
+  op.classList.toggle('t1', t > 7.4); op.classList.toggle('t2', t > 8.6); op.classList.toggle('t3', t > 9.8); op.classList.toggle('t4', t > 11.2);
   if (t < 30 && running) raf = requestAnimationFrame(draw);
 }
 function roundRect(x, y, w, h, r){cx.beginPath(); cx.moveTo(x + r, y); cx.arcTo(x + w, y, x + w, y + h, r); cx.arcTo(x + w, y + h, x, y + h, r); cx.arcTo(x, y + h, x, y, r); cx.arcTo(x, y, x + w, y, r); cx.closePath()}
@@ -1406,7 +1425,7 @@ function play(sound){
   size(); sparks.length = 0; t0 = performance.now(); running = true;
   if (sound) audioStart();
   raf = requestAnimationFrame(draw);
-  setTimeout(() => {if (running) goBtn.focus({preventScroll: true})}, 11200);
+  setTimeout(() => {if (running) goBtn.focus({preventScroll: true})}, 11400);
 }
 function close(){
   if (!running && op.hidden) return;
