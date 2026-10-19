@@ -28,7 +28,7 @@
   --bg:#F8F8F4; --surface:#FFFFFF; --ink:#16201B; --muted:#3B4740; --line:#C9D2CB;
   --pine:#1D4A3D; --pine-2:#163A30; --pine-deep:#0F2B23; --pine-soft:#E6EEE8; --on-pine:#FFFFFF;
   --gold:#8A621C; --gold-bright:#C99A45; --gold-soft:#F5ECDA; --band:#EEF2EC;
-  --f-display:"BIZ UDPMincho","Hiragino Mincho ProN","Yu Mincho",serif;
+  --f-display:"BIZ UDPMincho","Hiragino Mincho ProN","Yu Mincho","Noto Serif CJK JP","Noto Serif JP",serif;
   --f-body:"BIZ UDPGothic","Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",sans-serif;
   --wrap:1240px; font-size:100%;
 }
@@ -452,25 +452,28 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 @media (min-aspect-ratio:4/3){.opn::before,.opn::after{height:8.5vh}}
 .op-veil{position:absolute;inset:0;z-index:1;background:linear-gradient(0deg,rgba(8,6,4,.92) 0%,rgba(8,6,4,.78) 38%,rgba(8,6,4,.4) 55%,rgba(8,6,4,0) 72%);opacity:0;transition:opacity 2.4s ease}
 .opn.text .op-veil{opacity:1}
-.op-text{position:absolute;z-index:2;left:50%;top:14vh;transform:translateX(-50%);width:min(92vw,880px);text-align:center;color:#FBF6EA;font-family:var(--f-display)}
-.op-text .ln{margin:0;font-size:1.36rem;letter-spacing:.1em;line-height:1.8;opacity:0;filter:blur(10px);transform:translateY(8px);transition:opacity 2.6s ease,filter 2.6s ease,transform 2.6s ease;text-shadow:0 2px 18px rgba(0,0,0,.75)}
-.op-text .ln2{transition-delay:1.4s}
+.op-text{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);writing-mode:vertical-rl;white-space:nowrap;color:#FBF6EA;font-family:var(--f-display);transition:opacity 1.4s ease}
+.op-text::before{content:"";position:absolute;inset:-22% -70%;z-index:-1;background:radial-gradient(ellipse at center,rgba(8,6,4,.55) 0%,rgba(8,6,4,.3) 45%,rgba(8,6,4,0) 72%);opacity:0;transition:opacity 1.6s ease;pointer-events:none}
+.opn.catch .op-text::before{opacity:1}
+.opn.text .op-text{opacity:0}
+.op-text .ln{margin:0;font-size:min(5vh,9vw,3.2rem);font-weight:700;letter-spacing:.16em;line-height:1.9;opacity:0;filter:blur(10px);transform:translateY(-10px);transition:opacity 2.2s ease .8s,filter 2.2s ease .8s,transform 2.2s ease .8s;text-shadow:0 3px 24px rgba(0,0,0,.85),0 1px 4px rgba(0,0,0,.7)}
+.opn.catch .op-text .ln{opacity:1;filter:none;transform:none}
+.op-text .ln2{transition-delay:2.8s}
+.op-text .ln2{padding-top:2.2em}
 .op-title{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;justify-items:center;gap:clamp(22px,4vh,40px);width:min(94vw,1100px);text-align:center}
-.op-title::before{content:"";position:absolute;inset:-18% -6%;z-index:-1;background:radial-gradient(ellipse at center,rgba(8,6,4,.55) 0%,rgba(8,6,4,.28) 45%,rgba(8,6,4,0) 72%);opacity:0;transition:opacity 2s ease 2.4s;pointer-events:none}
-.op-name{display:flex;align-items:center;justify-content:center;gap:.35em;color:#FBF6EA;font-family:var(--f-display);opacity:0;filter:blur(8px);transform:scale(.97);transition:opacity 2.4s ease 2.6s,filter 2.4s ease 2.6s,transform 3s ease 2.6s;text-shadow:0 3px 28px rgba(0,0,0,.8),0 1px 4px rgba(0,0,0,.6)}
+.op-title::before{content:"";position:absolute;inset:-18% -6%;z-index:-1;background:radial-gradient(ellipse at center,rgba(8,6,4,.55) 0%,rgba(8,6,4,.28) 45%,rgba(8,6,4,0) 72%);opacity:0;transition:opacity 2s ease 1.2s;pointer-events:none}
+.op-name{display:flex;align-items:center;justify-content:center;gap:.35em;color:#FBF6EA;font-family:var(--f-display);opacity:0;filter:blur(8px);transform:scale(.97);transition:opacity 2.4s ease 1.4s,filter 2.4s ease 1.4s,transform 3s ease 1.4s;text-shadow:0 3px 28px rgba(0,0,0,.8),0 1px 4px rgba(0,0,0,.6)}
 .op-name b{font-size:clamp(2.2rem,7.2vw,5.6rem);letter-spacing:.14em;font-weight:700;white-space:nowrap;line-height:1.2}
 .op-name .brand-mark{width:clamp(52px,7vw,96px);height:clamp(52px,7vw,96px);color:#FBF6EA;flex-shrink:0;filter:drop-shadow(0 2px 12px rgba(0,0,0,.6))}
 .op-co{position:absolute;z-index:2;right:max(16px,3vw);bottom:max(14px,3vh);margin:0;font-family:var(--f-body);font-size:.82rem;letter-spacing:.12em;color:rgba(251,246,234,.62);opacity:0;transition:opacity 2s ease 4.4s;text-shadow:0 1px 6px rgba(0,0,0,.7)}
 @media (max-width:640px){.op-name{flex-direction:column;gap:14px}.op-name b{font-size:clamp(2rem,10.4vw,3rem);letter-spacing:.1em}}
-.op-go{opacity:0;transition:opacity 1.6s ease 4.2s;background:#C99A45;color:#1A1406;border:0;border-radius:10px;min-height:58px;padding:0 32px;font:inherit;font-family:var(--f-body);font-weight:700;font-size:1.1rem;cursor:pointer}
+.op-go{opacity:0;transition:opacity 1.6s ease 4s;background:#C99A45;color:#1A1406;border:0;border-radius:10px;min-height:58px;padding:0 32px;font:inherit;font-family:var(--f-body);font-weight:700;font-size:1.1rem;cursor:pointer}
 .op-go:hover{filter:brightness(1.07)}
-.opn.text .ln,.opn.text .op-name,.opn.text .op-go,.opn.text .op-co,.opn.text .op-title::before{opacity:1;filter:none;transform:none}
+.opn.text .op-name,.opn.text .op-go,.opn.text .op-co,.opn.text .op-title::before{opacity:1;filter:none;transform:none}
 .op-skip{position:absolute;z-index:4;right:max(16px,env(safe-area-inset-right,0px));top:max(16px,env(safe-area-inset-top,0px));min-height:48px;padding:0 20px;border-radius:99px;border:1px solid rgba(255,255,255,.7);background:rgba(20,16,12,.5);color:#fff;font:inherit;font-size:1rem;cursor:pointer}
 /* 横長の画面：映画の題字のように、左の暗い壁に縦書き */
 @media (min-aspect-ratio:4/3){
   .op-veil{background:linear-gradient(90deg,rgba(8,6,4,.62) 0%,rgba(8,6,4,.3) 18%,rgba(8,6,4,0) 30%),linear-gradient(0deg,rgba(8,6,4,.55) 0%,rgba(8,6,4,0) 24%)}
-  .op-text{left:4vw;top:50%;bottom:auto;transform:translateY(-50%);width:auto;max-height:76vh;writing-mode:vertical-rl;text-align:start;white-space:nowrap}
-  .op-text .ln{font-size:min(3.7vh,2.2rem);letter-spacing:.16em;line-height:2.1;transform:translateX(-8px)}
   .op-co{bottom:calc(8.5vh + 12px)}
   .op-name b{font-size:min(6.2vw,10vh,5.6rem)}
   .op-name .brand-mark{width:min(6vw,10vh,96px);height:min(6vw,10vh,96px)}
@@ -711,10 +714,10 @@ function fadeOut(){clearInterval(fadeI);if(au.paused)return;var vol=au.volume;fa
 function close(){if(done)return;done=true;clearTimeout(T);clearTimeout(AT);mark();var withSnd=started&&!au.muted;fadeOut();if(window.startBGM&&(withSnd||(function(){try{return localStorage.getItem('iejimai-bgm')==='on'}catch(e){return false}})()))setTimeout(function(){startBGM()},1400);op.classList.add('out');document.documentElement.style.overflow='';
  var hv=document.getElementById('heroV'),vc=document.getElementById('vctl');if(hv&&!(vc&&vc.classList.contains('paused'))){var p=hv.play();if(p&&p.catch)p.catch(function(){})}
  setTimeout(function(){op.hidden=true;try{v.pause()}catch(e){}},1700)}
-function showText(){if(shown)return;shown=true;op.classList.add('text');T=setTimeout(close,10000);var b=document.getElementById('opGo');setTimeout(function(){try{b.focus({preventScroll:true})}catch(e){}},4400)}
+function showText(){if(shown)return;shown=true;op.classList.add('catch','text');T=setTimeout(close,11000);var b=document.getElementById('opGo');setTimeout(function(){try{b.focus({preventScroll:true})}catch(e){}},4400)}
 function setSnd(on){au.muted=!on;snd.textContent=on?'音を消す':'音を出す';snd.setAttribute('aria-pressed',String(on))}
 function play(withSound){
- if(started)return;started=true;clearTimeout(AT);op.classList.add('playing');st.hidden=true;snd.hidden=false;
+ if(started)return;started=true;clearTimeout(AT);op.classList.add('playing');st.hidden=true;setTimeout(function(){op.classList.add('catch')},60);snd.hidden=false;
  try{v.currentTime=0}catch(e){}
  var p=v.play();if(p&&p.catch)p.catch(function(){op.classList.add('ended');showText()});
  au.volume=1;setSnd(withSound);try{au.currentTime=0}catch(e){}
@@ -723,7 +726,7 @@ function play(withSound){
 }
 function open(){
  done=false;shown=false;started=false;clearTimeout(T);clearTimeout(AT);clearInterval(fadeI);
- op.hidden=false;op.classList.remove('out','text','ended','playing');st.hidden=false;snd.hidden=true;
+ op.hidden=false;op.classList.remove('out','text','ended','playing','catch');st.hidden=false;snd.hidden=true;
  document.documentElement.style.overflow='hidden';
  var hv=document.getElementById('heroV');if(hv)hv.pause();
  try{au.pause()}catch(e){}
@@ -731,7 +734,7 @@ function open(){
  document.getElementById('opSound').focus({preventScroll:true});
  AT=setTimeout(function(){play(false)},8000);
 }
-v.addEventListener('timeupdate',function(){if(v.currentTime>6.6)showText()});
+v.addEventListener('timeupdate',function(){if(v.currentTime>7.4)showText()});
 v.addEventListener('ended',function(){op.classList.add('ended');showText()});
 v.addEventListener('error',function(){op.classList.add('ended');showText()},true);
 document.getElementById('opSound').addEventListener('click',function(){play(true)});
