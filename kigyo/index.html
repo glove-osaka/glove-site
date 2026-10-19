@@ -753,11 +753,20 @@ details[open]>summary .fold-k{background:var(--navy);color:var(--on-navy)}
 .op-corp{position:absolute;z-index:4;right:max(18px,env(safe-area-inset-right,0px));bottom:calc(6vh + 10px);margin:0;font-size:.78rem;letter-spacing:.14em;color:rgba(217,225,238,.6);opacity:0;transition:opacity 1.6s ease 1.2s}
 .opn.t3 .op-corp{opacity:1}
 @media (max-width:640px){.op-name{flex-direction:column;align-items:center;font-size:clamp(2.3rem,11vw,3.2rem)}.op-title .op-go{width:min(86vw,360px)}.op-corp{bottom:calc(9vh + 8px)}}
+
+/* オープニングを見るボタン */
+.util-r{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.op-btn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:.84rem;min-height:34px;border-radius:99px;border:1px solid rgba(232,180,106,.75);background:transparent;color:#F2D3A4;cursor:pointer;padding:0 14px;white-space:nowrap}
+.op-btn i{width:0;height:0;border-left:8px solid #E8B46A;border-top:5px solid transparent;border-bottom:5px solid transparent}
+.op-btn:hover{background:rgba(232,180,106,.15)}
+.nav-op{display:none}
+@media (max-width:1099px){.nav-op{display:flex;align-items:center;min-height:58px;padding:0 6px;border:0;border-bottom:1px solid var(--line);background:none;font:inherit;font-size:1.08rem;font-weight:700;color:var(--navy);text-align:left;cursor:pointer}.nav-op::before{content:"";width:0;height:0;border-left:9px solid var(--amber-b);border-top:6px solid transparent;border-bottom:6px solid transparent;margin-right:12px}}
+@media (max-width:560px){.op-btn{font-size:.78rem;padding:0 10px;min-height:32px}.util-r{gap:8px;justify-content:center}.fs>span{display:none}}
 </style>
 </head><body>
 <div class="opn" id="op" hidden role="dialog" aria-modal="true" aria-label="オープニング映像"><canvas id="opC" aria-hidden="true"></canvas><div class="op-start" id="opStart"><div class="op-start-in"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="3" y="3" width="42" height="42" rx="9" stroke="currentColor" stroke-width="2"/><path d="M14 13h13l7 7v16H14z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M27 13v7h7" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="30" cy="31" r="5.5" fill="var(--amber-b)" stroke="none"/><path d="M18.5 23h8M18.5 27.5h5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><p class="op-start-t">企業支援 総合相談窓口</p><p class="op-start-s">はじめに、短い映像（約17秒）をご覧ください。</p><div class="op-start-b"><button type="button" class="op-sb on" id="opSound">音ありで見る</button><button type="button" class="op-sb" id="opMute">音なしで見る</button></div><button type="button" class="op-sk" id="opSkip0">映像をとばして、ホームページへ</button></div></div><div class="op-text"><p class="ln ln1">許可、補助金、資金、人。</p><p class="ln ln2">会社の困りごとを、<br>ひとつの窓口で。</p></div><div class="op-dim" aria-hidden="true"></div><div class="op-title"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="3" y="3" width="42" height="42" rx="9" stroke="currentColor" stroke-width="2"/><path d="M14 13h13l7 7v16H14z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M27 13v7h7" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="30" cy="31" r="5.5" fill="var(--amber-b)" stroke="none"/><path d="M18.5 23h8M18.5 27.5h5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><p class="op-name"><span>企業支援</span><span>総合相談窓口</span></p><span class="op-rule" aria-hidden="true"></span><button class="op-go" id="opGo" type="button">ホームページへ進む</button></div><p class="op-corp">運営　株式会社グローブ</p><button class="op-skip" id="opSkip" type="button">とばす</button></div><a class="skip" href="#main">本文へ移動</a>
 <div class="util"><div class="wrap"><span class="op">運営：<b>株式会社グローブ</b>　資格が必要な業務は提携の専門家が担当します</span>
-<div class="fs" role="group" aria-label="文字の大きさ"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 25 10 8l6 17M6.2 19h7.6"/><path class="ac" d="M18 25l4.5-12L27 25M19.6 21h5.8"/></svg><span>文字の大きさ</span><button type="button" data-fs="" aria-pressed="true">標準</button><button type="button" data-fs="l" aria-pressed="false">大</button><button type="button" data-fs="xl" aria-pressed="false">特大</button></div></div></div>
+<div class="util-r"><button type="button" class="op-btn" data-replay><i aria-hidden="true"></i>オープニングを見る</button><div class="fs" role="group" aria-label="文字の大きさ"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 25 10 8l6 17M6.2 19h7.6"/><path class="ac" d="M18 25l4.5-12L27 25M19.6 21h5.8"/></svg><span>文字の大きさ</span><button type="button" data-fs="" aria-pressed="true">標準</button><button type="button" data-fs="l" aria-pressed="false">大</button><button type="button" data-fs="xl" aria-pressed="false">特大</button></div></div></div></div>
 <header class="hd"><div class="wrap hd-in">
 <a class="brand" href="#top"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="3" y="3" width="42" height="42" rx="9" stroke="currentColor" stroke-width="2"/><path d="M14 13h13l7 7v16H14z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M27 13v7h7" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="30" cy="31" r="5.5" fill="var(--amber-b)" stroke="none"/><path d="M18.5 23h8M18.5 27.5h5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span><b>企業支援 総合相談窓口</b><small>許認可・補助金・経営の悩みを、提携行政書士・専門家へ</small></span></a>
 <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="gnav"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9h22M5 16h22M5 23h22"/></svg><span>メニュー</span></button>
@@ -769,6 +778,7 @@ details[open]>summary .fold-k{background:var(--navy);color:var(--on-navy)}
 <a href="#flow">流れ・費用</a>
 <a href="#faq">よくある質問</a>
 <a href="#company">運営会社</a>
+<button type="button" class="nav-op" data-replay>オープニングを見る</button>
 <a class="cta" href="#contact"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 5.5l6 6L11 27H5v-6z"/><path class="ac" d="M17 9l6 6"/></svg>相談内容をまとめる</a>
 </nav></div></header>
 <main id="main"><section class="page" data-p="top" data-title="企業支援 総合相談窓口｜運営：株式会社グローブ">
@@ -1445,7 +1455,7 @@ document.getElementById('opSkip0').addEventListener('click', () => {running = tr
 skipBtn.addEventListener('click', close); goBtn.addEventListener('click', close);
 addEventListener('keydown', e => {if (e.key === 'Escape' && !op.hidden){running = true; close()}});
 addEventListener('resize', () => {if (!op.hidden) size()});
-document.querySelectorAll('[data-replay]').forEach(b => b.addEventListener('click', e => {e.preventDefault(); location.hash = 'top'; open()}));
+document.querySelectorAll('[data-replay]').forEach(b => b.addEventListener('click', e => {e.preventDefault(); const nav = document.getElementById('gnav'); if (nav) nav.classList.remove('open'); location.hash = 'top'; open()}));
 
 const atTop = !location.hash || location.hash === '#top';
 if (!reduce && atTop && !store.get()) open();
