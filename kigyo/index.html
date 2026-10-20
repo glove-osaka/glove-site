@@ -762,6 +762,18 @@ details[open]>summary .fold-k{background:var(--navy);color:var(--on-navy)}
 .nav-op{display:none}
 @media (max-width:1099px){.nav-op{display:flex;align-items:center;min-height:58px;padding:0 6px;border:0;border-bottom:1px solid var(--line);background:none;font:inherit;font-size:1.08rem;font-weight:700;color:var(--navy);text-align:left;cursor:pointer}.nav-op::before{content:"";width:0;height:0;border-left:9px solid var(--amber-b);border-top:6px solid transparent;border-bottom:6px solid transparent;margin-right:12px}}
 @media (max-width:560px){.op-btn{font-size:.78rem;padding:0 10px;min-height:32px}.util-r{gap:8px;justify-content:center}.fs>span{display:none}}
+
+/* オープニングを軽くする：画面全体のぼかしと、大きな文字のぼかし・字間の動きをやめる */
+.op-dim{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:radial-gradient(ellipse at 50% 50%,rgba(3,7,15,.9) 0%,rgba(3,7,15,.97) 65%)!important}
+.op-text .ln{filter:none!important;text-shadow:0 2px 12px rgba(0,0,0,.85)!important}
+.op-name{filter:none!important;letter-spacing:.12em!important;transform:scale(1.06);transition:opacity 1.6s ease .3s,transform 2.2s cubic-bezier(.2,.8,.2,1) .3s!important;text-shadow:0 3px 18px rgba(0,0,0,.6)!important}
+.op-name span{margin-right:-.12em!important}
+.opn.t3 .op-name{transform:none}
+/* ページも軽く：ぼかし効果を使わない */
+.tiers-sec .tier{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(13,26,51,.86)}
+.mbar{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:var(--surface)!important}
+.opn.op-low canvas{image-rendering:auto}
+.opn.op-low::before,.opn.op-low::after{transition:none}
 </style>
 </head><body>
 <div class="opn" id="op" hidden role="dialog" aria-modal="true" aria-label="オープニング映像"><canvas id="opC" aria-hidden="true"></canvas><div class="op-start" id="opStart"><div class="op-start-in"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="3" y="3" width="42" height="42" rx="9" stroke="currentColor" stroke-width="2"/><path d="M14 13h13l7 7v16H14z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M27 13v7h7" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="30" cy="31" r="5.5" fill="var(--amber-b)" stroke="none"/><path d="M18.5 23h8M18.5 27.5h5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><p class="op-start-t">企業支援 総合相談窓口</p><p class="op-start-s">はじめに、短い映像（約17秒）をご覧ください。</p><div class="op-start-b"><button type="button" class="op-sb on" id="opSound">音ありで見る</button><button type="button" class="op-sb" id="opMute">音なしで見る</button></div><button type="button" class="op-sk" id="opSkip0">映像をとばして、ホームページへ</button></div></div><div class="op-text"><p class="ln ln1">許可、補助金、資金、人。</p><p class="ln ln2">会社の困りごとを、<br>ひとつの窓口で。</p></div><div class="op-dim" aria-hidden="true"></div><div class="op-title"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="3" y="3" width="42" height="42" rx="9" stroke="currentColor" stroke-width="2"/><path d="M14 13h13l7 7v16H14z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M27 13v7h7" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><circle cx="30" cy="31" r="5.5" fill="var(--amber-b)" stroke="none"/><path d="M18.5 23h8M18.5 27.5h5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><p class="op-name"><span>企業支援</span><span>総合相談窓口</span></p><span class="op-rule" aria-hidden="true"></span><button class="op-go" id="opGo" type="button">ホームページへ進む</button></div><p class="op-corp">運営　株式会社グローブ</p><button class="op-skip" id="opSkip" type="button">とばす</button></div><a class="skip" href="#main">本文へ移動</a>
@@ -1257,7 +1269,7 @@ loadDraft();
 render();
 })();
 
-/* オープニング：書類が浮かび、7つの専門家が糸でつながり、「窓口」の印が押される。約13秒。音はすべてその場で合成 */
+/* オープニング：書類が浮かび、7つの専門家が糸でつながり、「窓口」の印が押される。約17秒。音はすべてその場で合成 */
 (function(){
 const op = document.getElementById('op');
 if (!op) return;
@@ -1269,13 +1281,53 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const NODES = ['行政書士','税理士','社会保険労務士','司法書士','弁護士','弁理士','中小企業診断士'];
 const SHORT = ['行政書士','税理士','社労士','司法書士','弁護士','弁理士','診断士'];
 let W = 0, H = 0, DPR = 1, t0 = 0, raf = 0, running = false, ac = null, master = null;
-const dust = Array.from({length: 140}, () => ({x: Math.random(), y: Math.random(), z: .2 + Math.random() * .8, s: Math.random() * 6.28}));
+const dust = Array.from({length: 80}, () => ({x: Math.random(), y: Math.random(), z: .2 + Math.random() * .8, s: Math.random() * 6.28}));
+/* 性能の低い端末では、最初から軽い描き方にする。途中で遅いと分かったときも切り替える */
+let low = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4 || !!(navigator.connection && navigator.connection.saveData);
+let bgC = null, vigC = null, gridP = null, glowS = null, dotS = null, docC = null, labels = [], lastNow = 0, slow = 0, frames = 0;
+const mk = (w, h) => {const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h)); return c};
 const sparks = [];
 
 function size(){
-  DPR = Math.min(2, devicePixelRatio || 1);
+  DPR = low ? .6 : Math.min(1.5, devicePixelRatio || 1);
+  op.classList.toggle('op-low', low);
   W = cv.clientWidth; H = cv.clientHeight;
   cv.width = W * DPR; cv.height = H * DPR; cx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  prerender();
+}
+/* 毎回描くと重いものを、先に一度だけ描いておく */
+function prerender(){
+  const S = Math.min(W, H), cxm = W / 2, cym = H * .47;
+  // 背景（濃い藍の光と、映写機の光）
+  bgC = mk(W, H); let c = bgC.getContext('2d');
+  const g = c.createRadialGradient(cxm, cym, 0, cxm, cym, Math.max(W, H) * .75);
+  g.addColorStop(0, '#13264A'); g.addColorStop(.6, '#0A1530'); g.addColorStop(1, '#03070F');
+  c.fillStyle = g; c.fillRect(0, 0, W, H);
+  const beam = c.createLinearGradient(0, 0, W, H); beam.addColorStop(0, 'rgba(232,180,106,.10)'); beam.addColorStop(.5, 'rgba(232,180,106,.02)'); beam.addColorStop(1, 'rgba(232,180,106,0)');
+  c.fillStyle = beam; c.beginPath(); c.moveTo(W * .05, 0); c.lineTo(W * .32, 0); c.lineTo(W * .9, H); c.lineTo(W * .45, H); c.fill();
+  // 周辺減光
+  vigC = mk(W, H); c = vigC.getContext('2d');
+  const v = c.createRadialGradient(cxm, H / 2, S * .35, cxm, H / 2, Math.max(W, H) * .8); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.65)');
+  c.fillStyle = v; c.fillRect(0, 0, W, H);
+  // 罫線の模様（1本分を繰り返す）
+  const gt = mk(8, 34); c = gt.getContext('2d'); c.fillStyle = 'rgba(157,182,227,1)'; c.fillRect(0, 33, 8, 1);
+  gridP = cx.createPattern(gt, 'repeat');
+  // 専門家の丸のまわりの光と、糸を走る光
+  const r = S * .062, gr = Math.ceil(r * 2.2);
+  glowS = mk(gr * 2, gr * 2); c = glowS.getContext('2d');
+  let gg = c.createRadialGradient(gr, gr, r * .6, gr, gr, gr); gg.addColorStop(0, 'rgba(157,182,227,.35)'); gg.addColorStop(1, 'rgba(157,182,227,0)');
+  c.fillStyle = gg; c.fillRect(0, 0, gr * 2, gr * 2);
+  dotS = mk(28, 28); c = dotS.getContext('2d');
+  gg = c.createRadialGradient(14, 14, 0, 14, 14, 14); gg.addColorStop(0, 'rgba(255,220,160,.95)'); gg.addColorStop(1, 'rgba(255,220,160,0)');
+  c.fillStyle = gg; c.fillRect(0, 0, 28, 28);
+  // 書類の紙と影
+  const dw = S * .28, dh = dw * 1.3, pad = 60;
+  docC = mk(dw + pad * 2, dh + pad * 2); c = docC.getContext('2d');
+  c.shadowColor = 'rgba(0,0,0,.55)'; c.shadowBlur = low ? 18 : 36; c.shadowOffsetY = 16;
+  c.fillStyle = '#F8F6F1'; c.beginPath(); c.roundRect ? c.roundRect(pad, pad, dw, dh, 10) : c.rect(pad, pad, dw, dh); c.fill();
+  // 専門家の名前の文字の大きさ
+  cx.textAlign = 'center'; cx.textBaseline = 'middle';
+  labels = NODES.map((n, i) => {const label = W < 560 ? SHORT[i] : n; let fs = Math.max(10, S * .021); cx.font = `700 ${fs}px "BIZ UDPGothic","Hiragino Kaku Gothic ProN",sans-serif`; while (cx.measureText(label).width > r * 1.75 && fs > 8){fs -= .5; cx.font = `700 ${fs}px "BIZ UDPGothic","Hiragino Kaku Gothic ProN",sans-serif`} return {label, font: cx.font}});
 }
 const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const ease = v => 1 - Math.pow(1 - clamp(v), 3);
@@ -1323,22 +1375,23 @@ function audioStop(){ if (!ac) return; try{master.gain.setTargetAtTime(0, ac.cur
 function draw(now){
   const t = (now - t0) / 1000;
   const cxm = W / 2, cym = H * .47, S = Math.min(W, H);
-  cx.clearRect(0, 0, W, H);
-  // 背景：濃い藍に、ゆっくり動く光
-  const g = cx.createRadialGradient(cxm, cym, 0, cxm, cym, Math.max(W, H) * .75);
-  g.addColorStop(0, '#13264A'); g.addColorStop(.6, '#0A1530'); g.addColorStop(1, '#03070F');
-  cx.fillStyle = g; cx.fillRect(0, 0, W, H);
+  // 遅い端末の見分け：最初の約1秒のコマの間隔が長ければ軽い描き方へ
+  if (lastNow){const dt = now - lastNow; frames++; if (dt > 34) slow++; if (!low && frames === 30 && slow > 9){low = true; size()}}
+  lastNow = now;
+  // 窓口名が出たあとは背景が隠れるので、絵を止める
+  if (t > 15.4){
+    op.classList.toggle('t1', true); op.classList.toggle('t2', true); op.classList.toggle('t3', true); op.classList.toggle('t4', t > 15.6);
+    if (t < 16.5 && running) raf = requestAnimationFrame(draw);
+    return;
+  }
+  cx.drawImage(bgC, 0, 0, W, H);
   const fadeIn = ease(seg(t, 0, 1.6));
   // 罫線の地紋
-  cx.save(); cx.globalAlpha = .08 * fadeIn; cx.strokeStyle = '#9DB6E3'; cx.lineWidth = 1;
-  const off = (t * 8) % 34;
-  for (let y = -34 + off; y < H; y += 34){cx.beginPath(); cx.moveTo(0, y); cx.lineTo(W, y); cx.stroke()}
-  cx.restore();
-  // 映写機の光と塵
-  cx.save(); cx.globalCompositeOperation = 'lighter';
-  const beam = cx.createLinearGradient(0, 0, W, H); beam.addColorStop(0, 'rgba(232,180,106,.10)'); beam.addColorStop(.5, 'rgba(232,180,106,.02)'); beam.addColorStop(1, 'rgba(0,0,0,0)');
-  cx.globalAlpha = fadeIn; cx.fillStyle = beam; cx.beginPath(); cx.moveTo(W * .05, 0); cx.lineTo(W * .32, 0); cx.lineTo(W * .9, H); cx.lineTo(W * .45, H); cx.fill();
-  dust.forEach(d => {const x = ((d.x + t * .006 * d.z) % 1) * W, y = ((d.y + Math.sin(t * .4 + d.s) * .01 - t * .004 * d.z + 1) % 1) * H; cx.fillStyle = `rgba(255,236,200,${.35 * d.z * fadeIn})`; cx.beginPath(); cx.arc(x, y, d.z * 1.4, 0, 6.28); cx.fill()});
+  cx.save(); cx.globalAlpha = .08 * fadeIn; cx.fillStyle = gridP; cx.translate(0, (t * 8) % 34); cx.fillRect(0, -34, W, H + 34); cx.restore();
+  // 塵
+  cx.save(); cx.fillStyle = '#FFECC8';
+  const nd = low ? 36 : dust.length;
+  for (let i = 0; i < nd; i++){const d = dust[i]; const x = ((d.x + t * .006 * d.z) % 1) * W, y = ((d.y + Math.sin(t * .4 + d.s) * .01 - t * .004 * d.z + 1) % 1) * H; cx.globalAlpha = .35 * d.z * fadeIn; const q = d.z * 2.4; cx.fillRect(x, y, q, q)}
   cx.restore();
 
   // カメラ：印のあとに少し引く。印の瞬間に揺れ
@@ -1363,17 +1416,14 @@ function draw(now){
     cx.save(); cx.setLineDash([5, 7]); cx.lineDashOffset = -t * 30; cx.strokeStyle = `rgba(232,180,106,${.75 * ap})`; cx.lineWidth = 1.6;
     cx.beginPath(); cx.moveTo(nx, ny); cx.lineTo(nx * (1 - lp), ny * (1 - lp)); cx.stroke(); cx.restore();
     // 糸を走る光
-    if (lp > 0 && lp < 1){const px = nx * (1 - lp), py = ny * (1 - lp); const gg = cx.createRadialGradient(px, py, 0, px, py, 14); gg.addColorStop(0, 'rgba(255,220,160,.95)'); gg.addColorStop(1, 'rgba(255,220,160,0)'); cx.fillStyle = gg; cx.beginPath(); cx.arc(px, py, 14, 0, 6.28); cx.fill()}
+    if (lp > 0 && lp < 1){const px = nx * (1 - lp), py = ny * (1 - lp); cx.drawImage(dotS, px - 14, py - 14)}
     // 丸
     const r = S * .062 * (0.6 + .4 * ap);
     cx.save(); cx.globalAlpha = ap;
-    const glow = cx.createRadialGradient(nx, ny, r * .6, nx, ny, r * 2.2); glow.addColorStop(0, 'rgba(157,182,227,.35)'); glow.addColorStop(1, 'rgba(157,182,227,0)');
-    cx.fillStyle = glow; cx.beginPath(); cx.arc(nx, ny, r * 2.2, 0, 6.28); cx.fill();
+    if (!low){const gw = glowS.width * (r / (S * .062)); cx.drawImage(glowS, nx - gw / 2, ny - gw / 2, gw, gw)}
     cx.fillStyle = '#132A52'; cx.strokeStyle = 'rgba(255,255,255,.7)'; cx.lineWidth = 1.4; cx.beginPath(); cx.arc(nx, ny, r, 0, 6.28); cx.fill(); cx.stroke();
     cx.fillStyle = '#fff'; cx.textAlign = 'center'; cx.textBaseline = 'middle';
-    const label = W < 560 ? SHORT[i] : n; let fs = Math.max(10, S * .021); cx.font = `700 ${fs}px "BIZ UDPGothic","Hiragino Kaku Gothic ProN",sans-serif`;
-    while (cx.measureText(label).width > r * 1.75 && fs > 8){fs -= .5; cx.font = `700 ${fs}px "BIZ UDPGothic","Hiragino Kaku Gothic ProN",sans-serif`}
-    cx.fillText(label, nx, ny); cx.restore();
+    cx.font = labels[i].font; cx.fillText(labels[i].label, nx, ny); cx.restore();
   });
 
   if (dr > 0){
@@ -1381,9 +1431,7 @@ function draw(now){
     const lift = (1 - dr) * S * .25, sc = .7 + .3 * dr;
     cx.translate(0, lift); cx.scale(sc, sc); cx.rotate((1 - dr) * -.12);
     cx.globalAlpha = dr;
-    cx.shadowColor = 'rgba(0,0,0,.55)'; cx.shadowBlur = 40; cx.shadowOffsetY = 18;
-    cx.fillStyle = '#F8F6F1'; roundRect(-dw / 2, -dh / 2, dw, dh, 10); cx.fill();
-    cx.shadowColor = 'transparent';
+    cx.drawImage(docC, -dw / 2 - 60, -dh / 2 - 60);
     // 上辺の見出し帯
     cx.fillStyle = '#1E3460'; cx.fillRect(-dw / 2 + dw * .1, -dh / 2 + dh * .1, dw * .4 * ease(seg(t, 2.3, 2.6)), dh * .035);
     // 罫線が書かれていく
@@ -1411,7 +1459,7 @@ function draw(now){
     const p = hitT / 1.4, sx = dw * .22 * pull, sy = dh * .3;
     cx.save(); cx.globalCompositeOperation = 'lighter';
     [0, .12].forEach(d => {const q = clamp((hitT - d) / 1.1); if (q <= 0) return; cx.strokeStyle = `rgba(232,180,106,${(1 - q) * .8})`; cx.lineWidth = 3 * (1 - q) + .5; cx.beginPath(); cx.arc(sx, sy, S * (.05 + q * .5), 0, 6.28); cx.stroke()});
-    if (sparks.length === 0) for (let i = 0; i < 46; i++){const a = Math.random() * 6.28, v = S * (.15 + Math.random() * .5); sparks.push({a, v, l: .5 + Math.random() * .8})}
+    if (sparks.length === 0) for (let i = 0; i < (low ? 20 : 40); i++){const a = Math.random() * 6.28, v = S * (.15 + Math.random() * .5); sparks.push({a, v, l: .5 + Math.random() * .8})}
     sparks.forEach(sp => {const q = hitT / sp.l; if (q > 1) return; const d = sp.v * ease(q); cx.strokeStyle = `rgba(255,214,150,${1 - q})`; cx.lineWidth = 2 * (1 - q) + .4; cx.beginPath(); cx.moveTo(sx + Math.cos(sp.a) * d * .7, sy + Math.sin(sp.a) * d * .7); cx.lineTo(sx + Math.cos(sp.a) * d, sy + Math.sin(sp.a) * d); cx.stroke()});
     // 一瞬の閃光
     cx.globalAlpha = Math.max(0, .35 - p * 1.2); cx.fillStyle = '#FFE9C7'; cx.fillRect(-W, -H, W * 2, H * 2);
@@ -1420,8 +1468,7 @@ function draw(now){
   cx.restore();
 
   // 周辺減光
-  const v = cx.createRadialGradient(cxm, H / 2, S * .35, cxm, H / 2, Math.max(W, H) * .8); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.65)');
-  cx.fillStyle = v; cx.fillRect(0, 0, W, H);
+  if (!low) cx.drawImage(vigC, 0, 0, W, H);
 
   // 文字（DOM）とボタン
   op.classList.toggle('t1', t > 7.4); op.classList.toggle('t2', t > 9.0); op.classList.toggle('t3', t > 14.2); op.classList.toggle('t4', t > 15.6);
@@ -1432,7 +1479,7 @@ function roundRect(x, y, w, h, r){cx.beginPath(); cx.moveTo(x + r, y); cx.arcTo(
 /* ---------- 進行 ---------- */
 function play(sound){
   startBox.hidden = true; op.classList.add('playing');
-  size(); sparks.length = 0; t0 = performance.now(); running = true;
+  size(); sparks.length = 0; lastNow = 0; slow = 0; frames = 0; t0 = performance.now(); running = true;
   if (sound) audioStart();
   raf = requestAnimationFrame(draw);
   setTimeout(() => {if (running) goBtn.focus({preventScroll: true})}, 15800);
