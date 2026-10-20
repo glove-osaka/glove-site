@@ -27,7 +27,7 @@
   --bg:#F6F8F7; --surface:#FFFFFF; --ink:#14211F; --muted:#3A4A48; --line:#C6D4D3;
   --pine:#0E5A63; --pine-2:#0B4A52; --pine-deep:#0A2E33; --pine-soft:#E3F0F0; --on-pine:#FFFFFF;
   --gold:#8A621C; --gold-bright:#C99A45; --gold-soft:#F5ECDA; --band:#EAF2F1;
-  --f-display:"BIZ UDPMincho","Hiragino Mincho ProN","Yu Mincho",serif;
+  --f-display:"BIZ UDPMincho","Hiragino Mincho ProN","Yu Mincho","Noto Serif CJK JP","Noto Serif JP",serif;
   --f-body:"BIZ UDPGothic","Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",sans-serif;
   --wrap:1240px; font-size:100%;
 }
@@ -424,15 +424,15 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 .ft li a:hover{text-decoration:underline}
 .ft .co{margin-top:20px;display:grid;gap:4px;font-size:.98rem;line-height:1.8}
 .ft-bottom{border-top:1px solid rgba(255,255,255,.14)}
-.ft-bottom .wrap{padding-block:18px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;color:#C6D6D6;font-size:.92rem}
+.ft-bottom .wrap{flex-wrap:wrap;gap:10px;padding-block:18px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;color:#C6D6D6;font-size:.92rem}
 @media (max-width:900px){.ft-in{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){.ft-in{grid-template-columns:1fr}}
 
 .op-title{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;justify-items:center;gap:clamp(22px,4vh,40px);width:min(94vw,1100px);text-align:center}
-.op-title::before{content:"";position:absolute;inset:-18% -6%;z-index:-1;background:radial-gradient(ellipse at center,rgba(8,6,4,.55) 0%,rgba(8,6,4,.28) 45%,rgba(8,6,4,0) 72%);opacity:0;transition:opacity 2s ease 2.4s;pointer-events:none}
-.op-name{display:flex;align-items:center;justify-content:center;gap:.35em;color:#FBF6EA;font-family:var(--f-display);opacity:0;filter:blur(8px);transform:scale(.97);transition:opacity 2.4s ease 2.6s,filter 2.4s ease 2.6s,transform 3s ease 2.6s;text-shadow:0 3px 28px rgba(0,0,0,.8),0 1px 4px rgba(0,0,0,.6)}
+.op-title::before{content:"";position:absolute;inset:-18% -6%;z-index:-1;background:radial-gradient(ellipse at center,rgba(8,6,4,.55) 0%,rgba(8,6,4,.28) 45%,rgba(8,6,4,0) 72%);opacity:0;transition:opacity 2s ease 1.2s;pointer-events:none}
+.op-name{display:flex;align-items:center;justify-content:center;gap:.35em;color:#FBF6EA;font-family:var(--f-display);opacity:0;transform:scale(.97) translateZ(0);transition:opacity 2.4s ease 1.4s,transform 3s ease 1.4s;will-change:opacity,transform;text-shadow:0 2px 12px rgba(0,0,0,.8),0 1px 3px rgba(0,0,0,.7)}
 .op-name b{font-size:clamp(2.2rem,7.2vw,5.6rem);letter-spacing:.14em;font-weight:700;white-space:nowrap;line-height:1.2}
-.op-name .brand-mark{width:clamp(52px,7vw,96px);height:clamp(52px,7vw,96px);color:#FBF6EA;flex-shrink:0;filter:drop-shadow(0 2px 12px rgba(0,0,0,.6))}
+.op-name .brand-mark{width:clamp(52px,7vw,96px);height:clamp(52px,7vw,96px);color:#FBF6EA;flex-shrink:0;}
 .op-co{position:absolute;z-index:2;right:max(16px,3vw);bottom:max(14px,3vh);margin:0;font-family:var(--f-body);font-size:.82rem;letter-spacing:.12em;color:rgba(251,246,234,.62);opacity:0;transition:opacity 2s ease 4.4s;text-shadow:0 1px 6px rgba(0,0,0,.7)}
 @media (max-width:640px){.op-name{flex-direction:column;gap:14px}.op-name b{font-size:clamp(2rem,10.4vw,3rem);letter-spacing:.1em}}
 /* 横長の画面：映画の題字のように、左の暗い壁に縦書き */
@@ -489,7 +489,9 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 .sidenav>summary h3{flex:1;margin:0!important}
 @media (min-width:961px){.sidenav>summary .st{display:none}.sidenav>summary{cursor:default}}
 @media (max-width:560px){.blk>summary>h2,.blk>summary>h3{font-size:1.15rem!important;line-height:1.5}.blk>summary{padding:10px 12px 10px 16px;gap:10px}.blk>.blk-b{padding:4px 14px 18px}.blk .st{padding:0 12px}}
-@media print{.blk>*,.sidenav>*{display:block!important}}
+@media print{.blk>*,.sidenav>*{display:block!important}}.lite .op-title::before{display:none}.lite .op-name{text-shadow:0 1px 4px rgba(0,0,0,.95);will-change:auto}
+.lite .hd{box-shadow:none}
+.lite .trust-in{box-shadow:none}
 .util-tel{display:none;align-items:center;gap:8px;min-height:44px;color:#fff;text-decoration:none;font-weight:700}.util-tel .ic{font-size:1.3rem;color:var(--gold-bright)}.util-tel b{font-size:1.25rem;letter-spacing:.05em;color:#fff}.util-tel small{font-size:.9rem;color:#E7F1F1;font-weight:400}
 @media (min-width:1241px){.util-tel{display:inline-flex}}
 @media (max-width:1599px){.util .op.has-tel{display:none}}
@@ -561,13 +563,13 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 .opn.ttl{background:#EEDFCF}
 @media (max-aspect-ratio:1/1){.opn video{object-fit:contain}}
 .op-cap{position:absolute;z-index:3;left:50%;top:16%;transform:translateX(-50%);width:min(92vw,980px);text-align:center;color:#F4F8F7;font-family:"BIZ UDMincho",var(--f-display);pointer-events:none}
-.op-cap p{margin:0;font-size:clamp(1.45rem,4.4vw,2.9rem);letter-spacing:.16em;line-height:1.75;opacity:0;filter:blur(8px);transform:translateY(10px);transition:opacity 1.1s ease,filter 1.1s ease,transform 1.1s ease;text-shadow:0 0 14px rgba(0,0,0,.95),0 0 34px rgba(0,0,0,.8),0 2px 4px rgba(0,0,0,.9)}
+.op-cap p{margin:0;font-size:clamp(1.45rem,4.4vw,2.9rem);letter-spacing:.16em;line-height:1.75;opacity:0;transform:translate3d(0,10px,0);transition:opacity 1s ease,transform 1s ease;will-change:opacity,transform;text-shadow:0 0 12px rgba(0,0,0,.9),0 2px 4px rgba(0,0,0,.9)}
 .op-cap p{transition-delay:0s}
 .opn.c1 #opCap1 p+p,.opn.c2 #opCap2 p+p{transition-delay:.7s}
 .op-cap p{transition-duration:.9s}
-.opn.c1 #opCap1 p,.opn.c2 #opCap2 p{opacity:1;filter:none;transform:none}
+.opn.c1 #opCap1 p,.opn.c2 #opCap2 p{opacity:1;transform:translate3d(0,0,0)}
 @media (min-aspect-ratio:1/1){#opCap2{top:auto;bottom:11%}}
-.op-title{position:absolute;z-index:3;left:50%;top:44%;transform:translate(-50%,-50%);width:94vw;text-align:center;color:#1E2B4A;font-family:"BIZ UDMincho",var(--f-display);pointer-events:none;opacity:0;transition:opacity 1.4s ease .4s}
+.op-title{position:absolute;z-index:3;left:50%;top:44%;transform:translate(-50%,-50%);width:94vw;text-align:center;color:#1E2B4A;font-family:"BIZ UDMincho",var(--f-display);pointer-events:none;opacity:0;transition:opacity 1.4s ease .4s;will-change:opacity}
 .op-title b{display:block;font-size:min(8.6vw,5.6rem);letter-spacing:.1em;line-height:1.3;font-weight:700}
 .op-title span{display:block;margin-top:.9em;font-size:min(4.4vw,1.75rem);letter-spacing:.2em}
 .op-title i{display:block;width:min(46vw,360px);height:1px;margin:.9em auto 0;background:linear-gradient(90deg,transparent,#B48A3C,transparent)}
@@ -687,13 +689,13 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 </nav></div></header>
 <main id="main">
 <div class="opn" id="op" hidden role="dialog" aria-label="オープニング映像" aria-modal="true">
-<video id="opV" muted playsinline preload="metadata" aria-hidden="true"><source src="assets/opening.webm" type="video/webm"><source src="assets/opening.mp4" type="video/mp4"></video>
+<video id="opV" muted playsinline preload="metadata" aria-hidden="true"><source src="assets/opening.mp4?v=2" type="video/mp4"><source src="assets/opening.webm?v=2" type="video/webm"></video>
 <img class="still" src="assets/opening-clean.jpg" alt="" aria-hidden="true" loading="lazy">
 <div class="op-cap" id="opCap1" aria-hidden="true"><p>立場は、それぞれ。</p><p>抱える悩みも、それぞれ。</p></div>
 <div class="op-cap" id="opCap2" aria-hidden="true"><p>この扉の向こうに、</p><p>解決への道があります。</p></div>
 <div class="op-title" aria-hidden="true"><b>医療介護総合支援会</b><i></i><span>医療と介護の未来を、つなぐ。</span></div>
 <p class="op-co" aria-hidden="true">運営　株式会社グローブ</p>
-<div class="op-start" id="opStart"><div class="op-start-in"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 4h7v8.5H28v7h-8.5V28h-7v-8.5H4v-7h8.5z"/><path class="ac" d="M16 23.5s-4-2.4-4-5.2a2.2 2.2 0 0 1 4-1.3 2.2 2.2 0 0 1 4 1.3c0 2.8-4 5.2-4 5.2z"/></svg><p class="op-start-t">医療介護総合支援会</p><p class="op-start-s">はじめに、短い映像（約10秒）をご覧ください。</p>
+<div class="op-start" id="opStart"><div class="op-start-in"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 4h7v8.5H28v7h-8.5V28h-7v-8.5H4v-7h8.5z"/><path class="ac" d="M16 23.5s-4-2.4-4-5.2a2.2 2.2 0 0 1 4-1.3 2.2 2.2 0 0 1 4 1.3c0 2.8-4 5.2-4 5.2z"/></svg><p class="op-start-t">医療介護総合支援会</p><p class="op-start-s">はじめに、短い映像（約11秒）をご覧ください。</p>
 <div class="op-start-b"><button type="button" class="op-sb on" id="opSound">音ありで見る</button><button type="button" class="op-sb" id="opMute">音なしで見る</button></div>
 <button type="button" class="op-sk" id="opSkip0">映像をとばして、ホームページへ</button>
 <a class="op-sk op-sos" href="soudan/index.html">急ぎのとき・緊急の相談窓口はこちら</a></div></div>
@@ -709,7 +711,7 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 <p class="lead">困ったときだけではありません。経営をよくしたい、働きやすくしたい、暮らしを便利にしたい、家族を支えたい。皆さまの声から、求められる支援を増やしていきます。</p>
 <div class="btns"><a class="btn btn-g" href="contact/index.html"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 6h22v15H14l-6 5v-5H5z"/><path class="ac" d="M10 12h12M10 16h8"/></svg>相談・要望を送る</a><a class="btn btn-w" href="roles/index.html"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="10" r="4"/><circle cx="22" cy="12" r="3.2"/><path d="M4 26c0-4.5 3.6-8 8-8s8 3.5 8 8"/><path class="ac" d="M20 19c4 0 7 2.8 7 6.5"/></svg>自分の立場から選ぶ</a></div>
 <p class="note"><b>ご相談の受付・整理は無料</b>　名前を伏せた相談もできます<br>対応地域：大阪府を中心に、関西全域</p>
-<p class="op-replay"><a href="#op" data-op><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16h20M19 9l7 7-7 7"/></svg>オープニング映像を見る（約10秒）</a></p>
+<p class="op-replay"><a href="#op" data-op><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16h20M19 9l7 7-7 7"/></svg>オープニング映像を見る（約11秒）</a></p>
 </div></div></section>
 
 <div class="trust"><div class="wrap"><div class="trust-in">
@@ -803,13 +805,14 @@ function close(){if(done)return;done=true;clearTimeout(T);clearTimeout(AT);mark(
 function showText(){if(shown)return;shown=true;op.classList.add('text');T=setTimeout(close,8000);setTimeout(function(){try{document.getElementById('opGo').focus({preventScroll:true})}catch(e){}},600)}
 function setSnd(on){v.muted=!on;snd.textContent=on?'音を消す':'音を出す';snd.setAttribute('aria-pressed',String(on))}
 function tick(){if(!started||done)return;var t=v.currentTime;
- op.classList.toggle('c1',t>0.2&&t<2.45);op.classList.toggle('c2',t>2.85&&t<4.45);op.classList.toggle('co',t>0.2&&t<3.0);
- if(t>7.75)op.classList.add('ttl');if(t>5.6&&v.playbackRate!==1){try{v.playbackRate=1}catch(e){}}
- requestAnimationFrame(tick)}
+ var c1=t>0.25&&t<3.05,c2=t>3.55&&t<5.55,co=t>0.25&&t<3.75;
+ if(c1!==op.classList.contains('c1'))op.classList.toggle('c1',c1);if(c2!==op.classList.contains('c2'))op.classList.toggle('c2',c2);if(co!==op.classList.contains('co'))op.classList.toggle('co',co);
+ if(t>9.15){op.classList.add('ttl');return}
+ setTimeout(function(){requestAnimationFrame(tick)},100)}
 function play(withSound){
  if(started)return;started=true;clearTimeout(AT);op.classList.add('playing');st.hidden=true;snd.hidden=false;
  v.preload='auto';try{v.currentTime=0}catch(e){}v.volume=1;setSnd(withSound);
- try{v.playbackRate=0.8}catch(e){}tick();
+ tick();
  var p=v.play();if(p&&p.catch)p.catch(function(){setSnd(false);var q=v.play();if(q&&q.catch)q.catch(function(){op.classList.add('ended','ttl');showText()})});
  try{document.getElementById('opSkip').focus({preventScroll:true})}catch(e){}
 }
@@ -817,18 +820,20 @@ function open(){
  done=false;shown=false;started=false;clearTimeout(T);clearTimeout(AT);clearInterval(fadeI);
  op.hidden=false;op.classList.remove('out','text','ended','playing','ttl','c1','c2','co');st.hidden=false;snd.hidden=true;
  document.documentElement.style.overflow='hidden';
+ try{if(v.preload!=='auto'){v.preload='auto';v.load()}}catch(e){}
  try{document.getElementById('opSound').focus({preventScroll:true})}catch(e){}
  AT=setTimeout(function(){play(false)},8000);
 }
 v.addEventListener('ended',function(){op.classList.add('ended','ttl');showText()});
-v.addEventListener('error',function(){op.classList.add('ended','ttl');showText()},true);
+function vfail(){op.classList.add('ended','ttl');showText()}
+v.addEventListener('error',vfail);var ls=v.querySelectorAll('source');if(ls.length)ls[ls.length-1].addEventListener('error',vfail);
 document.getElementById('opSound').addEventListener('click',function(){play(true)});
 document.getElementById('opMute').addEventListener('click',function(){play(false)});
 snd.addEventListener('click',function(){setSnd(v.muted)});
 document.getElementById('opSkip').addEventListener('click',close);
 document.getElementById('opSkip0').addEventListener('click',close);
 document.getElementById('opGo').addEventListener('click',close);
-document.getElementById('opAgain').addEventListener('click',function(){var w=!v.muted;clearTimeout(T);shown=false;op.classList.remove('text','ended','ttl','c1','c2','co');try{v.currentTime=0;v.playbackRate=0.8}catch(e){}requestAnimationFrame(tick);var p=v.play();if(p&&p.catch)p.catch(function(){});setSnd(w);try{document.getElementById('opSkip').focus({preventScroll:true})}catch(e){}});
+document.getElementById('opAgain').addEventListener('click',function(){var w=!v.muted;clearTimeout(T);shown=false;op.classList.remove('text','ended','ttl','c1','c2','co');try{v.currentTime=0}catch(e){}requestAnimationFrame(tick);var p=v.play();if(p&&p.catch)p.catch(function(){});setSnd(w);try{document.getElementById('opSkip').focus({preventScroll:true})}catch(e){}});
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!op.hidden)close()});
 var oa=document.querySelectorAll('[data-op]');for(var i=0;i<oa.length;i++)oa[i].addEventListener('click',function(e){e.preventDefault();open()});
 var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
