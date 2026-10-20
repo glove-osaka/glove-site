@@ -118,6 +118,19 @@
 <link rel="icon" type="image/png" sizes="32x32" href="images/icon-32.png">
 <link rel="apple-touch-icon" href="images/icon-180.png">
 <link rel="preload" as="image" href="images/hero.webp">
+<script>/* 軽量表示：性能の低い端末では、動きを間引いて滑らかさを保つ */
+(function(){var L=false;try{L=localStorage.getItem('glove-lite')==='1'}catch(e){}
+var hc=navigator.hardwareConcurrency||8,dm=navigator.deviceMemory||8;if(hc<=4||dm<=4)L=true;
+window.GLOVE_LITE=L;if(L)document.documentElement.classList.add('lite');
+window.gDPR=function(){return window.GLOVE_LITE?1:Math.min(window.devicePixelRatio||1,1.5)};
+var raf=window.requestAnimationFrame.bind(window),caf=window.cancelAnimationFrame.bind(window),seq=1e9,map=new Map();
+/* 軽量表示のときは、動きの計算を1コマおきにする（見た目の速さは同じ） */
+window.requestAnimationFrame=function(cb){if(!window.GLOVE_LITE)return raf(cb);var id=++seq;map.set(id,raf(function(){map.set(id,raf(function(t){map.delete(id);cb(t)}))}));return id};
+window.cancelAnimationFrame=function(id){if(map.has(id)){caf(map.get(id));map.delete(id)}else caf(id)};
+window.gLite=function(){if(window.GLOVE_LITE)return;window.GLOVE_LITE=true;document.documentElement.classList.add('lite');try{localStorage.setItem('glove-lite','1')}catch(e){}};
+/* 実際の滑らかさを測り、遅ければ軽量表示に切り替える */
+addEventListener('load',function(){setTimeout(function(){if(window.GLOVE_LITE)return;var n=0,t0=0,slow=0,last=0;
+function f(t){if(last){var d=t-last;if(d>34)slow++;n++}last=t;if(n<90)raf(f);else if(slow>36)window.gLite()}raf(f)},1200)});})();</script>
 <script>/* オープニング：トップを最初に開いたときだけ、読み込み中の画面を空色で覆う */
 (function(){try{var b=document.querySelector('base[data-site]'),p=location.pathname,home;
 if(b){var bp=new URL(b.href).pathname;home=(p===bp||p===bp+'index.html');}else{home=(!location.hash||location.hash==='#home');}
@@ -1265,6 +1278,13 @@ select.flash{animation:flash 1s ease}
 .desk i{font-style:normal;font-size:.82rem;font-weight:700;color:var(--gold-ink)}
 .case-link{justify-self:start;font-size:.84rem;font-weight:700;color:var(--gold-ink);text-decoration:none;border-bottom:1px solid currentColor}
 </style>
+<style id="lite-css">
+/* 軽量表示：ぼかし効果を外し、くり返しの飾りの動きは1回で止める */
+html.lite *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.lite body *:not(#intro):not(#intro *){animation-iteration-count:1!important}
+html.lite .hero2 h1 .g{animation:none!important}
+html.lite #scene #stars{display:none}
+</style>
 </head><body>
 <a class="skip" href="#view">本文へスキップ</a>
 <div id="glow" aria-hidden="true"></div><div id="scene" aria-hidden="true"><div class="ly space"><canvas id="stars"></canvas></div><div class="ly earth"></div><div class="ly city"></div></div>
@@ -1290,7 +1310,7 @@ select.flash{animation:flash 1s ease}
     </div></div>
   <div class="blk co-info no-fold"><h2>会社情報</h2>
   <div class="since"><div class="sonar" aria-hidden="true"><i></i><i></i><i></i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21.5s-7-6.6-7-12a7 7 0 0 1 14 0c0 5.4-7 12-7 12z"></path><circle cx="12" cy="9.5" r="2.6"></circle></svg></div>
-    <div><h2>2023年8月10日の設立から</h2><div class="since-n" aria-live="off"><span><b id="sd">1,166</b><small>日</small></span><span><b id="sh">18</b><small>時間</small></span><span><b id="sm">15</b><small>分</small></span><span><b id="ss">35</b><small>秒</small></span></div><p class="since-geo">本社 大阪・生野　北緯34.656° 東経135.534°</p></div></div><table class="tbl"><tbody><tr style="animation-delay: 0ms;"><th scope="row">会社名</th><td style="white-space:pre-line">株式会社グローブ</td></tr><tr style="animation-delay: 60ms;"><th scope="row">英文表記</th><td style="white-space:pre-line">GLOVE</td></tr><tr style="animation-delay: 120ms;"><th scope="row">所在地</th><td style="white-space:pre-line">〒544-0033 大阪府大阪市生野区勝山南2-2-7</td></tr><tr style="animation-delay: 180ms;"><th scope="row">代表者</th><td style="white-space:pre-line">代表取締役 藤原 重郎</td></tr><tr style="animation-delay: 240ms;"><th scope="row">設立年月日</th><td style="white-space:pre-line">2023年8月10日</td></tr><tr style="animation-delay: 300ms;"><th scope="row">事業内容</th><td style="white-space:pre-line">企業支援・経営サポート
+    <div><h2>2023年8月10日の設立から</h2><div class="since-n" aria-live="off"><span><b id="sd">1,167</b><small>日</small></span><span><b id="sh">18</b><small>時間</small></span><span><b id="sm">29</b><small>分</small></span><span><b id="ss">08</b><small>秒</small></span></div><p class="since-geo">本社 大阪・生野　北緯34.656° 東経135.534°</p></div></div><table class="tbl"><tbody><tr style="animation-delay: 0ms;"><th scope="row">会社名</th><td style="white-space:pre-line">株式会社グローブ</td></tr><tr style="animation-delay: 60ms;"><th scope="row">英文表記</th><td style="white-space:pre-line">GLOVE</td></tr><tr style="animation-delay: 120ms;"><th scope="row">所在地</th><td style="white-space:pre-line">〒544-0033 大阪府大阪市生野区勝山南2-2-7</td></tr><tr style="animation-delay: 180ms;"><th scope="row">代表者</th><td style="white-space:pre-line">代表取締役 藤原 重郎</td></tr><tr style="animation-delay: 240ms;"><th scope="row">設立年月日</th><td style="white-space:pre-line">2023年8月10日</td></tr><tr style="animation-delay: 300ms;"><th scope="row">事業内容</th><td style="white-space:pre-line">企業支援・経営サポート
 医療・介護 総合支援
 リユース・買取事業
 許認可・補助金申請サポート
@@ -1317,9 +1337,9 @@ FAX 06-6355-0800
     <div class="co-map"><iframe title="株式会社グローブ・買取大吉 大阪勝山南店の地図" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3282.0215739945393!2d135.52963297631027!3d34.65415808570783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6000df47e95dfd91%3A0x3d03a50c011b5ac5!2z6LK35Y-W5aSn5ZCJIOWkp-mYquWLneWxseWNl-W6lw!5e0!3m2!1sja!2sjp!4v1746500047292!5m2!1sja!2sjp" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen=""></iframe></div>
     <p style="margin:0">〒544-0033 大阪府大阪市生野区勝山南2-2-7（買取大吉 大阪勝山南店と同じ所在地です）</p>
     <p style="margin:0;display:flex;flex-wrap:wrap;gap:10px"><a class="btn btn-ghost btn-sm" href="https://www.google.com/maps/search/?api=1&amp;query=%E8%B2%B7%E5%8F%96%E5%A4%A7%E5%90%89%20%E5%A4%A7%E9%98%AA%E5%8B%9D%E5%B1%B1%E5%8D%97%E5%BA%97%20%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%A4%A7%E9%98%AA%E5%B8%82%E7%94%9F%E9%87%8E%E5%8C%BA%E5%8B%9D%E5%B1%B1%E5%8D%972-2-7" target="_blank" rel="noopener">Googleマップで開く</a><a class="btn btn-ghost btn-sm" href="https://www.kaitori-daikichi.jp/store/katsuyamaminami/" target="_blank" rel="noopener">買取大吉 大阪勝山南店の店舗ページ</a></p></div>
-  <div class="blk co-cases"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-rnr0qt">ご支援の例<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-rnr0qt" class="fold-body" hidden=""><p class="muted" style="margin:0">当社がどのようにお手伝いするかを分かりやすくお伝えするための、想定の事例です。実在の取引先や実績の数値を示すものではありません。</p><div class="case-grid"><div class="case"><span class="case-tag">リユース・買取</span><dl><dt>ご相談</dt><dd>事務所の移転で、使わなくなった備品や在庫の扱いに困っていた</dd><dt>当社の対応</dt><dd>査定・買取と、買取できない物の処分業者の手配を一つの窓口でまとめて進めた</dd><dt>結果</dt><dd>片付けと現金化を同じ日程で終えられ、移転の段取りが軽くなった</dd></dl><a class="case-link" href="https://www.kaitori-daikichi.jp/store/katsuyamaminami/" target="_blank" rel="noopener">買取大吉 大阪勝山南店へ →</a></div><div class="case"><span class="case-tag">家じまい・不動産</span><dl><dt>ご相談</dt><dd>親の住んでいた家の片付けと、その後の売却をどう進めればよいか分からなかった</dd><dt>当社の対応</dt><dd>品物の買取、遺品整理の業者、不動産会社と連携し、順番と役割を整理してご案内した</dd><dt>結果</dt><dd>相談先を探し回らずに、片付けから売却の相談まで進められた</dd></dl><a class="case-link" href="https://glove-osaka.github.io/glove-site/iejimai/" target="_blank" rel="noopener">家じまい相談窓口へ →</a></div><div class="case"><span class="case-tag">医療・介護</span><dl><dt>ご相談</dt><dd>介護事業所で、職員の採用と日々の経費の両方に悩んでいた</dd><dt>当社の対応</dt><dd>経費の見直しを当社が支援し、採用は許可を持つ提携事業者と連携して進めた</dd><dt>結果</dt><dd>経費の見直しと採用の相談を、一つの窓口で同時に進められた</dd></dl><a class="case-link" href="https://glove-osaka.github.io/glove-site/medical/" target="_blank" rel="noopener">医療介護総合支援会へ →</a></div><div class="case"><span class="case-tag">許認可・補助金</span><dl><dt>ご相談</dt><dd>新しい事業を始めるにあたり、使える補助金や必要な許可が分からなかった</dd><dt>当社の対応</dt><dd>事業計画を一緒に整理したうえで、申請手続きは行政書士へおつなぎした</dd><dt>結果</dt><dd>準備すべき書類と進める順番がはっきりし、申請までの道筋が見えた</dd></dl><a class="case-link" href="https://glove-osaka.github.io/glove-site/kigyo/" target="_blank" rel="noopener">企業支援 総合相談窓口へ →</a></div><div class="case"><span class="case-tag">海外・輸出</span><dl><dt>ご相談</dt><dd>買い取った中古品を、海外で販売できないか検討していた</dd><dt>当社の対応</dt><dd>対象の品目と国の規制を確認し、輸出の実績を持つ提携事業者と販路を検討した</dd><dt>結果</dt><dd>国内だけでなく、海外も視野に入れた販売の選択肢ができた</dd></dl></div><div class="case"><span class="case-tag">企画・地域</span><dl><dt>ご相談</dt><dd>商業施設で、集客につながる催しを探していた</dd><dt>当社の対応</dt><dd>施設と相談しながら、買取の催事を企画し、当日の運営まで行った</dd><dt>結果</dt><dd>来場のきっかけとなる新しい催しとして、施設の企画に加わった</dd></dl></div></div></div></div>
-  <div class="blk" style="margin-top:44px"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-y6xo5k">法令に基づく表示<span class="fold-ic" aria-hidden="true"></span></button></h2>
-    <div id="fold-y6xo5k" class="fold-body" hidden=""><div class="panel" style="font-size:.92rem">古物営業法に基づく表示：株式会社グローブ　大阪府公安委員会 第62102R050377号　／　買取大吉 大阪勝山南店の営業所情報は店舗窓口でご確認ください</div></div></div>
+  <div class="blk co-cases"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-x0ntzf">ご支援の例<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-x0ntzf" class="fold-body" hidden=""><p class="muted" style="margin:0">当社がどのようにお手伝いするかを分かりやすくお伝えするための、想定の事例です。実在の取引先や実績の数値を示すものではありません。</p><div class="case-grid"><div class="case"><span class="case-tag">リユース・買取</span><dl><dt>ご相談</dt><dd>事務所の移転で、使わなくなった備品や在庫の扱いに困っていた</dd><dt>当社の対応</dt><dd>査定・買取と、買取できない物の処分業者の手配を一つの窓口でまとめて進めた</dd><dt>結果</dt><dd>片付けと現金化を同じ日程で終えられ、移転の段取りが軽くなった</dd></dl><a class="case-link" href="https://www.kaitori-daikichi.jp/store/katsuyamaminami/" target="_blank" rel="noopener">買取大吉 大阪勝山南店へ →</a></div><div class="case"><span class="case-tag">家じまい・不動産</span><dl><dt>ご相談</dt><dd>親の住んでいた家の片付けと、その後の売却をどう進めればよいか分からなかった</dd><dt>当社の対応</dt><dd>品物の買取、遺品整理の業者、不動産会社と連携し、順番と役割を整理してご案内した</dd><dt>結果</dt><dd>相談先を探し回らずに、片付けから売却の相談まで進められた</dd></dl><a class="case-link" href="https://glove-osaka.github.io/glove-site/iejimai/" target="_blank" rel="noopener">家じまい相談窓口へ →</a></div><div class="case"><span class="case-tag">医療・介護</span><dl><dt>ご相談</dt><dd>介護事業所で、職員の採用と日々の経費の両方に悩んでいた</dd><dt>当社の対応</dt><dd>経費の見直しを当社が支援し、採用は許可を持つ提携事業者と連携して進めた</dd><dt>結果</dt><dd>経費の見直しと採用の相談を、一つの窓口で同時に進められた</dd></dl><a class="case-link" href="https://glove-osaka.github.io/glove-site/medical/" target="_blank" rel="noopener">医療介護総合支援会へ →</a></div><div class="case"><span class="case-tag">許認可・補助金</span><dl><dt>ご相談</dt><dd>新しい事業を始めるにあたり、使える補助金や必要な許可が分からなかった</dd><dt>当社の対応</dt><dd>事業計画を一緒に整理したうえで、申請手続きは行政書士へおつなぎした</dd><dt>結果</dt><dd>準備すべき書類と進める順番がはっきりし、申請までの道筋が見えた</dd></dl><a class="case-link" href="https://glove-osaka.github.io/glove-site/kigyo/" target="_blank" rel="noopener">企業支援 総合相談窓口へ →</a></div><div class="case"><span class="case-tag">海外・輸出</span><dl><dt>ご相談</dt><dd>買い取った中古品を、海外で販売できないか検討していた</dd><dt>当社の対応</dt><dd>対象の品目と国の規制を確認し、輸出の実績を持つ提携事業者と販路を検討した</dd><dt>結果</dt><dd>国内だけでなく、海外も視野に入れた販売の選択肢ができた</dd></dl></div><div class="case"><span class="case-tag">企画・地域</span><dl><dt>ご相談</dt><dd>商業施設で、集客につながる催しを探していた</dd><dt>当社の対応</dt><dd>施設と相談しながら、買取の催事を企画し、当日の運営まで行った</dd><dt>結果</dt><dd>来場のきっかけとなる新しい催しとして、施設の企画に加わった</dd></dl></div></div></div></div>
+  <div class="blk" style="margin-top:44px"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-33ykor">法令に基づく表示<span class="fold-ic" aria-hidden="true"></span></button></h2>
+    <div id="fold-33ykor" class="fold-body" hidden=""><div class="panel" style="font-size:.92rem">古物営業法に基づく表示：株式会社グローブ　大阪府公安委員会 第62102R050377号　／　買取大吉 大阪勝山南店の営業所情報は店舗窓口でご確認ください</div></div></div>
 </div></section></main>
 <footer class="ftr"><div class="wrap">
   <div class="cols">
@@ -1415,8 +1435,8 @@ FAX 06-6355-0800
     };
   })();
   var cv = el.querySelector("canvas"), g = cv.getContext("2d"), W = 0, H = 0, D = 1;
-  var small = matchMedia("(max-width: 760px)").matches;
-  function size() { D = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight; cv.width = W * D; cv.height = H * D; g.setTransform(D, 0, 0, D, 0, 0); }
+  var small = matchMedia("(max-width: 760px)").matches || !!window.GLOVE_LITE;
+  function size() { D = gDPR(); W = innerWidth; H = innerHeight; cv.width = W * D; cv.height = H * D; g.setTransform(D, 0, 0, D, 0, 0); }
   size(); addEventListener("resize", size);
   var rnd = Math.random, PI = Math.PI;
   /* stars */
@@ -2852,11 +2872,11 @@ let starsCtx, stars = [];
 function initScene() {
   const c = $("#stars"); if (!c) return;
   starsCtx = c.getContext("2d");
-  const size = () => { const d = Math.min(devicePixelRatio || 1, 2); c.width = innerWidth * d; c.height = innerHeight * d; starsCtx.setTransform(d, 0, 0, d, 0, 0);
+  const size = () => { const d = gDPR(); c.width = innerWidth * d; c.height = innerHeight * d; starsCtx.setTransform(d, 0, 0, d, 0, 0);
     stars = Array.from({ length: MOBILE ? 90 : 220 }, () => ({ x: Math.random() * innerWidth, y: Math.random() * innerHeight, r: Math.random() * 1.2 + .2, a: Math.random() * .7 + .2, t: Math.random() * 6 })); drawStars(0); };
   size(); addEventListener("resize", size);
   addEventListener("scroll", onSceneScroll, { passive: true }); onSceneScroll();
-  if (!RM) { let last = 0; const loop = t => { if (document.body.classList.contains("home-on") && t - last > (MOBILE ? 120 : 60)) { drawStars(t / 1000); last = t; } requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
+  if (!RM) { let last = 0; const loop = t => { if (!window.GLOVE_LITE && document.body.classList.contains("home-on") && t - last > (MOBILE ? 120 : 60)) { drawStars(t / 1000); last = t; } requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
 }
 function drawStars(t) {
   const g = starsCtx; g.clearRect(0, 0, innerWidth, innerHeight);
@@ -2885,7 +2905,7 @@ function startGlobe(cv) {
   const hubs = [[35.7, 139.7], [34.7, 135.5], [1.3, 103.8], [51.5, -0.1], [40.7, -74], [37.8, -122.4], [-33.9, 151.2], [48.9, 2.3], [25.2, 55.3], [22.3, 114.2], [-23.5, -46.6], [19.1, 72.9]]
     .map(([la, lo]) => { const a = la * Math.PI / 180, b = lo * Math.PI / 180; return [Math.cos(a) * Math.cos(b), Math.sin(a), Math.cos(a) * Math.sin(b)]; });
   const arcs = []; for (let i = 0; i < hubs.length; i++) arcs.push([1, i]); for (let i = 2; i < hubs.length; i += 2) arcs.push([i, (i + 5) % hubs.length]);
-  const size = () => { const d = Math.min(devicePixelRatio || 1, 2), b = cv.getBoundingClientRect(); W = b.width; cv.width = W * d; cv.height = W * d; g.setTransform(d, 0, 0, d, 0, 0); R = W * 0.38; cx = cy = W / 2; };
+  const size = () => { const d = gDPR(), b = cv.getBoundingClientRect(); W = b.width; cv.width = W * d; cv.height = W * d; g.setTransform(d, 0, 0, d, 0, 0); R = W * 0.38; cx = cy = W / 2; };
   size(); const ro = new ResizeObserver(size); ro.observe(cv);
   const tilt = -0.38, ct = Math.cos(tilt), st = Math.sin(tilt);
   const proj = (p, rot) => { const c = Math.cos(rot), s = Math.sin(rot); let x = p[0] * c - p[2] * s, z = p[0] * s + p[2] * c, y = p[1]; const y2 = y * ct - z * st, z2 = y * st + z * ct; return [cx + x * R, cy - y2 * R, z2]; };
@@ -2962,7 +2982,7 @@ function karakuri() {
 function heroFx() {
   const hero = $(".hero2"), cv = $("#hero-fx"), par = $(".hero2-par"); if (!hero || !cv) return;
   const g = cv.getContext("2d"); let W = 0, H = 0, d = 1;
-  const size = () => { d = Math.min(devicePixelRatio || 1, 2); const r = cv.getBoundingClientRect(); W = r.width; H = r.height; cv.width = W * d; cv.height = H * d; g.setTransform(d, 0, 0, d, 0, 0); };
+  const size = () => { d = gDPR(); const r = cv.getBoundingClientRect(); W = r.width; H = r.height; cv.width = W * d; cv.height = H * d; g.setTransform(d, 0, 0, d, 0, 0); };
   size(); const ro = new ResizeObserver(size); ro.observe(cv);
   const hubs = Array.from({ length: 9 }, (_, i) => ({ x: .18 + .7 * ((i * .37) % 1), y: .1 + .4 * ((i * .61) % 1) }));
   const lights = Array.from({ length: MOBILE ? 26 : 60 }, () => ({ x: Math.random(), y: .5 + Math.random() * .25, p: Math.random() * 6, s: .6 + Math.random() * 1.4 }));
@@ -3027,7 +3047,7 @@ function connectPuzzle() {
 function confetti() {
   if (RM) return;
   const cv = document.createElement("canvas"); cv.id = "confetti"; document.body.appendChild(cv);
-  const g = cv.getContext("2d"), d = Math.min(devicePixelRatio || 1, 2); cv.width = innerWidth * d; cv.height = innerHeight * d; g.scale(d, d);
+  const g = cv.getContext("2d"), d = gDPR(); cv.width = innerWidth * d; cv.height = innerHeight * d; g.scale(d, d);
   const cols = ["#E9C77E", "#C79A4A", "#22B8CF", "#0E2A52", "#FFFFFF", "#F6DFA6"];
   const ps = Array.from({ length: 160 }, () => ({ x: innerWidth / 2 + (Math.random() - .5) * 200, y: innerHeight * .55, vx: (Math.random() - .5) * 16, vy: -8 - Math.random() * 12, r: Math.random() * 6.283, vr: (Math.random() - .5) * .3, w: 6 + Math.random() * 6, h: 3 + Math.random() * 5, c: cols[(Math.random() * cols.length) | 0] }));
   const t0 = performance.now();
@@ -3090,7 +3110,7 @@ function pheadFx() {
   if (RM) return;
   const cv = document.createElement("canvas"); cv.className = "pfx"; cv.setAttribute("aria-hidden", "true"); ph.prepend(cv);
   const g = cv.getContext("2d"); let W, H;
-  const size = () => { const d = Math.min(devicePixelRatio || 1, 2); W = ph.clientWidth; H = ph.clientHeight; cv.width = W * d; cv.height = H * d; g.setTransform(d, 0, 0, d, 0, 0); };
+  const size = () => { const d = gDPR(); W = ph.clientWidth; H = ph.clientHeight; cv.width = W * d; cv.height = H * d; g.setTransform(d, 0, 0, d, 0, 0); };
   size(); const ro = new ResizeObserver(size); ro.observe(ph);
   const N = MOBILE ? 34 : 70, P = Array.from({ length: N }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .4, vy: (Math.random() - .5) * .4 }));
   let mx = -999, my = -999, raf, alive = true;
@@ -3381,7 +3401,10 @@ $("#menu-btn").addEventListener("click", () => { const n = $("#gnav"); n.classLi
 addEventListener("hashchange", () => { if (globeStop && route() !== "home") { globeStop(); globeStop = null; } render(); });
 $("#year").textContent = new Date().getFullYear();
 if (PATH_MODE) $$('footer a[href="#admin-login"], footer a[data-r="admin-login"]').forEach(a => (a.closest("li") || a).remove());
-fixLinks(document); jaLabels(document.body); foldFooter(); initScene(); paintLogo(); paintFooter(); render(); boot();
+fixLinks(document); jaLabels(document.body); foldFooter(); initScene();
+if ("IntersectionObserver" in window) { const vio = new IntersectionObserver(es => es.forEach(e => { const v = e.target; if (e.isIntersecting) { if (v.dataset.auto !== "0") { const pr = v.play(); pr && pr.catch(() => {}); } } else v.pause(); }), { rootMargin: "100px" });
+  new MutationObserver(() => $$("video").forEach(v => { if (!v.dataset.vio) { v.dataset.vio = "1"; vio.observe(v); } })).observe(document.body, { childList: true, subtree: true });
+  $$("video").forEach(v => { v.dataset.vio = "1"; vio.observe(v); }); } paintLogo(); paintFooter(); render(); boot();
 </script>
 
 </body></html>

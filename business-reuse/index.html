@@ -118,6 +118,19 @@
 <link rel="icon" type="image/png" sizes="32x32" href="images/icon-32.png">
 <link rel="apple-touch-icon" href="images/icon-180.png">
 <link rel="preload" as="image" href="images/hero.webp">
+<script>/* 軽量表示：性能の低い端末では、動きを間引いて滑らかさを保つ */
+(function(){var L=false;try{L=localStorage.getItem('glove-lite')==='1'}catch(e){}
+var hc=navigator.hardwareConcurrency||8,dm=navigator.deviceMemory||8;if(hc<=4||dm<=4)L=true;
+window.GLOVE_LITE=L;if(L)document.documentElement.classList.add('lite');
+window.gDPR=function(){return window.GLOVE_LITE?1:Math.min(window.devicePixelRatio||1,1.5)};
+var raf=window.requestAnimationFrame.bind(window),caf=window.cancelAnimationFrame.bind(window),seq=1e9,map=new Map();
+/* 軽量表示のときは、動きの計算を1コマおきにする（見た目の速さは同じ） */
+window.requestAnimationFrame=function(cb){if(!window.GLOVE_LITE)return raf(cb);var id=++seq;map.set(id,raf(function(){map.set(id,raf(function(t){map.delete(id);cb(t)}))}));return id};
+window.cancelAnimationFrame=function(id){if(map.has(id)){caf(map.get(id));map.delete(id)}else caf(id)};
+window.gLite=function(){if(window.GLOVE_LITE)return;window.GLOVE_LITE=true;document.documentElement.classList.add('lite');try{localStorage.setItem('glove-lite','1')}catch(e){}};
+/* 実際の滑らかさを測り、遅ければ軽量表示に切り替える */
+addEventListener('load',function(){setTimeout(function(){if(window.GLOVE_LITE)return;var n=0,t0=0,slow=0,last=0;
+function f(t){if(last){var d=t-last;if(d>34)slow++;n++}last=t;if(n<90)raf(f);else if(slow>36)window.gLite()}raf(f)},1200)});})();</script>
 <script>/* オープニング：トップを最初に開いたときだけ、読み込み中の画面を空色で覆う */
 (function(){try{var b=document.querySelector('base[data-site]'),p=location.pathname,home;
 if(b){var bp=new URL(b.href).pathname;home=(p===bp||p===bp+'index.html');}else{home=(!location.hash||location.hash==='#home');}
@@ -1265,6 +1278,13 @@ select.flash{animation:flash 1s ease}
 .desk i{font-style:normal;font-size:.82rem;font-weight:700;color:var(--gold-ink)}
 .case-link{justify-self:start;font-size:.84rem;font-weight:700;color:var(--gold-ink);text-decoration:none;border-bottom:1px solid currentColor}
 </style>
+<style id="lite-css">
+/* 軽量表示：ぼかし効果を外し、くり返しの飾りの動きは1回で止める */
+html.lite *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.lite body *:not(#intro):not(#intro *){animation-iteration-count:1!important}
+html.lite .hero2 h1 .g{animation:none!important}
+html.lite #scene #stars{display:none}
+</style>
 </head><body>
 <a class="skip" href="#view">本文へスキップ</a>
 <div id="glow" aria-hidden="true"></div><div id="scene" aria-hidden="true"><div class="ly space"><canvas id="stars"></canvas></div><div class="ly earth"></div><div class="ly city"></div></div>
@@ -1281,7 +1301,7 @@ select.flash{animation:flash 1s ease}
   <div class="en">事業 03</div><h1>リユース・買取事業</h1><p>眠っている資産を、次の価値へつなぐ。</p>
 </div></header>
 <section class="page"><div class="wrap">
-  <div class="biz-detail-visual bdv-video"><video class="bdv" poster="images/biz-03.webp" muted="" loop="" playsinline="" preload="auto" aria-label="リユース・買取事業の事業領域を表す動画"><source src="videos/reuse.webm" type="video/webm"><source src="videos/reuse.mp4" type="video/mp4"></video><div><span>GLOVE ／ 事業 03</span><strong>リユース・買取事業</strong></div><button type="button" class="vtoggle" aria-label="動画を再生" aria-pressed="true"><i aria-hidden="true"></i></button><div class="gauge" aria-label="法人向け関連サービス 7件"><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="bg" cx="50" cy="50" r="44"></circle><circle class="fg" cx="50" cy="50" r="44" stroke-dasharray="276.46015351590177" stroke-dashoffset="276.46015351590177" style="stroke-dashoffset: 179.699;"></circle></svg><div><b>7</b><small>サービス</small></div></div></div>
+  <div class="biz-detail-visual bdv-video"><video class="bdv" poster="images/biz-03.webp" muted="" loop="" playsinline="" preload="auto" aria-label="リユース・買取事業の事業領域を表す動画" data-vio="1"><source src="videos/reuse.webm" type="video/webm"><source src="videos/reuse.mp4" type="video/mp4"></video><div><span>GLOVE ／ 事業 03</span><strong>リユース・買取事業</strong></div><button type="button" class="vtoggle" aria-label="動画を一時停止" aria-pressed="false"><i aria-hidden="true"></i></button><div class="gauge" aria-label="法人向け関連サービス 7件"><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="bg" cx="50" cy="50" r="44"></circle><circle class="fg" cx="50" cy="50" r="44" stroke-dasharray="276.46015351590177" stroke-dashoffset="276.46015351590177" style="stroke-dashoffset: 179.699;"></circle></svg><div><b>7</b><small>サービス</small></div></div></div>
   
   <div class="notice" style="margin-bottom:24px">株式会社グローブの公式サイトは法人・事業者・専門家向けです。各事業の一般消費者向け受付は、専門窓口で行います。</div>
   <div class="blk rv"><h2>事業概要</h2>
@@ -1290,18 +1310,18 @@ select.flash{animation:flash 1s ease}
     
     
   </div>
-  <div class="blk rv"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-k7j66u">企業との連携領域<span class="fold-ic" aria-hidden="true"></span></button></h2>
+  <div class="blk rv"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-rhbnxm">企業との連携領域<span class="fold-ic" aria-hidden="true"></span></button></h2>
     
     
-  <div id="fold-k7j66u" class="fold-body" hidden=""><div class="panel"><ul class="ticks"><li>法人保有品・在庫の買取相談</li><li>商業施設・店舗での買取催事の協業</li><li>整理・不動産事業者との送客・相互連携</li></ul></div><p class="muted" style="font-size:.86rem;margin:0">連携内容・提供条件は個別に協議します。掲載は提携成立や提供開始を保証するものではありません。</p></div></div>
-  <div class="blk rv"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-tnuvtv">つながりマップ<span class="fold-ic" aria-hidden="true"></span></button></h2>
+  <div id="fold-rhbnxm" class="fold-body" hidden=""><div class="panel"><ul class="ticks"><li>法人保有品・在庫の買取相談</li><li>商業施設・店舗での買取催事の協業</li><li>整理・不動産事業者との送客・相互連携</li></ul></div><p class="muted" style="font-size:.86rem;margin:0">連携内容・提供条件は個別に協議します。掲載は提携成立や提供開始を保証するものではありません。</p></div></div>
+  <div class="blk rv"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-iqvvvi">つながりマップ<span class="fold-ic" aria-hidden="true"></span></button></h2>
     
     
-  <div id="fold-tnuvtv" class="fold-body" hidden=""><p class="muted" style="margin:0;font-size:.88rem">丸をドラッグすると線がのび、押すと内容が表示されます。金は連携領域、水色は対象企業です。</p><div class="cmap" id="cmap"><svg class="cmap-lines" aria-hidden="true"><line class="g" x1="NaN" y1="NaN" x2="NaN" y2="NaN"></line><line class="g" x1="NaN" y1="NaN" x2="NaN" y2="NaN"></line><line class="g" x1="NaN" y1="NaN" x2="NaN" y2="NaN"></line><line class="c" x1="NaN" y1="NaN" x2="NaN" y2="NaN"></line><line class="c" x1="NaN" y1="NaN" x2="NaN" y2="NaN"></line><line class="c" x1="NaN" y1="NaN" x2="NaN" y2="NaN"></line><circle r="3" cx="NaN" cy="NaN"></circle><circle r="3" cx="NaN" cy="NaN"></circle><circle r="3" cx="NaN" cy="NaN"></circle><circle r="3" cx="NaN" cy="NaN"></circle><circle r="3" cx="NaN" cy="NaN"></circle><circle r="3" cx="NaN" cy="NaN"></circle></svg><div class="cmap-info" id="cmap-info" aria-live="polite">リユース・買取事業を中心に、連携の広がりを表しています。</div><button type="button" class="cnd core" style="left: 539px; top: 224.1px;">リユース・買取事業</button><button type="button" class="cnd g" style="left: 763.058px; top: 156.87px;">法人保有品・在庫の買取相談</button><button type="button" class="cnd g" style="left: 539px; top: 358.56px;">商業施設・店舗での買取催事の協業</button><button type="button" class="cnd g" style="left: 314.942px; top: 156.87px;">整理・不動産事業者との送客・相互連携</button><button type="button" class="cnd c" style="left: 856.416px; top: 313.74px;">在庫や保有資産の現金化を検討する法人</button><button type="button" class="cnd c" style="left: 221.584px; top: 313.74px;">買取催事を共同開催したい店舗・商業施設</button><button type="button" class="cnd c" style="left: 539px; top: 44.82px;">遺品整理・不動産など、買取と連携したい事業者</button></div></div></div>
-  <div class="blk"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-yhb36q">法人向け関連サービス<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-yhb36q" class="fold-body" hidden=""><div class="legend">提供方法：<span class="pv pv-s">自社サービス</span><span class="pv pv-p">提携サービス</span><span class="pv pv-r">専門家への取次</span><span class="pv pv-d">提供予定</span></div><div class="svc-groups"><div class="svc-group"><h3 class="fold-head"><button type="button" class="fold-btn" aria-expanded="true" aria-controls="fold-ju5az9">買取<span class="fold-ic" aria-hidden="true"></span></button></h3><div id="fold-ju5az9" class="fold-body"><div class="svc-list"><a class="svc" href="/glove-site/service-B03-01/" data-r="service-B03-01" style="animation-delay: 0ms;"><b>法人向け買取</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B03-02/" data-r="service-B03-02" style="animation-delay: 40ms;"><b>在庫・備品の買取相談</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B03-03/" data-r="service-B03-03" style="animation-delay: 80ms;"><b>ブランド品・貴金属・時計の買取</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B03-04/" data-r="service-B03-04" style="animation-delay: 120ms;"><b>美術品・骨董品の買取</b><span class="pv pv-s">自社サービス</span></a></div></div></div><div class="svc-group"><h3 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-xxgk39">催事・連携<span class="fold-ic" aria-hidden="true"></span></button></h3><div id="fold-xxgk39" class="fold-body" hidden=""><div class="svc-list"><a class="svc" href="/glove-site/service-B03-05/" data-r="service-B03-05" style="animation-delay: 160ms;"><b>買取催事</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B03-06/" data-r="service-B03-06" style="animation-delay: 200ms;"><b>提携店舗での買取相談会</b><span class="pv pv-p">提携サービス</span></a><a class="svc" href="/glove-site/service-B03-07/" data-r="service-B03-07" style="animation-delay: 240ms;"><b>整理業務と連携した買取</b><span class="pv pv-s">自社サービス</span></a></div></div></div></div></div></div>
-  <div class="blk rv"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-qy36bo">法人連携の特長<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-qy36bo" class="fold-body" hidden=""><ul class="ticks"><li>実店舗の査定ノウハウを法人案件に活かします</li><li>ブランド品・貴金属・時計・美術品など幅広い品目に対応します</li><li>古物営業法に基づき、本人確認を含む適正な手続きで取引します</li></ul></div></div>
+  <div id="fold-iqvvvi" class="fold-body" hidden=""><p class="muted" style="margin:0;font-size:.88rem">丸をドラッグすると線がのび、押すと内容が表示されます。金は連携領域、水色は対象企業です。</p><div class="cmap" id="cmap"><svg class="cmap-lines" aria-hidden="true"><line class="g" x1="NaN" y1="NaN" x2="NaN" y2="NaN"></line><line class="g" x1="NaN" y1="NaN" x2="NaN" y2="NaN"></line><line class="g" x1="NaN" y1="NaN" x2="NaN" y2="NaN"></line><line class="c" x1="NaN" y1="NaN" x2="NaN" y2="NaN"></line><line class="c" x1="NaN" y1="NaN" x2="NaN" y2="NaN"></line><line class="c" x1="NaN" y1="NaN" x2="NaN" y2="NaN"></line><circle r="3" cx="NaN" cy="NaN"></circle><circle r="3" cx="NaN" cy="NaN"></circle><circle r="3" cx="NaN" cy="NaN"></circle><circle r="3" cx="NaN" cy="NaN"></circle><circle r="3" cx="NaN" cy="NaN"></circle><circle r="3" cx="NaN" cy="NaN"></circle></svg><div class="cmap-info" id="cmap-info" aria-live="polite">リユース・買取事業を中心に、連携の広がりを表しています。</div><button type="button" class="cnd core">リユース・買取事業</button><button type="button" class="cnd g">法人保有品・在庫の買取相談</button><button type="button" class="cnd g">商業施設・店舗での買取催事の協業</button><button type="button" class="cnd g">整理・不動産事業者との送客・相互連携</button><button type="button" class="cnd c">在庫や保有資産の現金化を検討する法人</button><button type="button" class="cnd c">買取催事を共同開催したい店舗・商業施設</button><button type="button" class="cnd c">遺品整理・不動産など、買取と連携したい事業者</button></div></div></div>
+  <div class="blk"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-mp7oq3">法人向け関連サービス<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-mp7oq3" class="fold-body" hidden=""><div class="legend">提供方法：<span class="pv pv-s">自社サービス</span><span class="pv pv-p">提携サービス</span><span class="pv pv-r">専門家への取次</span><span class="pv pv-d">提供予定</span></div><div class="svc-groups"><div class="svc-group"><h3 class="fold-head"><button type="button" class="fold-btn" aria-expanded="true" aria-controls="fold-6mxcdb">買取<span class="fold-ic" aria-hidden="true"></span></button></h3><div id="fold-6mxcdb" class="fold-body"><div class="svc-list"><a class="svc" href="/glove-site/service-B03-01/" data-r="service-B03-01" style="animation-delay: 0ms;"><b>法人向け買取</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B03-02/" data-r="service-B03-02" style="animation-delay: 40ms;"><b>在庫・備品の買取相談</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B03-03/" data-r="service-B03-03" style="animation-delay: 80ms;"><b>ブランド品・貴金属・時計の買取</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B03-04/" data-r="service-B03-04" style="animation-delay: 120ms;"><b>美術品・骨董品の買取</b><span class="pv pv-s">自社サービス</span></a></div></div></div><div class="svc-group"><h3 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-ddzgoj">催事・連携<span class="fold-ic" aria-hidden="true"></span></button></h3><div id="fold-ddzgoj" class="fold-body" hidden=""><div class="svc-list"><a class="svc" href="/glove-site/service-B03-05/" data-r="service-B03-05" style="animation-delay: 160ms;"><b>買取催事</b><span class="pv pv-s">自社サービス</span></a><a class="svc" href="/glove-site/service-B03-06/" data-r="service-B03-06" style="animation-delay: 200ms;"><b>提携店舗での買取相談会</b><span class="pv pv-p">提携サービス</span></a><a class="svc" href="/glove-site/service-B03-07/" data-r="service-B03-07" style="animation-delay: 240ms;"><b>整理業務と連携した買取</b><span class="pv pv-s">自社サービス</span></a></div></div></div></div></div></div>
+  <div class="blk rv"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-8xx9sc">法人連携の特長<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-8xx9sc" class="fold-body" hidden=""><ul class="ticks"><li>実店舗の査定ノウハウを法人案件に活かします</li><li>ブランド品・貴金属・時計・美術品など幅広い品目に対応します</li><li>古物営業法に基づき、本人確認を含む適正な手続きで取引します</li></ul></div></div>
   
-  <div class="blk rv"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-95ezxd">関連事業<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-95ezxd" class="fold-body" hidden=""><div class="panel" style="display:grid;gap:6px"><b>買取大吉 大阪勝山南店</b><p style="margin:0">株式会社グローブが運営する買取専門店（買取大吉フランチャイズ加盟店）</p><a href="https://www.kaitori-daikichi.jp/store/katsuyamaminami/" target="_blank" rel="noopener" style="color:var(--gold-ink)">サイトを見る →</a></div></div></div>
+  <div class="blk rv"><h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-ouc3ig">関連事業<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-ouc3ig" class="fold-body" hidden=""><div class="panel" style="display:grid;gap:6px"><b>買取大吉 大阪勝山南店</b><p style="margin:0">株式会社グローブが運営する買取専門店（買取大吉フランチャイズ加盟店）</p><a href="https://www.kaitori-daikichi.jp/store/katsuyamaminami/" target="_blank" rel="noopener" style="color:var(--gold-ink)">サイトを見る →</a></div></div></div>
   <div class="blk rv"><h2>ほかの事業へ</h2><div class="dial-wrap" data-cur="reuse"><div class="dial" role="group" aria-label="事業ダイヤル（ドラッグで回転）"><div class="dial-ring" style="transform: rotate(-60deg);"><span data-i="0" style="transform: rotate(0deg) translateY(calc(30px + (-0.5 * min(300px, 78vw)))) rotate(60deg);">01</span><span data-i="1" style="transform: rotate(30deg) translateY(calc(30px + (-0.5 * min(300px, 78vw)))) rotate(30deg);">02</span><span data-i="2" style="transform: rotate(60deg) translateY(calc(30px + (-0.5 * min(300px, 78vw)))) rotate(0deg);" class="cur">03</span><span data-i="3" style="transform: rotate(90deg) translateY(calc(30px + (-0.5 * min(300px, 78vw)))) rotate(-30deg);">04</span><span data-i="4" style="transform: rotate(120deg) translateY(calc(30px + (-0.5 * min(300px, 78vw)))) rotate(-60deg);">05</span><span data-i="5" style="transform: rotate(150deg) translateY(calc(30px + (-0.5 * min(300px, 78vw)))) rotate(-90deg);">06</span><span data-i="6" style="transform: rotate(180deg) translateY(calc(30px + (-0.5 * min(300px, 78vw)))) rotate(-120deg);">07</span><span data-i="7" style="transform: rotate(210deg) translateY(calc(30px + (-0.5 * min(300px, 78vw)))) rotate(-150deg);">08</span><span data-i="8" style="transform: rotate(240deg) translateY(calc(30px + (-0.5 * min(300px, 78vw)))) rotate(-180deg);">09</span><span data-i="9" style="transform: rotate(270deg) translateY(calc(30px + (-0.5 * min(300px, 78vw)))) rotate(-210deg);">10</span><span data-i="10" style="transform: rotate(300deg) translateY(calc(30px + (-0.5 * min(300px, 78vw)))) rotate(-240deg);">11</span><span data-i="11" style="transform: rotate(330deg) translateY(calc(30px + (-0.5 * min(300px, 78vw)))) rotate(-270deg);">12</span></div><div class="dial-hub">GLOVE</div></div>
     <div class="dial-side"><div class="nm" aria-live="polite"><small>事業 03</small>リユース・買取事業</div><p class="ld">眠っている資産を、次の価値へつなぐ。</p><div class="dial-btns"><button type="button" class="btn btn-ghost btn-sm" data-d="-1">‹ 前の事業</button><button type="button" class="btn btn-ghost btn-sm" data-d="1">次の事業 ›</button><a class="btn btn-navy btn-sm" id="dial-go" href="#business-reuse">表示中の事業</a></div></div></div></div>
   <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn btn-navy" href="/glove-site/contact-service-reuse/" data-r="contact-service-reuse">リユース・買取事業の法人連携を相談する</a><a class="btn btn-ghost" href="/glove-site/business/" data-r="business">事業一覧へ戻る</a></div>
@@ -1400,8 +1420,8 @@ select.flash{animation:flash 1s ease}
     };
   })();
   var cv = el.querySelector("canvas"), g = cv.getContext("2d"), W = 0, H = 0, D = 1;
-  var small = matchMedia("(max-width: 760px)").matches;
-  function size() { D = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight; cv.width = W * D; cv.height = H * D; g.setTransform(D, 0, 0, D, 0, 0); }
+  var small = matchMedia("(max-width: 760px)").matches || !!window.GLOVE_LITE;
+  function size() { D = gDPR(); W = innerWidth; H = innerHeight; cv.width = W * D; cv.height = H * D; g.setTransform(D, 0, 0, D, 0, 0); }
   size(); addEventListener("resize", size);
   var rnd = Math.random, PI = Math.PI;
   /* stars */
@@ -2837,11 +2857,11 @@ let starsCtx, stars = [];
 function initScene() {
   const c = $("#stars"); if (!c) return;
   starsCtx = c.getContext("2d");
-  const size = () => { const d = Math.min(devicePixelRatio || 1, 2); c.width = innerWidth * d; c.height = innerHeight * d; starsCtx.setTransform(d, 0, 0, d, 0, 0);
+  const size = () => { const d = gDPR(); c.width = innerWidth * d; c.height = innerHeight * d; starsCtx.setTransform(d, 0, 0, d, 0, 0);
     stars = Array.from({ length: MOBILE ? 90 : 220 }, () => ({ x: Math.random() * innerWidth, y: Math.random() * innerHeight, r: Math.random() * 1.2 + .2, a: Math.random() * .7 + .2, t: Math.random() * 6 })); drawStars(0); };
   size(); addEventListener("resize", size);
   addEventListener("scroll", onSceneScroll, { passive: true }); onSceneScroll();
-  if (!RM) { let last = 0; const loop = t => { if (document.body.classList.contains("home-on") && t - last > (MOBILE ? 120 : 60)) { drawStars(t / 1000); last = t; } requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
+  if (!RM) { let last = 0; const loop = t => { if (!window.GLOVE_LITE && document.body.classList.contains("home-on") && t - last > (MOBILE ? 120 : 60)) { drawStars(t / 1000); last = t; } requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
 }
 function drawStars(t) {
   const g = starsCtx; g.clearRect(0, 0, innerWidth, innerHeight);
@@ -2870,7 +2890,7 @@ function startGlobe(cv) {
   const hubs = [[35.7, 139.7], [34.7, 135.5], [1.3, 103.8], [51.5, -0.1], [40.7, -74], [37.8, -122.4], [-33.9, 151.2], [48.9, 2.3], [25.2, 55.3], [22.3, 114.2], [-23.5, -46.6], [19.1, 72.9]]
     .map(([la, lo]) => { const a = la * Math.PI / 180, b = lo * Math.PI / 180; return [Math.cos(a) * Math.cos(b), Math.sin(a), Math.cos(a) * Math.sin(b)]; });
   const arcs = []; for (let i = 0; i < hubs.length; i++) arcs.push([1, i]); for (let i = 2; i < hubs.length; i += 2) arcs.push([i, (i + 5) % hubs.length]);
-  const size = () => { const d = Math.min(devicePixelRatio || 1, 2), b = cv.getBoundingClientRect(); W = b.width; cv.width = W * d; cv.height = W * d; g.setTransform(d, 0, 0, d, 0, 0); R = W * 0.38; cx = cy = W / 2; };
+  const size = () => { const d = gDPR(), b = cv.getBoundingClientRect(); W = b.width; cv.width = W * d; cv.height = W * d; g.setTransform(d, 0, 0, d, 0, 0); R = W * 0.38; cx = cy = W / 2; };
   size(); const ro = new ResizeObserver(size); ro.observe(cv);
   const tilt = -0.38, ct = Math.cos(tilt), st = Math.sin(tilt);
   const proj = (p, rot) => { const c = Math.cos(rot), s = Math.sin(rot); let x = p[0] * c - p[2] * s, z = p[0] * s + p[2] * c, y = p[1]; const y2 = y * ct - z * st, z2 = y * st + z * ct; return [cx + x * R, cy - y2 * R, z2]; };
@@ -2947,7 +2967,7 @@ function karakuri() {
 function heroFx() {
   const hero = $(".hero2"), cv = $("#hero-fx"), par = $(".hero2-par"); if (!hero || !cv) return;
   const g = cv.getContext("2d"); let W = 0, H = 0, d = 1;
-  const size = () => { d = Math.min(devicePixelRatio || 1, 2); const r = cv.getBoundingClientRect(); W = r.width; H = r.height; cv.width = W * d; cv.height = H * d; g.setTransform(d, 0, 0, d, 0, 0); };
+  const size = () => { d = gDPR(); const r = cv.getBoundingClientRect(); W = r.width; H = r.height; cv.width = W * d; cv.height = H * d; g.setTransform(d, 0, 0, d, 0, 0); };
   size(); const ro = new ResizeObserver(size); ro.observe(cv);
   const hubs = Array.from({ length: 9 }, (_, i) => ({ x: .18 + .7 * ((i * .37) % 1), y: .1 + .4 * ((i * .61) % 1) }));
   const lights = Array.from({ length: MOBILE ? 26 : 60 }, () => ({ x: Math.random(), y: .5 + Math.random() * .25, p: Math.random() * 6, s: .6 + Math.random() * 1.4 }));
@@ -3012,7 +3032,7 @@ function connectPuzzle() {
 function confetti() {
   if (RM) return;
   const cv = document.createElement("canvas"); cv.id = "confetti"; document.body.appendChild(cv);
-  const g = cv.getContext("2d"), d = Math.min(devicePixelRatio || 1, 2); cv.width = innerWidth * d; cv.height = innerHeight * d; g.scale(d, d);
+  const g = cv.getContext("2d"), d = gDPR(); cv.width = innerWidth * d; cv.height = innerHeight * d; g.scale(d, d);
   const cols = ["#E9C77E", "#C79A4A", "#22B8CF", "#0E2A52", "#FFFFFF", "#F6DFA6"];
   const ps = Array.from({ length: 160 }, () => ({ x: innerWidth / 2 + (Math.random() - .5) * 200, y: innerHeight * .55, vx: (Math.random() - .5) * 16, vy: -8 - Math.random() * 12, r: Math.random() * 6.283, vr: (Math.random() - .5) * .3, w: 6 + Math.random() * 6, h: 3 + Math.random() * 5, c: cols[(Math.random() * cols.length) | 0] }));
   const t0 = performance.now();
@@ -3075,7 +3095,7 @@ function pheadFx() {
   if (RM) return;
   const cv = document.createElement("canvas"); cv.className = "pfx"; cv.setAttribute("aria-hidden", "true"); ph.prepend(cv);
   const g = cv.getContext("2d"); let W, H;
-  const size = () => { const d = Math.min(devicePixelRatio || 1, 2); W = ph.clientWidth; H = ph.clientHeight; cv.width = W * d; cv.height = H * d; g.setTransform(d, 0, 0, d, 0, 0); };
+  const size = () => { const d = gDPR(); W = ph.clientWidth; H = ph.clientHeight; cv.width = W * d; cv.height = H * d; g.setTransform(d, 0, 0, d, 0, 0); };
   size(); const ro = new ResizeObserver(size); ro.observe(ph);
   const N = MOBILE ? 34 : 70, P = Array.from({ length: N }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .4, vy: (Math.random() - .5) * .4 }));
   let mx = -999, my = -999, raf, alive = true;
@@ -3366,7 +3386,10 @@ $("#menu-btn").addEventListener("click", () => { const n = $("#gnav"); n.classLi
 addEventListener("hashchange", () => { if (globeStop && route() !== "home") { globeStop(); globeStop = null; } render(); });
 $("#year").textContent = new Date().getFullYear();
 if (PATH_MODE) $$('footer a[href="#admin-login"], footer a[data-r="admin-login"]').forEach(a => (a.closest("li") || a).remove());
-fixLinks(document); jaLabels(document.body); foldFooter(); initScene(); paintLogo(); paintFooter(); render(); boot();
+fixLinks(document); jaLabels(document.body); foldFooter(); initScene();
+if ("IntersectionObserver" in window) { const vio = new IntersectionObserver(es => es.forEach(e => { const v = e.target; if (e.isIntersecting) { if (v.dataset.auto !== "0") { const pr = v.play(); pr && pr.catch(() => {}); } } else v.pause(); }), { rootMargin: "100px" });
+  new MutationObserver(() => $$("video").forEach(v => { if (!v.dataset.vio) { v.dataset.vio = "1"; vio.observe(v); } })).observe(document.body, { childList: true, subtree: true });
+  $$("video").forEach(v => { v.dataset.vio = "1"; vio.observe(v); }); } paintLogo(); paintFooter(); render(); boot();
 </script>
 
 </body></html>
