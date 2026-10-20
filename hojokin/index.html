@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>公的支援マッチ｜補助金・助成金の対象可能性を判定</title>
+<meta name="description" content="会社の情報を入れるだけで、国・大阪府・大阪市などの補助金・助成金の対象となる可能性を、理由と根拠付きで判定します。">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+Antique:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* 管制室の流れをくむ、利用者向けの落ち着いた画面。薄い青灰の地に墨紺と朝日の橙 */
+:root{
+  --bg:#eef1f4; --panel:#fbfcfd; --ink:#16223a; --sub:#56627a; --line:#d4dae3; --soft:#e3e8ee;
+  --accent:#e2621b; --accent-ink:#fff; --accent-soft:#fbe6d8;
+  --ok:#1f7a4d; --ok-soft:#dcefe4; --warn:#a86b00; --warn-soft:#f6ead0; --ng:#6b7385; --ng-soft:#e6e9ee; --crit:#c0312b; --crit-soft:#f7dcda; --info:#2f5fa8; --info-soft:#dfe8f6;
+  --f-display:"Zen Kaku Gothic Antique","Hiragino Sans","Yu Gothic",sans-serif;
+  --f-body:"Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;
+  --f-num:"JetBrains Mono",ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1626; --panel:#162036; --ink:#e7ecf4; --sub:#9aa6bd; --line:#2a3752; --soft:#1d2942;
+  --accent:#f28a4a; --accent-ink:#1a1006; --accent-soft:#3a2516;
+  --ok:#5cc58e; --ok-soft:#173527; --warn:#e5b450; --warn-soft:#3a2e14; --ng:#9aa3b5; --ng-soft:#232d42; --crit:#f07a73; --crit-soft:#3d1c1b; --info:#82aaf0; --info-soft:#1b2a48; color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;padding-bottom:env(safe-area-inset-bottom,0px)}
+h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.35;text-wrap:balance}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+header.top{background:var(--ink);color:var(--bg);padding-top:env(safe-area-inset-top,0px)}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:14px}
+.brand b{font-family:var(--f-display);font-weight:900;font-size:19px;letter-spacing:.04em;display:block}
+.brand span{font-size:12px;opacity:.75}
+.who{font-size:12.5px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.who button{background:transparent;border:1px solid rgba(255,255,255,.35);color:inherit;border-radius:4px;padding:3px 10px;cursor:pointer}
+main{padding-block:22px 60px;display:flex;flex-direction:column;gap:18px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px 20px;min-width:0}
+.panel h2{font-size:18px}
+.lead{color:var(--sub);font-size:14px;margin:4px 0 14px;max-width:70ch}
+.btn{cursor:pointer;border:1px solid var(--line);background:var(--panel);padding:9px 16px;border-radius:5px;font-weight:700;font-size:14px}
+.btn:hover{border-color:var(--sub)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.sm{padding:5px 11px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.status{min-height:1.5em;font-size:14px;color:var(--sub)}
+.status.err{color:var(--crit)}
+.notice{border:1px solid var(--info);background:var(--info-soft);border-radius:6px;padding:10px 14px;font-size:14px}
+.notice.warn{border-color:var(--warn);background:var(--warn-soft)}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:1px 9px;border-radius:999px;white-space:nowrap}
+.p-ok{background:var(--ok-soft);color:var(--ok)} .p-warn{background:var(--warn-soft);color:var(--warn)} .p-ng{background:var(--ng-soft);color:var(--ng)} .p-info{background:var(--info-soft);color:var(--info)} .p-acc{background:var(--accent-soft);color:var(--accent)} .p-crit{background:var(--crit-soft);color:var(--crit)}
+
+/* ログイン */
+.login{max-width:460px;margin:30px auto;display:flex;flex-direction:column;gap:14px}
+.login h1{font-size:24px}
+.fld{display:flex;flex-direction:column;gap:5px;min-width:0}
+.fld label{font-size:13px;color:var(--sub);display:flex;justify-content:space-between;gap:6px}
+.fld input,.fld select,.fld textarea{border:1px solid var(--line);border-radius:5px;background:var(--bg);padding:9px 11px;width:100%}
+.fld textarea{min-height:70px;resize:vertical}
+.code-in{font-family:var(--f-num);font-size:22px;letter-spacing:.3em;text-align:center}
+
+/* 手順 */
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;list-style:none;margin:0;padding:0}
+.steps li{border:1px solid var(--line);border-radius:6px;padding:9px 11px;font-size:13px;display:flex;flex-direction:column;gap:2px}
+.steps li b{font-size:13.5px}
+.steps li span.n{font-family:var(--f-num);font-size:11px;color:var(--sub)}
+.steps li.done{background:var(--ok-soft);border-color:transparent}
+.steps li.now{background:var(--accent-soft);border-color:var(--accent)}
+
+/* 企業一覧 */
+.cos{display:flex;flex-direction:column;gap:10px}
+.co{border:1px solid var(--line);border-radius:6px;padding:12px 14px;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between}
+.co .nm{font-weight:700;font-size:15.5px}
+.co .meta{font-size:12.5px;color:var(--sub)}
+.tally{display:flex;gap:6px;flex-wrap:wrap}
+
+/* カルテ */
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.wide{grid-column:1/-1}
+.fset{grid-column:1/-1;border-top:1px solid var(--line);padding-top:10px;font-family:var(--f-display);font-weight:700}
+.checks{display:flex;flex-wrap:wrap;gap:6px 16px}
+.checks label{display:flex;gap:6px;align-items:center;font-size:14px;color:var(--ink)}
+.intake{border:1px solid var(--accent);background:var(--accent-soft);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.intake h3{font-size:16px}
+.intake .row input{flex:1 1 260px;border:1px solid var(--line);border-radius:5px;background:var(--panel);padding:9px 11px;min-width:0}
+.consent{border:1px solid var(--accent);border-radius:6px;padding:10px 12px;display:flex;gap:10px;font-size:14px;background:var(--accent-soft)}
+.draft table{width:100%;border-collapse:collapse;font-size:13.5px}
+.draft th,.draft td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--soft);vertical-align:top}
+.draft th{color:var(--sub);font-weight:500;font-size:12.5px}
+.tbl{overflow-x:auto}
+
+/* 判定 */
+.tabs{display:flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:5px;overflow:hidden;width:max-content;max-width:100%}
+.tabs button{all:unset;cursor:pointer;padding:6px 12px;font-size:13.5px}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.tabs button:focus-visible{outline:2px solid var(--accent)}
+.cards{display:flex;flex-direction:column;gap:12px}
+.jc{border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;background:var(--panel)}
+.jc.l-高{border-left:5px solid var(--ok)} .jc.l-中{border-left:5px solid var(--warn)} .jc.l-情報不足{border-left:5px solid var(--info)} .jc.l-対象外{border-left:5px solid var(--ng)}
+.jc-t{font-weight:700}
+.jc-m{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--sub)}
+.jc-m b{color:var(--ink);font-weight:500}
+.conds{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.cond h4{margin:0 0 3px;font-size:12.5px}
+.cond.ok h4{color:var(--ok)} .cond.ng h4{color:var(--crit)} .cond.q h4{color:var(--info)}
+.cond ul{margin:0;padding-left:1.1em;font-size:13px}
+.ev{font-size:13px;border-left:2px solid var(--line);padding:2px 0 2px 10px;color:var(--sub)}
+.ev q{color:var(--ink);quotes:"「" "」"}
+.next b{color:var(--accent)}
+.qbox{border:1px dashed var(--info);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.qbox .row label{flex:1 1 240px;font-size:13.5px}
+.qbox .row input{flex:1 1 180px;border:1px solid var(--line);border-radius:5px;background:var(--bg);padding:6px 9px;min-width:0}
+.foot{font-size:12px;color:var(--sub)}
+.policy{font-size:13px;color:var(--sub);display:flex;flex-direction:column;gap:4px;margin:0;padding-left:1.1em}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp 1s linear infinite;vertical-align:-1px}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+@media (max-width:700px){.steps{grid-template-columns:1fr 1fr}.grid2,.conds{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="brand"><b>公的支援マッチ</b><span>補助金・助成金の対象可能性を判定</span></div>
+  <div class="who" id="who" hidden><span id="who-mail"></span><span id="who-role" class="pill p-acc" hidden>管理者</span><button type="button" id="b-logout">ログアウト</button></div>
+</div></header>
+
+<main class="wrap">
+  <!-- ログイン -->
+  <section id="v-login" class="login" hidden>
+    <h1>メールアドレスでログイン</h1>
+    <p class="lead" style="margin:0">アカウントの作成は不要です。メールアドレスを入れると、6桁の確認番号が届きます。</p>
+    <div class="panel" style="display:flex;flex-direction:column;gap:12px">
+      <div class="fld" id="step-mail"><label for="in-mail">メールアドレス</label><input id="in-mail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.co.jp"></div>
+      <button class="btn primary" type="button" id="b-send">確認番号を送る</button>
+      <div class="fld" id="step-code" hidden><label for="in-code">メールに届いた6桁の確認番号</label><input id="in-code" class="code-in" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000"></div>
+      <button class="btn primary" type="button" id="b-verify" hidden>ログイン</button>
+      <div class="status" id="st-login" role="status"></div>
+    </div>
+    <ul class="policy">
+      <li>登録した企業の情報は、登録した本人と運営管理者だけが見られます。</li>
+      <li>第三者への提供や、営業目的の連絡はしません。</li>
+      <li>判定は「対象となる可能性」です。受給や採択を保証するものではありません。</li>
+    </ul>
+  </section>
+
+  <!-- 一覧 -->
+  <section id="v-home" hidden style="display:flex;flex-direction:column;gap:18px">
+    <div class="panel">
+      <h2>使い方</h2>
+      <ol class="steps" id="steps" style="margin-top:10px"></ol>
+    </div>
+    <div class="panel">
+      <div class="row" style="justify-content:space-between"><h2 id="home-h">登録した企業</h2><button class="btn primary" type="button" id="b-new">＋ 企業を登録</button></div>
+      <p class="lead" id="home-lead">企業を選ぶと、判定結果とカルテを確認できます。</p>
+      <div class="cos" id="cos"></div>
+      <div class="status" id="st-home" role="status"></div>
+    </div>
+  </section>
+
+  <!-- 企業 -->
+  <section id="v-co" hidden style="display:flex;flex-direction:column;gap:18px">
+    <div class="row"><button class="btn sm" type="button" id="b-back">← 企業の一覧へ</button><span class="status" id="st-co" role="status"></span></div>
+    <div class="panel">
+      <div class="row" style="justify-content:space-between"><h2 id="co-h">企業カルテ</h2><span id="co-state"></span></div>
+      <div class="tabs" role="group" aria-label="表示の切り替え" style="margin-top:10px"><button type="button" data-tab="result" aria-pressed="true">判定結果</button><button type="button" data-tab="card" aria-pressed="false">企業カルテ</button></div>
+    </div>
+
+    <div id="t-result" class="panel">
+      <div id="res-head"></div>
+      <div class="tabs" role="group" aria-label="判定で絞り込み" id="res-filter" style="margin:12px 0"></div>
+      <div class="cards" id="res-cards"></div>
+    </div>
+
+    <div id="t-card" class="panel" hidden>
+      <section class="intake" aria-label="ホームページ・名刺から入力">
+        <h3>① ホームページ・名刺から入力（おすすめ）</h3>
+        <p style="margin:0;font-size:14px">ホームページの住所を入れて「読み取りを依頼」、または名刺の写真を送ってください。1時間以内に会社情報を読み取り、この画面に候補を出します。</p>
+        <div class="row"><input id="in-url" type="url" inputmode="url" placeholder="https://example.co.jp/" aria-label="ホームページの住所"><button class="btn primary" type="button" id="b-hp">読み取りを依頼</button></div>
+        <div class="row"><label class="btn" for="in-card" tabindex="0" id="lb-card">名刺の写真を送る</label><input type="file" id="in-card" accept="image/*" capture="environment" hidden><span style="font-size:12.5px;color:var(--sub)">写真は会社情報の読み取りにだけ使います。</span></div>
+        <div id="req-st" style="font-size:13.5px"></div>
+      </section>
+      <div id="draft" class="draft"></div>
+      <form id="f-co" class="grid2" novalidate>
+        <div class="fset">② 内容を確認・入力</div>
+        <div class="fld"><label for="f-name">企業名</label><input id="f-name" required></div>
+        <div class="fld"><label for="f-form">申請者区分</label><select id="f-form"><option>株式会社</option><option>合同会社</option><option>有限会社</option><option>個人事業主</option><option>一般社団法人</option><option>NPO法人</option><option>社会福祉法人</option><option>医療法人</option><option>組合</option><option>その他</option></select></div>
+        <div class="fld"><label for="f-pref">本店の都道府県</label><input id="f-pref" placeholder="大阪府"></div>
+        <div class="fld"><label for="f-city">本店の市区町村</label><input id="f-city" placeholder="大阪市"></div>
+        <div class="fld wide"><label for="f-address">本店の住所</label><input id="f-address"></div>
+        <div class="fld"><label for="f-indcat">業種区分 ★</label><select id="f-indcat"></select></div>
+        <div class="fld"><label for="f-smetype">中小企業の判定に使う区分</label><select id="f-smetype"><option value="">業種区分から自動</option><option>製造業その他</option><option>卸売業</option><option>小売業</option><option>サービス業</option></select></div>
+        <div class="fld"><label for="f-emp">常時使用する従業員数 ★</label><input id="f-emp" inputmode="numeric"></div>
+        <div class="fld"><label for="f-cap">資本金（円） ★</label><input id="f-cap" inputmode="numeric"></div>
+        <div class="fld"><label for="f-founded">設立年月</label><input id="f-founded" placeholder="例：2018年4月"></div>
+        <div class="fld"><label for="f-corpno">法人番号（13桁）</label><input id="f-corpno" inputmode="numeric" maxlength="13"></div>
+        <div class="fld wide"><label for="f-business">事業内容・主要商品 ★</label><textarea id="f-business"></textarea></div>
+        <div class="fld wide"><label for="f-licenses">許認可</label><input id="f-licenses" placeholder="例：古物商許可、建設業許可"></div>
+        <div class="fld wide"><label>今後1年の取組（当てはまるものすべて） ★</label><div class="checks" id="f-plans-check"></div></div>
+        <div class="fld wide"><label for="f-plans">取組の具体内容</label><textarea id="f-plans"></textarea></div>
+        <div class="fld"><label for="f-hoken">雇用保険の適用</label><select id="f-hoken"><option value="">未回答</option><option>適用事業所</option><option>適用していない</option></select></div>
+        <div class="fld"><label for="f-wage">賃上げの予定</label><select id="f-wage"><option value="">未回答</option><option>予定あり</option><option>予定なし</option><option>検討中</option></select></div>
+        <div class="fld wide"><label for="f-hire">採用・教育訓練・正社員化などの予定</label><textarea id="f-hire"></textarea></div>
+        <div class="fld"><label for="f-tax">税・社会保険料の滞納</label><select id="f-tax"><option value="">未回答</option><option>なし</option><option>あり</option></select></div>
+        <div class="fld"><label for="f-past">過去3年の補助金採択</label><input id="f-past"></div>
+        <div class="fld wide"><label class="consent" for="f-consent"><input type="checkbox" id="f-consent" style="margin-top:4px"><span>判定のため、このカルテの内容を判定担当（運営者が契約するAI）に渡すことに同意します。第三者への提供はしません。同意がない企業は判定できません。</span></label></div>
+        <div class="wide row"><button class="btn primary" type="submit" id="b-save">保存して判定を依頼</button><button class="btn" type="button" id="b-del" hidden>この企業を削除</button></div>
+        <div class="wide notice warn" id="del-confirm" hidden>この企業を削除します。よろしいですか？ <button class="btn sm" type="button" id="b-del-yes">削除する</button> <button class="btn sm" type="button" id="b-del-no">やめる</button></div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ===== 設定 ===== */
+const API_URL = "";   // 受付プログラムの公開URL（設置後に入れる）
+const INDUSTRIES=["農業、林業","漁業","鉱業、採石業、砂利採取業","建設業","製造業","電気・ガス・熱供給・水道業","情報通信業","運輸業、郵便業","卸売業、小売業","金融業、保険業","不動産業、物品賃貸業","学術研究、専門・技術サービス業","宿泊業、飲食サービス業","生活関連サービス業、娯楽業","教育、学習支援業","医療、福祉","複合サービス事業","サービス業（他に分類されないもの）","公務（他に分類されるものを除く）","分類不能の産業"];
+const PLAN_OPTS=["設備投資","IT・デジタル化","省エネ・脱炭素","新事業・新分野","販路拡大・海外展開","店舗の出店・改装","研究開発","事業承継・M&A","採用・人材育成","賃上げ","職場環境の改善","安全・防災"];
+const LABEL={name:"企業名",pref:"都道府県",city:"市区町村",address:"本店の住所",founded:"設立年月",corpNo:"法人番号",capital:"資本金",employees:"従業員数",business:"事業内容",industry:"業種の詳細",licenses:"許認可",industryCat:"業種区分"};
+const LV_PILL={"高":"p-ok","中":"p-warn","情報不足":"p-info","対象外":"p-ng"};
+const LV_ORDER={"高":0,"中":1,"情報不足":2,"対象外":3};
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=iso=>{ if(!iso) return "—"; const d=new Date(iso); return isNaN(d)?"—":`${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,"0")}/${String(d.getDate()).padStart(2,"0")}`; };
+const yen=n=>{ n=Number(n)||0; if(!n) return "—"; if(n>=1e8) return (n/1e8).toLocaleString("ja-JP",{maximumFractionDigits:1})+"億円"; if(n>=1e4) return Math.round(n/1e4).toLocaleString("ja-JP")+"万円"; return n.toLocaleString("ja-JP")+"円"; };
+const S={token:null,email:null,isAdmin:false,companies:[],cur:null,result:null,draft:null,filter:"対象可能性あり"};
+const store={get(k){try{return localStorage.getItem(k);}catch(e){return null;}},set(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v);}catch(e){}}};
+function api(){ return API_URL || store.get("apiUrl") || ""; }
+function setSt(id,t,err){ const el=$(id); if(!el) return; el.innerHTML=t||""; el.classList.toggle("err",!!err); }
+async function call(action,body={}){
+  if(!api()) throw new Error("受付の準備ができていません。運営者にお問い合わせください。");
+  const r=await fetch(api(),{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,token:S.token,...body})});
+  const j=await r.json();
+  if(!j.ok){ if(j.relogin){ logout(true); } throw new Error(j.error||"処理に失敗しました。"); }
+  return j;
+}
+function show(v){ ["login","home","co"].forEach(x=>$("#v-"+x).hidden=x!==v); window.scrollTo(0,0); }
+
+/* ===== ログイン ===== */
+$("#b-send").onclick=async()=>{
+  const email=$("#in-mail").value.trim(); if(!email){ setSt("#st-login","メールアドレスを入力してください。",true); return; }
+  $("#b-send").disabled=true; setSt("#st-login",'<span class="spin"></span> 送信しています…');
+  try{ await call("requestCode",{email}); $("#step-code").hidden=false; $("#b-verify").hidden=false; $("#b-send").textContent="確認番号を送り直す"; setSt("#st-login",`${esc(email)} に確認番号を送りました。届かない場合は迷惑メールの箱もご確認ください。`); $("#in-code").focus(); }
+  catch(e){ setSt("#st-login",esc(e.message),true); }
+  finally{ $("#b-send").disabled=false; }
+};
+$("#b-verify").onclick=async()=>{
+  const email=$("#in-mail").value.trim(), code=$("#in-code").value.trim();
+  $("#b-verify").disabled=true; setSt("#st-login",'<span class="spin"></span> 確認しています…');
+  try{ const j=await call("verifyCode",{email,code}); S.token=j.token; S.email=j.email; S.isAdmin=j.isAdmin; store.set("tk",j.token); store.set("em",j.email); store.set("ad",j.isAdmin?"1":"0"); afterLogin(); }
+  catch(e){ setSt("#st-login",esc(e.message),true); }
+  finally{ $("#b-verify").disabled=false; }
+};
+$("#in-code").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#b-verify").click(); });
+$("#in-mail").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#b-send").click(); });
+function logout(silent){ if(!silent) call("logout").catch(()=>{}); S.token=null; ["tk","em","ad"].forEach(k=>store.set(k,null)); $("#who").hidden=true; show("login"); }
+$("#b-logout").onclick=()=>logout(false);
+function afterLogin(){ $("#who").hidden=false; $("#who-mail").textContent=S.email; $("#who-role").hidden=!S.isAdmin; loadHome(); }
+
+/* ===== 一覧 ===== */
+async function loadHome(){
+  show("home"); setSt("#st-home",'<span class="spin"></span> 読み込んでいます…');
+  try{ const j=await call("listCompanies"); S.companies=j.companies||[]; setSt("#st-home",""); renderHome(); }
+  catch(e){ setSt("#st-home",esc(e.message),true); }
+}
+function renderHome(){
+  $("#home-h").textContent=S.isAdmin?"登録されている企業（全員分）":"登録した企業";
+  const cs=S.companies;
+  const has=cs.length>0, judged=cs.some(c=>c._status==="判定済み"), consent=cs.some(c=>c.aiConsent);
+  const st=[["企業を登録","＋で企業名を入れる",has],["会社情報を入れる","ホームページ・名刺・手入力",has&&consent],["判定を待つ","1時間以内に結果が出る",judged],["結果を確認","質問に答えると精度が上がる",judged]];
+  const cur=st.findIndex(x=>!x[2]);
+  $("#steps").innerHTML=st.map((x,i)=>`<li class="${x[2]?"done":i===cur?"now":""}"><span class="n">手順 ${i+1}${x[2]?"　済":i===cur?"　いまここ":""}</span><b>${x[0]}</b><span>${x[1]}</span></li>`).join("");
+  $("#cos").innerHTML=cs.length? cs.map(c=>{ const s=c._summary||{};
+    const stPill=c._status==="判定済み"?`<span class="pill p-ok">判定済み ${fmt(c._judgedAt)}</span>`:`<span class="pill p-warn">${esc(c._status)}</span>`;
+    return `<div class="co"><div><div class="nm">${esc(c.name||"（名称未入力）")}</div><div class="meta">${S.isAdmin?esc(c.ownerEmail)+"・":""}${esc((c.pref||"")+(c.city||""))} ${c.aiConsent?"":"・<b style='color:var(--crit)'>判定への同意なし</b>"}${c._hasDraft?"・<b style='color:var(--info)'>読み取り候補あり</b>":""}</div></div>
+      <div class="row">${stPill}<div class="tally">${s["高"]?`<span class="pill p-ok">高 ${s["高"]}</span>`:""}${s["中"]?`<span class="pill p-warn">中 ${s["中"]}</span>`:""}${s["情報不足"]?`<span class="pill p-info">情報不足 ${s["情報不足"]}</span>`:""}</div><button class="btn sm" type="button" data-open="${esc(c.id)}">開く</button></div></div>`; }).join("")
+    : `<div class="notice">まだ企業が登録されていません。「＋ 企業を登録」から始めてください。</div>`;
+}
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-open]"); if(b) openCo(b.dataset.open); });
+$("#b-new").onclick=()=>{ S.cur={id:null,name:"",planTags:[]}; S.result=null; S.draft=null; openEditor(true); };
+$("#b-back").onclick=()=>loadHome();
+
+/* ===== 企業 ===== */
+async function openCo(id){
+  S.cur=S.companies.find(c=>c.id===id); S.result=null; S.draft=null; openEditor(false);
+  setSt("#st-co",'<span class="spin"></span> 結果を読み込んでいます…');
+  try{ const j=await call("getResult",{id}); S.result=j.result; S.draft=j.draft; setSt("#st-co",""); renderResult(); renderDraft(); }
+  catch(e){ setSt("#st-co",esc(e.message),true); }
+}
+function tab(t){ document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.tab===t))); $("#t-result").hidden=t!=="result"; $("#t-card").hidden=t!=="card"; }
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-tab]"); if(b) tab(b.dataset.tab); });
+function openEditor(isNew){
+  show("co"); const c=S.cur;
+  $("#co-h").textContent=isNew?"新しい企業を登録":(c.name||"企業カルテ");
+  $("#co-state").innerHTML=isNew?"":(c._status==="判定済み"?`<span class="pill p-ok">判定済み</span>`:`<span class="pill p-warn">${esc(c._status)}（1時間以内に判定）</span>`);
+  if(!$("#f-indcat").options.length) $("#f-indcat").innerHTML=`<option value="">未選択</option>`+INDUSTRIES.map(x=>`<option>${x}</option>`).join("");
+  if(!$("#f-plans-check").children.length) $("#f-plans-check").innerHTML=PLAN_OPTS.map((x,i)=>`<label for="pc${i}"><input type="checkbox" id="pc${i}" value="${x}">${x}</label>`).join("");
+  const v=(id,val)=>$(id).value=val??"";
+  v("#f-name",c.name); v("#f-pref",c.pref); v("#f-city",c.city); v("#f-address",c.address); v("#f-emp",c.employees); v("#f-cap",c.capital); v("#f-founded",c.founded); v("#f-corpno",c.corpNo); v("#f-business",c.business); v("#f-licenses",c.licenses); v("#f-plans",c.plans); v("#f-hire",c.hire); v("#f-past",c.pastAdopted); v("#in-url",c.url);
+  $("#f-form").value=c.form||"株式会社"; $("#f-indcat").value=c.industryCat||""; $("#f-smetype").value=c.smeType||""; $("#f-hoken").value=c.koyouHoken||""; $("#f-wage").value=c.wageUp||""; $("#f-tax").value=c.taxArrears||"";
+  $("#f-consent").checked=!!c.aiConsent;
+  document.querySelectorAll("#f-plans-check input").forEach(x=>x.checked=(c.planTags||[]).includes(x.value));
+  $("#b-del").hidden=isNew; $("#del-confirm").hidden=true;
+  renderReq(); renderResult(); renderDraft();
+  tab(isNew?"card":"result");
+}
+function renderReq(){
+  const c=S.cur; const parts=[];
+  if(c.hpRequestedAt) parts.push(`ホームページの読み取りを依頼済み（${fmt(c.hpRequestedAt)}）`);
+  if(c.cardRequestedAt) parts.push(`名刺の写真を受付済み（${fmt(c.cardRequestedAt)}）`);
+  $("#req-st").innerHTML=parts.length?`<span class="spin"></span> ${parts.join("／")}。読み取りが終わると、下に候補が出ます。`:"";
+}
+function formData(){
+  const g=id=>$(id).value.trim();
+  return {...S.cur,name:g("#f-name"),form:$("#f-form").value,pref:g("#f-pref"),city:g("#f-city"),address:g("#f-address"),industryCat:$("#f-indcat").value,smeType:$("#f-smetype").value,employees:g("#f-emp"),capital:g("#f-cap"),founded:g("#f-founded"),corpNo:g("#f-corpno"),business:g("#f-business"),licenses:g("#f-licenses"),planTags:[...document.querySelectorAll("#f-plans-check input:checked")].map(x=>x.value),plans:g("#f-plans"),koyouHoken:$("#f-hoken").value,wageUp:$("#f-wage").value,hire:g("#f-hire"),taxArrears:$("#f-tax").value,pastAdopted:g("#f-past"),aiConsent:$("#f-consent").checked,url:g("#in-url")||S.cur.url||""};
+}
+async function save(extra={},msg){
+  const d={...formData(),...extra};
+  if(!d.name){ setSt("#st-co","企業名を入力してください。",true); tab("card"); $("#f-name").focus(); return false; }
+  setSt("#st-co",'<span class="spin"></span> 保存しています…');
+  try{ const j=await call("saveCompany",{company:d}); S.cur={...d,id:j.id,updatedAt:j.updatedAt,_status:"再判定待ち"}; setSt("#st-co",msg||(d.aiConsent?"保存しました。1時間以内に判定し、この画面に結果を出します。":"保存しました。判定するには、同意にチェックを入れて保存してください。"));
+    $("#co-h").textContent=d.name; $("#b-del").hidden=false; renderReq(); return true; }
+  catch(e){ setSt("#st-co",esc(e.message),true); return false; }
+}
+$("#f-co").onsubmit=e=>{ e.preventDefault(); save(); };
+$("#b-hp").onclick=async()=>{ let u=$("#in-url").value.trim(); if(!u){ setSt("#st-co","ホームページの住所を入力してください。",true); return; } if(!/^https?:\/\//.test(u)) u="https://"+u; $("#in-url").value=u;
+  if(!$("#f-name").value.trim()){ try{ $("#f-name").value=new URL(u).hostname.replace(/^www\./,""); }catch(e){} }
+  await save({url:u,hpRequestedAt:new Date().toISOString()},"読み取りを依頼しました。1時間以内に候補を出します。"); };
+$("#lb-card").addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); $("#in-card").click(); } });
+$("#in-card").onchange=async e=>{
+  const f=e.target.files&&e.target.files[0]; if(!f) return;
+  if(!S.cur.id){ if(!$("#f-name").value.trim()) $("#f-name").value="（名刺から読み取り中）"; if(!(await save({},"企業を登録しました。"))) return; }
+  setSt("#st-co",'<span class="spin"></span> 名刺の写真を送っています…');
+  try{ const b64=await shrink(f); await call("uploadCard",{id:S.cur.id,data:b64,mime:"image/jpeg"}); S.cur.cardRequestedAt=new Date().toISOString(); renderReq(); setSt("#st-co","名刺の写真を受け付けました。1時間以内に読み取り、候補を出します。"); }
+  catch(err){ setSt("#st-co",esc(err.message),true); }
+  finally{ e.target.value=""; }
+};
+function shrink(file,max=1600){ return new Promise((res,rej)=>{ const img=new Image(), u=URL.createObjectURL(file);
+  img.onload=()=>{ const r=Math.min(1,max/Math.max(img.width,img.height)), cv=document.createElement("canvas"); cv.width=Math.round(img.width*r); cv.height=Math.round(img.height*r); cv.getContext("2d").drawImage(img,0,0,cv.width,cv.height); URL.revokeObjectURL(u); res(cv.toDataURL("image/jpeg",0.88).split(",")[1]); };
+  img.onerror=()=>{ URL.revokeObjectURL(u); rej(new Error("写真を開けませんでした。")); }; img.src=u; }); }
+$("#b-del").onclick=()=>{$("#del-confirm").hidden=false;};
+$("#b-del-no").onclick=()=>{$("#del-confirm").hidden=true;};
+$("#b-del-yes").onclick=async()=>{ try{ await call("deleteCompany",{id:S.cur.id}); loadHome(); }catch(e){ setSt("#st-co",esc(e.message),true); } };
+
+/* 読み取り候補 */
+function renderDraft(){
+  const d=S.draft&&S.draft.fields||null; const keys=d?Object.keys(d).filter(k=>LABEL[k]):[];
+  $("#draft").innerHTML=keys.length? `<div class="notice" style="margin-bottom:14px"><div class="row" style="justify-content:space-between"><b>読み取った候補（${esc(S.draft.source||"")}）</b><button class="btn sm primary" type="button" id="b-adopt-all">すべて入れる</button></div>
+    <div class="tbl"><table><thead><tr><th>項目</th><th>読み取った値</th><th>今の値</th><th>確度</th><th></th></tr></thead><tbody>${keys.map(k=>`<tr><td>${LABEL[k]}</td><td>${esc(d[k].value)}</td><td style="color:var(--sub)">${esc(S.cur[k]||"未入力")}</td><td class="num">${esc(d[k].conf)}%</td><td><button class="btn sm" type="button" data-adopt="${k}">入れる</button></td></tr>`).join("")}</tbody></table></div>
+    <p style="margin:6px 0 0;font-size:12.5px">「入れる」を押すと下の入力欄に入ります。最後に「保存して判定を依頼」を押してください。</p></div>` : "";
+}
+const FIELD_INPUT={name:"#f-name",pref:"#f-pref",city:"#f-city",address:"#f-address",founded:"#f-founded",corpNo:"#f-corpno",capital:"#f-cap",employees:"#f-emp",business:"#f-business",licenses:"#f-licenses",industryCat:"#f-indcat"};
+function adopt(k){ const d=S.draft.fields[k]; if(!d) return; const el=$(FIELD_INPUT[k]); if(!el) return;
+  if(k==="industryCat"&&!INDUSTRIES.includes(d.value)) return; el.value=d.value; el.style.outline="2px solid var(--ok)"; delete S.draft.fields[k]; renderDraft(); }
+document.addEventListener("click",async e=>{ const b=e.target.closest("[data-adopt]"); if(b){ adopt(b.dataset.adopt); return; }
+  if(e.target.id==="b-adopt-all"){ Object.keys(S.draft.fields).forEach(adopt); try{ await call("markDraftSeen",{id:S.cur.id}); }catch(err){} setSt("#st-co","候補を入力欄に入れました。内容を確かめて「保存して判定を依頼」を押してください。"); } });
+
+/* 判定結果 */
+function renderResult(){
+  const r=S.result, c=S.cur;
+  if(!c||!c.id){ $("#res-head").innerHTML=`<div class="notice">企業カルテを入力して保存すると、1時間以内に判定します。</div>`; $("#res-filter").innerHTML=""; $("#res-cards").innerHTML=""; return; }
+  if(!r){ $("#res-head").innerHTML=`<div class="notice">${c.aiConsent?'<span class="spin"></span> 判定を待っています。1時間以内に結果が出ます。この画面を開き直すと最新の結果を表示します。':"判定への同意がありません。「企業カルテ」で同意にチェックを入れて保存してください。"}</div>`; $("#res-filter").innerHTML=""; $("#res-cards").innerHTML=""; return; }
+  const js=r.judgments||[], n=l=>js.filter(j=>j.level===l).length;
+  const stale=c.updatedAt&&r.companyVer&&c.updatedAt>r.companyVer;
+  $("#res-head").innerHTML=`<div class="row" style="justify-content:space-between"><div class="row"><span class="pill p-ok">高 ${n("高")}</span><span class="pill p-warn">中 ${n("中")}</span><span class="pill p-info">情報不足 ${n("情報不足")}</span><span class="pill p-ng">対象外 ${n("対象外")}</span></div><span class="foot">判定 ${fmt(r.judgedAt)}・受付中の制度 ${js.length}件と照合</span></div>${stale?`<div class="notice warn" style="margin-top:10px">カルテが変わったため、判定し直しを待っています（1時間以内）。</div>`:""}`;
+  const opts=["対象可能性あり","高","中","情報不足","対象外"];
+  $("#res-filter").innerHTML=opts.map(o=>`<button type="button" data-f="${o}" aria-pressed="${S.filter===o}">${o}</button>`).join("");
+  const show=js.filter(j=>S.filter==="対象可能性あり"?j.level!=="対象外":j.level===S.filter).sort((a,b)=>(LV_ORDER[a.level]-LV_ORDER[b.level])||((a.program&&a.program.endAt||"9")>(b.program&&b.program.endAt||"9")?1:-1));
+  $("#res-cards").innerHTML=show.length? show.map(card).join("") : `<div class="notice">この区分の制度はありません。</div>`;
+}
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-f]"); if(b){ S.filter=b.dataset.f; renderResult(); } });
+function li(a,empty){ return a&&a.length?`<ul>${a.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:`<ul><li style="list-style:none;margin-left:-1.1em;color:var(--sub)">${empty}</li></ul>`; }
+function card(j){
+  const p=j.program||{}; const d=p.endAt?Math.ceil((new Date(p.endAt)-Date.now())/86400000):null;
+  const qs=(j.questions||[]).map((q,i)=>`<div class="row"><label for="q-${esc(j.programId)}-${i}">${esc(q.q)}</label><input id="q-${esc(j.programId)}-${i}" data-qf="${esc(q.field)}" data-qq="${esc(q.q)}" placeholder="回答"></div>`).join("");
+  return `<article class="jc l-${esc(j.level)}">
+    <div class="jc-t"><span class="pill ${LV_PILL[j.level]}">${j.level==="情報不足"||j.level==="対象外"?esc(j.level):"対象可能性："+esc(j.level)}</span> ${p.url?`<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.title||j.programId)}</a>`:esc(p.title||j.programId)}</div>
+    <div class="jc-m"><span>${p.endAt?`締切 <b class="num">${fmt(p.endAt)}</b>${d!=null&&d>=0?`（残り${d}日）`:""}`:`<b>${esc(p.status||"随時")}</b>`}</span><span>上限 <b>${yen(p.maxLimit)}</b></span><span>補助率 <b>${esc(p.rate||"公式資料を確認")}</b></span><span>相談先 <b>${p.kind==="助成金"?"社会保険労務士":"行政書士"}</b></span></div>
+    <div class="conds"><div class="cond ok"><h4>当てはまる条件</h4>${li(j.matched,"なし")}</div><div class="cond ng"><h4>当てはまらない条件</h4>${li(j.unmatched,"なし")}</div><div class="cond q"><h4>確認が必要な条件</h4>${li(j.unknown,"なし")}</div></div>
+    ${(j.evidence||[]).map(e=>`<div class="ev">公式の根拠 <q>${esc(e)}</q></div>`).join("")||`<div class="ev">公式の根拠：該当する文を特定できていません（確認が必要として扱います）</div>`}
+    ${j.next?`<div class="next"><b>次にすること</b>　${esc(j.next)}</div>`:""}
+    ${qs?`<div class="qbox"><b style="font-size:13px;color:var(--info)">判定を進めるための質問</b>${qs}<div><button class="btn sm primary" type="button" data-ans="${esc(j.programId)}">回答して判定し直す</button></div></div>`:""}
+  </article>`;
+}
+const QFIELD={employees:"employees",capital:"capital",founded:"founded",corpNo:"corpNo",industryCat:"industryCat",smeType:"smeType",business:"business",licenses:"licenses",investPlace:"investPlace",koyouHoken:"koyouHoken",wageUp:"wageUp",hire:"hire",taxArrears:"taxArrears",pastAdopted:"pastAdopted",plans:"plans",form:"form"};
+document.addEventListener("click",async e=>{ const b=e.target.closest("[data-ans]"); if(!b) return;
+  const ins=[...document.querySelectorAll(`input[id^="q-${CSS.escape(b.dataset.ans)}-"]`)].filter(x=>x.value.trim());
+  if(!ins.length){ setSt("#st-co","回答を入力してください。",true); return; }
+  const extra={...(S.cur.extra||{})}, upd={};
+  ins.forEach(x=>{ const f=QFIELD[x.dataset.qf]; if(f) upd[f]=x.value.trim(); else extra[x.dataset.qq]=x.value.trim(); });
+  S.cur={...S.cur,...upd,extra}; openEditor(false); tab("result");
+  await save({...upd,extra},"回答を保存しました。1時間以内に判定し直します。"); });
+
+/* ===== 起動 ===== */
+(function init(){
+  const q=new URLSearchParams(location.search); if(q.get("api")) store.set("apiUrl",q.get("api"));
+  S.token=store.get("tk"); S.email=store.get("em"); S.isAdmin=store.get("ad")==="1";
+  if(!api()){ show("login"); setSt("#st-login","受付の準備中です。しばらくお待ちください。",true); return; }
+  if(S.token) afterLogin(); else show("login");
+})();
+</script>
+</body>
+</html>
