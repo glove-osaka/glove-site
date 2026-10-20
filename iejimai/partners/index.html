@@ -424,7 +424,7 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 .ft li a:hover{text-decoration:underline}
 .ft .co{margin-top:20px;display:grid;gap:4px;font-size:.98rem;line-height:1.8}
 .ft-bottom{border-top:1px solid rgba(255,255,255,.14)}
-.ft-bottom .wrap{padding-block:18px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;color:#C9D6CF;font-size:.92rem}
+.ft-bottom .wrap{flex-wrap:wrap;gap:10px;padding-block:18px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;color:#C9D6CF;font-size:.92rem}
 @media (max-width:900px){.ft-in{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){.ft-in{grid-template-columns:1fr}}
 /* オープニング */
@@ -446,9 +446,9 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 .op-sk{margin-top:8px;background:none;border:0;color:#E9DFCB;font:inherit;font-size:1rem;text-decoration:underline;text-underline-offset:.25em;cursor:pointer;min-height:44px}
 .op-snd{position:absolute;z-index:4;left:max(16px,env(safe-area-inset-left,0px));top:max(16px,env(safe-area-inset-top,0px));min-height:48px;padding:0 20px;border-radius:99px;border:1px solid rgba(255,255,255,.7);background:rgba(20,16,12,.5);color:#fff;font:inherit;font-size:1rem;cursor:pointer}
 .opn:not(.playing) .op-skip{display:none}
-.opn::before,.opn::after{content:"";position:absolute;left:0;right:0;height:0;background:#000;z-index:3;transition:height 1.6s ease}
-.opn::before{top:0}.opn::after{bottom:0}
-@media (min-aspect-ratio:4/3){.opn::before,.opn::after{height:8.5vh}}
+.opn::before,.opn::after{content:"";position:absolute;left:0;right:0;height:8.5vh;background:#000;z-index:3;transform:scaleY(0);transition:transform 1.6s ease;will-change:transform}
+.opn::before{top:0;transform-origin:top}.opn::after{bottom:0;transform-origin:bottom}
+@media (min-aspect-ratio:4/3){.opn::before,.opn::after{transform:scaleY(1)}}
 .op-veil{position:absolute;inset:0;z-index:1;background:linear-gradient(0deg,rgba(8,6,4,.92) 0%,rgba(8,6,4,.78) 38%,rgba(8,6,4,.4) 55%,rgba(8,6,4,0) 72%);opacity:0;transition:opacity 2.4s ease}
 .opn.text .op-veil{opacity:1}
 .op-text{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);writing-mode:vertical-rl;white-space:nowrap;color:#FBF6EA;font-family:var(--f-display);transition:opacity 1.4s ease}
@@ -480,7 +480,7 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
   .op-snd{top:calc(8.5vh + 14px)}
 }
 .opn.text .op-skip{display:none}
-.opn.out::before,.opn.out::after{height:0}
+.opn.out::before,.opn.out::after{transform:scaleY(0)}
 .replay{background:none;border:1px solid rgba(255,255,255,.4);color:#C9D6CF;border-radius:8px;min-height:40px;padding:0 14px;font:inherit;font-size:.92rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
 /* 電話の表示（番号が決まると表示） */
 .nav .tel{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;min-height:52px;padding:0 12px;text-decoration:none;color:var(--pine);line-height:1.25}
@@ -530,6 +530,12 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 @media (min-width:961px){.sidenav>summary .st{display:none}.sidenav>summary{cursor:default}}
 @media (max-width:560px){.blk>summary>h2,.blk>summary>h3{font-size:1.15rem!important;line-height:1.5}.blk>summary{padding:10px 12px 10px 16px;gap:10px}.blk>.blk-b{padding:4px 14px 18px}.blk .st{padding:0 12px}}
 @media print{.blk>*,.sidenav>*{display:block!important}}
+.lite .opn.ended .still{animation:none}
+.lite .op-text::before,.lite .op-title::before{display:none}
+.lite .op-text .ln,.lite .op-name{text-shadow:0 1px 4px rgba(0,0,0,.95);will-change:auto}
+.lite .op-veil{background:rgba(8,6,4,.45)!important}
+.lite .hd{box-shadow:none}
+.lite .trust-in{box-shadow:none}
 .util-tel{display:none;align-items:center;gap:8px;min-height:44px;color:#fff;text-decoration:none;font-weight:700}.util-tel .ic{font-size:1.3rem;color:var(--gold-bright)}.util-tel b{font-size:1.25rem;letter-spacing:.05em;color:#fff}.util-tel small{font-size:.9rem;color:#E9F0EC;font-weight:400}
 @media (min-width:1241px){.util-tel{display:inline-flex}}
 @media (max-width:1599px){.util .op.has-tel{display:none}}
@@ -561,7 +567,7 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 </style>
 </head>
 <body>
-<a class="skip" href="#main">本文へ移動</a>
+<script>(function(){var d=document.documentElement,l=null;try{l=localStorage.getItem('iejimai-lite')}catch(e){}if(l==='1'){d.classList.add('lite');return}if(l==='0')return;var c=navigator.hardwareConcurrency||8,m=navigator.deviceMemory||8,cn=navigator.connection;if(c<=2||m<=2||(cn&&cn.saveData))d.classList.add('lite')})();</script><a class="skip" href="#main">本文へ移動</a>
 <div class="util"><div class="wrap"><span class="op has-tel">運営：<b>株式会社グローブ</b>（古物商許可 大阪府公安委員会 第62102R050377号）</span>
 <div class="util-r"><a class="util-tel" href="tel:0120933496"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h4.5l2 6-3 2a14 14 0 0 0 7.5 7.5l2-3 6 2V23a2.5 2.5 0 0 1-2.5 2.5C14.5 25.5 6.5 17.5 6.5 6.5A2.5 2.5 0 0 1 9 4z"/></svg><small>お電話でのご相談</small><b>0120-933-496</b><small>10:00〜19:00</small></a><button type="button" class="bgm-btn" id="bgmBtn" aria-pressed="false"><i aria-hidden="true"></i><span>音楽を流す</span></button>
 <div class="fs" role="group" aria-label="文字の大きさ"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 25 10 8l6 17M6.2 19h7.6"/><path class="ac" d="M18 25l4.5-12L27 25M19.6 21h5.8"/></svg><span>文字の大きさ</span><button type="button" data-fs="" aria-pressed="true">標準</button><button type="button" data-fs="l" aria-pressed="false">大</button><button type="button" data-fs="xl" aria-pressed="false">特大</button></div></div></div></div>
@@ -599,7 +605,7 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 <li><a href="../about/index.html">窓口について</a></li><li><a href="../flow/index.html">相談の流れ・費用</a></li><li><a href="../faq/index.html">よくある質問</a></li><li><a href="../company/index.html">運営会社</a></li><li><a href="../company/index.html#aisatsu">代表あいさつ</a></li><li><a href="../cases/index.html">相談事例</a></li><li><a href="../contact/index.html">相談内容をまとめる</a></li><li><a href="../contact/index.html#toiawase">お問い合わせ</a></li><li><a href="../partners/index.html">提携事業者の募集</a></li><li><a href="../privacy/index.html">個人情報の取り扱い</a></li><li><a href="../terms/index.html">利用規約・免責事項</a></li></ul></div>
 <div><h4>サービス一覧</h4><ul><li><a href="../services/index.html#kazai">家財・持ち物の整理</a></li><li><a href="../services/index.html#kurashi">暮らし・住み替え</a></li><li><a href="../services/index.html#sumai">住まい・不動産</a></li><li><a href="../services/index.html#souzoku">相続・各種手続き</a></li><li><a href="../services/index.html#senior">シニアライフサポート</a></li><li><a href="../services/index.html#support">業者選び・家族のサポート</a></li></ul></div>
 <div><h4>困りごとから探す</h4><ul><li><a href="../situations/nyukyo.html">施設への入居が決まった</a></li><li><a href="../situations/taiin.html">退院後の住まいを見直したい</a></li><li><a href="../situations/souzoku.html">相続が発生した</a></li><li><a href="../situations/akiya.html">実家が空き家になっている</a></li><li><a href="../situations/sumikae.html">住み替え・同居を考えている</a></li><li><a href="../situations/enpou.html">遠方に住んでいて実家に通えない</a></li><li><a href="../situations/index.html">すべての困りごと</a></li></ul></div>
-</div><div class="ft-bottom"><div class="wrap"><span>© 株式会社グローブ</span><a class="replay" href="../index.html#op">オープニングをもう一度見る</a></div></div></footer>
+</div><div class="ft-bottom"><div class="wrap"><span>© 株式会社グローブ</span><a class="replay" href="../index.html#op">オープニングをもう一度見る</a><button type="button" class="replay" id="liteBtn" aria-pressed="false">動きを軽くする</button></div></div></footer>
 <a class="telbar" href="tel:0120933496"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h4.5l2 6-3 2a14 14 0 0 0 7.5 7.5l2-3 6 2V23a2.5 2.5 0 0 1-2.5 2.5C14.5 25.5 6.5 17.5 6.5 6.5A2.5 2.5 0 0 1 9 4z"/></svg>お電話で相談する　0120-933-496</a><script>document.body.classList.add("has-telbar")</script>
 <script>
 (function(){var b=document.getElementById('menuBtn'),n=document.getElementById('gnav');
@@ -625,6 +631,8 @@ setTimeout(function(){var op=document.getElementById('op');if(pref()==='on'&&!(o
 (function(){function oh(){var h=decodeURIComponent((location.hash||'').slice(1));if(!h)return;var el=document.getElementById(h);if(!el)return;var d=el.tagName==='DETAILS'?el:el.closest('details');if(d&&!d.open){d.open=true;setTimeout(function(){el.scrollIntoView({block:'start'})},30)}}window.addEventListener('hashchange',oh);oh()})();
 
 (function(){var v=document.getElementById('heroV');if(!v||!('IntersectionObserver' in window))return;var io=new IntersectionObserver(function(es){es.forEach(function(e){var vc=document.getElementById('vctl'),op=document.getElementById('op');if(!e.isIntersecting){v.pause()}else if(!(vc&&vc.classList.contains('paused'))&&(!op||op.hidden)){var p=v.play();if(p&&p.catch)p.catch(function(){})}})},{threshold:0.05});io.observe(v)})();
+
+(function(){var b=document.getElementById('liteBtn');if(!b)return;var D=document.documentElement;function sy(){var on=D.classList.contains('lite');b.setAttribute('aria-pressed',String(on));b.textContent=on?'動きを元に戻す':'動きを軽くする'}sy();b.addEventListener('click',function(){var on=!D.classList.contains('lite');D.classList.toggle('lite',on);try{localStorage.setItem('iejimai-lite',on?'1':'0')}catch(e){}var v=document.getElementById('heroV'),vc=document.getElementById('vctl');if(v&&on){v.pause();if(vc){vc.classList.add('paused');vc.querySelector('span').textContent='動画を再生する'}}sy()});new MutationObserver(sy).observe(D,{attributes:true,attributeFilter:['class']})})();
 </script>
 </body>
 </html>
