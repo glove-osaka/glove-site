@@ -431,9 +431,9 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 .opn{position:fixed;inset:0;z-index:200;background:#0E0B08;overflow:hidden;transition:opacity 1.6s ease}
 .opn.out{opacity:0;pointer-events:none}
 .opn video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.opn .still{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform-origin:52% 48%;transition:opacity .2s}
+.opn .still{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform-origin:52% 48%;transition:opacity .2s;will-change:transform;backface-visibility:hidden}
 .opn.ended .still{opacity:1;animation:opZoom 24s linear forwards}
-@keyframes opZoom{from{transform:scale(1)}to{transform:scale(1.07)}}
+@keyframes opZoom{from{transform:scale(1) translateZ(0)}to{transform:scale(1.07) translateZ(0)}}
 .op-start{position:absolute;inset:0;z-index:5;display:grid;place-items:center;background:radial-gradient(ellipse at center,rgba(30,22,14,.55),rgba(8,6,4,.92)),url(assets/hero-poster.jpg) center/cover;color:#FBF6EA;text-align:center;padding:24px}
 .op-start-in{display:grid;justify-items:center;gap:14px;max-width:560px}
 .op-start .brand-mark{width:64px;height:64px;color:#FBF6EA}
@@ -455,15 +455,15 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 .op-text::before{content:"";position:absolute;inset:-22% -70%;z-index:-1;background:radial-gradient(ellipse at center,rgba(8,6,4,.55) 0%,rgba(8,6,4,.3) 45%,rgba(8,6,4,0) 72%);opacity:0;transition:opacity 1.6s ease;pointer-events:none}
 .opn.catch .op-text::before{opacity:1}
 .opn.text .op-text{opacity:0}
-.op-text .ln{margin:0;font-size:min(5vh,9vw,3.2rem);font-weight:700;letter-spacing:.16em;line-height:1.9;opacity:0;filter:blur(10px);transform:translateY(-10px);transition:opacity 2.2s ease .8s,filter 2.2s ease .8s,transform 2.2s ease .8s;text-shadow:0 3px 24px rgba(0,0,0,.85),0 1px 4px rgba(0,0,0,.7)}
+.op-text .ln{margin:0;font-size:min(5vh,9vw,3.2rem);font-weight:700;letter-spacing:.16em;line-height:1.9;opacity:0;transform:translate3d(0,-10px,0);transition:opacity 2.2s ease .8s,transform 2.2s ease .8s;will-change:opacity,transform;text-shadow:0 2px 10px rgba(0,0,0,.85),0 1px 3px rgba(0,0,0,.8)}
 .opn.catch .op-text .ln{opacity:1;filter:none;transform:none}
 .op-text .ln2{transition-delay:2.8s}
 .op-text .ln2{padding-top:2.2em}
 .op-title{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;justify-items:center;gap:clamp(22px,4vh,40px);width:min(94vw,1100px);text-align:center}
 .op-title::before{content:"";position:absolute;inset:-18% -6%;z-index:-1;background:radial-gradient(ellipse at center,rgba(8,6,4,.55) 0%,rgba(8,6,4,.28) 45%,rgba(8,6,4,0) 72%);opacity:0;transition:opacity 2s ease 1.2s;pointer-events:none}
-.op-name{display:flex;align-items:center;justify-content:center;gap:.35em;color:#FBF6EA;font-family:var(--f-display);opacity:0;filter:blur(8px);transform:scale(.97);transition:opacity 2.4s ease 1.4s,filter 2.4s ease 1.4s,transform 3s ease 1.4s;text-shadow:0 3px 28px rgba(0,0,0,.8),0 1px 4px rgba(0,0,0,.6)}
+.op-name{display:flex;align-items:center;justify-content:center;gap:.35em;color:#FBF6EA;font-family:var(--f-display);opacity:0;transform:scale(.97) translateZ(0);transition:opacity 2.4s ease 1.4s,transform 3s ease 1.4s;will-change:opacity,transform;text-shadow:0 2px 12px rgba(0,0,0,.8),0 1px 3px rgba(0,0,0,.7)}
 .op-name b{font-size:clamp(2.2rem,7.2vw,5.6rem);letter-spacing:.14em;font-weight:700;white-space:nowrap;line-height:1.2}
-.op-name .brand-mark{width:clamp(52px,7vw,96px);height:clamp(52px,7vw,96px);color:#FBF6EA;flex-shrink:0;filter:drop-shadow(0 2px 12px rgba(0,0,0,.6))}
+.op-name .brand-mark{width:clamp(52px,7vw,96px);height:clamp(52px,7vw,96px);color:#FBF6EA;flex-shrink:0;}
 .op-co{position:absolute;z-index:2;right:max(16px,3vw);bottom:max(14px,3vh);margin:0;font-family:var(--f-body);font-size:.82rem;letter-spacing:.12em;color:rgba(251,246,234,.62);opacity:0;transition:opacity 2s ease 4.4s;text-shadow:0 1px 6px rgba(0,0,0,.7)}
 @media (max-width:640px){.op-name{flex-direction:column;gap:14px}.op-name b{font-size:clamp(2rem,10.4vw,3rem);letter-spacing:.1em}}
 .op-go{opacity:0;transition:opacity 1.6s ease 4s;background:#C99A45;color:#1A1406;border:0;border-radius:10px;min-height:58px;padding:0 32px;font:inherit;font-family:var(--f-body);font-weight:700;font-size:1.1rem;cursor:pointer}
@@ -623,6 +623,8 @@ setTimeout(function(){var op=document.getElementById('op');if(pref()==='on'&&!(o
 })();
 
 (function(){function oh(){var h=decodeURIComponent((location.hash||'').slice(1));if(!h)return;var el=document.getElementById(h);if(!el)return;var d=el.tagName==='DETAILS'?el:el.closest('details');if(d&&!d.open){d.open=true;setTimeout(function(){el.scrollIntoView({block:'start'})},30)}}window.addEventListener('hashchange',oh);oh()})();
+
+(function(){var v=document.getElementById('heroV');if(!v||!('IntersectionObserver' in window))return;var io=new IntersectionObserver(function(es){es.forEach(function(e){var vc=document.getElementById('vctl'),op=document.getElementById('op');if(!e.isIntersecting){v.pause()}else if(!(vc&&vc.classList.contains('paused'))&&(!op||op.hidden)){var p=v.play();if(p&&p.catch)p.catch(function(){})}})},{threshold:0.05});io.observe(v)})();
 </script>
 </body>
 </html>
