@@ -405,9 +405,9 @@ $("#f-cap").addEventListener("change",()=>{ $("#w-capnum").hidden=$("#f-cap").va
 $("#f-pastsel").addEventListener("change",()=>{ $("#w-past").hidden=$("#f-pastsel").value!=="あり"; });
 $("#f-pref").addEventListener("change",()=>{ $("#f-city").placeholder=$("#f-pref").value==="大阪府"?"選ぶか入力（例：大阪市）":"入力してください"; });
 const toNum=v=>{ const m=String(v??"").replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/,/g,"").match(/\d+(\.\d+)?/); return m?Number(m[0]):null; };
-function setEmp(c){ const o=EMP_OPTS.find(x=>x[0]===c.employees);
+function setEmp(c){ const o=EMP_OPTS.find(x=>x[0]===c.employees); $("#f-empnum").value="";
   if(o){ $("#f-emp").value=o[0]; $("#w-empnum").hidden=true; } else if(toNum(c.employees)!=null){ $("#f-emp").value="__num"; $("#f-empnum").value=toNum(c.employees); $("#w-empnum").hidden=false; } else { $("#f-emp").value=""; $("#w-empnum").hidden=true; } }
-function setCap(c){ const o=CAP_OPTS.find(x=>x[0]===c.capital);
+function setCap(c){ const o=CAP_OPTS.find(x=>x[0]===c.capital); $("#f-capnum").value="";
   if(o){ $("#f-cap").value=o[0]; $("#w-capnum").hidden=true; } else if(toNum(c.capital)!=null){ $("#f-cap").value="__num"; $("#f-capnum").value=String(toNum(c.capital)/1e4); $("#w-capnum").hidden=false; } else { $("#f-cap").value=""; $("#w-capnum").hidden=true; } }
 function setFounded(v){ v=String(v||""); const m=v.match(/(\d{4})\s*年\s*(?:(\d{1,2})\s*月)?/); const w=v.match(/(令和|平成|昭和)\s*(元|\d+)\s*年\s*(?:(\d{1,2})\s*月)?/);
   let y="",mo=""; if(m){ y=m[1]; mo=m[2]||""; } else if(w){ const n=w[2]==="元"?1:Number(w[2]); y=String({令和:2018,平成:1988,昭和:1925}[w[1]]+n); mo=w[3]||""; } else if(/不明|わから/.test(v)) y="不明";
