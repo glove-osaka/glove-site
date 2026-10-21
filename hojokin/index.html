@@ -61,7 +61,8 @@ main{padding-block:22px 60px;display:flex;flex-direction:column;gap:18px}
 .login h1{font-size:24px}
 .fld{display:flex;flex-direction:column;gap:5px;min-width:0}
 .fld label{font-size:13px;color:var(--sub);display:flex;justify-content:space-between;gap:6px}
-.fld input,.fld select,.fld textarea{border:1px solid var(--line);border-radius:5px;background:var(--bg);padding:9px 11px;width:100%}
+.fld input,.fld select,.fld textarea,.grp .sub-in input{border:1px solid var(--line);border-radius:5px;background:var(--bg);padding:9px 11px;width:100%}
+.grp>label{font-size:13px;color:var(--sub);font-weight:700}
 .fld textarea{min-height:70px;resize:vertical}
 .code-in{font-family:var(--f-num);font-size:22px;letter-spacing:.3em;text-align:center}
 
@@ -96,6 +97,33 @@ main{padding-block:22px 60px;display:flex;flex-direction:column;gap:18px}
 .fset{grid-column:1/-1;border-top:1px solid var(--line);padding-top:10px;font-family:var(--f-display);font-weight:700}
 .checks{display:flex;flex-wrap:wrap;gap:6px 16px}
 .checks label{display:flex;gap:6px;align-items:center;font-size:14px;color:var(--ink)}
+/* 選ぶ式の入力部品 */
+.sec{grid-column:1/-1;display:flex;align-items:baseline;gap:10px;border-top:2px solid var(--ink);padding-top:12px;margin-top:6px}
+.sec b{font-family:var(--f-display);font-size:16px}
+.sec span{font-size:12.5px;color:var(--sub)}
+.hint{font-size:12px;color:var(--sub);margin-top:2px}
+.req{color:var(--accent);font-weight:700;font-size:12px;margin-left:4px}
+.auto{font-size:12px;color:var(--sub);background:var(--soft);border-radius:5px;padding:6px 10px;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center}
+.auto b{color:var(--ink);font-weight:700}
+.auto button{all:unset;cursor:pointer;color:var(--accent);text-decoration:underline}
+.sub-in{display:flex;gap:6px;align-items:center;margin-top:6px}
+.sub-in input{flex:1 1 auto;min-width:0}
+.sub-in span{font-size:13px;color:var(--sub);white-space:nowrap}
+.pair{display:flex;gap:6px}
+.pair select{flex:1 1 0;min-width:0}
+.pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.pick.small{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+.pk{position:relative;display:flex;flex-direction:column;gap:2px;border:1.5px solid var(--line);border-radius:8px;padding:10px 12px 10px 38px;cursor:pointer;background:var(--panel);font-size:14px;line-height:1.4;min-height:48px;justify-content:center}
+.pk input{position:absolute;opacity:0;width:1px;height:1px}
+.pk::before{content:"";position:absolute;left:12px;top:50%;width:18px;height:18px;margin-top:-9px;border:2px solid var(--line);border-radius:5px;background:var(--bg)}
+.pk.on{border-color:var(--accent);background:var(--accent-soft)}
+.pk.on::before{background:var(--accent);border-color:var(--accent);box-shadow:inset 0 0 0 3px var(--accent-soft)}
+.pk:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.pk b{font-weight:700}
+.pk small{font-size:12px;color:var(--sub)}
+.grp{grid-column:1/-1;display:flex;flex-direction:column;gap:6px}
+.grp h4{margin:4px 0 0;font-size:13px;color:var(--sub);font-weight:700}
+.cnt{font-size:12.5px;color:var(--accent);font-weight:700}
 .intake{border:1px solid var(--accent);background:var(--accent-soft);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
 .intake h3{font-size:16px}
 .intake .row input{flex:1 1 260px;border:1px solid var(--line);border-radius:5px;background:var(--panel);padding:9px 11px;min-width:0}
@@ -200,27 +228,49 @@ main{padding-block:22px 60px;display:flex;flex-direction:column;gap:18px}
       </section>
       <div id="draft" class="draft"></div>
       <form id="f-co" class="grid2" novalidate>
-        <div class="fset">② 内容を確認・入力</div>
-        <div class="fld"><label for="f-name">企業名</label><input id="f-name" required></div>
-        <div class="fld"><label for="f-form">申請者区分</label><select id="f-form"><option>株式会社</option><option>合同会社</option><option>有限会社</option><option>個人事業主</option><option>一般社団法人</option><option>NPO法人</option><option>社会福祉法人</option><option>医療法人</option><option>組合</option><option>その他</option></select></div>
-        <div class="fld"><label for="f-pref">本店の都道府県</label><input id="f-pref" placeholder="大阪府"></div>
-        <div class="fld"><label for="f-city">本店の市区町村</label><input id="f-city" placeholder="大阪市"></div>
-        <div class="fld wide"><label for="f-address">本店の住所</label><input id="f-address"></div>
-        <div class="fld"><label for="f-indcat">業種区分 ★</label><select id="f-indcat"></select></div>
-        <div class="fld"><label for="f-smetype">中小企業の判定に使う区分</label><select id="f-smetype"><option value="">業種区分から自動</option><option>製造業その他</option><option>卸売業</option><option>小売業</option><option>サービス業</option></select></div>
-        <div class="fld"><label for="f-emp">常時使用する従業員数 ★</label><input id="f-emp" inputmode="numeric"></div>
-        <div class="fld"><label for="f-cap">資本金（円） ★</label><input id="f-cap" inputmode="numeric"></div>
-        <div class="fld"><label for="f-founded">設立年月</label><input id="f-founded" placeholder="例：2018年4月"></div>
-        <div class="fld"><label for="f-corpno">法人番号（13桁）</label><input id="f-corpno" inputmode="numeric" maxlength="13"></div>
-        <div class="fld wide"><label for="f-business">事業内容・主要商品 ★</label><textarea id="f-business"></textarea></div>
-        <div class="fld wide"><label for="f-licenses">許認可</label><input id="f-licenses" placeholder="例：古物商許可、建設業許可"></div>
-        <div class="fld wide"><label>今後1年の取組（当てはまるものすべて） ★</label><div class="checks" id="f-plans-check"></div></div>
-        <div class="fld wide"><label for="f-plans">取組の具体内容</label><textarea id="f-plans"></textarea></div>
-        <div class="fld"><label for="f-hoken">雇用保険の適用</label><select id="f-hoken"><option value="">未回答</option><option>適用事業所</option><option>適用していない</option></select></div>
-        <div class="fld"><label for="f-wage">賃上げの予定</label><select id="f-wage"><option value="">未回答</option><option>予定あり</option><option>予定なし</option><option>検討中</option></select></div>
-        <div class="fld wide"><label for="f-hire">採用・教育訓練・正社員化などの予定</label><textarea id="f-hire"></textarea></div>
+        <div class="sec"><b>② 会社の基本</b><span>★の項目は判定に大きく効きます</span></div>
+        <div class="fld"><label for="f-name">企業名<span class="req">必須</span></label><input id="f-name" required autocomplete="organization" placeholder="例：株式会社〇〇"></div>
+        <div class="fld"><label for="f-form">申請者区分</label><select id="f-form"><option>株式会社</option><option>合同会社</option><option>有限会社</option><option>個人事業主</option><option>一般社団法人</option><option>一般財団法人</option><option>NPO法人</option><option>社会福祉法人</option><option>医療法人</option><option>協同組合</option><option>その他</option></select></div>
+        <div class="fld"><label for="f-pref">本店の都道府県</label><select id="f-pref"></select></div>
+        <div class="fld"><label for="f-city">本店の市区町村</label><input id="f-city" list="dl-city" placeholder="選ぶか入力（例：大阪市）"><datalist id="dl-city"></datalist></div>
+        <div class="fld wide"><label for="f-address">本店の住所</label><input id="f-address" autocomplete="street-address" placeholder="例：大阪府大阪市北区〇〇1-2-3"></div>
+        <div class="fld"><label for="f-fy">設立年月</label><div class="pair"><select id="f-fy" aria-label="設立した年"></select><select id="f-fm" aria-label="設立した月"></select></div></div>
+        <div class="fld"><label for="f-corpno">法人番号（13桁・任意）</label><input id="f-corpno" inputmode="numeric" maxlength="13" placeholder="わかれば入力"></div>
+
+        <div class="sec"><b>③ 業種と規模</b><span>選ぶだけで、判定に使う分類が自動で決まります</span></div>
+        <div class="fld wide"><label for="f-indsel">業種 ★</label><select id="f-indsel"></select>
+          <div class="sub-in" id="w-indother" hidden><input id="f-industry" placeholder="業種を具体的に（例：中古ブランド品の買取・販売）"></div>
+          <div class="auto" id="w-auto"></div>
+          <div id="w-manual" hidden style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:6px">
+            <div class="fld"><label for="f-indcat">判定に使う分類（日本標準産業分類）</label><select id="f-indcat"></select></div>
+            <div class="fld"><label for="f-smetype">中小企業の区分</label><select id="f-smetype"></select></div>
+          </div>
+        </div>
+        <div class="fld"><label for="f-emp">常時使用する従業員数 ★</label><select id="f-emp"></select>
+          <div class="sub-in" id="w-empnum" hidden><input id="f-empnum" inputmode="numeric" placeholder="例：12"><span>人</span></div>
+          <div class="hint">パート・アルバイトも、常に働いている人は含めます。役員は含めません。</div></div>
+        <div class="fld"><label for="f-cap">資本金 ★</label><select id="f-cap"></select>
+          <div class="sub-in" id="w-capnum" hidden><input id="f-capnum" inputmode="decimal" placeholder="例：1000"><span>万円</span></div>
+          <div class="hint">個人事業主は「なし」を選んでください。</div></div>
+        <div class="fld wide"><label for="f-business">事業内容・主な商品やサービス ★</label><textarea id="f-business" placeholder="例：ブランド品・貴金属の買取と販売。大阪市内で2店舗を運営。"></textarea></div>
+        <div class="grp"><label>許認可（持っているものすべて）</label><div class="pick small" id="f-lic"></div>
+          <div class="sub-in"><input id="f-licother" placeholder="その他の許認可があれば入力"></div></div>
+
+        <div class="sec"><b>④ 今後1年の取組 ★</b><span>当てはまるものをすべて押してください <span class="cnt" id="plan-cnt"></span></span></div>
+        <div class="grp" id="f-plans-check"></div>
+        <div class="fld wide"><label for="f-plans">取組の具体的な内容（任意）</label><textarea id="f-plans" placeholder="例：2号店の出店、査定システムの導入、店舗の空調更新"></textarea></div>
+
+        <div class="sec"><b>⑤ 雇用・人材</b><span>助成金の判定に使います</span></div>
+        <div class="fld"><label for="f-hoken">雇用保険の適用</label><select id="f-hoken"><option value="">わからない・未回答</option><option>適用事業所</option><option>適用していない</option></select></div>
+        <div class="fld"><label for="f-wage">賃上げの予定</label><select id="f-wage"><option value="">わからない・未回答</option><option>予定あり</option><option>検討中</option><option>予定なし</option></select></div>
+        <div class="grp"><label>採用・人材育成の予定（当てはまるものすべて）</label><div class="pick small" id="f-hirechk"></div>
+          <div class="sub-in"><input id="f-hire" placeholder="その他・具体的な内容があれば入力"></div></div>
+
+        <div class="sec"><b>⑥ その他</b><span>判定に必要なときだけ使います</span></div>
         <div class="fld"><label for="f-tax">税・社会保険料の滞納</label><select id="f-tax"><option value="">未回答</option><option>なし</option><option>あり</option></select></div>
-        <div class="fld"><label for="f-past">過去3年の補助金採択</label><input id="f-past"></div>
+        <div class="fld"><label for="f-pastsel">過去3年の補助金・助成金の採択</label><select id="f-pastsel"><option value="">未回答</option><option>なし</option><option>あり</option><option>わからない</option></select>
+          <div class="sub-in" id="w-past" hidden><input id="f-past" placeholder="制度名と年（例：2025年 ものづくり補助金）"></div></div>
+
         <div class="fld wide"><label class="consent" for="f-consent"><input type="checkbox" id="f-consent" style="margin-top:4px"><span>判定のため、このカルテの内容を判定担当（運営者が契約するAI）に渡すことに同意します。第三者への提供はしません。同意がない企業は判定できません。</span></label></div>
         <div class="wide row"><button class="btn primary" type="submit" id="b-save">保存して判定を依頼</button><button class="btn" type="button" id="b-del" hidden>この企業を削除</button></div>
         <div class="wide notice warn" id="del-confirm" hidden>この企業を削除します。よろしいですか？ <button class="btn sm" type="button" id="b-del-yes">削除する</button> <button class="btn sm" type="button" id="b-del-no">やめる</button></div>
@@ -234,7 +284,7 @@ main{padding-block:22px 60px;display:flex;flex-direction:column;gap:18px}
 const API_URL = "https://script.google.com/macros/s/AKfycby-CtJxLMf934H_5B6AZ2wFxYqMaMPbBQ3yCURtV9JpY4UzEx29gq28kvG58H3tAYZQzw/exec";   // 受付プログラムの公開URL（設置後に入れる）
 const INDUSTRIES=["農業、林業","漁業","鉱業、採石業、砂利採取業","建設業","製造業","電気・ガス・熱供給・水道業","情報通信業","運輸業、郵便業","卸売業、小売業","金融業、保険業","不動産業、物品賃貸業","学術研究、専門・技術サービス業","宿泊業、飲食サービス業","生活関連サービス業、娯楽業","教育、学習支援業","医療、福祉","複合サービス事業","サービス業（他に分類されないもの）","公務（他に分類されるものを除く）","分類不能の産業"];
 const PLAN_OPTS=["設備投資","IT・デジタル化","省エネ・脱炭素","新事業・新分野","販路拡大・海外展開","店舗の出店・改装","研究開発","事業承継・M&A","採用・人材育成","賃上げ","職場環境の改善","安全・防災"];
-const LABEL={name:"企業名",pref:"都道府県",city:"市区町村",address:"本店の住所",founded:"設立年月",corpNo:"法人番号",capital:"資本金",employees:"従業員数",business:"事業内容",industry:"業種の詳細",licenses:"許認可",industryCat:"業種区分"};
+const LABEL={industry:"業種",name:"企業名",pref:"都道府県",city:"市区町村",address:"本店の住所",founded:"設立年月",corpNo:"法人番号",capital:"資本金",employees:"従業員数",business:"事業内容",industry:"業種の詳細",licenses:"許認可",industryCat:"業種区分"};
 const LV_PILL={"高":"p-ok","中":"p-warn","情報不足":"p-info","対象外":"p-ng"};
 const LV_ORDER={"高":0,"中":1,"情報不足":2,"対象外":3};
 
@@ -286,6 +336,84 @@ document.addEventListener("click",e=>{ const b=e.target.closest("[data-go]"); if
   if(!c){ $("#b-new").click(); return; }
   if(S.cur&&S.cur.id===c.id&&!$("#v-co").hidden){ tab(g==="card"?"card":"result"); renderGuide(); return; }
   openCo(c.id).then(()=>{ tab(g==="card"?"card":"result"); renderGuide(); }); });
+
+/* ===== 入力部品のデータ ===== */
+const PREFS=["北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県","茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県","新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県","静岡県","愛知県","三重県","滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県","鳥取県","島根県","岡山県","広島県","山口県","徳島県","香川県","愛媛県","高知県","福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県"];
+const OSAKA_CITIES=["大阪市","堺市","岸和田市","豊中市","池田市","吹田市","泉大津市","高槻市","貝塚市","守口市","枚方市","茨木市","八尾市","泉佐野市","富田林市","寝屋川市","河内長野市","松原市","大東市","和泉市","箕面市","柏原市","羽曳野市","門真市","摂津市","高石市","藤井寺市","東大阪市","泉南市","四條畷市","交野市","大阪狭山市","阪南市","島本町","豊能町","能勢町","忠岡町","熊取町","田尻町","岬町","太子町","河南町","千早赤阪村"];
+const BIG_CITIES=["札幌市","仙台市","さいたま市","千葉市","横浜市","川崎市","相模原市","新潟市","静岡市","浜松市","名古屋市","京都市","神戸市","岡山市","広島市","北九州市","福岡市","熊本市","東京都23区"];
+/* 中小企業基本法・同法施行令の区分（資本金・常時使用する従業員の上限） */
+const SME_TYPES=[["製造業その他","製造業・建設業・運輸業・その他（資本金3億円以下／従業員300人以下）"],["卸売業","卸売業（1億円以下／100人以下）"],["小売業","小売業・飲食店（5,000万円以下／50人以下）"],["サービス業","サービス業（5,000万円以下／100人以下）"],["ゴム製品製造業","ゴム製品製造業（3億円以下／900人以下）"],["ソフトウェア業・情報処理サービス業","ソフトウェア業・情報処理サービス業（3億円以下／300人以下）"],["旅館業","旅館業（5,000万円以下／200人以下）"]];
+/* 業種の選択肢：[表示名, 日本標準産業分類, 中小企業の区分] */
+const M="製造業その他", W="卸売業", R="小売業", SV="サービス業";
+const IND_GROUPS=[
+ ["小売業",[["中古品・リユース・買取販売","卸売業、小売業",R],["衣料品・服飾雑貨の小売","卸売業、小売業",R],["食品・スーパー・コンビニ","卸売業、小売業",R],["家具・家電・日用品の小売","卸売業、小売業",R],["自動車・バイク・自転車の販売","卸売業、小売業",R],["ドラッグストア・薬局（調剤含む）","卸売業、小売業",R],["燃料（ガソリンスタンド等）","卸売業、小売業",R],["通信販売・ネットショップ","卸売業、小売業",R],["その他の小売業","卸売業、小売業",R]]],
+ ["卸売業",[["食品・飲料の卸売","卸売業、小売業",W],["衣料・繊維製品の卸売","卸売業、小売業",W],["建材・機械器具の卸売","卸売業、小売業",W],["中古品・再生資源の卸売","卸売業、小売業",W],["その他の卸売業","卸売業、小売業",W]]],
+ ["飲食・宿泊",[["飲食店（レストラン・居酒屋・カフェ等）","宿泊業、飲食サービス業",R],["持ち帰り・配達の飲食","宿泊業、飲食サービス業",R],["旅館・ホテル","宿泊業、飲食サービス業","旅館業"],["簡易宿所・民泊","宿泊業、飲食サービス業","旅館業"]]],
+ ["製造業",[["食料品・飲料の製造","製造業",M],["繊維・衣服の製造","製造業",M],["木材・家具の製造","製造業",M],["紙・印刷","製造業",M],["化学・プラスチック製品の製造","製造業",M],["ゴム製品の製造","製造業","ゴム製品製造業"],["窯業・土石製品の製造","製造業",M],["鉄鋼・金属製品の製造・加工","製造業",M],["機械・電気機器の製造","製造業",M],["自動車部品など輸送用機器の製造","製造業",M],["その他の製造業","製造業",M]]],
+ ["建設業",[["総合工事（建築・土木）","建設業",M],["職別工事（内装・大工・塗装・左官など）","建設業",M],["設備工事（電気・管・空調など）","建設業",M]]],
+ ["情報通信",[["ソフトウェア・システム開発","情報通信業","ソフトウェア業・情報処理サービス業"],["情報処理・データ処理サービス","情報通信業","ソフトウェア業・情報処理サービス業"],["Web制作・インターネットサービス","情報通信業",SV],["映像・音声・出版の制作","情報通信業",SV]]],
+ ["運輸・物流",[["貨物運送（トラック等）","運輸業、郵便業",M],["旅客運送（タクシー・バス等）","運輸業、郵便業",M],["倉庫・物流","運輸業、郵便業",M]]],
+ ["不動産・レンタル",[["不動産の売買・仲介","不動産業、物品賃貸業",SV],["不動産の賃貸・管理","不動産業、物品賃貸業",SV],["物品のレンタル・リース","不動産業、物品賃貸業",SV]]],
+ ["専門サービス",[["士業（税理士・行政書士・社労士など）","学術研究、専門・技術サービス業",SV],["経営コンサルティング","学術研究、専門・技術サービス業",SV],["設計・デザイン","学術研究、専門・技術サービス業",SV],["広告業","学術研究、専門・技術サービス業",SV],["研究開発","学術研究、専門・技術サービス業",SV]]],
+ ["生活関連・娯楽",[["理容・美容","生活関連サービス業、娯楽業",SV],["エステ・リラクゼーション","生活関連サービス業、娯楽業",SV],["クリーニング","生活関連サービス業、娯楽業",SV],["冠婚葬祭","生活関連サービス業、娯楽業",SV],["旅行業","生活関連サービス業、娯楽業",SV],["フィットネス・スポーツ施設","生活関連サービス業、娯楽業",SV],["娯楽（カラオケ・遊技場など）","生活関連サービス業、娯楽業",SV]]],
+ ["教育",[["学習塾・予備校","教育、学習支援業",SV],["習い事・スクール","教育、学習支援業",SV]]],
+ ["医療・福祉",[["病院・診療所","医療、福祉",SV],["歯科医院","医療、福祉",SV],["介護事業所","医療、福祉",SV],["障害福祉サービス","医療、福祉",SV],["保育・子育て支援","医療、福祉",SV]]],
+ ["その他のサービス",[["ビルメンテナンス・清掃","サービス業（他に分類されないもの）",SV],["警備","サービス業（他に分類されないもの）",SV],["人材派遣・職業紹介","サービス業（他に分類されないもの）",SV],["自動車整備","サービス業（他に分類されないもの）",SV],["廃棄物処理・リサイクル","サービス業（他に分類されないもの）",SV],["その他のサービス業","サービス業（他に分類されないもの）",SV]]],
+ ["農林漁業・エネルギー・金融",[["農業","農業、林業",M],["林業","農業、林業",M],["漁業・水産養殖","漁業",M],["電気・ガス・熱供給・水道","電気・ガス・熱供給・水道業",M],["金融・保険（保険代理店など）","金融業、保険業",M]]]
+];
+const IND_MAP={}; IND_GROUPS.forEach(([g,list])=>list.forEach(x=>IND_MAP[x[0]]={cat:x[1],sme:x[2]}));
+const EMP_OPTS=[["0人（代表者のみ）",0,0],["1〜5人",1,5],["6〜20人",6,20],["21〜50人",21,50],["51〜100人",51,100],["101〜200人",101,200],["201〜300人",201,300],["301〜900人",301,900],["901人以上",901,null]];
+const CAP_OPTS=[["なし（個人事業主など）",0,0],["100万円以下",1,1e6],["100万円超〜300万円以下",1e6+1,3e6],["300万円超〜1,000万円以下",3e6+1,1e7],["1,000万円超〜5,000万円以下",1e7+1,5e7],["5,000万円超〜1億円以下",5e7+1,1e8],["1億円超〜3億円以下",1e8+1,3e8],["3億円超",3e8+1,null]];
+const LIC_OPTS=["古物商許可","建設業許可","宅地建物取引業免許","酒類販売業免許","飲食店営業許可","食品製造業の許可","旅館業許可","産業廃棄物収集運搬業許可","一般貨物自動車運送事業許可","労働者派遣事業許可","有料職業紹介事業許可","介護保険事業所の指定","障害福祉サービス事業所の指定","保険医療機関の指定","薬局開設許可","警備業の認定"];
+const PLAN_GROUPS=[["設備・IT",[["設備投資","機械・設備の購入や更新"],["IT・デジタル化","システム・ソフト・機器の導入"],["省エネ・脱炭素","空調・照明・断熱・太陽光など"]]],["事業の拡大",[["新事業・新分野","新しい商品・サービス・業態"],["販路拡大・海外展開","展示会・ネット販売・輸出"],["店舗の出店・改装","新店舗・改装・移転"],["研究開発","新製品・新技術の開発"],["事業承継・M&A","後継者への引継ぎ・買収"]]],["人と職場",[["採用・人材育成","採用・研修・資格取得"],["賃上げ","従業員の給与を上げる"],["職場環境の改善","働きやすさ・休みやすさ"],["安全・防災","事故防止・災害への備え"]]]];
+const HIRE_OPTS=["正社員の採用","パート・アルバイトの採用","非正規から正社員への転換","社員研修・資格取得","育児・介護との両立支援","高齢者の継続雇用","障害者の雇用","外国人材の雇用","テレワークの導入"];
+const opt=(v,l,sel)=>`<option value="${esc(v)}"${sel?" selected":""}>${esc(l??v)}</option>`;
+function pickHtml(list,name){ return list.map((x,i)=>{ const [v,d]=Array.isArray(x)?x:[x,""]; return `<label class="pk" for="${name}${i}"><input type="checkbox" id="${name}${i}" value="${esc(v)}"><b>${esc(v)}</b>${d?`<small>${esc(d)}</small>`:""}</label>`; }).join(""); }
+function syncPk(root){ (root||document).querySelectorAll(".pk").forEach(l=>l.classList.toggle("on",l.querySelector("input").checked)); const n=document.querySelectorAll("#f-plans-check input:checked").length; $("#plan-cnt").textContent=n?`${n}件選択中`:""; }
+document.addEventListener("change",e=>{ if(e.target.closest(".pk")) syncPk(); });
+function buildForm(){
+  if($("#f-pref").options.length) return;
+  $("#f-pref").innerHTML=opt("","選んでください")+PREFS.map(p=>opt(p)).join("");
+  $("#dl-city").innerHTML=[...OSAKA_CITIES,...BIG_CITIES].map(c=>`<option value="${c}">`).join("");
+  const y=new Date().getFullYear(); let ys=opt("","年を選ぶ")+opt("不明","わからない");
+  const wa=n=>n>=2019?`令和${n-2018===1?"元":n-2018}年`:n>=1989?`平成${n-1988===1?"元":n-1988}年`:`昭和${n-1925}年`;
+  for(let i=y;i>=1950;i--) ys+=opt(String(i),`${i}年（${wa(i)}）`); ys+=opt("1949以前","1949年以前");
+  $("#f-fy").innerHTML=ys; $("#f-fm").innerHTML=opt("","月")+[...Array(12)].map((_,i)=>opt(String(i+1),`${i+1}月`)).join("");
+  $("#f-indsel").innerHTML=opt("","業種を選んでください")+IND_GROUPS.map(([g,l])=>`<optgroup label="${g}">${l.map(x=>opt(x[0])).join("")}</optgroup>`).join("")+`<optgroup label="一覧にない">${opt("__other","一覧にない（自分で入力する）")}</optgroup>`;
+  $("#f-indcat").innerHTML=opt("","選んでください")+INDUSTRIES.map(x=>opt(x)).join("");
+  $("#f-smetype").innerHTML=opt("","選んでください")+SME_TYPES.map(([v,l])=>opt(v,l)).join("");
+  $("#f-emp").innerHTML=opt("","選んでください")+EMP_OPTS.map(x=>opt(x[0])).join("")+opt("__num","人数を入力する");
+  $("#f-cap").innerHTML=opt("","選んでください")+CAP_OPTS.map(x=>opt(x[0])).join("")+opt("__num","金額を入力する");
+  $("#f-lic").innerHTML=pickHtml(LIC_OPTS,"lc");
+  $("#f-plans-check").innerHTML=PLAN_GROUPS.map(([g,l],gi)=>`<h4>${g}</h4><div class="pick">${pickHtml(l,"pc"+gi+"_")}</div>`).join("");
+  $("#f-hirechk").innerHTML=pickHtml(HIRE_OPTS,"hc");
+}
+function smeLabel(v){ const t=SME_TYPES.find(x=>x[0]===v); return t?t[1]:"未選択"; }
+function renderAuto(){
+  const k=$("#f-indsel").value, other=k==="__other";
+  $("#w-indother").hidden=!other;
+  if(k&&!other&&IND_MAP[k]){ $("#f-indcat").value=IND_MAP[k].cat; if(!$("#f-smetype").dataset.manual) $("#f-smetype").value=IND_MAP[k].sme; }
+  const cat=$("#f-indcat").value, sme=$("#f-smetype").value;
+  $("#w-auto").innerHTML=(cat||sme)?`判定に使う分類：<b>${esc(cat||"未選択")}</b>　中小企業の区分：<b>${esc(smeLabel(sme))}</b> <button type="button" id="b-manual">${$("#w-manual").hidden?"変更する":"閉じる"}</button>`:"業種を選ぶと、判定に使う分類が自動で決まります。";
+  if(other) $("#w-manual").hidden=false;
+}
+$("#f-indsel").addEventListener("change",()=>{ $("#f-smetype").dataset.manual=""; renderAuto(); if($("#f-indsel").value==="__other") $("#f-industry").focus(); });
+["#f-indcat","#f-smetype"].forEach(id=>$(id).addEventListener("change",()=>{ if(id==="#f-smetype") $("#f-smetype").dataset.manual="1"; renderAuto(); }));
+document.addEventListener("click",e=>{ if(e.target.id==="b-manual"){ $("#w-manual").hidden=!$("#w-manual").hidden; renderAuto(); } });
+$("#f-emp").addEventListener("change",()=>{ $("#w-empnum").hidden=$("#f-emp").value!=="__num"; if(!$("#w-empnum").hidden) $("#f-empnum").focus(); });
+$("#f-cap").addEventListener("change",()=>{ $("#w-capnum").hidden=$("#f-cap").value!=="__num"; if(!$("#w-capnum").hidden) $("#f-capnum").focus(); });
+$("#f-pastsel").addEventListener("change",()=>{ $("#w-past").hidden=$("#f-pastsel").value!=="あり"; });
+$("#f-pref").addEventListener("change",()=>{ $("#f-city").placeholder=$("#f-pref").value==="大阪府"?"選ぶか入力（例：大阪市）":"入力してください"; });
+const toNum=v=>{ const m=String(v??"").replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/,/g,"").match(/\d+(\.\d+)?/); return m?Number(m[0]):null; };
+function setEmp(c){ const o=EMP_OPTS.find(x=>x[0]===c.employees);
+  if(o){ $("#f-emp").value=o[0]; $("#w-empnum").hidden=true; } else if(toNum(c.employees)!=null){ $("#f-emp").value="__num"; $("#f-empnum").value=toNum(c.employees); $("#w-empnum").hidden=false; } else { $("#f-emp").value=""; $("#w-empnum").hidden=true; } }
+function setCap(c){ const o=CAP_OPTS.find(x=>x[0]===c.capital);
+  if(o){ $("#f-cap").value=o[0]; $("#w-capnum").hidden=true; } else if(toNum(c.capital)!=null){ $("#f-cap").value="__num"; $("#f-capnum").value=String(toNum(c.capital)/1e4); $("#w-capnum").hidden=false; } else { $("#f-cap").value=""; $("#w-capnum").hidden=true; } }
+function setFounded(v){ v=String(v||""); const m=v.match(/(\d{4})\s*年\s*(?:(\d{1,2})\s*月)?/); const w=v.match(/(令和|平成|昭和)\s*(元|\d+)\s*年\s*(?:(\d{1,2})\s*月)?/);
+  let y="",mo=""; if(m){ y=m[1]; mo=m[2]||""; } else if(w){ const n=w[2]==="元"?1:Number(w[2]); y=String({令和:2018,平成:1988,昭和:1925}[w[1]]+n); mo=w[3]||""; } else if(/不明|わから/.test(v)) y="不明";
+  $("#f-fy").value=[...$("#f-fy").options].some(o=>o.value===y)?y:(y&&Number(y)<1950?"1949以前":""); $("#f-fm").value=mo; }
+function setPicks(root,vals){ root.querySelectorAll("input").forEach(x=>x.checked=(vals||[]).includes(x.value)); }
+function industryKeyOf(c){ if(c.industryKey&&(IND_MAP[c.industryKey]||c.industryKey==="__other")) return c.industryKey; if(c.industry&&IND_MAP[c.industry]) return c.industry; return c.industryCat||c.industry?"__other":""; }
 
 /* ===== ログイン ===== */
 $("#b-send").onclick=async()=>{
@@ -340,13 +468,17 @@ function openEditor(isNew){
   show("co"); const c=S.cur;
   $("#co-h").textContent=isNew?"新しい企業を登録":(c.name||"企業カルテ");
   $("#co-state").innerHTML=isNew?"":(c._status==="判定済み"?`<span class="pill p-ok">判定済み</span>`:`<span class="pill p-warn">${esc(c._status)}（1時間以内に判定）</span>`);
-  if(!$("#f-indcat").options.length) $("#f-indcat").innerHTML=`<option value="">未選択</option>`+INDUSTRIES.map(x=>`<option>${x}</option>`).join("");
-  if(!$("#f-plans-check").children.length) $("#f-plans-check").innerHTML=PLAN_OPTS.map((x,i)=>`<label for="pc${i}"><input type="checkbox" id="pc${i}" value="${x}">${x}</label>`).join("");
+  buildForm();
   const v=(id,val)=>$(id).value=val??"";
-  v("#f-name",c.name); v("#f-pref",c.pref); v("#f-city",c.city); v("#f-address",c.address); v("#f-emp",c.employees); v("#f-cap",c.capital); v("#f-founded",c.founded); v("#f-corpno",c.corpNo); v("#f-business",c.business); v("#f-licenses",c.licenses); v("#f-plans",c.plans); v("#f-hire",c.hire); v("#f-past",c.pastAdopted); v("#in-url",c.url);
-  $("#f-form").value=c.form||"株式会社"; $("#f-indcat").value=c.industryCat||""; $("#f-smetype").value=c.smeType||""; $("#f-hoken").value=c.koyouHoken||""; $("#f-wage").value=c.wageUp||""; $("#f-tax").value=c.taxArrears||"";
-  $("#f-consent").checked=!!c.aiConsent;
-  document.querySelectorAll("#f-plans-check input").forEach(x=>x.checked=(c.planTags||[]).includes(x.value));
+  v("#f-name",c.name); v("#f-city",c.city); v("#f-address",c.address); v("#f-corpno",c.corpNo); v("#f-business",c.business); v("#f-plans",c.plans); v("#in-url",c.url);
+  $("#f-pref").value=PREFS.includes(c.pref)?c.pref:""; $("#f-form").value=c.form||"株式会社"; setFounded(c.founded); setEmp(c); setCap(c);
+  const ik=industryKeyOf(c); $("#f-indsel").value=ik; $("#f-industry").value=ik==="__other"?(c.industry||""):""; $("#f-indcat").value=c.industryCat||""; $("#f-smetype").value=c.smeType||""; $("#f-smetype").dataset.manual=c.smeType?"1":""; $("#w-manual").hidden=ik!=="__other"; renderAuto();
+  const licTags=c.licenseTags||LIC_OPTS.filter(x=>String(c.licenses||"").includes(x.replace(/の(許可|指定|認定)$/,"")));
+  setPicks($("#f-lic"),licTags); $("#f-licother").value=c.licenseOther??(c.licenseTags?"":String(c.licenses||"").split(/[、,]/).filter(x=>x&&!licTags.some(t=>x.includes(t.replace(/の(許可|指定|認定)$/,"")))).join("、"));
+  setPicks($("#f-plans-check"),c.planTags); setPicks($("#f-hirechk"),c.hireTags); $("#f-hire").value=c.hireOther??(c.hireTags?"":(c.hire||""));
+  $("#f-hoken").value=c.koyouHoken||""; $("#f-wage").value=c.wageUp||""; $("#f-tax").value=c.taxArrears||"";
+  const pa=String(c.pastAdopted||""); $("#f-pastsel").value=!pa?"":/^なし$/.test(pa)?"なし":/わから/.test(pa)?"わからない":"あり"; $("#f-past").value=$("#f-pastsel").value==="あり"&&pa!=="あり"?pa:""; $("#w-past").hidden=$("#f-pastsel").value!=="あり";
+  $("#f-consent").checked=!!c.aiConsent; syncPk();
   $("#b-del").hidden=isNew; $("#del-confirm").hidden=true;
   renderReq(); renderResult(); renderDraft();
   tab(isNew?"card":"result");
@@ -359,7 +491,26 @@ function renderReq(){
 }
 function formData(){
   const g=id=>$(id).value.trim();
-  return {...S.cur,name:g("#f-name"),form:$("#f-form").value,pref:g("#f-pref"),city:g("#f-city"),address:g("#f-address"),industryCat:$("#f-indcat").value,smeType:$("#f-smetype").value,employees:g("#f-emp"),capital:g("#f-cap"),founded:g("#f-founded"),corpNo:g("#f-corpno"),business:g("#f-business"),licenses:g("#f-licenses"),planTags:[...document.querySelectorAll("#f-plans-check input:checked")].map(x=>x.value),plans:g("#f-plans"),koyouHoken:$("#f-hoken").value,wageUp:$("#f-wage").value,hire:g("#f-hire"),taxArrears:$("#f-tax").value,pastAdopted:g("#f-past"),aiConsent:$("#f-consent").checked,url:g("#in-url")||S.cur.url||""};
+  const ik=$("#f-indsel").value, other=ik==="__other";
+  const industry=other?g("#f-industry"):(ik||"");
+  let employees="",employeesLo=null,employeesHi=null; const ev=$("#f-emp").value;
+  if(ev==="__num"){ const n=toNum(g("#f-empnum")); if(n!=null){ employees=String(Math.round(n)); employeesLo=employeesHi=Math.round(n); } }
+  else if(ev){ const o=EMP_OPTS.find(x=>x[0]===ev); employees=o[0]; employeesLo=o[1]; employeesHi=o[2]; }
+  let capital="",capitalLo=null,capitalHi=null; const cv=$("#f-cap").value;
+  if(cv==="__num"){ const n=toNum(g("#f-capnum")); if(n!=null){ const yen=Math.round(n*1e4); capital=String(yen); capitalLo=capitalHi=yen; } }
+  else if(cv){ const o=CAP_OPTS.find(x=>x[0]===cv); capital=o[0]; capitalLo=o[1]; capitalHi=o[2]; }
+  const fy=$("#f-fy").value, fm=$("#f-fm").value;
+  const founded=fy==="不明"?"不明":fy==="1949以前"?"1949年以前":fy?`${fy}年${fm?fm+"月":""}`:"";
+  const licenseTags=[...document.querySelectorAll("#f-lic input:checked")].map(x=>x.value), licenseOther=g("#f-licother");
+  const hireTags=[...document.querySelectorAll("#f-hirechk input:checked")].map(x=>x.value), hireOther=g("#f-hire");
+  const ps=$("#f-pastsel").value, pastAdopted=ps==="あり"?(g("#f-past")||"あり"):ps;
+  return {...S.cur,name:g("#f-name"),form:$("#f-form").value,pref:$("#f-pref").value,city:g("#f-city"),address:g("#f-address"),founded,corpNo:g("#f-corpno"),
+    industryKey:ik,industry,industryCat:$("#f-indcat").value,smeType:$("#f-smetype").value,
+    employees,employeesLo,employeesHi,capital,capitalLo,capitalHi,business:g("#f-business"),
+    licenseTags,licenseOther,licenses:[...licenseTags,...(licenseOther?[licenseOther]:[])].join("、"),
+    planTags:[...document.querySelectorAll("#f-plans-check input:checked")].map(x=>x.value),plans:g("#f-plans"),
+    koyouHoken:$("#f-hoken").value,wageUp:$("#f-wage").value,hireTags,hireOther,hire:[...hireTags,...(hireOther?[hireOther]:[])].join("、"),
+    taxArrears:$("#f-tax").value,pastAdopted,aiConsent:$("#f-consent").checked,url:g("#in-url")||S.cur.url||""};
 }
 async function save(extra={},msg){
   const d={...formData(),...extra};
@@ -405,9 +556,21 @@ function renderDraft(){
     <div class="tbl"><table><thead><tr><th>項目</th><th>読み取った値</th><th>今の値</th><th>確度</th><th></th></tr></thead><tbody>${keys.map(k=>`<tr><td>${LABEL[k]}</td><td>${esc(d[k].value)}</td><td style="color:var(--sub)">${esc(S.cur[k]||"未入力")}</td><td class="num">${esc(d[k].conf)}%</td><td><button class="btn sm" type="button" data-adopt="${k}">入れる</button></td></tr>`).join("")}</tbody></table></div>
     <p style="margin:6px 0 0;font-size:12.5px">「入れる」を押すと下の入力欄に入ります。最後に「保存して判定を依頼」を押してください。</p></div>` : "";
 }
-const FIELD_INPUT={name:"#f-name",pref:"#f-pref",city:"#f-city",address:"#f-address",founded:"#f-founded",corpNo:"#f-corpno",capital:"#f-cap",employees:"#f-emp",business:"#f-business",licenses:"#f-licenses",industryCat:"#f-indcat"};
-function adopt(k){ const d=S.draft.fields[k]; if(!d) return; const el=$(FIELD_INPUT[k]); if(!el) return;
-  if(k==="industryCat"&&!INDUSTRIES.includes(d.value)) return; el.value=d.value; el.style.outline="2px solid var(--ok)"; delete S.draft.fields[k]; renderDraft(); }
+function adopt(k){ const d=S.draft&&S.draft.fields&&S.draft.fields[k]; if(!d) return; const v=String(d.value||"").trim(); let el=null;
+  if(k==="name"){ el=$("#f-name"); el.value=v; }
+  else if(k==="pref"){ if(PREFS.includes(v)){ el=$("#f-pref"); el.value=v; } }
+  else if(k==="city"){ el=$("#f-city"); el.value=v; }
+  else if(k==="address"){ el=$("#f-address"); el.value=v; }
+  else if(k==="corpNo"){ el=$("#f-corpno"); el.value=v.replace(/\D/g,""); }
+  else if(k==="business"){ el=$("#f-business"); el.value=v; }
+  else if(k==="founded"){ setFounded(v); el=$("#f-fy"); }
+  else if(k==="employees"){ setEmp({employees:v}); el=$("#f-emp"); }
+  else if(k==="capital"){ setCap({capital:v}); el=$("#f-cap"); }
+  else if(k==="licenses"){ const tags=LIC_OPTS.filter(x=>v.includes(x.replace(/の(許可|指定|認定)$/,""))); const cur=[...document.querySelectorAll("#f-lic input:checked")].map(x=>x.value); setPicks($("#f-lic"),[...new Set([...cur,...tags])]); syncPk(); const rest=v.split(/[、,]/).filter(x=>x&&!tags.some(t=>x.includes(t.replace(/の(許可|指定|認定)$/,"")))).join("、"); if(rest) $("#f-licother").value=rest; el=$("#f-licother"); }
+  else if(k==="industryCat"){ if(INDUSTRIES.includes(v)){ $("#f-indcat").value=v; if(!$("#f-indsel").value){ $("#f-indsel").value="__other"; } renderAuto(); el=$("#f-indcat"); } }
+  else if(k==="industry"){ if(IND_MAP[v]){ $("#f-indsel").value=v; renderAuto(); el=$("#f-indsel"); } else if(!$("#f-indsel").value||$("#f-indsel").value==="__other"){ $("#f-indsel").value="__other"; $("#f-industry").value=v; renderAuto(); el=$("#f-industry"); } }
+  if(el) el.style.outline="2px solid var(--ok)";
+  delete S.draft.fields[k]; renderDraft(); }
 document.addEventListener("click",async e=>{ const b=e.target.closest("[data-adopt]"); if(b){ adopt(b.dataset.adopt); return; }
   if(e.target.id==="b-adopt-all"){ Object.keys(S.draft.fields).forEach(adopt); try{ await call("markDraftSeen",{id:S.cur.id}); }catch(err){} setSt("#st-co","候補を入力欄に入れました。内容を確かめて「保存して判定を依頼」を押してください。"); } });
 
