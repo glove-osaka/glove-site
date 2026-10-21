@@ -67,11 +67,21 @@ main{padding-block:22px 60px;display:flex;flex-direction:column;gap:18px}
 
 /* 手順 */
 .steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;list-style:none;margin:0;padding:0}
-.steps li{border:1px solid var(--line);border-radius:6px;padding:9px 11px;font-size:13px;display:flex;flex-direction:column;gap:2px}
+.steps li{min-width:0}
+.steps li button{all:unset;box-sizing:border-box;cursor:pointer;width:100%;height:100%;border:1px solid var(--line);border-radius:6px;padding:9px 11px;font-size:13px;display:flex;flex-direction:column;gap:2px}
+.steps li button:hover{border-color:var(--sub)}
+.steps li button:focus-visible{outline:2px solid var(--accent)}
+.steps li.done button{background:var(--ok-soft);border-color:transparent}
+.steps li.now button{background:var(--accent-soft);border-color:var(--accent)}
+.guide{position:sticky;top:0;z-index:5;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.guide-h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.guide-h b{font-family:var(--f-display);font-size:15px}
+.next-do{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;font-size:14px;border-top:1px dashed var(--line);padding-top:10px}
+.next-do p{margin:0;max-width:70ch}
+.next-do p b{color:var(--accent)}
 .steps li b{font-size:13.5px}
 .steps li span.n{font-family:var(--f-num);font-size:11px;color:var(--sub)}
-.steps li.done{background:var(--ok-soft);border-color:transparent}
-.steps li.now{background:var(--accent-soft);border-color:var(--accent)}
+
 
 /* 企業一覧 */
 .cos{display:flex;flex-direction:column;gap:10px}
@@ -131,6 +141,13 @@ main{padding-block:22px 60px;display:flex;flex-direction:column;gap:18px}
 </div></header>
 
 <main class="wrap">
+  <section class="guide" id="guide" aria-label="使い方の案内" hidden>
+    <div class="guide-h"><b>使い方　4つの手順で結果まで進みます</b><button class="btn sm" type="button" id="g-toggle" aria-expanded="true">たたむ</button></div>
+    <div id="g-body">
+      <ol class="steps" id="steps"></ol>
+      <div class="next-do" id="g-next" style="margin-top:10px"></div>
+    </div>
+  </section>
   <!-- ログイン -->
   <section id="v-login" class="login" hidden>
     <h1>メールアドレスでログイン</h1>
@@ -151,10 +168,6 @@ main{padding-block:22px 60px;display:flex;flex-direction:column;gap:18px}
 
   <!-- 一覧 -->
   <section id="v-home" hidden style="display:flex;flex-direction:column;gap:18px">
-    <div class="panel">
-      <h2>使い方</h2>
-      <ol class="steps" id="steps" style="margin-top:10px"></ol>
-    </div>
     <div class="panel">
       <div class="row" style="justify-content:space-between"><h2 id="home-h">登録した企業</h2><button class="btn primary" type="button" id="b-new">＋ 企業を登録</button></div>
       <p class="lead" id="home-lead">企業を選ぶと、判定結果とカルテを確認できます。</p>
@@ -180,8 +193,8 @@ main{padding-block:22px 60px;display:flex;flex-direction:column;gap:18px}
     <div id="t-card" class="panel" hidden>
       <section class="intake" aria-label="ホームページ・名刺から入力">
         <h3>① ホームページ・名刺から入力（おすすめ）</h3>
-        <p style="margin:0;font-size:14px">ホームページの住所を入れて「読み取りを依頼」、または名刺の写真を送ってください。1時間以内に会社情報を読み取り、この画面に候補を出します。</p>
-        <div class="row"><input id="in-url" type="url" inputmode="url" placeholder="https://example.co.jp/" aria-label="ホームページの住所"><button class="btn primary" type="button" id="b-hp">読み取りを依頼</button></div>
+        <p style="margin:0;font-size:14px">ホームページの住所を入れて「読み取る」を押すと、10〜30秒で会社情報の候補が出ます。名刺の写真は1時間以内に読み取ります。</p>
+        <div class="row"><input id="in-url" type="url" inputmode="url" placeholder="https://example.co.jp/" aria-label="ホームページの住所"><button class="btn primary" type="button" id="b-hp">読み取る</button></div>
         <div class="row"><label class="btn" for="in-card" tabindex="0" id="lb-card">名刺の写真を送る</label><input type="file" id="in-card" accept="image/*" capture="environment" hidden><span style="font-size:12.5px;color:var(--sub)">写真は会社情報の読み取りにだけ使います。</span></div>
         <div id="req-st" style="font-size:13.5px"></div>
       </section>
@@ -240,7 +253,39 @@ async function call(action,body={}){
   if(!j.ok){ if(j.relogin){ logout(true); } throw new Error(j.error||"処理に失敗しました。"); }
   return j;
 }
-function show(v){ ["login","home","co"].forEach(x=>$("#v-"+x).hidden=x!==v); window.scrollTo(0,0); }
+function show(v){ ["login","home","co"].forEach(x=>$("#v-"+x).hidden=x!==v); $("#guide").hidden=v==="login"; window.scrollTo(0,0); renderGuide(); }
+/* ===== 使い方の案内 ===== */
+let guideOpen=store.get("guideOpen")!=="0";
+function guideSteps(){
+  const cs=S.companies||[], c=S.cur&&S.cur.id?S.cur:null;
+  const target=c||cs[0]||null;
+  const has=cs.length>0||!!c;
+  const filled=!!(target&&target.name&&target.aiConsent&&(target.business||target.industryCat||target.url));
+  const judged=!!(target&&(target._status==="判定済み"||(c&&S.result)));
+  const opened=!!(c&&S.result&&!$("#t-result").hidden&&!$("#v-co").hidden);
+  return [
+    {nm:"企業を登録",desc:"＋で企業名を入れる",done:has,go:"new",act:"＋ 企業を登録する",msg:"まず<b>「＋ 企業を登録」</b>を押して、企業名を入れてください。"},
+    {nm:"会社情報を入れる",desc:"ホームページ・名刺・手入力",done:filled,go:"card",act:"企業カルテを開く",msg:target&&!target.aiConsent?"<b>企業カルテ</b>のいちばん下にある<b>「判定への同意」</b>にチェックを入れて、「保存して判定を依頼」を押してください。":"<b>企業カルテ</b>で、ホームページの住所か名刺の写真を送るか、会社情報を入れて<b>「保存して判定を依頼」</b>を押してください。"},
+    {nm:"判定を待つ",desc:"1時間以内に結果が出る",done:judged,go:"refresh",act:"最新の状態を見る",msg:"いま判定しています。<b>1時間以内</b>に結果が出ます。しばらくしてから「最新の状態を見る」を押してください。"},
+    {nm:"結果を確認",desc:"質問に答えると精度が上がる",done:judged&&opened,go:"result",act:"判定結果を開く",msg:"<b>判定結果</b>を開いて、対象となる可能性のある制度を確認してください。青い枠の質問に答えると、判定がより正確になります。"}
+  ];
+}
+function renderGuide(){
+  if($("#guide").hidden) return;
+  const st=guideSteps(), cur=st.findIndex(x=>!x.done);
+  $("#steps").innerHTML=st.map((x,i)=>`<li class="${x.done?"done":i===cur?"now":""}"><button type="button" data-go="${x.go}"><span class="n">手順 ${i+1}${x.done?"　済":i===cur?"　いまここ":""}</span><b>${x.nm}</b><span>${x.desc}</span></button></li>`).join("");
+  const n=cur<0?null:st[cur];
+  $("#g-next").innerHTML=n?`<p><b>次にやること：</b>${n.msg}</p><button class="btn primary sm" type="button" data-go="${n.go}">${n.act}</button>`:`<p><b>すべての手順が済みました。</b>カルテを直すと、1時間以内に判定し直します。別の企業は「＋ 企業を登録」から追加できます。</p>`;
+  $("#g-body").hidden=!guideOpen; $("#g-toggle").textContent=guideOpen?"たたむ":"開く"; $("#g-toggle").setAttribute("aria-expanded",String(guideOpen));
+}
+$("#g-toggle").onclick=()=>{ guideOpen=!guideOpen; store.set("guideOpen",guideOpen?"1":"0"); renderGuide(); };
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-go]"); if(!b) return; const g=b.dataset.go;
+  const c=S.cur&&S.cur.id?S.cur:(S.companies[0]||null);
+  if(g==="new"){ $("#b-new").click(); return; }
+  if(g==="refresh"){ if(c&&!$("#v-co").hidden) openCo(c.id); else loadHome(); return; }
+  if(!c){ $("#b-new").click(); return; }
+  if(S.cur&&S.cur.id===c.id&&!$("#v-co").hidden){ tab(g==="card"?"card":"result"); renderGuide(); return; }
+  openCo(c.id).then(()=>{ tab(g==="card"?"card":"result"); renderGuide(); }); });
 
 /* ===== ログイン ===== */
 $("#b-send").onclick=async()=>{
@@ -266,16 +311,12 @@ function afterLogin(){ $("#who").hidden=false; $("#who-mail").textContent=S.emai
 /* ===== 一覧 ===== */
 async function loadHome(){
   show("home"); setSt("#st-home",'<span class="spin"></span> 読み込んでいます…');
-  try{ const j=await call("listCompanies"); S.companies=j.companies||[]; setSt("#st-home",""); renderHome(); }
+  try{ const j=await call("listCompanies"); S.companies=j.companies||[]; setSt("#st-home",""); renderHome(); renderGuide(); }
   catch(e){ setSt("#st-home",esc(e.message),true); }
 }
 function renderHome(){
   $("#home-h").textContent=S.isAdmin?"登録されている企業（全員分）":"登録した企業";
   const cs=S.companies;
-  const has=cs.length>0, judged=cs.some(c=>c._status==="判定済み"), consent=cs.some(c=>c.aiConsent);
-  const st=[["企業を登録","＋で企業名を入れる",has],["会社情報を入れる","ホームページ・名刺・手入力",has&&consent],["判定を待つ","1時間以内に結果が出る",judged],["結果を確認","質問に答えると精度が上がる",judged]];
-  const cur=st.findIndex(x=>!x[2]);
-  $("#steps").innerHTML=st.map((x,i)=>`<li class="${x[2]?"done":i===cur?"now":""}"><span class="n">手順 ${i+1}${x[2]?"　済":i===cur?"　いまここ":""}</span><b>${x[0]}</b><span>${x[1]}</span></li>`).join("");
   $("#cos").innerHTML=cs.length? cs.map(c=>{ const s=c._summary||{};
     const stPill=c._status==="判定済み"?`<span class="pill p-ok">判定済み ${fmt(c._judgedAt)}</span>`:`<span class="pill p-warn">${esc(c._status)}</span>`;
     return `<div class="co"><div><div class="nm">${esc(c.name||"（名称未入力）")}</div><div class="meta">${S.isAdmin?esc(c.ownerEmail)+"・":""}${esc((c.pref||"")+(c.city||""))} ${c.aiConsent?"":"・<b style='color:var(--crit)'>判定への同意なし</b>"}${c._hasDraft?"・<b style='color:var(--info)'>読み取り候補あり</b>":""}</div></div>
@@ -290,10 +331,10 @@ $("#b-back").onclick=()=>loadHome();
 async function openCo(id){
   S.cur=S.companies.find(c=>c.id===id); S.result=null; S.draft=null; openEditor(false);
   setSt("#st-co",'<span class="spin"></span> 結果を読み込んでいます…');
-  try{ const j=await call("getResult",{id}); S.result=j.result; S.draft=j.draft; setSt("#st-co",""); renderResult(); renderDraft(); }
+  try{ const j=await call("getResult",{id}); S.result=j.result; S.draft=j.draft; setSt("#st-co",""); renderResult(); renderDraft(); renderGuide(); }
   catch(e){ setSt("#st-co",esc(e.message),true); }
 }
-function tab(t){ document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.tab===t))); $("#t-result").hidden=t!=="result"; $("#t-card").hidden=t!=="card"; }
+function tab(t){ document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.tab===t))); $("#t-result").hidden=t!=="result"; $("#t-card").hidden=t!=="card"; renderGuide(); }
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-tab]"); if(b) tab(b.dataset.tab); });
 function openEditor(isNew){
   show("co"); const c=S.cur;
@@ -325,13 +366,22 @@ async function save(extra={},msg){
   if(!d.name){ setSt("#st-co","企業名を入力してください。",true); tab("card"); $("#f-name").focus(); return false; }
   setSt("#st-co",'<span class="spin"></span> 保存しています…');
   try{ const j=await call("saveCompany",{company:d}); S.cur={...d,id:j.id,updatedAt:j.updatedAt,_status:"再判定待ち"}; setSt("#st-co",msg||(d.aiConsent?"保存しました。1時間以内に判定し、この画面に結果を出します。":"保存しました。判定するには、同意にチェックを入れて保存してください。"));
-    $("#co-h").textContent=d.name; $("#b-del").hidden=false; renderReq(); return true; }
+    $("#co-h").textContent=d.name; $("#b-del").hidden=false; renderReq(); if(!S.companies.some(x=>x.id===j.id)) S.companies.push(S.cur); else S.companies=S.companies.map(x=>x.id===j.id?S.cur:x); renderGuide(); return true; }
   catch(e){ setSt("#st-co",esc(e.message),true); return false; }
 }
 $("#f-co").onsubmit=e=>{ e.preventDefault(); save(); };
 $("#b-hp").onclick=async()=>{ let u=$("#in-url").value.trim(); if(!u){ setSt("#st-co","ホームページの住所を入力してください。",true); return; } if(!/^https?:\/\//.test(u)) u="https://"+u; $("#in-url").value=u;
   if(!$("#f-name").value.trim()){ try{ $("#f-name").value=new URL(u).hostname.replace(/^www\./,""); }catch(e){} }
-  await save({url:u,hpRequestedAt:new Date().toISOString()},"読み取りを依頼しました。1時間以内に候補を出します。"); };
+  $("#b-hp").disabled=true;
+  try{
+    if(!(await save({url:u},"ホームページを読み取っています…"))) return;
+    setSt("#st-co",'<span class="spin"></span> ホームページを読み取っています（10〜30秒）…');
+    const j=await call("readHp",{id:S.cur.id,url:u});
+    const r=await call("getResult",{id:S.cur.id}); S.draft=r.draft; renderDraft(); tab("card");
+    if(j.found>0){ setSt("#st-co",`${j.found}項目を読み取りました。下の候補を確かめて「すべて入れる」を押し、最後に「保存して判定を依頼」を押してください。`); $("#draft").scrollIntoView({behavior:"smooth",block:"start"}); }
+    else{ await save({url:u,hpRequestedAt:new Date().toISOString()},""); setSt("#st-co",(j.note||"ホームページから会社情報を見つけられませんでした。")+" より詳しく読み取る処理に回したので、1時間以内に候補が出ることがあります。急ぐ場合は名刺の写真か、手入力をお使いください。"); }
+  }catch(e){ setSt("#st-co",esc(e.message),true); }
+  finally{ $("#b-hp").disabled=false; renderGuide(); } };
 $("#lb-card").addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); $("#in-card").click(); } });
 $("#in-card").onchange=async e=>{
   const f=e.target.files&&e.target.files[0]; if(!f) return;
