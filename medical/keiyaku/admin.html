@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>電子契約の管理｜医療介護総合支援会</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDPMincho:wght@700&display=swap">
+<link rel="stylesheet" href="keiyaku.css">
+</head>
+<body>
+<div class="demo" id="demoBar" hidden>お試し表示です（メールは送られず、この端末の中だけで動きます）</div>
+<header class="top"><div class="in"><span class="brand"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 4h7v8.5H28v7h-8.5V28h-7v-8.5H4v-7h8.5z"/><path class="ac" d="M16 23.5s-4-2.4-4-5.2a2.2 2.2 0 0 1 4-1.3 2.2 2.2 0 0 1 4 1.3c0 2.8-4 5.2-4 5.2z"/></svg><span><b>医療介護総合支援会</b><small>電子契約の管理（担当者用）</small></span></span></div></header>
+<main>
+<section class="card" id="gate" hidden>
+<h2>管理画面は、支援会の担当者の Google アカウントで開きます</h2>
+<p>合言葉は要りません。登録された Google アカウントでログインしたパソコンやスマホから、下のボタンで開いてください。</p>
+<p><a class="btn" id="gateLink" href="#">管理画面を開く</a></p>
+<p class="hint">ほかのアカウントでは開けないようになっています。</p>
+</section>
+
+<div id="panel" hidden>
+<section class="card">
+<h2>契約書を送る</h2>
+<p class="hint">サイトの「会員登録の申込み」の通知メールを見ながら入れてください。</p>
+<div class="fld"><label for="tpl">契約書の種類</label><select id="tpl"></select></div>
+<div class="fld"><label for="pName">相手のお名前（ご担当者）<span class="req">必須</span></label><input type="text" id="pName"></div>
+<div class="fld" id="pCompanyBox"><label for="pCompany">事業所名・法人名</label><input type="text" id="pCompany"></div>
+<div class="fld"><label for="pEmail">相手のメールアドレス<span class="req">必須</span></label><input type="email" id="pEmail" autocomplete="off"></div>
+
+<div class="fld" id="condBox" hidden><label>契約の内容（会費は自動で計算します）</label>
+<div class="cond">
+<div class="fld"><label for="cType">会員区分</label><select id="cType"><option value="jigyosho">事業所会員</option><option value="hojin">法人会員</option><option value="kyosan">協賛会員</option></select></div>
+<div class="fld"><label for="cPay">支払方法</label><select id="cPay"><option value="month">月払い</option><option value="year">年間払い（10か月分）</option></select></div>
+<div class="fld" id="cSitesBox"><label for="cSites">事業所数</label><input type="number" id="cSites" min="1" value="1" inputmode="numeric"></div>
+<div class="fld" id="cStaffBox"><label for="cStaff">職員数（合計）</label><input type="number" id="cStaff" min="0" value="5" inputmode="numeric"></div>
+<div class="fld"><label for="cStart">会費の発生月（1日から）</label><input type="month" id="cStart"></div>
+<div class="fld"><label for="cRef">紹介者</label><input type="text" id="cRef" placeholder="なければ空のまま"></div>
+<div class="fld"><label class="agree" for="cFounder" style="padding:10px"><input type="checkbox" id="cFounder" checked><span>創設会員（入会金免除）</span></label></div>
+<div class="fld" id="cEntryBox" hidden><label for="cEntry">入会金</label><input type="text" id="cEntry" placeholder="例：11,000円（税込）"></div>
+<p class="fee" id="cFee"></p>
+</div></div>
+
+<div class="fld"><label>相手に記入してもらう項目</label><div class="chk" id="fieldChk"></div></div>
+<div class="fld"><label>前もって入れておく内容（申込みの内容を写すと、相手の手間が減ります。相手は直せます）</label><div class="pre" id="preBox"></div></div>
+<div class="fld"><label class="agree" for="reqId" style="padding:12px"><input type="checkbox" id="reqId"><span>本人確認書類の写真の添付を求める</span></label></div>
+<div class="fld" id="noteBox"><label for="note" id="noteLabel">特記事項</label><textarea id="note" placeholder="なければ空のまま"></textarea></div>
+<div class="fld"><label class="agree" for="draft" style="padding:12px"><input type="checkbox" id="draft"><span>下書き（確認用）として送る　※相手は内容を見るだけで、締結はできません</span></label></div>
+<div class="btns" style="margin-top:0;margin-bottom:14px"><button class="btn o" type="button" id="doPrev">送る前に文面を確かめる</button></div>
+<div class="doc" id="prev" hidden tabindex="0"></div>
+<p class="err" id="errI" role="alert"></p>
+<button class="btn" id="doIssue">メールで送る</button>
+<p id="issued" class="note" hidden></p>
+</section>
+
+<section class="card">
+<h2>送った契約書の一覧</h2>
+<div class="tbl"><table class="list"><thead><tr><th>契約番号</th><th>種類</th><th>相手</th><th>状態</th><th>送った日</th><th>操作</th></tr></thead><tbody id="rows"><tr><td colspan="6">読み込み中…</td></tr></tbody></table></div>
+<p class="err" id="errR" role="alert"></p>
+</section>
+</div>
+</main>
+<p class="foot">運営　株式会社グローブ</p>
+<script src="config.js"></script>
+<script src="api.js"></script>
+<script>
+(function(){
+var $=function(id){return document.getElementById(id)},TPL=[],FIELDS={},K=window.KEIYAKU_CORE;
+var IN_GAS=!!window.IN_GAS;
+if(window.KEIYAKU_DEMO&&!IN_GAS)$('demoBar').hidden=false;
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function day(s){if(!s)return'';var d=new Date(s);return isNaN(d)?esc(s):(d.getMonth()+1)+'/'+d.getDate()}
+function api(a,d){return keiyakuApi(a,d||{})}
+var n=new Date(),nx=new Date(n.getFullYear(),n.getMonth()+1,1);$('cStart').value=nx.getFullYear()+'-'+('0'+(nx.getMonth()+1)).slice(-2);
+function start(){$('panel').hidden=false;
+ api('admin.templates').then(function(r){TPL=r.templates;FIELDS=r.fields;$('tpl').innerHTML=TPL.map(function(t){return'<option value="'+t.key+'">'+esc(t.title)+'</option>'}).join('');onTpl()}).catch(function(e){$('errI').textContent=e.message});list()}
+function cur(){var k=$('tpl').value;return TPL.filter(function(x){return x.key===k})[0]}
+function cond(){return{type:$('cType').value,pay:$('cPay').value,sites:$('cSites').value,staff:$('cStaff').value,start:$('cStart').value,referrer:$('cRef').value.trim(),founder:$('cFounder').checked,entryFee:$('cEntry').value.trim()}}
+function onCond(){var t=$('cType').value;$('cSitesBox').hidden=t!=='hojin';$('cStaffBox').hidden=t==='kyosan';$('cEntryBox').hidden=$('cFounder').checked;
+ var o=K.normCond(cond());$('cFee').textContent='月額 '+K.yen(o.monthly)+'　／　初回のお振込み '+K.yen(o.first)+'（'+o.dueText+'まで）　／　契約期間 '+o.startText+'〜'+o.endText;$('prev').hidden=true}
+['cType','cPay','cSites','cStaff','cStart','cRef','cFounder','cEntry'].forEach(function(id){$(id).addEventListener('input',onCond);$(id).addEventListener('change',onCond)});
+function preKeys(){return[].map.call($('fieldChk').querySelectorAll('input:checked'),function(i){return i.value}).filter(function(k){return k!=='birth'&&k!=='bank'})}
+function drawPre(){var old={};[].forEach.call($('preBox').querySelectorAll('input'),function(i){old[i.dataset.k]=i.value});
+ $('preBox').innerHTML=preKeys().map(function(k){return'<div class="fld"><label for="pre_'+k+'" style="font-weight:400">'+esc(FIELDS[k].label)+'</label><input type="text" id="pre_'+k+'" data-k="'+k+'" value="'+esc(old[k]||'')+'"></div>'}).join('')}
+function onTpl(){var t=cur();if(!t)return;
+ $('fieldChk').innerHTML=Object.keys(FIELDS).map(function(k){var req=t.required.indexOf(k)>=0;return'<label><input type="checkbox" value="'+k+'"'+(t.fields.indexOf(k)>=0||req?' checked':'')+(req?' disabled':'')+'>'+esc(FIELDS[k].label)+(req?'（必須）':'')+'</label>'}).join('');
+ $('fieldChk').onchange=drawPre;drawPre();
+ $('reqId').checked=!!t.requireId;$('condBox').hidden=!t.cond;$('noteBox').hidden=!t.note;$('noteLabel').textContent=t.note||'特記事項';$('prev').hidden=true;if(t.cond)onCond()}
+$('tpl').addEventListener('change',onTpl);
+function payload(){var t=cur(),pre={};[].forEach.call($('preBox').querySelectorAll('input'),function(i){if(i.value.trim())pre[i.dataset.k]=i.value.trim()});
+ return{template:t.key,party:{name:$('pName').value.trim(),company:$('pCompany').value.trim(),email:$('pEmail').value.trim()},fields:[].map.call($('fieldChk').querySelectorAll('input:checked'),function(i){return i.value}),requireId:$('reqId').checked,cond:t.cond?cond():null,note:t.note?$('note').value.trim():'',prefill:pre,draft:$('draft').checked}}
+$('doPrev').addEventListener('click',function(){var p=payload();$('prev').textContent=K.buildBody(p.template,p.cond,p.note,p.party.company||p.party.name||'（相手のお名前）').replace(/\[\[(\w+)\]\]/g,function(_,k){return p.prefill[k]?p.prefill[k]+'（相手が直せます）':'＿＿＿（相手が記入）'});$('prev').hidden=false});
+$('doIssue').addEventListener('click',function(){var b=this,p=payload();
+ if(p.template==='kaiin'&&p.cond.type==='hojin'&&(+p.cond.sites||1)<2&&!confirm('法人会員で事業所数が1か所です。このまま送りますか？'))return;
+ if(p.template==='kaiin'&&p.cond.type==='kyosan'&&!confirm('協賛会員は審査が必要です。審査は済んでいますか？'))return;
+ b.disabled=true;$('errI').textContent='';$('issued').hidden=true;
+ api('admin.issue',p).then(function(r){$('issued').hidden=false;$('issued').innerHTML='送りました（契約番号 '+esc(r.id)+'）。<br>相手の画面：<a href="'+esc(r.url)+'" target="_blank" rel="noopener">'+esc(r.url)+'</a>';['pName','pCompany','pEmail','note','cRef','cEntry'].forEach(function(id){$(id).value=''});$('preBox').innerHTML='';onTpl();list()})
+ .catch(function(e){$('errI').textContent=e.message}).then(function(){b.disabled=false})});
+function list(){api('admin.list').then(function(r){if(!r.rows.length){$('rows').innerHTML='<tr><td colspan="6">まだありません</td></tr>';return}
+ $('rows').innerHTML=r.rows.map(function(x){var cls=x.status==='締結済み'?'done':x.status==='取り消し'?'cancel':'';var st=x.status==='送付済み'&&x.viewed?'確認中':x.status;
+  return'<tr><td>'+esc(x.id)+'</td><td>'+esc(x.title)+(x.draft==='yes'?'<br><span class="tag">下書き</span>':'')+'</td><td>'+esc(x.party_company?x.party_company+' ':'')+esc(x.party_name)+'<br><small>'+esc(x.party_email)+'</small></td><td><span class="tag '+cls+'">'+esc(st)+'</span></td><td>'+day(x.created)+'</td><td>'+
+  (x.status==='締結済み'?'<button class="small-btn" data-pdf="'+esc(x.id)+'">PDFを保存</button>':x.status==='取り消し'?'':'<button class="small-btn" data-resend="'+esc(x.id)+'">もう一度送る</button><button class="small-btn" data-cancel="'+esc(x.id)+'">取り消す</button>')+'</td></tr>'}).join('')}).catch(function(e){$('errR').textContent=e.message})}
+$('rows').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;$('errR').textContent='';
+ if(b.dataset.resend)api('admin.resend',{id:b.dataset.resend}).then(function(){$('errR').textContent='もう一度送りました。'}).catch(function(x){$('errR').textContent=x.message});
+ if(b.dataset.cancel&&confirm('この契約書を取り消しますか？相手はもう開けなくなります。'))api('admin.cancel',{id:b.dataset.cancel}).then(list).catch(function(x){$('errR').textContent=x.message});
+ if(b.dataset.pdf)api('admin.pdf',{id:b.dataset.pdf}).then(function(r){var bin=atob(r.pdf),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);var u=URL.createObjectURL(new Blob([a],{type:'application/pdf'}));var l=document.createElement('a');l.href=u;l.download=r.filename;document.body.appendChild(l);l.click();setTimeout(function(){URL.revokeObjectURL(u);l.remove()},2000)}).catch(function(x){$('errR').textContent=x.message})});
+if(IN_GAS||window.KEIYAKU_DEMO){start()}else{$('gate').hidden=false;$('gateLink').href=window.KEIYAKU_ADMIN_URL||'#'}
+})();
+</script>
+</body>
+</html>
