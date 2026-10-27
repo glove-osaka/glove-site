@@ -24,7 +24,7 @@ h2{font-size:1.25rem;margin:0 0 12px}
 .hint{color:var(--muted);font-size:.95rem}
 .fld{margin-bottom:18px}
 .fld label{display:block;font-weight:700;margin-bottom:6px}
-.fld .req{display:inline-block;margin-left:8px;font-size:.78rem;color:#fff;background:var(--red);border-radius:4px;padding:0 6px}
+.fld .req{display:inline-block;margin-left:8px;font-size:.78rem;color:#fff;background:#B3261E;border-radius:4px;padding:0 6px}
 input[type=text],input[type=tel],input[type=email],input[type=date],input[type=password],textarea,select{width:100%;min-height:54px;padding:10px 14px;font:inherit;font-size:1.05rem;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
 textarea{min-height:96px}
 input:focus,textarea:focus,select:focus{outline:3px solid var(--gold-bright);outline-offset:1px;border-color:var(--pine)}
