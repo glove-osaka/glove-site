@@ -11,13 +11,13 @@
 <body>
 <div class="demo" id="demoBar" hidden>お試し表示です（メールは送られず、この端末の中だけで動きます）</div>
 <header class="top"><div class="in"><span class="brand"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><circle cx="24" cy="24" r="22.5" stroke="currentColor" stroke-width="1.6"/><path d="M10 24 24 13l14 11" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 21.5V35h20V21.5" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg><span><b>家じまい相談窓口</b><small>電子契約の管理（担当者用）</small></span></span>
-<button class="small-btn" id="logout" hidden>ログアウト</button></div></header>
+</div></header>
 <main>
-<section class="card" id="login">
-<h2>担当者のログイン</h2>
-<div class="fld"><label for="pass">合言葉</label><input type="password" id="pass" autocomplete="current-password"></div>
-<p class="err" id="errL" role="alert"></p>
-<button class="btn" id="doLogin">ログイン</button>
+<section class="card" id="gate" hidden>
+<h2>管理画面は、家じまい専用の Google アカウントで開きます</h2>
+<p>合言葉は要りません。家じまい専用の Google アカウントでログインしたパソコンやスマホから、下のボタンで開いてください。</p>
+<p><a class="btn" id="gateLink" href="#">管理画面を開く</a></p>
+<p class="hint">ほかのアカウントでは開けないようになっています。</p>
 </section>
 
 <div id="panel" hidden>
@@ -48,18 +48,14 @@
 <script src="api.js"></script>
 <script>
 (function(){
-var $=function(id){return document.getElementById(id)},T=null,TPL=[],FIELDS={};
-try{T=sessionStorage.getItem('ij-adm')}catch(e){}
-if(window.KEIYAKU_DEMO)$('demoBar').hidden=false;
+var $=function(id){return document.getElementById(id)},TPL=[],FIELDS={};
+var IN_GAS=!!window.IN_GAS;
+if(window.KEIYAKU_DEMO&&!IN_GAS)$('demoBar').hidden=false;
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function day(s){if(!s)return'';var d=new Date(s);return isNaN(d)?esc(s):(d.getMonth()+1)+'/'+d.getDate()}
-function api(a,d){return keiyakuApi(a,Object.assign({adminToken:T},d||{})).catch(function(e){if(/ログイン/.test(e.message))logout();throw e})}
-function logout(){T=null;try{sessionStorage.removeItem('ij-adm')}catch(e){}$('panel').hidden=true;$('login').hidden=false;$('logout').hidden=true}
-$('logout').addEventListener('click',logout);
-$('doLogin').addEventListener('click',function(){keiyakuApi('admin.login',{pass:$('pass').value}).then(function(r){T=r.adminToken;try{sessionStorage.setItem('ij-adm',T)}catch(e){}start()}).catch(function(e){$('errL').textContent=e.message})});
-$('pass').addEventListener('keydown',function(e){if(e.key==='Enter')$('doLogin').click()});
-function start(){$('login').hidden=true;$('panel').hidden=false;$('logout').hidden=false;
- api('admin.templates').then(function(r){TPL=r.templates;FIELDS=r.fields;$('tpl').innerHTML=TPL.map(function(t){return'<option value="'+t.key+'">'+esc(t.title)+'</option>'}).join('');onTpl()});list()}
+function api(a,d){return keiyakuApi(a,d||{})}
+function start(){$('panel').hidden=false;
+ api('admin.templates').then(function(r){TPL=r.templates;FIELDS=r.fields;$('tpl').innerHTML=TPL.map(function(t){return'<option value="'+t.key+'">'+esc(t.title)+'</option>'}).join('');onTpl()}).catch(function(e){$('errI').textContent=e.message});list()}
 var NOTE={nda:'特記事項',kaitori:'特記事項（引渡しの日時・方法など）',chosei:'費用（例：無料／1件あたり〇〇円 など）',teikei:'その他の提携条件（業務分野・対応地域など）'};
 function onTpl(){var t=TPL.filter(function(x){return x.key===$('tpl').value})[0];if(!t)return;
  $('fieldChk').innerHTML=Object.keys(FIELDS).map(function(k){return'<label><input type="checkbox" value="'+k+'"'+(t.defaultFields.indexOf(k)>=0?' checked':'')+(k==='name'?' checked disabled':'')+'>'+esc(FIELDS[k].label)+'</label>'}).join('');
@@ -84,7 +80,7 @@ $('rows').addEventListener('click',function(e){var b=e.target.closest('button');
  if(b.dataset.resend)api('admin.resend',{id:b.dataset.resend}).then(function(){$('errR').textContent='もう一度送りました。'}).catch(function(x){$('errR').textContent=x.message});
  if(b.dataset.cancel&&confirm('この契約書を取り消しますか？相手はもう開けなくなります。'))api('admin.cancel',{id:b.dataset.cancel}).then(list).catch(function(x){$('errR').textContent=x.message});
  if(b.dataset.pdf)api('admin.pdf',{id:b.dataset.pdf}).then(function(r){var bin=atob(r.pdf),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);var u=URL.createObjectURL(new Blob([a],{type:'application/pdf'}));var l=document.createElement('a');l.href=u;l.download=r.filename;document.body.appendChild(l);l.click();setTimeout(function(){URL.revokeObjectURL(u);l.remove()},2000)}).catch(function(x){$('errR').textContent=x.message})});
-if(T)start();
+if(IN_GAS||window.KEIYAKU_DEMO){start()}else{$('gate').hidden=false;$('gateLink').href=window.KEIYAKU_ADMIN_URL||'#'}
 })();
 </script>
 </body>
