@@ -1,5 +1,5 @@
-:root{--bg:#F8F8F4;--surface:#fff;--ink:#16201B;--muted:#3B4740;--line:#C9D2CB;--pine:#1D4A3D;--pine-2:#163A30;--pine-soft:#E6EEE8;--gold:#8A621C;--gold-bright:#C99A45;--red:#B3261E;--f-body:"BIZ UDPGothic","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans CJK JP",sans-serif;--f-display:"BIZ UDPMincho","Hiragino Mincho ProN","Yu Mincho","Noto Serif CJK JP",serif}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101714;--surface:#17201C;--ink:#EEF3EF;--muted:#C2CEC6;--line:#34443B;--pine:#7FB89F;--pine-2:#9CCBB5;--pine-soft:#1E2B25;--gold:#E0BD7C;--red:#F2B8B5}}
+:root{--bg:#F8F8F4;--surface:#fff;--ink:#16201B;--muted:#3B4740;--line:#C9D2CB;--pine:#1D4A3D;--pine-2:#163A30;--pine-soft:#E6EEE8;--gold:#8A621C;--gold-bright:#C99A45;--red:#B3261E;--on-pine:#fff;--f-body:"BIZ UDPGothic","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans CJK JP",sans-serif;--f-display:"BIZ UDPMincho","Hiragino Mincho ProN","Yu Mincho","Noto Serif CJK JP",serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101714;--surface:#17201C;--ink:#EEF3EF;--muted:#C2CEC6;--line:#34443B;--pine:#7FB89F;--pine-2:#9CCBB5;--pine-soft:#1E2B25;--gold:#E0BD7C;--red:#F2B8B5;--on-pine:#0E1A15}}
 *{box-sizing:border-box}
 html{font-size:18px;-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);line-height:1.85}
@@ -18,7 +18,7 @@ h2{font-size:1.25rem;margin:0 0 12px}
 .steps li{flex:1 1 0;min-width:96px;text-align:center;padding:10px 6px;border-radius:10px;background:var(--surface);border:2px solid var(--line);font-weight:700;font-size:.92rem;color:var(--muted)}
 .steps li b{display:block;font-size:1.1rem}
 .steps li.on{border-color:var(--pine);color:var(--pine);background:var(--pine-soft)}
-.steps li.done{border-color:var(--pine);color:#fff;background:var(--pine)}
+.steps li.done{border-color:var(--pine);color:var(--on-pine);background:var(--pine)}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 20px;margin-bottom:20px}
 .doc{white-space:pre-wrap;font-family:var(--f-display);font-size:1.02rem;line-height:2;max-height:60vh;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:18px;background:var(--bg)}
 .hint{color:var(--muted);font-size:.95rem}
@@ -28,7 +28,7 @@ h2{font-size:1.25rem;margin:0 0 12px}
 input[type=text],input[type=tel],input[type=email],input[type=date],input[type=password],textarea,select{width:100%;min-height:54px;padding:10px 14px;font:inherit;font-size:1.05rem;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
 textarea{min-height:96px}
 input:focus,textarea:focus,select:focus{outline:3px solid var(--gold-bright);outline-offset:1px;border-color:var(--pine)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:60px;padding:0 28px;border-radius:12px;border:2px solid var(--pine);background:var(--pine);color:#fff;font:inherit;font-weight:700;font-size:1.1rem;cursor:pointer;text-decoration:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:60px;padding:0 28px;border-radius:12px;border:2px solid var(--pine);background:var(--pine);color:var(--on-pine);font:inherit;font-weight:700;font-size:1.1rem;cursor:pointer;text-decoration:none}
 .btn:hover{background:var(--pine-2)}
 .btn.o{background:var(--surface);color:var(--pine)}
 .btn.gold{background:var(--gold-bright);border-color:var(--gold-bright);color:#1A1406}
@@ -49,7 +49,7 @@ table.list{width:100%;border-collapse:collapse;font-size:.95rem}
 table.list th,table.list td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left;vertical-align:top}
 table.list th{background:var(--pine-soft)}
 .tag{display:inline-block;border-radius:6px;padding:0 8px;font-size:.85rem;font-weight:700;background:var(--pine-soft);color:var(--pine)}
-.tag.done{background:var(--pine);color:#fff}.tag.cancel{background:#eee;color:#555}
+.tag.done{background:var(--pine);color:var(--on-pine)}.tag.cancel{background:#eee;color:#555}
 .chk{display:flex;flex-wrap:wrap;gap:10px}
 .chk label{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 14px;border:2px solid var(--line);border-radius:10px;background:var(--surface);font-weight:400;cursor:pointer}
 .chk input{width:22px;height:22px}
