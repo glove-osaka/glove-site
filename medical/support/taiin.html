@@ -534,6 +534,9 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 @media (max-width:960px){.flow.f4{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){.flow.f4{grid-template-columns:1fr}}
 .sec .note-box+.eyebrow,.sec>.wrap>.note-box{margin-bottom:34px}
+.num-c{white-space:nowrap;font-weight:700}
+.mtbl th,.mtbl thead th{width:auto}.mtbl tbody th{width:9em}.mtbl td.num-c{width:9.5em}
+@media (max-width:640px){.mtbl thead{display:none}.mtbl td[data-l]{display:flex;justify-content:space-between;gap:12px}.mtbl td[data-l]::before{content:attr(data-l);font-weight:400;color:var(--muted)}}
 /* オープニング */
 .op-sos{display:inline-flex;align-items:center;margin-top:0;color:#fff;font-weight:700}
 .op-replay{margin:10px 0 0}.op-replay a{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:inherit;text-decoration:underline;text-underline-offset:.25em}
