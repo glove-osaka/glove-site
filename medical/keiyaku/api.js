@@ -116,6 +116,11 @@ function buildBody(key, cond, note, party) {
       return wait({ ok: true, id: o.id, url: location.href.replace(/admin\.html.*$/, "index.html") + "?t=" + o.token + "&demo=1" });
     }
     if (action === "admin.list") return wait({ ok: true, rows: list });
+    if (action === "client.apply") {
+      var kj = d.type === "kojin", tp = tplOf(kj ? "kojin" : "kaiin");
+      var oo = { id: "IKK-DEMO-" + (1001 + list.length), token: "demo" + Date.now(), template: tp.key, title: tp.title, party_name: d.name, party_company: kj ? "" : d.org, party_email: d.email, status: "送付済み", created: new Date().toISOString(), draft: "", fields: tp.fields.slice(), required: tp.required, requireId: tp.requireId, prefill: kj ? { name: d.name, address: d.address, phone: d.phone } : { company: d.org, address: d.address, rep: d.rep, name: d.name, phone: d.phone }, body: buildBody(tp.key, kj ? null : { type: d.type, pay: d.pay, sites: d.sites, staff: d.staff, referrer: d.referrer, founder: true }, "", kj ? d.name : d.org) };
+      list.unshift(oo); store(list); return wait({ ok: true, token: oo.token });
+    }
     if (action === "admin.resend") return wait({ ok: true });
     if (action === "admin.cancel") { list.forEach(function (x) { if (x.id === d.id) x.status = "取り消し"; }); store(list); return wait({ ok: true }); }
     if (action === "admin.pdf" || action === "client.pdf") return Promise.reject(new Error("お試し表示では、契約書のPDFは作られません"));
@@ -125,7 +130,7 @@ function buildBody(key, cond, note, party) {
     if (action === "client.verify") return String(d.code) === "123456" ? wait({ ok: true, sess: "demo" }) : Promise.reject(new Error("認証コードが違います（お試し表示では 123456 です）。"));
     if (action === "client.get") {
       var t2 = tplOf(c.template) || tplOf("kaiin");
-      if (d.sess !== "demo") return wait({ ok: true, needOtp: true, contract: { id: c.id, title: c.title, party_name: c.party_name, party_company: c.party_company, email: c.party_email.slice(0, 2) + "***@" + c.party_email.split("@")[1], issuer: ISSUER } });
+      if (d.sess !== "demo") return wait({ ok: true, needOtp: true, contract: { id: c.id, title: c.title, party_name: c.party_name, party_company: c.party_company, email: c.party_email.split("@")[0].slice(0, 2) + "***@" + c.party_email.split("@")[1], issuer: ISSUER } });
       return wait({ ok: true, contract: { id: c.id, title: c.title, status: c.status, draft: c.draft === "yes", party_name: c.party_name, party_company: c.party_company, body: c.body, fields: c.fields.map(function (k) { return { key: k, label: fieldLabel(t2, k), type: FIELDS[k].type, ac: FIELDS[k].ac || "", required: c.required.indexOf(k) >= 0, value: (c.prefill || {})[k] || "" }; }), requireId: !!c.requireId, adult: !!t2.adult, seal: t2.seal, issuer: ISSUER, signed: c.status === "締結済み" } });
     }
     if (action === "client.sign") { list.forEach(function (x) { if (x.token === d.token) { x.status = "締結済み"; x.signed = new Date().toISOString(); } }); store(list); return wait({ ok: true, demo: true }); }

@@ -25,11 +25,11 @@
 <p class="hint" id="toLine0"></p>
 <h1 id="title0"></h1>
 <h2>はじめに、ご本人の確認をします</h2>
-<p>このメールアドレスに、6けたの認証コードをお送りします。<br><b id="mailMask"></b></p>
-<div class="btns" style="margin-top:6px"><button class="btn" type="button" id="sendOtp">認証コードを送る</button></div>
+<p id="otpLead">このメールアドレスに、6けたの認証コードをお送りします。<br><b id="mailMask"></b></p>
+<div class="btns" style="margin-top:6px" id="sendRow"><button class="btn" type="button" id="sendOtp">認証コードを送る</button></div>
 <div id="otpIn" hidden style="margin-top:20px">
 <div class="fld"><label for="code">届いた認証コード（6けたの数字）</label><div class="otp"><input type="text" id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*"><button class="btn" type="button" id="doVerify">確認する</button></div></div>
-<p class="hint">届かないときは、迷惑メールのフォルダもご確認ください。数分たっても届かない場合は「認証コードを送る」をもう一度押してください。</p>
+<p class="hint">届かないときは、迷惑メールのフォルダもご確認ください。<button type="button" class="small-btn" id="resend">もう一度送る</button></p>
 </div>
 <p class="err" id="errO" role="alert"></p>
 </section>
@@ -38,19 +38,19 @@
 <p class="hint" id="toLine"></p>
 <h1 id="title"></h1>
 <p class="hint">契約番号　<span id="cid"></span></p>
-<ol class="steps" id="steps"><li><b>1</b>確認</li><li><b>2</b>記入</li><li><b>3</b>押印</li><li><b>4</b>承認</li><li><b>5</b>完了</li></ol>
+<ol class="steps" id="steps"><li><b>1</b>確認</li><li><b>2</b>記入</li><li><b>3</b>押印・承認</li><li><b>4</b>完了</li></ol>
 
 <section class="card" data-s="0">
-<h2>1　契約書の内容をご確認ください</h2>
-<p class="hint">下の枠の中を、最後までゆっくりお読みください。枠の中は上下に動かせます。<span class="blank">記入欄</span>の部分は、次の画面でご記入いただきます。</p>
+<h2>契約書の内容をご確認ください</h2>
+<p class="hint">枠の中を、最後までお読みください。枠の中は上下に動かせます。<span id="blankHint"><span class="blank">記入欄</span>は、次の画面でご記入いただきます。</span></p>
 <div class="doc" id="doc" tabindex="0"></div>
 <p class="note" id="draftNote" hidden>この書面は「下書き（確認用）」です。内容をご確認いただくためのもので、締結はできません。気になる点はお電話でお知らせください。</p>
 <div class="btns"><button class="btn" type="button" id="toFill">内容を確認しました。次へ</button></div>
 </section>
 
 <section class="card" data-s="1" hidden>
-<h2>2　必要なことを記入してください</h2>
-<p class="hint">「必須」の印がある欄は、必ずご記入ください。前もって入っている内容も、違っていれば直してください。</p>
+<h2>必要なことを記入してください</h2>
+<p class="hint">「必須」の印がある欄は、必ずご記入ください。入っている内容も、違っていれば直してください。</p>
 <div id="fields"></div>
 <div class="fld" id="idBox" hidden>
 <label for="idFile">本人確認書類の写真<span class="req">必須</span></label>
@@ -63,28 +63,22 @@
 </section>
 
 <section class="card" data-s="2" hidden>
-<h2>3　押印してください</h2>
-<p class="hint">印の形と、印に入れる文字を確かめて、「押印する」を押してください。</p>
-<div class="shape" role="radiogroup" aria-label="印の形"><label><input type="radio" name="shape" value="round" checked>丸印（個人・個人事業主）</label><label><input type="radio" name="shape" value="square">角印（事業所・法人）</label></div>
-<div class="fld"><label for="sealName" id="sealLabel">印に入れる名字（4文字まで）</label><input type="text" id="sealName" maxlength="4"></div>
-<div class="seal-wrap"><div class="seal-box"><canvas id="seal" width="240" height="240" aria-label="印影"></canvas></div>
-<div><button class="btn gold" type="button" id="doSeal">押印する</button><p class="hint" id="sealState">まだ押印していません</p></div></div>
-<p class="err" id="err2" role="alert"></p>
-<div class="btns"><button class="btn o" type="button" data-back="1">戻る</button><button class="btn" type="button" id="toAgree" disabled>次へ</button></div>
-</section>
-
-<section class="card" data-s="3" hidden>
-<h2>4　承認して、契約を結びます</h2>
-<label class="agree" for="agree"><input type="checkbox" id="agree"><span>契約書の内容を確認し、記入した内容に間違いがないことを確かめました。この内容で契約を結ぶことに同意します。</span></label>
-<p class="hint" style="margin-top:12px">「承認する」を押すと、契約が結ばれます。押印済みの契約書は、この画面と、メールでお届けします。</p>
+<h2>押印して、承認してください</h2>
+<div id="sumBox"></div>
+<p class="hint">印は自動で作りました。形や文字を変えたいときだけ、直してください。</p>
+<div class="seal-wrap" style="margin-bottom:14px"><div class="seal-box"><canvas id="seal" width="240" height="240" aria-label="印影"></canvas></div>
+<div style="flex:1;min-width:220px"><div class="shape" role="radiogroup" aria-label="印の形"><label><input type="radio" name="shape" value="round" checked>丸印</label><label><input type="radio" name="shape" value="square">角印</label></div>
+<div class="fld" style="margin:0"><label for="sealName" id="sealLabel">印に入れる名字（4文字まで）</label><input type="text" id="sealName" maxlength="4"></div></div></div>
+<label class="agree" for="agree"><input type="checkbox" id="agree"><span>契約書の内容と記入した内容を確認しました。この内容で契約を結ぶことに同意します。</span></label>
 <p class="err" id="err3" role="alert"></p>
-<div class="btns"><button class="btn o" type="button" data-back="2">戻る</button><button class="btn" type="button" id="doSign">承認する</button></div>
+<div class="btns"><button class="btn o" type="button" id="back2">記入した内容を直す</button><button class="btn gold" type="button" id="doSign">押印して承認する</button></div>
+<p class="hint">「押印して承認する」を押すと、契約が結ばれます。押印済みの契約書は、この画面とメールでお届けします。</p>
 </section>
 
-<section class="card ok" data-s="4" hidden>
-<h2>5　ご契約の手続きが終わりました</h2>
+<section class="card ok" data-s="3" hidden>
+<h2>ご契約の手続きが終わりました</h2>
 <p>ありがとうございました。押印済みの契約書を、メールでもお送りしました。大切に保管してください。</p>
-<p id="nextPay" hidden>会費のお振込先と金額は、担当者から別のメールでご案内します。入金を確認したら、会員登録完了のお知らせをお送りします。</p>
+<p id="nextPay" hidden>会費のお振込先と金額は、担当者からメールでご案内します。入金を確認したら、会員登録完了のお知らせをお送りします。</p>
 <div class="btns"><button class="btn" type="button" id="dl">契約書（PDF）を保存する</button></div>
 <p class="err" id="err4" role="alert"></p>
 <p class="hint">ご不明な点は、<a href="tel:0120933496">0120-933-496</a>（受付 10:00〜19:00）までお気軽にお電話ください。</p>
@@ -98,10 +92,11 @@
 (function(){
 var $=function(id){return document.getElementById(id)};
 var token=(location.search.match(/[?&]t=([A-Za-z0-9]+)/)||[])[1]||(window.KEIYAKU_DEMO?'sample':'');
-var C=null,step=0,sealPng='',idImage='',pdf=null,sess='';
+var sent=/[?&]s=1/.test(location.search);
+var C=null,idImage='',pdf=null,sess='',skipFill=false;
 try{sess=sessionStorage.getItem('iryo-k-'+token)||''}catch(e){}
 if(window.KEIYAKU_DEMO)$('demoBar').hidden=false;
-function show(s){step=s;document.querySelectorAll('section[data-s]').forEach(function(x){x.hidden=+x.dataset.s!==s});
+function show(s){document.querySelectorAll('section[data-s]').forEach(function(x){x.hidden=+x.dataset.s!==s});
  document.querySelectorAll('#steps li').forEach(function(li,i){li.className=i<s?'done':(i===s?'on':'')});window.scrollTo(0,0);
  var h=document.querySelector('section[data-s="'+s+'"] h2');if(h){h.tabIndex=-1;h.focus({preventScroll:true})}}
 function fail(m){$('loading').hidden=true;$('app').hidden=true;$('otpBox').hidden=true;$('fail').hidden=false;$('failMsg').textContent=m}
@@ -109,58 +104,69 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return
 function who(c){return(c.party_company?c.party_company+'　':'')+c.party_name+' 様'}
 document.querySelectorAll('[data-back]').forEach(function(b){b.addEventListener('click',function(){show(+b.dataset.back)})});
 if(!token){fail('契約書のリンクが正しくありません。メールのボタンから開き直してください。');return}
+function values(){var v={};C.fields.forEach(function(x){v[x.key]=($('f_'+x.key).value||'').trim()});return v}
+function missing(){var v=values();return C.fields.filter(function(x){return x.required&&!v[x.key]})}
+function renderDoc(){var v=values();$('doc').innerHTML=esc(C.body).replace(/\[\[(\w+)\]\]/g,function(_,k){return v[k]?'<b>'+esc(v[k])+'</b>':'<span class="blank">記入欄</span>'});
+ $('blankHint').hidden=!/\[\[\w+\]\]/.test(C.body)||!missing().length}
 function get(){keiyakuApi('client.get',{token:token,sess:sess}).then(function(r){
  C=r.contract;$('loading').hidden=true;
- if(r.needOtp){$('otpBox').hidden=false;$('toLine0').textContent=who(C);$('title0').textContent=C.title;$('mailMask').textContent=C.email;return}
+ if(r.needOtp){$('otpBox').hidden=false;$('toLine0').textContent=who(C);$('title0').textContent=C.title;$('mailMask').textContent=C.email;
+  if(sent){$('otpLead').innerHTML='<b>'+esc(C.email)+'</b> に、6けたの認証コードを送りました。メールを開いて、下に入れてください。';$('sendRow').hidden=true;$('otpIn').hidden=false;if(window.KEIYAKU_DEMO)$('errO').textContent='お試し表示のため、認証コードは 123456 です。';try{$('code').focus()}catch(x){}}return}
  $('otpBox').hidden=true;$('app').hidden=false;
  $('title').textContent=C.title;$('cid').textContent=C.id;$('toLine').textContent=who(C);
- var lab={};C.fields.forEach(function(x){lab[x.key]=x.label});
- $('doc').innerHTML=esc(C.body).replace(/\[\[(\w+)\]\]/g,function(_,k){return'<span class="blank">記入欄</span>'});
- if(C.draft){$('draftNote').hidden=false;$('toFill').hidden=true}
  var f='';C.fields.forEach(function(x){var tag=x.type==='textarea'?'<textarea id="f_'+x.key+'"></textarea>':'<input type="'+x.type+'" id="f_'+x.key+'"'+(x.ac?' autocomplete="'+x.ac+'"':'')+'>';
   f+='<div class="fld"><label for="f_'+x.key+'">'+esc(x.label)+(x.required?'<span class="req">必須</span>':'')+'</label>'+tag+'</div>'});
  $('fields').innerHTML=f;
- C.fields.forEach(function(x){var el=$('f_'+x.key);el.value=x.value||(x.key==='name'?C.party_name:x.key==='company'?(C.party_company||''):'')});
+ C.fields.forEach(function(x){$('f_'+x.key).value=x.value||(x.key==='name'?C.party_name:x.key==='company'?(C.party_company||''):'')});
+ skipFill=!missing().length&&!C.requireId;
+ if(skipFill){document.querySelector('#steps li:nth-child(2)').hidden=true;document.querySelectorAll('#steps li b')[2].textContent='2';document.querySelectorAll('#steps li b')[3].textContent='3'}
+ renderDoc();
+ if(C.draft){$('draftNote').hidden=false;$('toFill').hidden=true}
  if(C.requireId)$('idBox').hidden=false;
- if(C.seal==='square')document.querySelector('input[name=shape][value=square]').checked=true;onShape();
+ if(C.seal==='square')document.querySelector('input[name=shape][value=square]').checked=true;
  $('nextPay').hidden=!/会員申込書/.test(C.title);
- if(C.signed){show(4)}else show(0);
+ if(C.signed){show(3)}else show(0);
 }).catch(function(e){fail(e.message)})}
 get();
-$('sendOtp').addEventListener('click',function(){var b=this;b.disabled=true;$('errO').textContent='';
- keiyakuApi('client.otp',{token:token}).then(function(r){$('otpIn').hidden=false;b.textContent='認証コードをもう一度送る';$('code').focus();if(r.demoCode)$('errO').textContent='お試し表示のため、認証コードは '+r.demoCode+' です。'})
- .catch(function(e){$('errO').textContent=e.message}).then(function(){setTimeout(function(){b.disabled=false},20000)})});
+function sendOtp(){$('errO').textContent='';$('sendOtp').disabled=true;$('resend').disabled=true;
+ keiyakuApi('client.otp',{token:token}).then(function(r){$('otpIn').hidden=false;$('sendRow').hidden=true;$('code').focus();$('errO').textContent=r.demoCode?'お試し表示のため、認証コードは '+r.demoCode+' です。':'認証コードを送りました。'})
+ .catch(function(e){$('errO').textContent=e.message}).then(function(){setTimeout(function(){$('sendOtp').disabled=false;$('resend').disabled=false},20000)})}
+$('sendOtp').addEventListener('click',sendOtp);$('resend').addEventListener('click',sendOtp);
 function verify(){var c=($('code').value||'').replace(/\D/g,'');if(c.length!==6){$('errO').textContent='6けたの数字を入れてください。';return}
  $('doVerify').disabled=true;keiyakuApi('client.verify',{token:token,code:c}).then(function(r){sess=r.sess;try{sessionStorage.setItem('iryo-k-'+token,sess)}catch(e){}$('errO').textContent='';get()})
  .catch(function(e){$('errO').textContent=e.message}).then(function(){$('doVerify').disabled=false})}
 $('doVerify').addEventListener('click',verify);$('code').addEventListener('keydown',function(e){if(e.key==='Enter')verify()});
-$('toFill').addEventListener('click',function(){show(1)});
+$('code').addEventListener('input',function(){if(this.value.replace(/\D/g,'').length===6)verify()});
+function toSign(){var v=values();
+ $('sumBox').innerHTML='<table class="list" style="margin-bottom:14px">'+C.fields.filter(function(x){return v[x.key]}).map(function(x){return'<tr><th style="width:38%">'+esc(x.label)+'</th><td>'+esc(v[x.key])+'</td></tr>'}).join('')+'</table>';
+ setDefaultSeal();show(2)}
+$('toFill').addEventListener('click',function(){if(skipFill)toSign();else show(1)});
+$('back2').addEventListener('click',function(){document.querySelector('#steps li:nth-child(2)').hidden=false;skipFill=false;show(1)});
 $('idFile').addEventListener('change',function(){var file=this.files[0];if(!file)return;var rd=new FileReader();rd.onload=function(){var img=new Image();img.onload=function(){var m=1600,w=img.width,h=img.height,k=Math.min(1,m/Math.max(w,h));var cv=document.createElement('canvas');cv.width=Math.round(w*k);cv.height=Math.round(h*k);cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);idImage=cv.toDataURL('image/jpeg',.85);$('idPrev').src=idImage;$('idPrev').hidden=false};img.src=rd.result};rd.readAsDataURL(file)});
-function values(){var v={};C.fields.forEach(function(x){v[x.key]=($('f_'+x.key).value||'').trim()});return v}
-function shape(){return document.querySelector('input[name=shape]:checked').value}
-function onShape(){var sq=shape()==='square';$('sealName').maxLength=sq?12:4;$('sealLabel').textContent=sq?'印に入れる文字（事業所名・法人名など。12文字まで）':'印に入れる名字（4文字まで）';
- var v=C?values():{};$('sealName').value=sq?((v.company||C&&C.party_company||'').replace(/[\s　]/g,'').slice(0,12)):((v.rep||v.name||'').split(/[\s　]+/)[0].slice(0,4));resetSeal()}
-document.querySelectorAll('input[name=shape]').forEach(function(r){r.addEventListener('change',onShape)});
-$('toSeal').addEventListener('click',function(){var v=values(),miss=C.fields.filter(function(x){return x.required&&!v[x.key]});
+$('toSeal').addEventListener('click',function(){var v=values(),miss=missing();
  if(miss.length){$('err1').textContent=miss[0].label+'を記入してください。';$('f_'+miss[0].key).focus();return}
  if(C.adult&&v.birth){var b=new Date(v.birth),l=new Date();l.setFullYear(l.getFullYear()-18);if(!(b<=l)){$('err1').textContent='18歳未満の方は登録できません。';return}}
  if(C.requireId&&!idImage){$('err1').textContent='本人確認書類の写真を添付してください。';return}
- $('err1').textContent='';if(!$('sealName').value)onShape();drawSeal(false);show(2)});
-function drawSeal(on){var cv=$('seal'),g=cv.getContext('2d'),n=($('sealName').value||'').replace(/[\s　]/g,'');g.clearRect(0,0,240,240);if(!on)return;
+ $('err1').textContent='';renderDoc();toSign()});
+function shape(){return document.querySelector('input[name=shape]:checked').value}
+function setDefaultSeal(){var sq=shape()==='square',v=values();$('sealName').maxLength=sq?12:4;$('sealLabel').textContent=sq?'印に入れる文字（12文字まで）':'印に入れる名字（4文字まで）';
+ $('sealName').value=sq?((v.company||C.party_company||v.name||'').replace(/[\s　]/g,'').slice(0,12)):((v.rep||v.name||C.party_name||'').split(/[\s　]+/)[0].slice(0,4));drawSeal()}
+document.querySelectorAll('input[name=shape]').forEach(function(r){r.addEventListener('change',setDefaultSeal)});
+function drawSeal(){var cv=$('seal'),g=cv.getContext('2d'),n=($('sealName').value||'').replace(/[\s　]/g,'');g.clearRect(0,0,240,240);if(!n)return;
  var red='#C8211B';g.strokeStyle=red;g.fillStyle=red;g.textAlign='center';g.textBaseline='middle';var F='"Noto Serif CJK JP","Hiragino Mincho ProN","Yu Mincho",serif';
  if(shape()==='square'){n=n.slice(0,12);g.lineWidth=9;g.strokeRect(14,14,212,212);g.lineWidth=3;g.strokeRect(26,26,188,188);
-  var L=n.length||1,rows=L<=4?2:L<=9?3:4,cols=Math.ceil(L/rows),cell=Math.min(176/rows,176/cols),size=cell*.9;g.font='bold '+size+'px '+F;
+  var L=n.length,rows=L<=4?2:L<=9?3:4,cols=Math.ceil(L/rows),cell=Math.min(176/rows,176/cols),size=cell*.9;g.font='bold '+size+'px '+F;
   var x0=120+cell*(cols-1)/2,y0=120-cell*(rows-1)/2;for(var i=0;i<L;i++){var c=Math.floor(i/rows),r=i%rows;g.fillText(n[i],x0-c*cell,y0+r*cell)}return}
  n=n.slice(0,4);g.lineWidth=10;g.beginPath();g.arc(120,120,104,0,Math.PI*2);g.stroke();
- var L2=n.length||1,sz=L2<=1?120:L2===2?84:L2===3?62:50;g.font='bold '+sz+'px '+F;var gap=sz*.98,yy=120-gap*(L2-1)/2;for(var j=0;j<L2;j++)g.fillText(n[j],120,yy+gap*j)}
-function resetSeal(){if(sealPng){$('sealState').textContent='印を変えたので、もう一度押印してください'}sealPng='';$('toAgree').disabled=true;drawSeal(false)}
-$('sealName').addEventListener('input',resetSeal);
-$('doSeal').addEventListener('click',function(){if(!$('sealName').value.trim()){$('err2').textContent='印に入れる文字を記入してください。';return}$('err2').textContent='';drawSeal(true);sealPng=$('seal').toDataURL('image/png');$('sealState').textContent='押印しました';$('toAgree').disabled=false});
-$('toAgree').addEventListener('click',function(){if(!sealPng)return;show(3)});
-$('doSign').addEventListener('click',function(){if(!$('agree').checked){$('err3').textContent='内容に同意する欄に印を付けてください。';return}
+ var L2=n.length,sz=L2<=1?120:L2===2?84:L2===3?62:50;g.font='bold '+sz+'px '+F;var gap=sz*.98,yy=120-gap*(L2-1)/2;for(var j=0;j<L2;j++)g.fillText(n[j],120,yy+gap*j)}
+$('sealName').addEventListener('input',drawSeal);
+$('doSign').addEventListener('click',function(){
+ if(!$('sealName').value.trim()){$('err3').textContent='印に入れる文字を入れてください。';$('sealName').focus();return}
+ if(!$('agree').checked){$('err3').textContent='同意する欄に印を付けてください。';return}
+ drawSeal();var sealPng=$('seal').toDataURL('image/png');
  var b=this;b.disabled=true;b.textContent='手続きしています…';$('err3').textContent='';
- keiyakuApi('client.sign',{token:token,sess:sess,values:values(),sealPng:sealPng,idImage:idImage,agree:true,ua:navigator.userAgent}).then(function(r){pdf=r.pdf?r:null;show(4)})
- .catch(function(e){$('err3').textContent=e.message;b.disabled=false;b.textContent='承認する'})});
+ keiyakuApi('client.sign',{token:token,sess:sess,values:values(),sealPng:sealPng,idImage:idImage,agree:true,ua:navigator.userAgent}).then(function(r){pdf=r.pdf?r:null;show(3)})
+ .catch(function(e){$('err3').textContent=e.message;b.disabled=false;b.textContent='押印して承認する'})});
 function save(r){var bin=atob(r.pdf),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);var url=URL.createObjectURL(new Blob([a],{type:'application/pdf'}));var l=document.createElement('a');l.href=url;l.download=r.filename||'契約書.pdf';document.body.appendChild(l);l.click();setTimeout(function(){URL.revokeObjectURL(url);l.remove()},2000)}
 $('dl').addEventListener('click',function(){$('err4').textContent='';if(pdf){save(pdf);return}keiyakuApi('client.pdf',{token:token,sess:sess}).then(function(r){pdf=r;save(r)}).catch(function(e){$('err4').textContent=e.message})});
 })();
