@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>電子契約の管理｜家じまい相談窓口</title>
+<base target="_top">
+<style>:root{--bg:#F8F8F4;--surface:#fff;--ink:#16201B;--muted:#3B4740;--line:#C9D2CB;--pine:#1D4A3D;--pine-2:#163A30;--pine-soft:#E6EEE8;--gold:#8A621C;--gold-bright:#C99A45;--red:#B3261E;--on-pine:#fff;--f-body:"BIZ UDPGothic","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans CJK JP",sans-serif;--f-display:"BIZ UDPMincho","Hiragino Mincho ProN","Yu Mincho","Noto Serif CJK JP",serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101714;--surface:#17201C;--ink:#EEF3EF;--muted:#C2CEC6;--line:#34443B;--pine:#7FB89F;--pine-2:#9CCBB5;--pine-soft:#1E2B25;--gold:#E0BD7C;--red:#F2B8B5;--on-pine:#0E1A15}}
+*{box-sizing:border-box}
+html{font-size:18px;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);line-height:1.85}
+.top{background:var(--surface);border-bottom:1px solid var(--line)}
+.top .in{max-width:880px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none}
+.brand svg{width:44px;height:44px;color:var(--pine)}
+.brand b{font-family:var(--f-display);font-size:1.15rem;letter-spacing:.08em;display:block}
+.brand small{display:block;font-size:.8rem;color:var(--muted)}
+.tel{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 14px;border-radius:10px;background:var(--pine-soft);color:var(--pine);font-weight:700;text-decoration:none}
+.tel b{white-space:nowrap}.tel small{white-space:nowrap;font-weight:400;font-size:.82rem;color:var(--muted)}
+main{max-width:880px;margin:0 auto;padding:24px 16px 80px}
+h1{font-family:var(--f-display);font-size:1.6rem;line-height:1.5;margin:8px 0 6px}
+h2{font-size:1.25rem;margin:0 0 12px}
+.steps{display:flex;gap:6px;list-style:none;padding:0;margin:18px 0 26px;flex-wrap:wrap}
+.steps li{flex:1 1 0;min-width:96px;text-align:center;padding:10px 6px;border-radius:10px;background:var(--surface);border:2px solid var(--line);font-weight:700;font-size:.92rem;color:var(--muted)}
+.steps li b{display:block;font-size:1.1rem}
+.steps li.on{border-color:var(--pine);color:var(--pine);background:var(--pine-soft)}
+.steps li.done{border-color:var(--pine);color:var(--on-pine);background:var(--pine)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 20px;margin-bottom:20px}
+.doc{white-space:pre-wrap;font-family:var(--f-display);font-size:1.02rem;line-height:2;max-height:60vh;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:18px;background:var(--bg)}
+.hint{color:var(--muted);font-size:.95rem}
+.fld{margin-bottom:18px}
+.fld label{display:block;font-weight:700;margin-bottom:6px}
+.fld .req{display:inline-block;margin-left:8px;font-size:.78rem;color:#fff;background:#B3261E;border-radius:4px;padding:0 6px}
+input[type=text],input[type=tel],input[type=email],input[type=date],input[type=password],textarea,select{width:100%;min-height:54px;padding:10px 14px;font:inherit;font-size:1.05rem;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+textarea{min-height:96px}
+input:focus,textarea:focus,select:focus{outline:3px solid var(--gold-bright);outline-offset:1px;border-color:var(--pine)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:60px;padding:0 28px;border-radius:12px;border:2px solid var(--pine);background:var(--pine);color:var(--on-pine);font:inherit;font-weight:700;font-size:1.1rem;cursor:pointer;text-decoration:none}
+.btn:hover{background:var(--pine-2)}
+.btn.o{background:var(--surface);color:var(--pine)}
+.btn.gold{background:var(--gold-bright);border-color:var(--gold-bright);color:#1A1406}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+.agree{display:flex;gap:12px;align-items:flex-start;padding:16px;border:2px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer}
+.agree input{width:28px;height:28px;flex-shrink:0;margin-top:3px}
+.seal-wrap{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.seal-box{width:150px;height:150px;border:2px dashed var(--line);border-radius:12px;display:grid;place-items:center;background:var(--surface)}
+.seal-box canvas{width:120px;height:120px}
+.err{color:var(--red);font-weight:700;min-height:1.6em;margin-top:10px}
+.ok{background:var(--pine-soft);border:2px solid var(--pine);border-radius:14px;padding:22px}
+.note{background:#F5ECD9;color:#3a2c10;border-radius:10px;padding:14px 16px;font-size:.95rem}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .note{background:#3a2f1a;color:#f2e6cc}}
+.demo{background:var(--gold-bright);color:#1A1406;text-align:center;font-weight:700;padding:8px 12px;font-size:.92rem}
+.idprev{max-width:260px;border-radius:10px;border:1px solid var(--line);display:block;margin-top:10px}
+table.list{width:100%;border-collapse:collapse;font-size:.95rem}
+table.list th,table.list td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left;vertical-align:top}
+table.list th{background:var(--pine-soft)}
+.tag{display:inline-block;border-radius:6px;padding:0 8px;font-size:.85rem;font-weight:700;background:var(--pine-soft);color:var(--pine)}
+.tag.done{background:var(--pine);color:var(--on-pine)}.tag.cancel{background:#eee;color:#555}
+.chk{display:flex;flex-wrap:wrap;gap:10px}
+.chk label{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 14px;border:2px solid var(--line);border-radius:10px;background:var(--surface);font-weight:400;cursor:pointer}
+.chk input{width:22px;height:22px}
+.items-row{display:grid;grid-template-columns:2fr 70px 120px 1fr 44px;gap:8px;margin-bottom:8px}
+.items-row input{min-height:48px;font-size:1rem}
+.items-row button{min-height:48px;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font-size:1.2rem;cursor:pointer}
+.tbl{overflow-x:auto}
+.small-btn{min-height:44px;padding:0 12px;border-radius:8px;border:2px solid var(--pine);background:var(--surface);color:var(--pine);font:inherit;font-weight:700;cursor:pointer;margin:2px}
+h2:focus{outline:none}
+@media (max-width:640px){.steps{gap:4px}.steps li{min-width:0;padding:8px 2px;font-size:.72rem}.steps li b{font-size:1rem}.tel{font-size:.9rem}.items-row{grid-template-columns:1fr 1fr}.items-row input:first-child{grid-column:1/-1}h1{font-size:1.35rem}}
+</style>
+</head>
+<body>
+<div class="demo" id="demoBar" hidden>お試し表示です（メールは送られず、この端末の中だけで動きます）</div>
+<header class="top"><div class="in"><span class="brand"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><circle cx="24" cy="24" r="22.5" stroke="currentColor" stroke-width="1.6"/><path d="M10 24 24 13l14 11" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 21.5V35h20V21.5" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg><span><b>家じまい相談窓口</b><small>電子契約の管理（担当者用）</small></span></span>
+</div></header>
+<main>
+<section class="card" id="gate" hidden>
+<h2>管理画面は、家じまい専用の Google アカウントで開きます</h2>
+<p>合言葉は要りません。家じまい専用の Google アカウントでログインしたパソコンやスマホから、下のボタンで開いてください。</p>
+<p><a class="btn" id="gateLink" href="#">管理画面を開く</a></p>
+<p class="hint">ほかのアカウントでは開けないようになっています。</p>
+</section>
+
+<div id="panel" hidden>
+<section class="card">
+<h2>契約書を送る</h2>
+<div class="fld"><label for="tpl">契約書の種類</label><select id="tpl"></select></div>
+<div class="fld"><label for="pName">相手のお名前<span class="req">必須</span></label><input type="text" id="pName"></div>
+<div class="fld" id="pCompanyBox"><label for="pCompany">会社名・屋号（協力企業・法人の場合）</label><input type="text" id="pCompany"></div>
+<div class="fld"><label for="pEmail">相手のメールアドレス<span class="req">必須</span></label><input type="email" id="pEmail" autocomplete="off"></div>
+<div class="fld"><label>相手に記入してもらう項目</label><div class="chk" id="fieldChk"></div></div>
+<div class="fld"><label class="agree" for="reqId" style="padding:12px"><input type="checkbox" id="reqId"><span>本人確認書類の写真の添付を求める</span></label></div>
+<div class="fld" id="itemsBox" hidden><label>買い取る物品（品名・数量・金額・特徴）</label><div id="items"></div><button type="button" class="small-btn" id="addItem">＋ 行を足す</button></div>
+<div class="fld"><label for="note" id="noteLabel">特記事項</label><textarea id="note" placeholder="なければ空のまま"></textarea></div>
+<div class="fld"><label class="agree" for="draft" style="padding:12px"><input type="checkbox" id="draft"><span>下書き（確認用）として送る　※相手は内容を見るだけで、締結はできません</span></label></div>
+<p class="err" id="errI" role="alert"></p>
+<button class="btn" id="doIssue">メールで送る</button>
+<p id="issued" class="note" hidden></p>
+</section>
+
+<section class="card">
+<h2>送った契約書の一覧</h2>
+<div class="tbl"><table class="list"><thead><tr><th>契約番号</th><th>種類</th><th>相手</th><th>状態</th><th>送った日</th><th>操作</th></tr></thead><tbody id="rows"><tr><td colspan="6">読み込み中…</td></tr></tbody></table></div>
+<p class="err" id="errR" role="alert"></p>
+</section>
+</div>
+</main>
+<script>
+window.IN_GAS=true;window.KEIYAKU_DEMO=false;
+window.keiyakuApi=function(a,d){return new Promise(function(res,rej){google.script.run.withSuccessHandler(function(r){if(r&&r.ok===false)rej(new Error(r.error||'うまくいきませんでした'));else res(r)}).withFailureHandler(function(e){rej(new Error(e&&e.message||'通信できませんでした'))}).adminCall(a,d||{})})};
+</script>
+<script>
+(function(){
+var $=function(id){return document.getElementById(id)},TPL=[],FIELDS={};
+var IN_GAS=!!window.IN_GAS;
+if(window.KEIYAKU_DEMO&&!IN_GAS)$('demoBar').hidden=false;
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function day(s){if(!s)return'';var d=new Date(s);return isNaN(d)?esc(s):(d.getMonth()+1)+'/'+d.getDate()}
+function api(a,d){return keiyakuApi(a,d||{})}
+function start(){$('panel').hidden=false;
+ api('admin.templates').then(function(r){TPL=r.templates;FIELDS=r.fields;$('tpl').innerHTML=TPL.map(function(t){return'<option value="'+t.key+'">'+esc(t.title)+'</option>'}).join('');onTpl()}).catch(function(e){$('errI').textContent=e.message});list()}
+var NOTE={nda:'特記事項',kaitori:'特記事項（引渡しの日時・方法など）',chosei:'費用（例：無料／1件あたり〇〇円 など）',teikei:'その他の提携条件（業務分野・対応地域など）'};
+function onTpl(){var t=TPL.filter(function(x){return x.key===$('tpl').value})[0];if(!t)return;
+ $('fieldChk').innerHTML=Object.keys(FIELDS).map(function(k){return'<label><input type="checkbox" value="'+k+'"'+(t.defaultFields.indexOf(k)>=0?' checked':'')+(k==='name'?' checked disabled':'')+'>'+esc(FIELDS[k].label)+'</label>'}).join('');
+ $('reqId').checked=!!t.requireId;$('itemsBox').hidden=!t.items;if(t.items&&!$('items').children.length)addItem();$('noteLabel').textContent=NOTE[t.key]||'特記事項';$('pCompanyBox').hidden=false}
+$('tpl').addEventListener('change',onTpl);
+function addItem(){var d=document.createElement('div');d.className='items-row';d.innerHTML='<input placeholder="品名（例：金の指輪）"><input type="number" min="1" value="1" aria-label="数量"><input type="number" min="0" placeholder="金額（円）" aria-label="金額"><input placeholder="特徴（例：18金・約5g）"><button type="button" aria-label="この行を消す">×</button>';d.querySelector('button').onclick=function(){d.remove()};$('items').appendChild(d)}
+$('addItem').addEventListener('click',addItem);
+$('doIssue').addEventListener('click',function(){var b=this,t=$('tpl').value;
+ var fields=[].map.call($('fieldChk').querySelectorAll('input:checked'),function(i){return i.value});
+ var items=[].map.call($('items').children,function(r){var i=r.querySelectorAll('input');return{name:i[0].value.trim(),qty:+i[1].value||1,price:+i[2].value||0,note:i[3].value.trim()}}).filter(function(x){return x.name});
+ var tp=TPL.filter(function(x){return x.key===t})[0];
+ if(tp&&tp.items&&!items.length&&!$('draft').checked){$('errI').textContent='買い取る物品を1つ以上入れてください。';return}
+ b.disabled=true;$('errI').textContent='';$('issued').hidden=true;
+ api('admin.issue',{template:t,party:{name:$('pName').value.trim(),company:$('pCompany').value.trim(),email:$('pEmail').value.trim()},fields:fields,requireId:$('reqId').checked,items:items,note:$('note').value.trim(),draft:$('draft').checked})
+ .then(function(r){$('issued').hidden=false;$('issued').innerHTML='送りました（契約番号 '+esc(r.id)+'）。<br>相手の画面：<a href="'+esc(r.url)+'" target="_blank" rel="noopener">'+esc(r.url)+'</a>';['pName','pCompany','pEmail','note'].forEach(function(id){$(id).value=''});$('items').innerHTML='';onTpl();list()})
+ .catch(function(e){$('errI').textContent=e.message}).then(function(){b.disabled=false})});
+function list(){api('admin.list').then(function(r){if(!r.rows.length){$('rows').innerHTML='<tr><td colspan="6">まだありません</td></tr>';return}
+ $('rows').innerHTML=r.rows.map(function(x){var cls=x.status==='締結済み'?'done':x.status==='取り消し'?'cancel':'';
+  return'<tr><td>'+esc(x.id)+'</td><td>'+esc(x.title)+(x.draft==='yes'?'<br><span class="tag">下書き</span>':'')+'</td><td>'+esc(x.party_company?x.party_company+' ':'')+esc(x.party_name)+'<br><small>'+esc(x.party_email)+'</small></td><td><span class="tag '+cls+'">'+esc(x.status)+'</span></td><td>'+day(x.created)+'</td><td>'+
+  (x.status==='締結済み'?'<button class="small-btn" data-pdf="'+esc(x.id)+'">PDFを保存</button>':x.status==='取り消し'?'':'<button class="small-btn" data-resend="'+esc(x.id)+'">もう一度送る</button><button class="small-btn" data-cancel="'+esc(x.id)+'">取り消す</button>')+'</td></tr>'}).join('')}).catch(function(e){$('errR').textContent=e.message})}
+$('rows').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;$('errR').textContent='';
+ if(b.dataset.resend)api('admin.resend',{id:b.dataset.resend}).then(function(){$('errR').textContent='もう一度送りました。'}).catch(function(x){$('errR').textContent=x.message});
+ if(b.dataset.cancel&&confirm('この契約書を取り消しますか？相手はもう開けなくなります。'))api('admin.cancel',{id:b.dataset.cancel}).then(list).catch(function(x){$('errR').textContent=x.message});
+ if(b.dataset.pdf)api('admin.pdf',{id:b.dataset.pdf}).then(function(r){var bin=atob(r.pdf),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);var u=URL.createObjectURL(new Blob([a],{type:'application/pdf'}));var l=document.createElement('a');l.href=u;l.download=r.filename;document.body.appendChild(l);l.click();setTimeout(function(){URL.revokeObjectURL(u);l.remove()},2000)}).catch(function(x){$('errR').textContent=x.message})});
+if(IN_GAS||window.KEIYAKU_DEMO){start()}else{$('gate').hidden=false;$('gateLink').href=window.KEIYAKU_ADMIN_URL||'#'}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+/**
+ * 家じまい相談窓口　相談フォームの受け取り（Google Apps Script）
+ *
+ * 【設定の手順】
+ * 1. 株式会社グローブ専用のGoogleアカウントでログインし、新しいスプレッドシートを作る
+ *    （名前の例：家じまい相談 受付一覧）
+ * 2. メニュー「拡張機能」→「Apps Script」を開き、最初からある文字をすべて消して、このファイルの中身を貼り付ける
+ * 3. 下の NOTIFY_TO に、通知を受け取るメールアドレスを書く
+ * 4. 「保存」→「デプロイ」→「新しいデプロイ」→ 種類「ウェブアプリ」
+ *      次のユーザーとして実行：自分
+ *      アクセスできるユーザー：全員
+ *    →「デプロイ」→ 権限の確認画面で「許可」
+ * 5. 表示された「ウェブアプリのURL」（https://script.google.com/macros/s/…/exec）を控える
+ * 6. そのURLをホームページ側の設定（build2.py の CONTACT["form_url"]）に入れて作り直す
+ *    → 相談フォームの「この内容で送信する」が使えるようになります
+ */
+var NOTIFY_TO = 'ここに通知先のメールアドレス';
+var SHEET_NAME = '受付';
+
+function doPost(e) {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sh = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
+    var p = e.parameter || {};
+    var keys = Object.keys(p);
+    if (sh.getLastRow() === 0) sh.appendRow(['受付日時'].concat(keys));
+    var head = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0];
+    keys.forEach(function (k) { if (head.indexOf(k) < 0) { head.push(k); sh.getRange(1, head.length).setValue(k); } });
+    var row = head.map(function (h, i) { return i === 0 ? new Date() : (p[h] || ''); });
+    sh.appendRow(row);
+    var body = keys.map(function (k) { return k + '：' + p[k]; }).join('\n');
+    if (NOTIFY_TO.indexOf('@') > 0) {
+      MailApp.sendEmail(NOTIFY_TO, '【家じまい相談窓口】新しいご相談が届きました', body + '\n\n一覧：' + ss.getUrl());
+    }
+    return ContentService.createTextOutput('ok');
+  } finally {
+    lock.releaseLock();
+  }
+}
