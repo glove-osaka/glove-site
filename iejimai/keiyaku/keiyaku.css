@@ -87,3 +87,7 @@ tr.row{cursor:pointer}tr.row:hover td,tr.row:focus td{background:var(--pine-soft
 .danger{margin-top:28px;text-align:right}.small-btn.warn{border-color:var(--red);color:var(--red)}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 22px;border-radius:10px;font-weight:700;z-index:20}
 .st-新規{background:#FBE3E1;color:#8C1D18}.st-完了,.st-成約{background:var(--pine);color:var(--on-pine)}.st-見送り,.st-不成約,.st-取り下げ{background:#eee;color:#555}
+.login{max-width:520px;margin:24px auto}
+.showpw{display:inline-flex!important;align-items:center;gap:8px;margin-top:8px;font-weight:400!important;cursor:pointer}.showpw input{width:22px;height:22px}
+.tabs .acct{margin-left:auto;font-size:.92rem}.tabs .acct+.acct{margin-left:0}
+[hidden]{display:none!important}

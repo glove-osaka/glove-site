@@ -4,11 +4,15 @@
   var DEMO = !URL_ || /[?&]demo=1/.test(location.search);
   window.KEIYAKU_DEMO = DEMO;
 
+  function sess() { try { return sessionStorage.getItem("ij-admin-session") || ""; } catch (e) { return window.__ijs || ""; } }
+  window.keiyakuSession = function (t) { window.__ijs = t || ""; try { if (t) sessionStorage.setItem("ij-admin-session", t); else sessionStorage.removeItem("ij-admin-session"); } catch (e) { } };
+  window.keiyakuHasSession = function () { return !!sess(); };
   function real(action, data) {
-    var body = JSON.stringify(Object.assign({ action: action }, data || {}));
+    var extra = /^(admin|kanri)\./.test(action) && action !== "admin.login" ? { session: sess() } : {};
+    var body = JSON.stringify(Object.assign({ action: action }, data || {}, extra));
     return fetch(URL_, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: body, redirect: "follow" })
       .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j.ok) throw new Error(j.error || "うまくいきませんでした"); return j; });
+      .then(function (j) { if (!j.ok) { if (j.relogin) { window.keiyakuSession(""); document.dispatchEvent(new Event("ij-relogin")); } throw new Error(j.error || "うまくいきませんでした"); } return j; });
   }
 
   /* ---- お試し表示 ---- */
@@ -27,7 +31,8 @@
   function demo(action, d) {
     d = d || {};
     var list = load();
-    if (action === "admin.login") return d.pass ? wait({ ok: true, adminToken: "demo" }) : Promise.reject(new Error("合言葉を入れてください"));
+    if (action === "admin.login") return d.pass ? wait({ ok: true, session: "demo" }) : Promise.reject(new Error("パスワードを入れてください"));
+    if (action === "admin.logout" || action === "admin.password") return wait({ ok: true });
     if (action === "admin.templates") return wait({ ok: true, templates: TPL, fields: FIELDS });
     if (action === "admin.issue") {
       if (!d.party || !d.party.name || !d.party.email) return Promise.reject(new Error("相手のお名前とメールアドレスを入れてください"));

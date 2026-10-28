@@ -1,0 +1,155 @@
+/**
+ * 家じまい相談窓口　管理画面（相談・取次ぎ・協力企業）
+ * 電子契約と同じプロジェクトに「Kanri」という名前のスクリプトファイルとして置きます。
+ * 台帳は電子契約と同じスプレッドシート（シート：案件／取次ぎ／協力企業）。
+ */
+var K_TABLES = {
+  case: {
+    sheet: '案件', prefix: 'C',
+    cols: ['id', 'created', 'source', 'name', 'relation', 'phone', 'email', 'contact_pref', 'area', 'housing', 'timing',
+      'fields', 'services', 'worries', 'detail', 'status', 'staff', 'next_action', 'next_date', 'memo', 'form_ref', 'updated', 'log']
+  },
+  ref: {
+    sheet: '取次ぎ', prefix: 'R',
+    cols: ['id', 'created', 'case_id', 'case_name', 'partner_id', 'partner_name', 'service', 'date', 'status', 'amount', 'memo', 'updated']
+  },
+  partner: {
+    sheet: '協力企業', prefix: 'P',
+    cols: ['id', 'created', 'kind', 'name', 'person', 'phone', 'email', 'fields', 'area', 'memo', 'active', 'updated']
+  }
+};
+var K_CASE_STATUS = ['新規', '連絡済み', '面談予定', '対応中', '取次ぎ中', '完了', '見送り'];
+var K_REF_STATUS = ['依頼済み', '見積もり中', '成約', '不成約', '取り下げ'];
+var FORM_SHEET = '相談受付';
+
+function kanriCall_(action, req) {
+  switch (action) {
+    case 'kanri.dash': kSync_(); return kDash_();
+    case 'kanri.list': if (req.table === 'case') kSync_(); return { ok: true, rows: kRows_(req.table).reverse().map(kOut_), opts: kOpts_() };
+    case 'kanri.get': return kGet_(req);
+    case 'kanri.save': return kSave_(req);
+    case 'kanri.note': return kNote_(req);
+    case 'kanri.remove': return kRemove_(req);
+    default: return { ok: false, error: '不明な操作です' };
+  }
+}
+function kOpts_() { return { caseStatus: K_CASE_STATUS, refStatus: K_REF_STATUS }; }
+
+/* ---------- 台帳の読み書き ---------- */
+function kSheet_(t) {
+  var T = K_TABLES[t]; if (!T) throw new Error('台帳の種類が正しくありません');
+  var ss = book_(), sh = ss.getSheetByName(T.sheet);
+  if (!sh) { sh = ss.insertSheet(T.sheet); sh.getRange(1, 1, sh.getMaxRows(), T.cols.length).setNumberFormat('@'); sh.appendRow(T.cols); sh.setFrozenRows(1); }
+  return sh;
+}
+function kRows_(t) {
+  var T = K_TABLES[t], v = kSheet_(t).getDataRange().getValues(), out = [];
+  for (var i = 1; i < v.length; i++) { var o = { _row: i + 1 }; T.cols.forEach(function (c, j) { o[c] = v[i][j]; }); if (o.id) out.push(o); }
+  return out;
+}
+function kFind_(t, id) { return kRows_(t).filter(function (x) { return String(x.id) === String(id); })[0] || null; }
+function kPut_(t, o) {
+  var T = K_TABLES[t], sh = kSheet_(t), line = T.cols.map(function (c) { return o[c] === undefined || o[c] === null ? '' : o[c]; });
+  if (o._row) sh.getRange(o._row, 1, 1, T.cols.length).setValues([line]); else sh.appendRow(line);
+}
+function kId_(t) { return K_TABLES[t].prefix + '-' + Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyMMdd') + '-' + Math.floor(Math.random() * 9000 + 1000); }
+function kOut_(o) { var r = {}; Object.keys(o).forEach(function (k) { if (k === '_row') return; r[k] = o[k] instanceof Date ? kDay_(o[k], k) : String(o[k] === null || o[k] === undefined ? '' : o[k]); }); return r; }
+function kDay_(d, k) { return Utilities.formatDate(d, 'Asia/Tokyo', (k === 'date' || k === 'next_date') ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm'); }
+function kNow_() { return Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd HH:mm'); }
+function kLogAdd_(o, text) { var l = []; try { l = JSON.parse(o.log || '[]'); } catch (e) { } l.push({ t: kNow_(), text: String(text).slice(0, 2000) }); o.log = JSON.stringify(l); }
+
+/* ---------- 相談フォームの受付を案件に取り込む ---------- */
+function kSync_() {
+  var sh = book_().getSheetByName(FORM_SHEET); if (!sh || sh.getLastRow() < 2) return 0;
+  var v = sh.getDataRange().getValues(), head = v[0].map(String), col = head.indexOf('案件番号');
+  if (col < 0) { col = head.length; sh.getRange(1, col + 1).setValue('案件番号'); head.push('案件番号'); }
+  var g = function (row, k) { var i = head.indexOf(k); return i < 0 ? '' : String(row[i] || ''); }, n = 0;
+  for (var i = 1; i < v.length; i++) {
+    if (v[i][col]) continue;
+    var r = v[i], o = {
+      id: kId_('case'), created: r[0] instanceof Date ? kDay_(r[0]) : kNow_(), source: 'ホームページ', name: g(r, 'お名前'), relation: g(r, 'ご関係'),
+      phone: kTel_(g(r, '電話')), email: g(r, 'メール'), contact_pref: g(r, '連絡方法'), area: g(r, '場所'), housing: g(r, '住まい'), timing: g(r, '時期'),
+      fields: g(r, '分野'), services: g(r, '内容'), worries: g(r, 'お悩み'), detail: g(r, '自由記入'), status: '新規', staff: '', next_action: '最初のご連絡',
+      next_date: '', memo: '', form_ref: FORM_SHEET + ' ' + (i + 1) + '行目', updated: kNow_(), log: '[]'
+    };
+    kLogAdd_(o, 'ホームページの相談フォームから受付');
+    kPut_('case', o); sh.getRange(i + 1, col + 1).setValue(o.id); n++;
+  }
+  return n;
+}
+
+function kTel_(t) { t = String(t || '').trim(); return /^[1-9][0-9]{8,10}$/.test(t) ? '0' + t : t; }
+
+/* ---------- まとめ ---------- */
+function kDash_() {
+  var cases = kRows_('case'), refs = kRows_('ref'), today = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd');
+  var month = today.slice(0, 7), contracts = rows_();
+  var due = cases.filter(function (c) { var d = c.next_date instanceof Date ? kDay_(c.next_date, 'next_date') : String(c.next_date || ''); return d && d <= today && ['完了', '見送り'].indexOf(String(c.status)) < 0; });
+  return {
+    ok: true, today: today,
+    counts: {
+      newCase: cases.filter(function (c) { return c.status === '新規'; }).length,
+      open: cases.filter(function (c) { return ['完了', '見送り'].indexOf(String(c.status)) < 0; }).length,
+      due: due.length,
+      refOpen: refs.filter(function (r) { return ['依頼済み', '見積もり中'].indexOf(String(r.status)) < 0 ? false : true; }).length,
+      signedMonth: contracts.filter(function (x) { return x.signed instanceof Date && kDay_(x.signed).slice(0, 7) === month; }).length,
+      waiting: contracts.filter(function (x) { return ['送付済み', '確認中'].indexOf(String(x.status)) >= 0; }).length
+    },
+    due: due.map(kOut_).slice(0, 30),
+    newest: cases.filter(function (c) { return c.status === '新規'; }).reverse().map(kOut_).slice(0, 30)
+  };
+}
+
+/* ---------- 1件を開く（関連する取次ぎ・契約も一緒に） ---------- */
+function kGet_(req) {
+  var o = kFind_(req.table, req.id); if (!o) throw new Error('見つかりません');
+  var r = { ok: true, row: kOut_(o), opts: kOpts_() }, link = (req.table === 'case' ? 'case:' : 'partner:') + o.id;
+  if (req.table === 'case') r.refs = kRows_('ref').filter(function (x) { return String(x.case_id) === String(o.id); }).map(kOut_);
+  if (req.table === 'partner') r.refs = kRows_('ref').filter(function (x) { return String(x.partner_id) === String(o.id); }).map(kOut_);
+  r.contracts = rows_().filter(function (x) { return String(x.link || '') === link; }).map(function (x) { return { id: x.id, title: x.title, status: x.status, created: iso_(x.created), signed: iso_(x.signed) }; });
+  if (req.table === 'case' || req.table === 'ref') r.partners = kRows_('partner').filter(function (p) { return String(p.active) !== '停止'; }).map(function (p) { return { id: String(p.id), name: String(p.name), kind: String(p.kind), fields: String(p.fields) }; });
+  return r;
+}
+
+/* ---------- 保存 ---------- */
+function kSave_(req) {
+  var t = req.table, T = K_TABLES[t]; if (!T) throw new Error('台帳の種類が正しくありません');
+  var d = req.row || {}, o = d.id ? kFind_(t, d.id) : null, isNew = !o;
+  if (isNew) o = { id: kId_(t), created: kNow_(), log: '[]' };
+  var before = { status: o.status, staff: o.staff };
+  T.cols.forEach(function (c) { if (['id', 'created', 'updated', 'log', 'form_ref'].indexOf(c) < 0 && d[c] !== undefined) o[c] = String(d[c]).slice(0, 5000); });
+  if (t === 'case') {
+    if (!o.name) throw new Error('お名前を入れてください');
+    if (!o.status) o.status = '新規';
+    if (!o.source) o.source = '電話';
+    if (isNew) kLogAdd_(o, '登録（' + o.source + '）');
+    else { if (before.status !== o.status) kLogAdd_(o, '状態：' + (before.status || '') + ' → ' + o.status); if (before.staff !== o.staff) kLogAdd_(o, '担当：' + (o.staff || '（なし）')); }
+  }
+  if (t === 'partner') { if (!o.name) throw new Error('会社名・お名前を入れてください'); if (!o.active) o.active = '取引中'; if (!o.kind) o.kind = '協力企業'; }
+  if (t === 'ref') {
+    if (!o.case_id || !o.partner_id) throw new Error('相談と取次ぎ先を選んでください');
+    var c = kFind_('case', o.case_id), p = kFind_('partner', o.partner_id);
+    if (!c || !p) throw new Error('相談または取次ぎ先が見つかりません');
+    o.case_name = c.name; o.partner_name = p.name; if (!o.status) o.status = '依頼済み';
+    if (isNew || before.status !== o.status) {
+      kLogAdd_(c, '取次ぎ：' + p.name + '（' + (o.service || '') + '）' + o.status);
+      if (isNew && ['完了', '見送り'].indexOf(String(c.status)) < 0) c.status = '取次ぎ中';
+      c.updated = kNow_(); kPut_('case', c);
+    }
+  }
+  o.updated = kNow_();
+  if (T.cols.indexOf('log') < 0) delete o.log;
+  kPut_(t, o);
+  return { ok: true, id: o.id };
+}
+function kNote_(req) {
+  var o = kFind_('case', req.id); if (!o) throw new Error('見つかりません');
+  if (!String(req.text || '').trim()) throw new Error('対応の内容を入れてください');
+  kLogAdd_(o, req.text); o.updated = kNow_(); kPut_('case', o); return { ok: true };
+}
+function kRemove_(req) {
+  var o = kFind_(req.table, req.id); if (!o) throw new Error('見つかりません');
+  if (req.table === 'case' && kRows_('ref').some(function (x) { return String(x.case_id) === String(o.id); })) throw new Error('取次ぎの記録がある相談は消せません。先に取次ぎを消すか、状態を「見送り」にしてください');
+  if (req.table === 'partner' && kRows_('ref').some(function (x) { return String(x.partner_id) === String(o.id); })) throw new Error('取次ぎの記録がある協力企業は消せません。「停止」にしてください');
+  kSheet_(req.table).deleteRow(o._row); return { ok: true };
+}
