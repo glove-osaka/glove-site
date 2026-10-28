@@ -537,6 +537,7 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 .lite .op-veil{background:rgba(8,6,4,.45)!important}
 .lite .hd{box-shadow:none}
 .lite .trust-in{box-shadow:none}
+html.op-on body *{visibility:hidden}html.op-on .opn,html.op-on .opn *{visibility:visible}
 .util-tel{display:none;align-items:center;gap:8px;min-height:44px;color:#fff;text-decoration:none;font-weight:700}.util-tel .ic{font-size:1.3rem;color:var(--gold-bright)}.util-tel b{font-size:1.25rem;letter-spacing:.05em;color:#fff}.util-tel small{font-size:.9rem;color:#E9F0EC;font-weight:400}
 @media (min-width:1241px){.util-tel{display:inline-flex}}
 @media (max-width:1599px){.util .op.has-tel{display:none}}
@@ -568,7 +569,7 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 </style>
 </head>
 <body>
-<script>(function(){var d=document.documentElement,l=null;try{l=localStorage.getItem('iejimai-lite')}catch(e){}if(l==='1'){d.classList.add('lite');return}if(l==='0')return;var c=navigator.hardwareConcurrency||8,m=navigator.deviceMemory||8,cn=navigator.connection;if(c<=2||m<=2||(cn&&cn.saveData))d.classList.add('lite')})();</script><a class="skip" href="#main">本文へ移動</a>
+<script>(function(){var d=document.documentElement,l=null;try{l=localStorage.getItem('iejimai-lite')}catch(e){}if(l==='1'){d.classList.add('lite');return}if(l==='0')return;var c=navigator.hardwareConcurrency||8,m=navigator.deviceMemory||8,cn=navigator.connection;if(c<=4||m<=4||(cn&&cn.saveData))d.classList.add('lite')})();</script><a class="skip" href="#main">本文へ移動</a>
 <div class="util"><div class="wrap"><span class="op has-tel">運営：<b>株式会社グローブ</b>（古物商許可 大阪府公安委員会 第62102R050377号）</span>
 <div class="util-r"><a class="util-tel" href="tel:0120933496"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h4.5l2 6-3 2a14 14 0 0 0 7.5 7.5l2-3 6 2V23a2.5 2.5 0 0 1-2.5 2.5C14.5 25.5 6.5 17.5 6.5 6.5A2.5 2.5 0 0 1 9 4z"/></svg><small>お電話でのご相談</small><b>0120-933-496</b><small>10:00〜19:00</small></a><button type="button" class="bgm-btn" id="bgmBtn" aria-pressed="false"><i aria-hidden="true"></i><span>音楽を流す</span></button>
 <div class="fs" role="group" aria-label="文字の大きさ"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 25 10 8l6 17M6.2 19h7.6"/><path class="ac" d="M18 25l4.5-12L27 25M19.6 21h5.8"/></svg><span>文字の大きさ</span><button type="button" data-fs="" aria-pressed="true">標準</button><button type="button" data-fs="l" aria-pressed="false">大</button><button type="button" data-fs="xl" aria-pressed="false">特大</button></div></div></div></div>
@@ -587,7 +588,7 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 <a class="tel" href="tel:0120933496"><small>お電話でのご相談</small><b>0120-933-496</b></a><a class="cta" href="contact/index.html"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 5.5l6 6L11 27H5v-6z"/><path class="ac" d="M17 9l6 6"/></svg>相談内容をまとめる</a>
 </nav></div></header>
 <main id="main"><div class="opn" id="op" hidden role="dialog" aria-label="オープニング映像" aria-modal="true">
-<video id="opV" muted playsinline preload="auto" aria-hidden="true"><source src="assets/opening-sp.mp4" type="video/mp4" media="(max-width: 820px)"><source src="assets/opening.mp4" type="video/mp4"><source src="assets/opening.webm" type="video/webm"></video>
+<video id="opV" muted playsinline preload="auto" aria-hidden="true" data-lite="assets/opening-md.mp4"><source src="assets/opening-sp.mp4" type="video/mp4" media="(max-width: 820px)"><source src="assets/opening.mp4" type="video/mp4"><source src="assets/opening.webm" type="video/webm"></video>
 <img id="opS" class="still" src="assets/garden-still.jpg" alt="" aria-hidden="true">
 <audio id="opA" preload="auto"><source src="assets/opening-sound.ogg" type="audio/ogg"><source src="assets/opening-sound.mp3" type="audio/mpeg"></audio>
 <div class="op-veil"></div>
@@ -602,7 +603,7 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 <button class="op-skip" id="opSkip" type="button">とばす</button>
 </div>
 <section class="hero">
-<div class="hero-media"><video id="heroV" autoplay muted loop playsinline preload="auto" poster="assets/hero-poster.jpg" aria-hidden="true"><source src="assets/hero-sp.mp4" type="video/mp4" media="(max-width: 820px)"><source src="assets/hero.mp4" type="video/mp4"><source src="assets/hero.webm" type="video/webm"></video></div>
+<div class="hero-media"><video id="heroV" muted loop playsinline preload="auto" poster="assets/hero-poster.jpg" aria-hidden="true"><source src="assets/hero-sp.mp4" type="video/mp4" media="(max-width: 820px)"><source src="assets/hero.mp4" type="video/mp4"><source src="assets/hero.webm" type="video/webm"></video></div>
 <button class="vctl" id="vctl" type="button"><i aria-hidden="true"></i><span>動画を止める</span></button>
 <div class="wrap hero-in"><div class="hero-copy">
 <span class="lbl">株式会社グローブ運営　家じまいの総合相談窓口</span>
@@ -721,22 +722,28 @@ var T=null,AT=null,shown=false,done=false,started=false,fadeI=null;
 function seen(){try{if(localStorage.getItem('iejimai-op-seen')==='1')return true}catch(e){}try{return sessionStorage.getItem('iejimai-op')==='1'}catch(e){return false}}
 function mark(){try{sessionStorage.setItem('iejimai-op','1')}catch(e){}try{localStorage.setItem('iejimai-op-seen','1')}catch(e){}}
 function fadeOut(){clearInterval(fadeI);if(au.paused)return;var vol=au.volume;fadeI=setInterval(function(){vol=Math.max(0,vol-0.06);au.volume=vol;if(vol<=0){clearInterval(fadeI);au.pause()}},90)}
-function close(){if(done)return;done=true;clearTimeout(T);clearTimeout(AT);mark();var withSnd=started&&!au.muted;fadeOut();if(window.startBGM&&(withSnd||(function(){try{return localStorage.getItem('iejimai-bgm')==='on'}catch(e){return false}})()))setTimeout(function(){startBGM()},1400);op.classList.add('out');document.documentElement.style.overflow='';
+function close(){if(done)return;done=true;document.documentElement.classList.remove('op-on');clearTimeout(T);clearTimeout(AT);mark();var withSnd=started&&!au.muted;fadeOut();if(window.startBGM&&(withSnd||(function(){try{return localStorage.getItem('iejimai-bgm')==='on'}catch(e){return false}})()))setTimeout(function(){startBGM()},1400);op.classList.add('out');document.documentElement.style.overflow='';
  var hv=document.getElementById('heroV'),vc=document.getElementById('vctl');if(hv&&!(vc&&vc.classList.contains('paused'))){var p=hv.play();if(p&&p.catch)p.catch(function(){})}
  setTimeout(function(){op.hidden=true;try{v.pause()}catch(e){}},1700)}
 function showText(){if(shown)return;shown=true;op.classList.add('catch','text');T=setTimeout(close,11000);var b=document.getElementById('opGo');setTimeout(function(){try{b.focus({preventScroll:true})}catch(e){}},4400)}
 function setSnd(on){au.muted=!on;snd.textContent=on?'音を消す':'音を出す';snd.setAttribute('aria-pressed',String(on))}
 function play(withSound){
  if(started)return;started=true;clearTimeout(AT);op.classList.add('playing');st.hidden=true;setTimeout(function(){op.classList.add('catch')},60);snd.hidden=false;
- var D=document.documentElement,sp=v.querySelector('source[src*="-sp."]');if(D.classList.contains('lite')&&sp&&v.currentSrc.indexOf('-sp.')<0&&v.canPlayType('video/mp4; codecs="avc1.4D401F"')){v.src=sp.src;try{v.load()}catch(e){}}
+ var D=document.documentElement;if(D.classList.contains('lite'))toLight(false);
  try{v.currentTime=0}catch(e){}
- (function(){var f=[],t0=performance.now(),last=t0;function k(n){f.push(n-last);last=n;if(n-t0<2500&&!done)requestAnimationFrame(k);else{var slow=f.filter(function(x){return x>40}).length;if(f.length>10&&slow/f.length>0.2){D.classList.add('lite');try{localStorage.setItem('iejimai-lite','1')}catch(e){}}else if(!D.classList.contains('lite')){try{localStorage.setItem('iejimai-lite','0')}catch(e){}}}}requestAnimationFrame(k)})();
+ (function(){var f=[],t0=0,last=0;function k(n){if(!t0){t0=last=n;requestAnimationFrame(k);return}f.push(n-last);last=n;if(n-t0<2000&&!done)requestAnimationFrame(k);else if(!done){var slow=f.filter(function(x){return x>40}).length;if(f.length>8&&slow/f.length>0.2){D.classList.add('lite');try{localStorage.setItem('iejimai-lite','1')}catch(e){}toLight(true)}else if(!D.classList.contains('lite')){try{localStorage.setItem('iejimai-lite','0')}catch(e){}}}}
+  v.addEventListener('playing',function once(){v.removeEventListener('playing',once);setTimeout(function(){requestAnimationFrame(k)},400)})})();
  var p=v.play();if(p&&p.catch)p.catch(function(){op.classList.add('ended');showText()});
  au.volume=1;setSnd(withSound);try{au.currentTime=0}catch(e){}
  var q=au.play();if(q&&q.catch)q.catch(function(){setSnd(false)});
  document.getElementById('opSkip').focus({preventScroll:true});
 }
+function toLight(keep){var sm=matchMedia('(max-width: 820px)').matches,sp=v.querySelector('source[src*="-sp."]'),src=sm&&sp?sp.src:new URL(v.getAttribute('data-lite'),location.href).href;
+ if(!src||v.currentSrc===src||v.currentSrc.indexOf('-sp.')>=0||!v.canPlayType('video/mp4; codecs="avc1.4D401F"'))return;
+ var t=keep?v.currentTime:0,was=keep&&!v.paused;v.src=src;try{v.load()}catch(e){}
+ if(keep){v.addEventListener('loadedmetadata',function m(){v.removeEventListener('loadedmetadata',m);try{v.currentTime=t}catch(e){}if(was){var q=v.play();if(q&&q.catch)q.catch(function(){})}})}}
 function open(){
+ document.documentElement.classList.add('op-on');
  done=false;shown=false;started=false;clearTimeout(T);clearTimeout(AT);clearInterval(fadeI);
  op.hidden=false;op.classList.remove('out','text','ended','playing','catch');st.hidden=false;snd.hidden=true;
  document.documentElement.style.overflow='hidden';
@@ -762,6 +769,7 @@ var h=location.hash||'';
 if(h==='#op'||h==='#top--op'){open()}
 else if(h===''||h==='#top'){open()}
 window.addEventListener('hashchange',function(){if(location.hash==='#op')open()});
+(function(){var hv=document.getElementById('heroV'),vc=document.getElementById('vctl');if(hv&&op.hidden&&!(vc&&vc.classList.contains('paused'))){var q=hv.play();if(q&&q.catch)q.catch(function(){})}})();
 var first=true;document.addEventListener('pagechange',function(e){if(first){first=false;return}if(e.detail.page==='top'&&(e.detail.sub==='op'||!e.detail.sub)&&(op.hidden||done))open()});
 })();</script>
 </body>

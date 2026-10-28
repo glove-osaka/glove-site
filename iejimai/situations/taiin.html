@@ -536,6 +536,7 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 .lite .op-veil{background:rgba(8,6,4,.45)!important}
 .lite .hd{box-shadow:none}
 .lite .trust-in{box-shadow:none}
+html.op-on body *{visibility:hidden}html.op-on .opn,html.op-on .opn *{visibility:visible}
 .util-tel{display:none;align-items:center;gap:8px;min-height:44px;color:#fff;text-decoration:none;font-weight:700}.util-tel .ic{font-size:1.3rem;color:var(--gold-bright)}.util-tel b{font-size:1.25rem;letter-spacing:.05em;color:#fff}.util-tel small{font-size:.9rem;color:#E9F0EC;font-weight:400}
 @media (min-width:1241px){.util-tel{display:inline-flex}}
 @media (max-width:1599px){.util .op.has-tel{display:none}}
@@ -567,7 +568,7 @@ table.info th{width:12em;background:var(--pine-soft);font-weight:700}
 </style>
 </head>
 <body>
-<script>(function(){var d=document.documentElement,l=null;try{l=localStorage.getItem('iejimai-lite')}catch(e){}if(l==='1'){d.classList.add('lite');return}if(l==='0')return;var c=navigator.hardwareConcurrency||8,m=navigator.deviceMemory||8,cn=navigator.connection;if(c<=2||m<=2||(cn&&cn.saveData))d.classList.add('lite')})();</script><a class="skip" href="#main">本文へ移動</a>
+<script>(function(){var d=document.documentElement,l=null;try{l=localStorage.getItem('iejimai-lite')}catch(e){}if(l==='1'){d.classList.add('lite');return}if(l==='0')return;var c=navigator.hardwareConcurrency||8,m=navigator.deviceMemory||8,cn=navigator.connection;if(c<=4||m<=4||(cn&&cn.saveData))d.classList.add('lite')})();</script><a class="skip" href="#main">本文へ移動</a>
 <div class="util"><div class="wrap"><span class="op has-tel">運営：<b>株式会社グローブ</b>（古物商許可 大阪府公安委員会 第62102R050377号）</span>
 <div class="util-r"><a class="util-tel" href="tel:0120933496"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h4.5l2 6-3 2a14 14 0 0 0 7.5 7.5l2-3 6 2V23a2.5 2.5 0 0 1-2.5 2.5C14.5 25.5 6.5 17.5 6.5 6.5A2.5 2.5 0 0 1 9 4z"/></svg><small>お電話でのご相談</small><b>0120-933-496</b><small>10:00〜19:00</small></a><button type="button" class="bgm-btn" id="bgmBtn" aria-pressed="false"><i aria-hidden="true"></i><span>音楽を流す</span></button>
 <div class="fs" role="group" aria-label="文字の大きさ"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 25 10 8l6 17M6.2 19h7.6"/><path class="ac" d="M18 25l4.5-12L27 25M19.6 21h5.8"/></svg><span>文字の大きさ</span><button type="button" data-fs="" aria-pressed="true">標準</button><button type="button" data-fs="l" aria-pressed="false">大</button><button type="button" data-fs="xl" aria-pressed="false">特大</button></div></div></div></div>
