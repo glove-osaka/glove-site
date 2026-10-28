@@ -47,6 +47,9 @@
       list.forEach(function (x) { if (x.token === d.token) { x.status = "締結済み"; x.signed = new Date().toISOString(); } }); store(list);
       return wait({ ok: true, demo: true });
     }
+    if (action === "kanri.dash") return wait({ ok: true, counts: { newCase: 0, open: 0, due: 0, refOpen: 0, signedMonth: 0, waiting: 0 }, due: [], newest: [] });
+    if (action === "kanri.list") return wait({ ok: true, rows: [], opts: { caseStatus: ["新規", "連絡済み", "面談予定", "対応中", "取次ぎ中", "完了", "見送り"], refStatus: ["依頼済み", "見積もり中", "成約", "不成約", "取り下げ"] } });
+    if (action.indexOf("kanri.") === 0) return Promise.reject(new Error("お試し表示では保存できません"));
     return Promise.reject(new Error("不明な操作です"));
   }
   window.keiyakuApi = function (action, data) { return DEMO ? demo(action, data) : real(action, data); };
