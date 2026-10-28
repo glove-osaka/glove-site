@@ -1,0 +1,369 @@
+/* このファイルは make_keiyaku.py が作りました。直すときは元のファイルを直してください */
+var KIYAKU_TEXT = "医療介護総合支援会　会員規約（事業所・法人・協賛会員）\n\n第1条（目的と適用）\n1　この規約は、株式会社グローブ（以下「当社」）が運営する「医療介護総合支援会」（以下「本会」）の会員制サービスの利用条件を定めるものです。\n2　この規約は、事業所会員・法人会員・協賛会員（以下あわせて「会員」）に適用します。個人会員には「個人会員規約」を適用します。\n\n第2条（本会の性格）\n本会は、当社が提供する会員制のサービスです。中小企業等協同組合法その他の法令に基づく組合や社団ではなく、会員が本会の出資者や構成員となるものではありません。契約・会費・入退会・個人情報の管理は、当社が行います。\n\n第3条（会員の種類）\n1　事業所会員：病院・診療所・介護事業所・薬局など1つの事業所\n2　法人会員：複数の事業所を運営する法人\n3　協賛会員：医療・介護に関わる方へサービスを提供する企業で、当社の審査を通過したもの\n\n第4条（入会の申込みと契約の成立）\n1　入会を希望する方は、本会のウェブサイトから申し込み、当社が送る電子契約でこの規約を確認し、必要事項の記入と押印をして承認します。\n2　入会の契約は、申込者が電子契約で承認した時に成立します。\n3　当社は、申込者が次のいずれかに当たる場合、入会をお断りすることがあります。理由は開示しないことがあります。\n　(1) 申込内容に偽りや誤りがある\n　(2) 過去にこの規約に反して退会させられたことがある\n　(3) 反社会的勢力に当たる、または関わりがある\n　(4) その他、当社が会員とすることが適当でないと判断した\n\n第5条（会費）\n1　会費（税込）は次のとおりとします。年間払いは、いずれも月額の10か月分とします。\n　(1) 事業所会員：月額5,500円（職員5名まで）。職員が5名を超える場合は1名につき500円を加算\n　(2) 法人会員：1か所目5,500円、2か所目から1か所につき5,000円（いずれも職員5名まで）。5名を超える職員1名につき500円を加算\n　(3) 協賛会員：月額33,000円（年間払い330,000円）\n2　職員の数は、入会時と更新時に会員が申告した人数とします。契約期間中に事業所や職員が増えた場合は、会員は当社に速やかに知らせ、翌月分から変更後の会費とします。\n3　会費は、入会の翌月1日から発生します。入会した月の会費はかかりません。\n\n第6条（会費の支払い）\n1　会費は前払いとし、当社が指定する銀行口座への振込みで支払うものとします。振込手数料は会員の負担とします。\n2　月払いの会員は、毎月末日までに翌月分の会費を支払います。入会時は、入会した月の末日までに翌月分を支払います。\n3　年間払いの会員は、12か月分の会費を、その12か月が始まる月の前月末日までに支払います。\n4　支払日が金融機関の休業日の場合は、その前の営業日までに支払うものとします。\n\n第7条（入会金と創設会員）\n1　創設会員は、事業所会員・法人会員の数が合わせて100社に達するまでに入会した会員とします。\n2　創設会員の入会金は免除します。創設会員以外の入会金は、別に定めて公表します。\n\n第8条（紹介特典）\n創設会員の募集期間中に、会員の紹介で事業所会員または法人会員が3社入会した場合、その会員の会費を1年分免除します。免除は、3社目の入会を確認した月の翌月分から適用します。年間払いで支払済みの会費がある場合は、次の更新時から免除します。\n\n第9条（契約期間と更新）\n1　契約期間は、会費が発生する月の1日から1年間とします。月払いの会員も同じです。\n2　期間が終わる1か月前までに会員または当社から解約の申し出がない場合、契約は同じ条件で1年間更新され、以後も同様とします。\n3　当社は、更新の2か月前までに、会員に更新日と解約の申し出の期限をメールで知らせます。\n\n第10条（解約）\n1　会員は、契約期間が終わる1か月前までに当社所定の方法で申し出ることで、期間の終了をもって解約できます。\n2　月払いの会員が契約期間の途中で解約する場合、契約期間の残りの月数分の会費を、解約日の属する月の末日までに支払うものとします。\n3　年間払いの会員が契約期間の途中で解約する場合、支払済みの会費は返金しません。\n4　第2項と第3項は、次条の場合には適用しません。\n\n第11条（効果が出なかった場合の途中解約）\n1　入会後、当社が提案する経費の削減などを会員が実施したにもかかわらず、会費が発生してから3か月の時点で、その効果の額が同じ期間に支払った会費の額を下回る場合、会員は残りの月数分の会費を支払うことなく解約できます。\n2　会員が当社の提案に同意しなかった場合、または同意した提案を実施しなかった場合は、前項を適用しません。\n3　効果の額は、会員が提出する請求書などの資料をもとに、当社と会員が確認して決めます。\n\n第12条（サービスの内容と範囲）\n1　当社は、会員に対し、本会のウェブサイトに示す支援（情報の提供、相談内容の整理、専門家・提携先へのおつなぎ、経費の見直しの提案など）を提供します。\n2　当社は、診断・治療などの医療の判断、法律・税務・労務の専門的な判断、補助金などの申請書類の作成、職業紹介、事業の売買の仲介は行いません。これらは、資格や許可を持つ専門家・提携先が担当します。\n3　当社は、患者・利用者の個人情報を受け取りません。会員は、当社への相談に患者・利用者を特定できる情報を含めないものとします。\n4　提携先が提供するサービスの契約は、会員と提携先の間で結ばれ、当社はその当事者になりません。\n5　当社は、提案や情報によって経費の削減や売上などの特定の結果が生じることを保証しません（第11条の途中解約を除きます）。\n\n第13条（手数料と紹介料の開示）\n1　当社は、会員が提携先のサービスを利用した場合に、提携先から手数料を受け取ることがあります。その場合は、提案の時にその旨を知らせます。\n2　当社は、弁護士・税理士・社会保険労務士・行政書士などの専門家から紹介料を受け取りません。\n3　当社は、会員を紹介した個人会員に、その会員の会費・手数料の一部を紹介料として支払います。紹介料は当社の受け取る会費・手数料から支払うもので、会員の会費に上乗せするものではありません。\n\n第14条（協賛会員の特則）\n1　協賛会員の入会には、当社の審査が必要です。\n2　協賛会員の紹介・掲載は、広告であることを明示して行います。当社は、他の会員に協賛会員の商品・サービスの購入を強いません。\n\n第15条（禁止事項）\n会員は、次の行為をしてはなりません。\n　(1) 他の会員・提携先・当社の信用を傷つける行為\n　(2) 本会で知った他の会員の情報を、その会員の同意なく営業や第三者への提供に使う行為\n　(3) 本会の名称を、当社の承諾なく宣伝に使う行為\n　(4) 法令や公序良俗に反する行為\n\n第16条（会費の滞納と退会）\n1　会費の支払いが期日から1か月以上遅れた場合、当社はサービスの提供を止めることがあります。\n2　会員がこの規約に重大な違反をし、当社が求めても改めない場合、当社は契約を解除できます。この場合、支払済みの会費は返金せず、未払いの会費はただちに支払うものとします。\n\n第17条（個人情報）\n当社は、会員の個人情報を、本会のウェブサイトに示す「個人情報の取り扱い」に従って取り扱います。会員の同意なく、提携先や個人会員に会員の情報を渡しません。\n\n第18条（反社会的勢力の排除）\n会員と当社は、自らとその役員が暴力団などの反社会的勢力でないこと、反社会的勢力と関わりを持たないことを確約します。相手がこれに反した場合、催告なく契約を解除できます。\n\n第19条（責任の範囲）\n当社は、本会のサービスに関して会員に生じた損害について、当社の故意または重大な過失による場合を除き、損害が生じた月の会費の額を上限として責任を負います。\n\n第20条（規約の変更）\n1　当社は、会員の利益になる場合、または変更の必要性・内容の相当性などに照らして合理的な場合に、この規約を変更できます。\n2　変更するときは、効力が生じる日の1か月前までに、変更の内容と効力が生じる日を、本会のウェブサイトとメールで知らせます。\n3　会費の値上げは、次の更新時から適用します。\n\n第21条（準拠法と管轄）\nこの規約は日本の法律に従います。この規約に関する紛争は、大阪地方裁判所を第一審の専属的合意管轄裁判所とします。";
+var KOJIN_TEXT = "医療介護総合支援会　個人会員（営業協力者）規約\n\n第1条（目的）\nこの規約は、株式会社グローブ（以下「当社」）が運営する「医療介護総合支援会」（以下「本会」）に、事業所会員・法人会員を紹介する個人会員（営業協力者）と当社の間の条件を定めるものです。\n\n第2条（個人会員の位置づけ）\n1　個人会員の登録と継続に費用はかかりません。個人会員は、本会の支援サービスを利用できません。\n2　個人会員は、当社の従業員・代理人ではなく、当社に代わって契約を結ぶ権限もありません。\n3　個人会員に、紹介の件数・時間のノルマはありません。\n\n第3条（登録）\n1　登録を希望する方は、本会のウェブサイトから申し込み、当社が送る電子契約でこの規約を確認して承認します。\n2　紹介料の支払いを受けるには、本人確認書類の提出と、本人名義の振込口座の登録が必要です。\n3　18歳未満の方、反社会的勢力に当たる方、その他当社が不適当と判断した方は、登録できません。\n\n第4条（紹介の方法）\n1　個人会員は、紹介先の了解を得たうえで、当社所定の紹介コードまたは紹介の申込みで、紹介先を当社に知らせます。\n2　紹介先が入会の申込みで紹介者として個人会員を指定した場合に、その個人会員の紹介とします。同じ紹介先に複数の紹介があった場合は、紹介先が指定した方を優先します。\n3　個人会員は、本会のサービスの内容や費用を自分で説明して契約を結ばせてはならず、その説明は当社が行います。\n\n第5条（紹介料）\n1　当社は、個人会員の紹介で入会した事業所会員・法人会員（以下「紹介先」）について、次の紹介料を支払います。\n　(1) 会費の紹介料：紹介先から当社に入金された会費の20%\n　(2) 手数料の紹介料：紹介先が経費の削減などのサービスを利用して当社が受け取った手数料の20%。当社が紹介先へ還元した場合は、還元した額を差し引いた残りの20%\n2　紹介料は、紹介先からの入金を当社が確認したものだけを対象とします。\n3　紹介料は、毎月末日で締め、翌月15日までに計算して個人会員に知らせ、翌月末日に登録口座へ振り込みます。\n4　紹介先が会費の返金を受けた場合や、紹介が第7条に反していた場合は、その分の紹介料を支払いません。すでに支払った場合は、次回以降の紹介料から差し引くか、返していただきます。\n5　個人会員が別の個人会員を紹介しても、紹介料は支払いません。個人会員が紹介した個人会員の成果に応じた紹介料も支払いません。\n6　紹介料は、当社が受け取る会費・手数料の中から支払うもので、紹介先の会費に上乗せしません。当社は、紹介料の仕組みがあることを本会のウェブサイトと会員規約で紹介先に知らせます。\n7　紹介料に関する税金の申告は、個人会員が自分で行います。当社は、法令に従い支払の記録を作り、必要な場合は税務署に提出します。\n\n第6条（勤め先の紹介）\n個人会員が自分の勤め先や、自分が役員を務める法人を紹介する場合は、紹介料を受け取ることについて、その勤め先・法人の了解を得なければなりません。当社は、了解を得たことを確かめることがあります。\n\n第7条（禁止事項）\n個人会員は、紹介にあたり次の行為をしてはなりません。\n　(1) 「必ず得をする」「確実に経費が下がる」など、事実と違う説明や断定的な説明\n　(2) 断られた後の繰り返しの勧誘、威迫、心理的に追い込む勧誘\n　(3) 当社の従業員や代理人であるかのような名乗り、本会の名での契約や約束\n　(4) 紹介先に紹介料の一部を渡す約束や、金品の提供\n　(5) 紹介先の同意なく、その情報を当社や第三者に伝えること\n　(6) 患者・利用者の個人情報を扱うこと\n　(7) 本会の名称・画像を、当社の承諾なく広告に使うこと\n　(8) 法令や公序良俗に反する行為\n\n第8条（秘密の保持）\n個人会員は、紹介を通じて知った紹介先と当社の秘密を、登録を終えた後も第三者に漏らしてはなりません。\n\n第9条（登録の取消し）\n1　個人会員は、いつでも登録を取り消せます。取り消した月までに入金が確認された分の紹介料は支払います。\n2　当社は、個人会員がこの規約に反した場合、紹介料の支払いを止め、登録を取り消すことがあります。\n\n第10条（個人情報・反社会的勢力・規約の変更・管轄）\n個人情報の取り扱い、反社会的勢力の排除、規約の変更、準拠法と管轄は、会員規約の第17条・第18条・第20条・第21条と同じとします。";
+var NDA_TEXT = "株式会社グローブ（以下「甲」という。）と [[party]]（以下「乙」という。）は、甲が運営する医療介護総合支援会でのご相談に関し、次のとおり秘密保持契約を結ぶ。\n\n第1条（秘密情報）\n本契約で秘密情報とは、ご相談の内容、乙の事業・経営・人事・取引に関する情報など、相談を通じて甲が知った一切の情報をいう。ただし、すでに公知の情報、甲が正当に第三者から得た情報は除く。\n\n第2条（秘密の保持）\n甲は、秘密情報を厳重に管理し、乙の事前の同意なく第三者に開示・漏えいしない。\n\n第3条（目的外の使用の禁止）\n甲は、秘密情報を、乙のご相談への対応の目的以外に使わない。\n\n第4条（専門家・提携先への開示）\n甲は、乙の同意を得た場合に限り、ご相談に必要な範囲で、秘密情報を専門家・提携先に開示できる。この場合、甲は開示先に本契約と同じ義務を守らせる。\n\n第5条（患者・利用者の情報）\n乙は、ご相談に患者・利用者を特定できる情報を含めない。誤って受け取った場合、甲はただちに乙に知らせ、廃棄する。\n\n第6条（返還・廃棄）\n甲は、ご相談が終わった後、乙から求めがあれば、秘密情報を返還または廃棄する。\n\n第7条（有効期間）\n本契約は締結の日から効力を持ち、ご相談が終わった後も3年間有効とする。\n\n第8条（準拠法と管轄）\n本契約は日本の法律に従う。本契約に関する紛争は、大阪地方裁判所を第一審の専属的合意管轄裁判所とする。";
+var TEIKEI_TEXT = "株式会社グローブ（以下「甲」という。）と [[party]]（以下「乙」という。）は、甲が運営する医療介護総合支援会（以下「本会」）の会員に対し、乙がサービスを提供することに関し、次のとおり業務提携契約を結ぶ。\n\n第1条（目的）\n甲は、本会の会員の相談内容に応じて乙を紹介し、乙は会員に対して自らのサービスを提供する。\n\n第2条（契約の当事者）\n乙のサービスの契約は、乙と会員の間で結ばれ、甲はその当事者にならない。乙は、自らの責任でサービスを提供する。\n\n第3条（手数料）\n1　会員が乙のサービスを利用した場合、乙は甲に、別に定める手数料を支払う。手数料の条件は、末尾の「提携の条件」による。\n2　甲は、手数料を受け取ることを、提案の時に会員に知らせる。乙はこれに同意する。\n3　手数料を会員への請求額に上乗せしてはならない。\n\n第4条（適正な提供）\n乙は、法令・業界の規則を守り、会員に対し、事実と違う説明や断定的な説明、強引な勧誘をしない。\n\n第5条（秘密の保持と個人情報）\n1　甲と乙は、本契約を通じて知った相手方と会員の秘密を、第三者に漏らさない。本契約の終了後も同じとする。\n2　甲と乙は、会員の個人情報を、個人情報の保護に関する法律に従って取り扱い、紹介の目的以外に使わない。\n\n第6条（反社会的勢力の排除）\n甲と乙は、自らとその役員が反社会的勢力でないこと、反社会的勢力と関わりを持たないことを確約する。相手がこれに反した場合、催告なく本契約を解除できる。\n\n第7条（有効期間）\n本契約の有効期間は締結の日から1年間とし、期間が終わる1か月前までに申し出がなければ、同じ条件で1年間更新し、以後も同様とする。\n\n第8条（解除）\n甲または乙は、相手方が本契約に違反し、催告しても改めない場合、本契約を解除できる。\n\n第9条（準拠法と管轄）\n本契約は日本の法律に従う。本契約に関する紛争は、大阪地方裁判所を第一審の専属的合意管轄裁判所とする。";
+/* ---- 共通：項目・ひな形・会費の計算・文面の組み立て（サイトのお試し表示と Apps Script で同じものを使う） ---- */
+var ISSUER = { name: "株式会社グローブ", service: "医療介護総合支援会", rep: "代表取締役 藤原 重郎", addr: "〒544-0033 大阪府大阪市生野区勝山南2-2-7", tel: "0120-933-496", hours: "10:00〜19:00" };
+var FIELDS = {
+  company: { label: "事業所名・法人名", type: "text", ac: "organization" },
+  address: { label: "所在地・ご住所", type: "text", ac: "street-address" },
+  rep: { label: "代表者名", type: "text" },
+  name: { label: "お名前（ご担当者名）", type: "text", ac: "name" },
+  kana: { label: "ふりがな", type: "text" },
+  title: { label: "役職", type: "text", ac: "organization-title" },
+  phone: { label: "電話番号", type: "tel", ac: "tel" },
+  birth: { label: "生年月日", type: "date", ac: "bday" },
+  bank: { label: "紹介料の振込口座（銀行名・支店・種別・口座番号・名義）", type: "textarea" }
+};
+var TEMPLATES = [
+  { key: "kaiin", title: "会員申込書（事業所・法人・協賛会員）", cond: true, fields: ["company", "address", "rep", "name", "phone"], required: ["company", "address", "rep", "name", "phone"], requireId: false, seal: "square", note: "", labels: { name: "ご担当者名", address: "所在地", company: "事業所名・法人名" } },
+  { key: "kojin", title: "個人会員（営業協力者）登録書", cond: false, fields: ["name", "kana", "address", "phone", "birth", "bank"], required: ["name", "kana", "address", "phone", "birth", "bank"], requireId: true, adult: true, seal: "round", note: "特記事項", labels: { name: "お名前", address: "ご住所" } },
+  { key: "nda", title: "秘密保持契約書（ご相談）", cond: false, fields: ["company", "name", "address", "phone"], required: ["name", "address", "phone"], requireId: false, seal: "round", note: "特記事項" },
+  { key: "teikei", title: "業務提携契約書（提携先）", cond: false, fields: ["company", "rep", "name", "title", "address", "phone"], required: ["company", "rep", "address", "phone"], requireId: false, seal: "square", note: "提携の条件（業務分野・手数料の率・支払時期など）" }
+];
+var MEMBER_LABEL = { jigyosho: "事業所会員", hojin: "法人会員", kyosan: "協賛会員" };
+function tplOf(key) { for (var i = 0; i < TEMPLATES.length; i++) if (TEMPLATES[i].key === key) return TEMPLATES[i]; return null; }
+function fieldLabel(t, k) { return (t && t.labels && t.labels[k]) || FIELDS[k].label; }
+/* 項目の並びをひな形の順にそろえ、必須の項目を必ず入れる */
+function orderFields(t, arr) {
+  arr = (arr || t.fields).filter(function (k) { return FIELDS[k]; });
+  t.required.forEach(function (k) { if (arr.indexOf(k) < 0) arr.push(k); });
+  var first = t.fields.filter(function (k) { return arr.indexOf(k) >= 0; });
+  return first.concat(Object.keys(FIELDS).filter(function (k) { return arr.indexOf(k) >= 0 && first.indexOf(k) < 0; }));
+}
+function yen(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "円"; }
+function monthlyFee(c) {
+  var s = Math.max(1, parseInt(c.sites, 10) || 1), n = Math.max(0, parseInt(c.staff, 10) || 0);
+  if (c.type === "jigyosho") return 5500 + Math.max(0, n - 5) * 500;
+  if (c.type === "hojin") return 5500 + (s - 1) * 5000 + Math.max(0, n - 5 * s) * 500;
+  if (c.type === "kyosan") return 33000;
+  return 0;
+}
+function ymd(d) { return d.getFullYear() + "年" + (d.getMonth() + 1) + "月" + d.getDate() + "日"; }
+function nextFirst(from) { var d = from ? new Date(from) : new Date(); return new Date(d.getFullYear(), d.getMonth() + 1, 1); }
+/* 契約の条件をそろえる（金額は必ずここで計算し直す） */
+function normCond(c) {
+  c = c || {};
+  var o = { type: MEMBER_LABEL[c.type] ? c.type : "jigyosho", pay: c.pay === "year" ? "year" : "month", sites: Math.max(1, parseInt(c.sites, 10) || 1), staff: Math.max(0, parseInt(c.staff, 10) || 0), founder: c.founder !== false && c.founder !== "false", referrer: String(c.referrer || "").slice(0, 60), entryFee: String(c.entryFee || "").slice(0, 40) };
+  if (o.type === "jigyosho") o.sites = 1;
+  var st = c.start && /^\d{4}-\d{2}/.test(c.start) ? new Date(+c.start.slice(0, 4), +c.start.slice(5, 7) - 1, 1) : nextFirst();
+  o.start = st.getFullYear() + "-" + ("0" + (st.getMonth() + 1)).slice(-2) + "-01";
+  o.monthly = monthlyFee(o);
+  o.first = o.pay === "year" ? o.monthly * 10 : o.monthly;
+  o.startText = ymd(st);
+  o.endText = ymd(new Date(st.getFullYear() + 1, st.getMonth(), 0));
+  o.dueText = ymd(new Date(st.getFullYear(), st.getMonth(), 0));
+  return o;
+}
+function condText(c) {
+  var o = normCond(c), L = [];
+  L.push("　会員区分：" + MEMBER_LABEL[o.type] + (o.type === "kyosan" ? "" : "（事業所数 " + o.sites + "か所、職員数 " + o.staff + "名）"));
+  L.push("　支払方法：" + (o.pay === "year" ? "年間払い（12か月分を10か月分の額で）" : "月払い") + "　銀行振込・前払い。振込手数料は申込者の負担");
+  L.push("　月額会費（税込）：" + yen(o.monthly) + (o.pay === "year" ? "　→　年間払いの額（税込）：" + yen(o.monthly * 10) : ""));
+  L.push("　初回のお振込み額（税込）：" + yen(o.first) + "（" + o.dueText + "まで）");
+  L.push("　会費の発生日：" + o.startText);
+  L.push("　契約期間：" + o.startText + "〜" + o.endText + "（1年。期間が終わる1か月前までに申し出がなければ1年ごとに自動更新）");
+  L.push("　入会金：" + (o.founder ? "創設会員のため免除" : (o.entryFee || "別に定める額（担当者からご案内します）")));
+  L.push("　紹介者：" + (o.referrer || "なし"));
+  return L.join("\n");
+}
+/* 文面を組み立てる。[[項目]] は相手が記入する欄（画面では「記入欄」、PDFでは記入した内容になる） */
+function buildBody(key, cond, note, party) {
+  var t = tplOf(key), b = "";
+  var who = party || "[[name]]";
+  if (key === "kaiin") {
+    b = "医療介護総合支援会　会員申込書\n\n株式会社グローブ　御中\n\n申込者は、下に続く「医療介護総合支援会 会員規約」に同意し、次のとおり入会を申し込みます。\n\n1．申込者\n　事業所名・法人名：[[company]]\n　所在地：[[address]]\n　代表者名：[[rep]]\n　ご担当者名：[[name]]\n　電話番号：[[phone]]\n\n2．契約の内容\n" + condText(cond) +
+      "\n\n3．特にご確認いただく事項\n　・契約期間は1年で、月払いも同じです。終了日の1か月前までに解約の申し出がない場合は、1年ごとに自動で更新されます。\n　・月払いで途中解約する場合は、残りの月数分の会費をお支払いいただきます。年間払いの途中解約は返金しません。\n　・会費が発生してから3か月の時点で、当社の提案を実施しても効果が会費を下回った場合は、会員規約第11条により途中解約できます。\n　・当社は、本会を紹介した個人会員に会費・手数料の一部を紹介料として支払うことがあります（会費に上乗せはありません）。\n\n――――――――――――――――――――\n\n" + KIYAKU_TEXT;
+  } else if (key === "kojin") {
+    b = "医療介護総合支援会　個人会員（営業協力者）登録書\n\n株式会社グローブ　御中\n\n私は、下に続く「医療介護総合支援会 個人会員（営業協力者）規約」に同意し、個人会員として登録を申し込みます。\n\n1．登録者\n　お名前：[[name]]（[[kana]]）\n　ご住所：[[address]]\n　電話番号：[[phone]]\n　生年月日：[[birth]]\n　紹介料の振込口座：[[bank]]\n\n2．確認事項\n　・個人会員の登録と継続に費用はかかりません。本会の支援サービスは利用できません。\n　・紹介料は、紹介先の会費の20%と、手数料の20%（紹介先へ還元した額を差し引いた残り）です。毎月末日締め、翌月15日までに計算し、翌月末日に振り込みます。\n　・個人会員を紹介しても紹介料はありません。\n　・紹介料の税金の申告は、ご自身で行っていただきます。\n\n――――――――――――――――――――\n\n" + KOJIN_TEXT;
+  } else if (key === "nda") {
+    b = "秘密保持契約書\n\n" + NDA_TEXT.replace("[[party]]", who);
+  } else if (key === "teikei") {
+    b = "業務提携契約書\n\n" + TEIKEI_TEXT.replace("[[party]]", who);
+  }
+  if (note) b += "\n\n" + (t && t.note ? t.note : "特記事項") + "\n" + note;
+  return b;
+}
+
+/* =====================================================================
+   医療介護総合支援会　電子契約（Google Apps Script）
+   ・お客様の画面（サイトの /medical/keiyaku/）からの通信を受ける doPost
+   ・担当者の管理画面（このスクリプトのウェブアプリ ?admin=1）
+   使い方は「設定のしかた.txt」を見てください。
+   ===================================================================== */
+var SHEET = "契約";
+var COLS = ["id", "token", "template", "title", "party_name", "party_company", "party_email", "fields", "required", "require_id", "cond", "note", "prefill", "body", "status", "created", "expires", "viewed", "signed", "values", "seal_file", "id_file", "pdf_id", "hash", "ua", "log", "draft", "paid"];
+var VALID_DAYS = 30;
+
+function P(k) { return PropertiesService.getScriptProperties().getProperty(k) || ""; }
+function json(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
+
+/* ---- 最初に1回だけ実行：シートとフォルダを作る ---- */
+function setup() {
+  var pr = PropertiesService.getScriptProperties();
+  if (!P("SHEET_ID")) {
+    var ss = SpreadsheetApp.create("医療介護総合支援会 電子契約（台帳）");
+    var sh = ss.getActiveSheet(); sh.setName(SHEET); sh.appendRow(COLS); sh.setFrozenRows(1);
+    pr.setProperty("SHEET_ID", ss.getId());
+  }
+  inboxSheet_();
+  if (!P("FOLDER_ID")) { var f = DriveApp.createFolder("医療介護総合支援会 電子契約"); pr.setProperty("FOLDER_ID", f.getId()); }
+  if (!P("ADMIN_EMAILS")) pr.setProperty("ADMIN_EMAILS", Session.getEffectiveUser().getEmail());
+  if (!P("NOTIFY_TO")) pr.setProperty("NOTIFY_TO", Session.getEffectiveUser().getEmail());
+  if (!P("SIGN_URL")) pr.setProperty("SIGN_URL", "https://glove-osaka.github.io/glove-site/medical/keiyaku/index.html");
+  Logger.log("準備ができました。台帳: https://docs.google.com/spreadsheets/d/" + P("SHEET_ID") + "  フォルダ: https://drive.google.com/drive/folders/" + P("FOLDER_ID"));
+}
+
+/* ---- サイトのフォーム（相談・会員登録の申込み）の受付 ---- */
+var INBOX = "受付", INBOX_COLS = ["受付番号", "受付日時", "区分", "お名前", "事業所名・会社名", "メール", "電話", "内容", "状態", "対応メモ"];
+function inboxSheet_() {
+  var ss = SpreadsheetApp.openById(P("SHEET_ID")), sh = ss.getSheetByName(INBOX);
+  if (!sh) { sh = ss.insertSheet(INBOX); sh.appendRow(INBOX_COLS); sh.setFrozenRows(1); }
+  return sh;
+}
+function inbox_(d) {
+  var cache = CacheService.getScriptCache(), cut = function (x, m) { return String(x == null ? "" : x).slice(0, m || 200); };
+  if (+d.elapsed > 0 && +d.elapsed < 3000) throw new Error("送信できませんでした");
+  var em = cut(d.email, 120).trim(), okMail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em);
+  var n1 = +(cache.get("in_" + em.toLowerCase()) || 0), n2 = +(cache.get("in_all") || 0);
+  if (n1 >= 5 || n2 >= 100) throw new Error("送信が続いたため、しばらくお待ちください");
+  cache.put("in_" + em.toLowerCase(), String(n1 + 1), 3600); cache.put("in_all", String(n2 + 1), 3600);
+  var no = /^[A-Z]{2,3}-[0-9]{6}-[0-9A-Z]{4,8}$/.test(String(d.no || "")) ? d.no : "IK-" + Utilities.formatDate(new Date(), "Asia/Tokyo", "yyMMdd-HHmm") + Math.floor(Math.random() * 1000);
+  var body = cut(d.body, 6000), label = cut(d.catLabel || d.entry, 120);
+  inboxSheet_().appendRow([no, new Date(), label, cut(d.name, 60), cut(d.company, 100), em, "'" + cut(d.tel, 30), body, "新規受付", ""]);
+  var mail = { to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］新しい受付 " + no + "　" + label, body: body + "\n\nお名前：" + cut(d.name, 60) + "\nメール：" + em + "\n電話：" + cut(d.tel, 30) + "\n\n受付の一覧：https://docs.google.com/spreadsheets/d/" + P("SHEET_ID") };
+  if (okMail) mail.replyTo = em;
+  MailApp.sendEmail(mail);
+  if (okMail) MailApp.sendEmail({ to: em, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】受付しました（受付番号 " + no + "）", body: cut(d.name, 60) + " 様\n\nお問い合わせありがとうございます。次の内容で受け付けました。\n受付後、原則として3営業日以内にメールでご返信します（土日祝・年末年始を除く）。\n\n受付番号：" + no + "\n\n" + body + "\n\nお心当たりがない場合は、このメールを破棄してください。\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）\n" + P("NOTIFY_TO") });
+  return { ok: true, no: no };
+}
+
+/* ---- 台帳 ---- */
+function sheet_() {
+  var sh = SpreadsheetApp.openById(P("SHEET_ID")).getSheetByName(SHEET);
+  if (sh.getLastColumn() < COLS.length) sh.getRange(1, 1, 1, COLS.length).setValues([COLS]);
+  return sh;
+}
+function rows_() {
+  var sh = sheet_(), v = sh.getDataRange().getValues(), out = [];
+  for (var i = 1; i < v.length; i++) { var o = { _row: i + 1 }; COLS.forEach(function (c, j) { o[c] = v[i][j]; }); out.push(o); }
+  return out;
+}
+function find_(key, val) { var r = rows_(); for (var i = 0; i < r.length; i++) if (String(r[i][key]) === String(val)) return r[i]; return null; }
+function save_(o) {
+  var sh = sheet_(), line = COLS.map(function (c) { var v = o[c]; return v == null ? "" : (typeof v === "object" && !(v instanceof Date) ? JSON.stringify(v) : v); });
+  if (o._row) sh.getRange(o._row, 1, 1, COLS.length).setValues([line]); else { sh.appendRow(line); }
+}
+function log_(o, msg) { o.log = (o.log ? o.log + "\n" : "") + Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy-MM-dd HH:mm:ss") + "　" + msg; }
+function parse_(s, d) { try { return s ? JSON.parse(s) : d; } catch (e) { return d; } }
+function newToken_() { return (Utilities.getUuid() + Utilities.getUuid()).replace(/-/g, ""); }
+function newId_() {
+  var d = Utilities.formatDate(new Date(), "Asia/Tokyo", "yyMMdd"), n = rows_().filter(function (r) { return String(r.id).indexOf("IKK-" + d) === 0; }).length + 1;
+  return "IKK-" + d + "-" + ("00" + n).slice(-3);
+}
+function esc_(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+/* ---- 入口：お客様の画面から ---- */
+function doPost(e) {
+  var lock = LockService.getScriptLock();
+  try {
+    var d = JSON.parse(e.postData.contents || "{}"), a = String(d.action || "");
+    if (d.kind === "inbox") { lock.waitLock(20000); return json(inbox_(d)); }
+    if (a.indexOf("client.") !== 0) return json({ ok: false, error: "この操作はできません" });
+    lock.waitLock(20000);
+    if (a === "client.apply") return json(apply_(d));
+    return json(client_(a, d));
+  } catch (err) {
+    return json({ ok: false, error: String(err && err.message || err) });
+  } finally { try { lock.releaseLock(); } catch (x) { } }
+}
+function doGet(e) {
+  if (e && e.parameter && e.parameter.admin) {
+    if (!isAdmin_()) return HtmlService.createHtmlOutput("<p style='font:16px sans-serif;padding:24px'>この画面は、登録された担当者の Google アカウントでのみ開けます。</p>");
+    return HtmlService.createHtmlOutputFromFile("admin").setTitle("電子契約の管理｜医療介護総合支援会").addMetaTag("viewport", "width=device-width,initial-scale=1");
+  }
+  return ContentService.createTextOutput("ok");
+}
+function isAdmin_() {
+  var me = String(Session.getActiveUser().getEmail() || "").toLowerCase();
+  if (!me) return false;
+  return P("ADMIN_EMAILS").toLowerCase().split(/[\s,]+/).indexOf(me) >= 0;
+}
+
+/* ---- お客様側の操作 ---- */
+function client_(a, d) {
+  var o = find_("token", d.token);
+  if (!o || !d.token) throw new Error("契約書が見つかりません。メールのボタンから開き直してください。");
+  if (o.status === "取り消し") throw new Error("この契約書は取り消されました。");
+  var signed = o.status === "締結済み";
+  if (!signed && o.expires && new Date(o.expires) < new Date()) throw new Error("リンクの有効期限が切れました。担当者から送り直します。");
+  var cache = CacheService.getScriptCache();
+  if (a === "client.otp") { otp_(o); save_(o); return { ok: true }; }
+  if (a === "client.verify") {
+    var tries = +(cache.get("otpt_" + o.token) || 0);
+    if (tries >= 8) throw new Error("間違いが続いたため、しばらく入力できません。認証コードを送り直してください。");
+    if (!d.code || cache.get("otp_" + o.token) !== String(d.code).replace(/\D/g, "")) { cache.put("otpt_" + o.token, String(tries + 1), 1800); throw new Error("認証コードが違います。メールの6けたの数字を入れてください。"); }
+    cache.remove("otp_" + o.token); cache.remove("otpt_" + o.token);
+    var sess = newToken_(); cache.put("sess_" + sess, o.token, 7200);
+    log_(o, "メール認証"); save_(o);
+    return { ok: true, sess: sess };
+  }
+  var authed = d.sess && cache.get("sess_" + d.sess) === o.token;
+  if (a === "client.get") {
+    var t = tplOf(o.template);
+    if (!authed) return { ok: true, needOtp: true, contract: { id: o.id, title: o.title, party_name: o.party_name, party_company: o.party_company, email: maskMail_(o.party_email), issuer: ISSUER } };
+    if (!o.viewed) { o.viewed = new Date(); log_(o, "内容を表示"); save_(o); }
+    var fields = parse_(o.fields, []), req = parse_(o.required, []), pre = parse_(o.prefill, {});
+    return { ok: true, contract: { id: o.id, title: o.title, status: o.status, draft: o.draft === "yes", party_name: o.party_name, party_company: o.party_company, body: o.body, fields: fields.map(function (k) { return { key: k, label: fieldLabel(t, k), type: FIELDS[k].type, ac: FIELDS[k].ac || "", required: req.indexOf(k) >= 0, value: pre[k] || "" }; }), requireId: o.require_id === "yes" || o.require_id === true, adult: !!(t && t.adult), seal: t ? t.seal : "round", issuer: ISSUER, signed: signed } };
+  }
+  if (!authed) throw new Error("確認の時間が過ぎました。画面を開き直して、認証コードを入れてください。");
+  if (a === "client.sign") return sign_(o, d);
+  if (a === "client.pdf") {
+    if (!signed || !o.pdf_id) throw new Error("契約書はまだできていません。");
+    var f = DriveApp.getFileById(o.pdf_id);
+    return { ok: true, pdf: Utilities.base64Encode(f.getBlob().getBytes()), filename: f.getName() };
+  }
+  throw new Error("不明な操作です");
+}
+function otp_(o) {
+  var cache = CacheService.getScriptCache(), cnt = +(cache.get("otpn_" + o.token) || 0);
+  if (cnt >= 5) throw new Error("認証コードを送る回数が多すぎます。1時間ほどおいてお試しください。");
+  var code = ("00000" + Math.floor(Math.random() * 1000000)).slice(-6);
+  cache.put("otp_" + o.token, code, 900); cache.put("otpn_" + o.token, String(cnt + 1), 3600);
+  MailApp.sendEmail({ to: o.party_email, name: ISSUER.service, subject: "【" + ISSUER.service + "】認証コード " + code, body: o.party_name + " 様\n\n電子契約の認証コードは " + code + " です（15分間有効）。\n開いている画面に入力してください。\n\nお心当たりがない場合は、このメールを破棄してください。\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）" });
+  log_(o, "認証コードを送信");
+}
+/* サイトの「会員登録の申込み」から、その場で契約書を作る（協賛会員は審査があるため対象外） */
+function apply_(d) {
+  var type = String(d.type || ""), email = String(d.email || "").trim(), cache = CacheService.getScriptCache();
+  if (["jigyosho", "hojin", "kojin"].indexOf(type) < 0) throw new Error("会員の種類が正しくありません");
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || !d.name) throw new Error("お名前とメールアドレスを入れてください");
+  var ke = "apl_" + email.toLowerCase(), n1 = +(cache.get(ke) || 0), n2 = +(cache.get("apl_all") || 0);
+  if (n1 >= 3 || n2 >= 60) throw new Error("申込みが続いたため、しばらくお待ちください");
+  cache.put(ke, String(n1 + 1), 3600); cache.put("apl_all", String(n2 + 1), 3600);
+  var cut = function (x, m) { return String(x || "").trim().slice(0, m || 120); };
+  var kj = type === "kojin", t = tplOf(kj ? "kojin" : "kaiin");
+  var cond = kj ? "" : normCond({ type: type, pay: d.pay, sites: d.sites, staff: d.staff, referrer: cut(d.referrer, 60), founder: true });
+  var o = { id: newId_(), token: newToken_(), template: t.key, title: t.title, party_name: cut(d.name, 40), party_company: kj ? "" : cut(d.org, 80), party_email: email, fields: t.fields.slice(), required: t.required, require_id: t.requireId ? "yes" : "", cond: cond, note: "",
+    prefill: kj ? { name: cut(d.name, 40), address: cut(d.address), phone: cut(d.phone, 20) } : { company: cut(d.org, 80), address: cut(d.address), rep: cut(d.rep, 40), name: cut(d.name, 40), phone: cut(d.phone, 20) },
+    status: "送付済み", created: new Date(), expires: new Date(Date.now() + VALID_DAYS * 864e5), draft: "" };
+  o.body = buildBody(t.key, cond, "", kj ? o.party_name : o.party_company);
+  log_(o, "サイトの申込みから作成（受付番号 " + cut(d.no, 30) + "）");
+  otp_(o); save_(o);
+  MailApp.sendEmail({ to: P("NOTIFY_TO"), subject: "［電子契約］サイトから申込み：" + o.id + "　" + (o.party_company ? o.party_company + " " : "") + o.party_name, body: o.title + "\n" + o.id + "（受付番号 " + cut(d.no, 30) + "）\n" + (o.party_company ? o.party_company + "　" : "") + o.party_name + "（" + email + "）\n" + (cond ? condText(cond) + "\n" : "") + "連絡事項：" + cut(d.note, 500) + "\n\n申込者はそのまま電子契約の画面に進んでいます。締結するとまた通知します。" });
+  return { ok: true, token: o.token };
+}
+function maskMail_(m) { m = String(m); var p = m.split("@"); return p[0].slice(0, 2) + "***@" + (p[1] || ""); }
+
+function sign_(o, d) {
+  if (o.status === "締結済み") throw new Error("この契約はすでに結ばれています。");
+  if (o.draft === "yes") throw new Error("この書面は下書き（確認用）のため、締結できません。");
+  if (!d.agree) throw new Error("内容に同意する欄に印を付けてください。");
+  var fields = parse_(o.fields, []), req = parse_(o.required, []), v = {}, t = tplOf(o.template);
+  fields.forEach(function (k) { v[k] = String((d.values || {})[k] || "").trim().slice(0, 300); });
+  req.forEach(function (k) { if (!v[k]) throw new Error(fieldLabel(t, k) + "を記入してください。"); });
+  if (t && t.adult && v.birth) { var b = new Date(v.birth), lim = new Date(); lim.setFullYear(lim.getFullYear() - 18); if (!(b <= lim)) throw new Error("18歳未満の方は登録できません。"); }
+  if (!/^data:image\/png;base64,/.test(d.sealPng || "")) throw new Error("押印してください。");
+  var folder = DriveApp.getFolderById(P("FOLDER_ID"));
+  var seal = folder.createFile(Utilities.newBlob(Utilities.base64Decode(d.sealPng.split(",")[1]), "image/png", o.id + "_印影.png"));
+  o.seal_file = seal.getId();
+  if (o.require_id === "yes" || o.require_id === true) {
+    if (!/^data:image\/jpeg;base64,/.test(d.idImage || "")) throw new Error("本人確認書類の写真を添付してください。");
+    var idf = folder.createFile(Utilities.newBlob(Utilities.base64Decode(d.idImage.split(",")[1]), "image/jpeg", o.id + "_本人確認書類.jpg"));
+    o.id_file = idf.getId();
+  }
+  o.values = v; o.signed = new Date(); o.status = "締結済み"; o.ua = String(d.ua || "").slice(0, 300);
+  var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, o.id + "\n" + o.body + "\n" + JSON.stringify(v) + "\n" + d.sealPng + "\n" + o.signed.toISOString(), Utilities.Charset.UTF_8);
+  o.hash = digest.map(function (b) { return ("0" + ((b + 256) % 256).toString(16)).slice(-2); }).join("");
+  log_(o, "承認（締結）"); 
+  var pdf = makePdf_(o, d.sealPng);
+  var pf = folder.createFile(pdf); o.pdf_id = pf.getId();
+  save_(o);
+  var mail = { name: ISSUER.service, replyTo: P("NOTIFY_TO"), attachments: [pdf] };
+  MailApp.sendEmail(Object.assign({ to: o.party_email, subject: "【" + ISSUER.service + "】" + o.title + "（締結済み）", body: o.party_name + " 様\n\nお手続きありがとうございました。押印済みの契約書（PDF）をお送りします。大切に保管してください。\n契約番号：" + o.id + "\n\n" + (o.template === "kaiin" ? "お振込先と金額は、担当者から別のメールでご案内します。\n\n" : "") + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）" }, mail));
+  MailApp.sendEmail(Object.assign({ to: P("NOTIFY_TO"), subject: "［電子契約］締結：" + o.id + "　" + (o.party_company ? o.party_company + " " : "") + o.party_name, body: o.title + "\n" + o.id + "\n" + (o.party_company ? o.party_company + "　" : "") + o.party_name + "（" + o.party_email + "）\n\n台帳：https://docs.google.com/spreadsheets/d/" + P("SHEET_ID") }, mail));
+  if (o.template === "kaiin") payMail_(o);
+  return { ok: true, pdf: Utilities.base64Encode(pdf.getBytes()), filename: pdf.getName() };
+}
+
+/* ---- 会費の振込のご案内（締結したら自動で送る）。振込先はスクリプト プロパティ BANK_INFO に書く ---- */
+function payMail_(o) {
+  var c = typeof o.cond === "string" ? parse_(o.cond, null) : o.cond;
+  if (!c || !c.first) return;
+  var bank = P("BANK_INFO"), who = (o.party_company ? o.party_company + "　" : "") + o.party_name + " 様";
+  var kana = String(o.id).replace(/[^0-9]/g, "");
+  if (!bank) {
+    MailApp.sendEmail({ to: P("NOTIFY_TO"), subject: "［電子契約］振込先が未設定です：" + o.id, body: "BANK_INFO（振込先）が設定されていないため、" + who + "への振込のご案内を自動で送れませんでした。手でご案内してください。\n\nお振込み額：" + yen(c.first) + "（" + c.dueText + "まで）" });
+    return;
+  }
+  var body = who + "\n\n" + ISSUER.service + "へのご入会のお手続き、ありがとうございました。\n初回の会費のお振込みについてご案内します。\n\n" +
+    "■お振込み額（税込）：" + yen(c.first) + (c.pay === "year" ? "（年間払い：" + c.startText.replace(/\d+日$/, "") + "からの12か月分）" : "（月払い：" + c.startText.replace(/\d+日$/, "") + "分）") + "\n" +
+    "■お振込みの期限：" + c.dueText + "\n" +
+    "■お振込先：\n" + bank + "\n" +
+    "■お振込みの名義：ご依頼人名の前に、番号「" + kana + "」を入れてください（例：" + kana + " " + (o.party_company || o.party_name) + "）\n" +
+    "■振込手数料：恐れ入りますが、ご負担をお願いします。\n\n" +
+    (c.pay === "month" ? "2か月目からは、毎月末日までに翌月分（" + yen(c.monthly) + "）をお振込みください。\n" : "") +
+    "入金を確認しましたら、会員登録完了のお知らせをお送りします。\n\n契約番号：" + o.id + "\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）\n" + P("NOTIFY_TO");
+  MailApp.sendEmail({ to: o.party_email, bcc: P("NOTIFY_TO"), name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】会費のお振込みのご案内（" + yen(c.first) + "・" + c.dueText + "まで）", body: body });
+  log_(o, "振込のご案内を送信"); save_(o);
+}
+/* 入金を確認したら、会員登録完了のお知らせを送る */
+function paid_(o) {
+  if (o.status !== "締結済み") throw new Error("締結済みの契約ではありません");
+  if (o.paid) throw new Error("すでに入金確認済みです");
+  var c = typeof o.cond === "string" ? parse_(o.cond, null) : o.cond;
+  o.paid = new Date(); log_(o, "入金確認・登録完了のお知らせを送信"); save_(o);
+  MailApp.sendEmail({ to: o.party_email, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】会員登録が完了しました", body: (o.party_company ? o.party_company + "　" : "") + o.party_name + " 様\n\nお振込みを確認しました。ありがとうございます。\n" + ISSUER.service + "の会員登録が完了しました。\n\n" + (c ? "会員区分：" + MEMBER_LABEL[c.type] + "\n会費の発生日：" + c.startText + "\n契約期間：" + c.startText + "〜" + c.endText + "\n" : "") + "契約番号：" + o.id + "\n\nご相談は、このメールへの返信、またはサイトの相談フォームからお寄せください。\nhttps://glove-osaka.github.io/glove-site/medical/contact/index.html\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）" });
+  return { ok: true };
+}
+
+function makePdf_(o, sealPng) {
+  var v = typeof o.values === "string" ? parse_(o.values, {}) : o.values || {};
+  var body = esc_(o.body).replace(/\[\[(\w+)\]\]/g, function (_, k) { return "<b>" + esc_(v[k] || "") + "</b>"; });
+  var co = P("COMPANY_SEAL") ? "<img src='data:image/png;base64," + Utilities.base64Encode(DriveApp.getFileById(P("COMPANY_SEAL")).getBlob().getBytes()) + "' style='width:80px;height:80px'>" : "";
+  var rows = parse_(o.fields, []).map(function (k) { return "<tr><th>" + esc_(fieldLabel(tplOf(o.template), k)) + "</th><td>" + esc_(v[k] || "") + "</td></tr>"; }).join("");
+  var tz = function (x) { return x ? Utilities.formatDate(new Date(x), "Asia/Tokyo", "yyyy年M月d日 HH:mm") : ""; };
+  var html = "<html><head><meta charset='utf-8'><style>body{font-family:'Noto Serif JP','Noto Sans JP',serif;font-size:10.5pt;line-height:1.8;color:#111}h1{font-size:15pt;text-align:center;letter-spacing:.2em;margin:0 0 4px}.no{text-align:right;font-size:9pt}.doc{white-space:pre-wrap}table{border-collapse:collapse;width:100%;margin:8px 0}th,td{border:1px solid #888;padding:4px 8px;text-align:left;font-size:9.5pt;vertical-align:top}th{background:#eef4f4;width:32%}.sig{display:flex;gap:40px;margin-top:14px}.box{flex:1}.aud{font-size:8pt;color:#333;word-break:break-all}</style></head><body>" +
+    "<p class='no'>契約番号 " + esc_(o.id) + "</p><h1>" + esc_(o.title) + "</h1><div class='doc'>" + body + "</div>" +
+    "<h2 style='font-size:11pt;margin-top:18px'>記入内容</h2><table>" + rows + "</table>" +
+    "<table><tr><th>甲（当社）</th><td>" + esc_(ISSUER.addr) + "<br>" + esc_(ISSUER.name) + "　" + esc_(ISSUER.rep) + "　" + co + "</td></tr>" +
+    "<tr><th>" + (o.template === "kaiin" || o.template === "kojin" ? "申込者" : "乙") + "</th><td>" + esc_(v.address || "") + "<br>" + esc_(v.company || o.party_company || "") + "　" + esc_(v.rep || v.name || o.party_name) + "　<img src='" + sealPng + "' style='width:70px;height:70px;vertical-align:middle'></td></tr></table>" +
+    "<h2 style='font-size:11pt;margin-top:14px'>電子契約の記録</h2><table class='aud'><tr><th>締結日時</th><td>" + tz(o.signed) + "</td></tr><tr><th>署名者のメール（認証済み）</th><td>" + esc_(o.party_email) + "</td></tr><tr><th>送付・表示</th><td>送付 " + tz(o.created) + "／表示 " + tz(o.viewed) + "</td></tr><tr><th>改ざん検知用の値（SHA-256）</th><td>" + esc_(o.hash) + "</td></tr><tr><th>利用環境</th><td>" + esc_(o.ua) + "</td></tr></table>" +
+    "<p style='font-size:8.5pt'>この契約書は、電子契約で締結されたものです。署名者はメールに届いた認証コードで本人確認をしたうえで、内容を確認し、押印・承認しました。原本はこの電子データです。</p></body></html>";
+  return Utilities.newBlob(html, "text/html", "x.html").getAs("application/pdf").setName(o.id + "_" + o.title.replace(/[（）\s]/g, "") + ".pdf");
+}
+
+/* ---- 管理画面から（google.script.run で呼ぶ） ---- */
+function adminCall(a, d) {
+  try {
+    if (!isAdmin_()) throw new Error("担当者として登録されたアカウントではありません");
+    d = d || {};
+    if (a === "admin.templates") return { ok: true, templates: TEMPLATES, fields: FIELDS };
+    if (a === "admin.preview") return { ok: true, cond: normCond(d.cond), body: buildBody(d.template, d.cond, d.note, d.party) };
+    if (a === "admin.issue") return issue_(d);
+    if (a === "admin.list") return { ok: true, rows: rows_().reverse().slice(0, 300).map(function (r) { return { id: r.id, title: r.title, party_name: r.party_name, party_company: r.party_company, party_email: r.party_email, status: r.status, template: r.template, paid: r.paid ? new Date(r.paid).toISOString() : "", created: r.created ? new Date(r.created).toISOString() : "", viewed: r.viewed ? new Date(r.viewed).toISOString() : "", signed: r.signed ? new Date(r.signed).toISOString() : "", draft: r.draft }; }) };
+    var o = find_("id", d.id); if (!o) throw new Error("見つかりません");
+    if (a === "admin.resend") { if (o.status === "締結済み" || o.status === "取り消し") throw new Error("送り直せない状態です"); o.expires = new Date(Date.now() + VALID_DAYS * 864e5); sendInvite_(o); log_(o, "送り直し"); save_(o); return { ok: true }; }
+    if (a === "admin.paid") return paid_(o);
+    if (a === "admin.cancel") { if (o.status === "締結済み") throw new Error("締結済みの契約は取り消せません"); o.status = "取り消し"; log_(o, "取り消し"); save_(o); return { ok: true }; }
+    if (a === "admin.pdf") { if (!o.pdf_id) throw new Error("まだ締結されていません"); var f = DriveApp.getFileById(o.pdf_id); return { ok: true, pdf: Utilities.base64Encode(f.getBlob().getBytes()), filename: f.getName() }; }
+    throw new Error("不明な操作です");
+  } catch (err) { return { ok: false, error: String(err && err.message || err) }; }
+}
+function issue_(d) {
+  var t = tplOf(d.template); if (!t) throw new Error("契約書の種類を選んでください");
+  var p = d.party || {};
+  if (!p.name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email || "")) throw new Error("相手のお名前と、正しいメールアドレスを入れてください");
+  var fields = orderFields(t, d.fields);
+  var cond = t.cond ? normCond(d.cond) : "";
+  var o = { id: newId_(), token: newToken_(), template: t.key, title: t.title, party_name: p.name, party_company: p.company || "", party_email: p.email, fields: fields, required: t.required, require_id: (d.requireId || t.requireId) ? "yes" : "", cond: cond, note: d.note || "", prefill: d.prefill || {}, status: "送付済み", created: new Date(), expires: new Date(Date.now() + VALID_DAYS * 864e5), draft: d.draft ? "yes" : "" };
+  o.body = buildBody(t.key, cond, o.note, p.company || p.name);
+  log_(o, "作成・送付"); save_(o); sendInvite_(o);
+  return { ok: true, id: o.id, url: P("SIGN_URL") + "?t=" + o.token };
+}
+function sendInvite_(o) {
+  var url = P("SIGN_URL") + "?t=" + o.token, draft = o.draft === "yes";
+  var html = "<div style='font-family:sans-serif;font-size:16px;line-height:1.8;color:#14211F'><p>" + esc_(o.party_company ? o.party_company + "　" : "") + esc_(o.party_name) + " 様</p><p>" + esc_(ISSUER.service) + "です。" + (draft ? "「" + esc_(o.title) + "」の下書き（確認用）をお送りします。" : "「" + esc_(o.title) + "」をお送りします。下のボタンから内容をご確認のうえ、記入・押印・承認をお願いします。") + "</p><p><a href='" + url + "' style='display:inline-block;background:#0E5A63;color:#fff;padding:14px 26px;border-radius:10px;text-decoration:none;font-weight:bold'>契約書を開く</a></p><p style='font-size:14px;color:#3A4A48'>開くと、このメールアドレスに6けたの認証コードが届きます。リンクの有効期限は" + VALID_DAYS + "日です。<br>契約番号：" + esc_(o.id) + "</p><p style='font-size:14px'>" + esc_(ISSUER.service) + "（運営 " + esc_(ISSUER.name) + "）<br>" + ISSUER.tel + "（受付 " + ISSUER.hours + "）</p></div>";
+  MailApp.sendEmail({ to: o.party_email, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】" + o.title + (draft ? "（下書き）" : "") + "のご案内", htmlBody: html, body: "契約書を開く：" + url });
+}

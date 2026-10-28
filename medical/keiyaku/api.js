@@ -122,6 +122,7 @@ function buildBody(key, cond, note, party) {
       list.unshift(oo); store(list); return wait({ ok: true, token: oo.token });
     }
     if (action === "admin.resend") return wait({ ok: true });
+    if (action === "admin.paid") { list.forEach(function (x) { if (x.id === d.id) x.paid = new Date().toISOString(); }); store(list); return wait({ ok: true }); }
     if (action === "admin.cancel") { list.forEach(function (x) { if (x.id === d.id) x.status = "取り消し"; }); store(list); return wait({ ok: true }); }
     if (action === "admin.pdf" || action === "client.pdf") return Promise.reject(new Error("お試し表示では、契約書のPDFは作られません"));
     var c = list.filter(function (x) { return x.token === d.token; })[0] || sample();
