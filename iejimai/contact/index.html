@@ -589,7 +589,7 @@ html.op-on body *{visibility:hidden}html.op-on .opn,html.op-on .opn *{visibility
 <main id="main"><section class="ph"><img class="bg" src="../assets/head-2.jpg" alt=""><div class="wrap"><span class="emb lg"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 5.5l6 6L11 27H5v-6z"/><path class="ac" d="M17 9l6 6"/></svg></span><div><nav aria-label="現在地"><ol class="crumbs"><li><a href="../index.html">トップ</a></li><li aria-current="page">相談内容をまとめる</li></ol></nav><h1>相談内容をまとめる</h1><p>質問に順番にお答えいただくだけで、ご相談の内容がまとまります。全部で7つの段階です。</p></div></div></section>
 <div class="wrap" style="padding-block:56px 88px;max-width:960px">
 <section class="contact-box" id="toiawase"><h2>お問い合わせ・お電話</h2><dl><dt>お電話</dt><dd><a class="big" href="tel:0120933496">0120-933-496</a><span style="white-space:nowrap">（通話料無料）</span></dd><dt>受付時間</dt><dd>10:00〜19:00</dd><dt>メール</dt><dd><a href="mailto:info@kaitori-d.com">info@kaitori-d.com</a></dd><dt>ご来店</dt><dd>ご来店でのご相談も承ります。<br>大阪府大阪市生野区勝山南2-2-7<br><a href="https://www.google.com/maps/search/?api=1&query=%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%A4%A7%E9%98%AA%E5%B8%82%E7%94%9F%E9%87%8E%E5%8C%BA%E5%8B%9D%E5%B1%B1%E5%8D%972-2-7" target="_blank" rel="noopener">地図を開く（別の画面で開きます）</a></dd><dt>対応地域</dt><dd>関西全域（順次、全国へ広げています）</dd></dl></section>
-<div class="prep"><svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="16" cy="16" r="12"/><path class="ac" d="M12.4 12.6a3.6 3.6 0 1 1 5.2 3.2c-1 .5-1.6 1.3-1.6 2.4v1"/><circle cx="16" cy="22.6" r="1.1" fill="currentColor" stroke="none"/></svg><p>この画面からの送信は準備中です（入力した内容は保存されません）。まとめた内容を写し取って（コピーして）メールに貼り付けたり、お電話の際に読み上げたり、ご家族に送ったりできます。</p></div>
+
 <ol class="steps" id="steps" aria-hidden="true"><li data-i="0">分野</li><li data-i="1">内容</li><li data-i="2">お悩み</li><li data-i="3">状況</li><li data-i="4">自由記入</li><li data-i="5">ご連絡先</li><li data-i="6">確認</li></ol>
 <form class="form-card" id="f" novalidate>
 <p class="stepnow" id="stepnow"></p>
@@ -603,15 +603,15 @@ html.op-on body *{visibility:hidden}html.op-on .opn,html.op-on .opn *{visibility
 <div class="fld"><label for="rel">ご相談される方は、ご本人から見てどなたですか</label><select id="rel"><option value="">選んでください</option><option>本人</option><option>子</option><option>配偶者</option><option>きょうだい</option><option>その他の親族</option><option>その他</option></select></div></section>
 <section data-step="4" hidden><h2>伝えておきたいこと</h2><p class="hint">ご家族の事情、気がかりなこと、ご希望などを、ご自由にお書きください。書かなくても進めます。</p>
 <div class="fld"><label for="memo">自由記入</label><textarea id="memo" placeholder="例：母が来月施設に入ります。実家は空き家になる予定で、兄弟は遠方に住んでいます。"></textarea></div></section>
-<section data-step="5" hidden><h2>ご連絡先</h2><p class="hint">窓口からのご連絡に使います。この画面からはまだ送信されません。</p>
+<section data-step="5" hidden><h2>ご連絡先</h2><p class="hint">窓口からのご連絡に使います。</p>
 <div class="fld"><label for="nm">お名前</label><input id="nm" type="text" autocomplete="name"></div>
 <div class="fld"><label for="tel">電話番号</label><input id="tel" type="tel" autocomplete="tel" inputmode="tel"></div>
 <div class="fld"><label for="mail">メールアドレス（お持ちでなければ空欄で構いません）</label><input id="mail" type="email" autocomplete="email"></div>
 <div class="fld"><label for="how">ご希望の連絡方法</label><select id="how"><option value="">選んでください</option><option>電話</option><option>メール</option><option>どれでもよい</option></select></div>
 <label class="agree" for="agree"><input type="checkbox" id="agree"><span><a href="../privacy/index.html" target="_blank" rel="noopener">個人情報の取り扱い</a>（別の画面で開きます）を読み、同意します。ご相談の内容に、病気や介護の状況などが含まれる場合も、その取り扱いに同意します。</span></label></section>
-<section data-step="6" hidden><h2>内容のご確認</h2><p class="hint">まとめた内容です。写し取って（コピーして）info@kaitori-d.com へメールで送るか、0120-933-496 へお電話ください。</p>
+<section data-step="6" hidden><h2>内容のご確認</h2><p class="hint">まとめた内容です。よろしければ「この内容で送信する」を押してください。</p>
 <dl class="sum" id="sum"></dl>
-<div class="btns" style="margin-top:22px"><button class="btn btn-o" type="button" id="copy">内容を写し取る（コピー）</button><button class="btn btn-p" type="submit" id="send" disabled>送信（準備中）</button></div>
+<div class="btns" style="margin-top:22px"><button class="btn btn-o" type="button" id="copy">内容を写し取る（コピー）</button><button class="btn btn-p" type="submit" id="send">この内容で送信する</button></div>
 <p class="fine" style="margin-top:16px;font-weight:700">ご家族に送って、一緒に確認する</p>
 <div class="share"><a class="btn btn-o" id="shareMail" href="#">メールで送る</a><a class="btn btn-o" id="shareLine" href="#" target="_blank" rel="noopener">LINEで送る</a></div>
 <p class="fine" id="copyMsg" style="margin-top:12px" role="status"></p></section>
@@ -685,7 +685,7 @@ function ok(){if(st===0&&!vals('cat').length)return need('分野を1つ以上選
  if(st===5){var m=v('mail');if(!v('nm'))return need('お名前を入力してください。');if(!v('tel')&&!m)return need('電話番号かメールアドレスの、どちらかを入力してください。');if(m&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m))return need('メールアドレスの形をご確認ください（例：name@example.jp）。');if(!document.getElementById('agree').checked)return need('個人情報の取り扱いを読み、同意の欄に印を付けてください。')}return true}
 document.getElementById('next').addEventListener('click',function(){if(ok()){st++;show()}});
 document.getElementById('back').addEventListener('click',function(){if(st>0){st--;show()}});
-var FORM_URL="";
+var FORM_URL="https://script.google.com/macros/s/AKfycbzspTPRrI0F1xU8fej0KCgmqFCzeHlI8IPk5K40d5onV6YMPvLQ9bQPwfaEBJpAtcs2/exec";
 function txt(){return '【家じまい相談窓口 ご相談内容】\n'+rows().map(function(r){return r[0]+'：'+(r[1]||'未入力')}).join('\n')}
 function upd(){var t=txt();document.getElementById('shareMail').href='mailto:?subject='+encodeURIComponent('家じまいの相談内容（確認のお願い）')+'&body='+encodeURIComponent(t);document.getElementById('shareLine').href='https://line.me/R/share?text='+encodeURIComponent(t)}
 document.getElementById('next').addEventListener('click',function(){if(st===6)upd()});
