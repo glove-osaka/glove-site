@@ -91,3 +91,21 @@ tr.row{cursor:pointer}tr.row:hover td,tr.row:focus td{background:var(--pine-soft
 .showpw{display:inline-flex!important;align-items:center;gap:8px;margin-top:8px;font-weight:400!important;cursor:pointer}.showpw input{width:22px;height:22px}
 .tabs .acct{margin-left:auto;font-size:.92rem}.tabs .acct+.acct{margin-left:0}
 [hidden]{display:none!important}
+/* 案件管理 */
+.prog{display:inline-flex;gap:3px;vertical-align:middle}.prog i{width:14px;height:10px;border-radius:3px;background:var(--line)}.prog i.d{background:var(--pine)}.prog i.c{background:var(--gold-bright)}
+.progt{display:block;font-weight:700;color:var(--ink);margin-top:2px}
+.al{display:inline-block;margin:2px 4px 2px 0;padding:1px 8px;border-radius:6px;font-size:.82rem;font-weight:700;white-space:nowrap}
+.al-red{background:#B3261E;color:#fff}.al-yellow{background:#F6E2B3;color:#4a3606}
+.idle{font-size:1.05rem}.idle.y{color:#8A621C}.idle.r{color:#B3261E}
+tr.lv-red td:first-child{box-shadow:inset 6px 0 0 #B3261E}tr.lv-yellow td:first-child{box-shadow:inset 6px 0 0 #E0B04A}
+tr.is-new td{font-weight:700}
+li.lv-red{border-left:6px solid #B3261E;padding-left:10px}li.lv-yellow{border-left:6px solid #E0B04A;padding-left:10px}
+.sv{display:block;font-size:.9rem;line-height:1.6}.sv em{font-style:normal;color:var(--pine)}.sv small{color:var(--red)}
+.tile.t-red{border-color:#B3261E;background:#FBE3E1}.tile.t-red b{color:#B3261E}.tile.t-yellow{border-color:#E0B04A;background:#FBF3E4}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tile.t-red{background:#3d1b19}:root:not([data-theme="light"]) .tile.t-yellow{background:#3a2f1a}:root:not([data-theme="light"]) .al-yellow{background:#5a4512;color:#fff3d6}}
+.stages{display:grid;gap:8px}.stg{display:grid;grid-template-columns:7em 1fr 3em;align-items:center;gap:10px}.stg i{display:block;height:18px;border-radius:5px;background:var(--pine);min-width:3px}.stg b{text-align:right}
+.edtop{background:var(--pine-soft);border-radius:10px;padding:12px 14px;margin-bottom:16px}
+.chk.svc label{min-height:44px;font-size:.95rem}
+dialog.rep{width:min(760px,calc(100vw - 24px));max-height:calc(100vh - 24px);border:0;border-radius:14px;padding:22px 20px;background:var(--surface);color:var(--ink)}
+dialog.rep::backdrop{background:rgba(0,0,0,.45)}
+dialog.rep textarea{min-height:300px;font-size:1rem;line-height:1.8}
