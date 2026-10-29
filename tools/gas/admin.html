@@ -364,7 +364,7 @@ function openCase(no, keep) {
           ${c.kind === "inbox" ? `<label class="f">振分け先（提携企業）<select id="d-partner"><option value="">（未設定）</option>${partners.map(p => `<option ${p === (c.partner || sugg(c)) ? "selected" : ""}>${esc(p)}</option>`).join("")}<option value="__other">ほかの会社を入力…</option></select>
             <span class="hint">${routeHint && routeHint.partner ? `分類「${esc(c.cat)}」の振分け先：<b>${esc(routeHint.partner)}</b>${routeHint.person ? "（" + esc(routeHint.person) + "）" : ""}${routeHint.contact ? "　" + esc(routeHint.contact) : ""}` : `分類「${esc(c.cat)}」の振分け先は未設定です（振分け設定で登録できます）`}</span></label>` : ""}
           <label class="f">担当者<select id="d-staff"><option value="">（未設定）</option>${staffList.map(s => `<option ${s === c.staff ? "selected" : ""}>${esc(s)}</option>`).join("")}</select></label>
-          <label class="f">次の対応予定日<input type="date" id="d-next" value="${esc((c.next || "").replace(/\//g, "-").slice(0, 10))}"></label>
+          <label class="f">次の対応予定日<input type="date" id="d-next" value="${esc(String(c.next || "").split("/").join("-").slice(0, 10))}"></label>
         </div>
         <div class="row"><button class="btn btn-navy btn-sm" id="d-save">保存する</button><span class="hint">受付から ${ago(c.ts)}・最終更新から ${ago(c.updated)}</span></div>
       </div>
