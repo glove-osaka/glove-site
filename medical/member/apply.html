@@ -811,7 +811,7 @@ function rows(){var t=typ(),r=[['会員の種類',NAMES[t]]];
 f.addEventListener('submit',function(e){e.preventDefault();if(sending||!ok())return;
  if(v('hpf'))return;
  sending=true;var b=$('asend');b.disabled=true;b.textContent='送信しています…';
- rec={no:receipt(),ts:new Date().toISOString(),entry:SITE,name:v('nm'),company:v('org'),email:v('mail'),tel:v('tel'),cat:'medical',method:'メール',body:'【'+SITE+' 会員登録の申込み】\n'+rows().map(function(r){return r[0]+'：'+r[1]}).join('\n'),agree:true,share:false,status:'新規受付',memo:''};
+ rec={no:receipt(),ts:new Date().toISOString(),entry:SITE,name:v('nm'),company:v('org'),email:v('mail'),tel:v('tel'),cat:'medical',method:'メール',body:'【'+SITE+' 会員登録の申込み】\n'+rows().map(function(r){return r[0]+'：'+r[1]}).join('\n'),agree:true,share:false,status:'新規受付',memo:'',fields:['会員登録（'+NAMES[typ()]+'）']};
  fetch(EP,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({kind:'inbox'},rec,{elapsed:Date.now()-t0,catLabel:SITE+'：会員登録／'+NAMES[typ()]}))})
  .then(function(r){return r.json()}).then(function(j){if(!j||j.ok!==true)throw new Error('not_saved');rec.no=j.no||rec.no;
   var t=typ(),KY='審査のうえ、電子契約へ進むご案内をメールでお送りします。届かない場合は、迷惑メールの設定をご確認ください。';

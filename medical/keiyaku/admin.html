@@ -29,15 +29,34 @@
 
 <div id="panel" hidden>
 <p style="text-align:right;margin:0 0 10px"><button type="button" class="small-btn" id="logout">ログアウト</button></p>
-<nav class="tabs" role="tablist"><button type="button" role="tab" class="tab on" data-v="inbox">受付（相談・申込み）<span class="cnt" id="newCnt" hidden></span></button><button type="button" role="tab" class="tab" data-v="keiyaku">電子契約</button></nav>
+<nav class="tabs" role="tablist"><button type="button" role="tab" class="tab on" data-v="inbox">案件管理<span class="cnt" id="newCnt" hidden></span></button><button type="button" role="tab" class="tab" data-v="keiyaku">電子契約</button><button type="button" role="tab" class="tab" data-v="route">振分け設定</button><button type="button" class="small-btn" id="snd" aria-pressed="true" style="margin-left:auto">警告音：オン</button></nav>
 <div data-view="inbox">
+<div class="alertbar" id="alertBar" hidden></div>
+<div class="sum" id="sum"></div>
 <section class="card">
-<h2>受付の一覧</h2>
-<div class="filters"><label>状態 <select id="fSt"><option value="">すべて</option><option>新規受付</option><option>対応中</option><option>完了</option></select></label><label>さがす <input type="text" id="fQ" placeholder="名前・会社・番号・内容"></label><button type="button" class="small-btn" id="reloadIn">最新にする</button></div>
+<div class="filters"><label>状態 <select id="fSt"><option value="">完了・見送り以外</option><option value="all">すべて</option><option value="alert">警告・注意があるもの</option></select></label><label>振分け先 <select id="fPt"><option value="">すべて</option></select></label><label>さがす <input type="text" id="fQ" placeholder="名前・会社・番号・内容"></label><button type="button" class="small-btn" id="reloadIn">最新にする</button></div>
 <div id="inbox"><p class="hint">読み込み中…</p></div>
 <p class="err" id="errB" role="alert"></p>
 </section>
 </div>
+<div data-view="route" hidden>
+<section class="card">
+<h2>振分け設定</h2>
+<p class="hint">お客様がサイトで選んだ分野ごとに、どの提携企業・専門家へ振り分けるかを決めます。新しい受付には、ここで決めた先（複数のときは最初の先）が自動で入ります。案件ごとに変えることもできます。複数の先は「、」で区切ってください。</p>
+<div class="tbl"><table class="list"><thead><tr><th style="width:42%">分野（お客様が選ぶ項目）</th><th>振分け先</th><th style="width:70px">件数</th></tr></thead><tbody id="routeRows"></tbody></table></div>
+<p class="err" id="errRt" role="alert"></p>
+<button class="btn" type="button" id="saveRt">振分け設定を保存する</button>
+</section>
+</div>
+<div class="modal" id="rpt" hidden role="dialog" aria-modal="true" aria-labelledby="rptH"><div class="modal-in">
+<h2 id="rptH">お客様に進捗を報告しますか？</h2>
+<p class="hint" id="rptInfo"></p>
+<p class="note" id="rptWarn" hidden></p>
+<div class="fld"><label for="rptS">件名</label><input type="text" id="rptS"></div>
+<div class="fld"><label for="rptB">本文（直してから送れます）</label><textarea id="rptB" style="min-height:260px"></textarea></div>
+<p class="err" id="errRp" role="alert"></p>
+<div class="btns"><button class="btn" type="button" id="rpSend">メールで送る</button><button class="btn o" type="button" id="rpPhone">電話で伝えた（記録する）</button><button class="btn o" type="button" id="rpSkip">今回は送らない</button><button class="small-btn" type="button" id="rpAlt">別の言い回しで作り直す</button></div>
+</div></div>
 <div data-view="keiyaku" hidden>
 <section class="card">
 <h2>送った契約書の一覧</h2>
@@ -126,19 +145,82 @@ $('rows').addEventListener('click',function(e){var b=e.target.closest('button');
  if(b.dataset.pdf)api('admin.pdf',{id:b.dataset.pdf}).then(function(r){var bin=atob(r.pdf),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);var u=URL.createObjectURL(new Blob([a],{type:'application/pdf'}));var l=document.createElement('a');l.href=u;l.download=r.filename;document.body.appendChild(l);l.click();setTimeout(function(){URL.revokeObjectURL(u);l.remove()},2000)}).catch(function(x){$('errR').textContent=x.message})});
 var started=false;function go(){if(started){list();inbox();return}started=true;start();inbox()}
 document.querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x===t)});document.querySelectorAll('[data-view]').forEach(function(v){v.hidden=v.dataset.view!==t.dataset.v})})});
-var IN=[];function dt(s){var d=new Date(s);return isNaN(d)?esc(s):(d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)}
-function inbox(){api('admin.inbox').then(function(r){IN=r.rows||[];drawIn()}).catch(function(e){$('errB').textContent=e.message})}
-function drawIn(){var st=$('fSt').value,q=$('fQ').value.trim().toLowerCase();var n=IN.filter(function(x){return x.status==='新規受付'}).length;$('newCnt').hidden=!n;$('newCnt').textContent=n;
- var rows=IN.filter(function(x){return(!st||x.status===st)&&(!q||[x.no,x.name,x.company,x.email,x.body,x.label].join(' ').toLowerCase().indexOf(q)>=0)});
- if(!rows.length){$('inbox').innerHTML='<p class="hint">'+(IN.length?'条件に合う受付はありません':'まだ受付はありません')+'</p>';return}
- $('inbox').innerHTML=rows.map(function(x){var c=x.status==='新規受付'?'new':x.status==='対応中'?'doing':'done';var sub='【'+x.no+'】'+(x.label||'お問い合わせ');
-  return'<div class="ib '+c+'"><div class="ib-h"><b>'+esc(x.company?x.company+'　':'')+esc(x.name||'（お名前なし）')+'</b><span class="ib-m">'+esc(x.no)+'　'+dt(x.ts)+'</span></div>'+
-  '<div class="ib-m">'+esc(x.label)+'</div><div class="ib-m">'+(x.email?'<a href="mailto:'+esc(x.email)+'?subject='+encodeURIComponent('Re: '+sub)+'">'+esc(x.email)+'</a>':'')+(x.tel?'　<a href="tel:'+esc(String(x.tel).replace(/[^0-9+]/g,''))+'">'+esc(x.tel)+'</a>':'')+'</div>'+
-  '<details><summary>内容を見る</summary><pre>'+esc(x.body)+'</pre></details>'+
-  '<div class="ib-a"><select data-no="'+esc(x.no)+'" aria-label="状態">'+['新規受付','対応中','完了'].map(function(s){return'<option'+(s===x.status?' selected':'')+'>'+s+'</option>'}).join('')+'</select><input type="text" data-memo="'+esc(x.no)+'" value="'+esc(x.memo)+'" placeholder="対応メモ（担当・日付・内容など）"><button type="button" class="small-btn" data-save="'+esc(x.no)+'">保存</button></div></div>'}).join('')}
-$('fSt').addEventListener('change',drawIn);$('fQ').addEventListener('input',drawIn);$('reloadIn').addEventListener('click',inbox);
-$('inbox').addEventListener('click',function(e){var b=e.target.closest('[data-save]');if(!b)return;var no=b.dataset.save,sel=$('inbox').querySelector('select[data-no="'+no+'"]'),m=$('inbox').querySelector('input[data-memo="'+no+'"]');
- b.disabled=true;b.textContent='保存中…';api('admin.inboxSet',{no:no,status:sel.value,memo:m.value}).then(function(){IN.forEach(function(x){if(x.no===no){x.status=sel.value;x.memo=m.value}});b.textContent='保存しました';setTimeout(drawIn,800)}).catch(function(x){$('errB').textContent=x.message;b.disabled=false;b.textContent='保存'})});
+var IN=[],STEPS=['新規受付','内容確認中','振分け済み','提携先対応中','提案・見積り中','完了','見送り'],ROUTES={},H=36e5,SND=true,lastRed=-1;
+try{SND=localStorage.getItem('iryo-snd')!=='off'}catch(x){}
+function sndBtn(){$('snd').textContent='警告音：'+(SND?'オン':'オフ');$('snd').setAttribute('aria-pressed',SND)}sndBtn();
+$('snd').addEventListener('click',function(){SND=!SND;try{localStorage.setItem('iryo-snd',SND?'on':'off')}catch(x){}sndBtn();if(SND)beep()});
+function beep(){try{var A=window.AudioContext||window.webkitAudioContext,c=new A();[0,.35,.7].forEach(function(t){var o=c.createOscillator(),g=c.createGain();o.frequency.value=880;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.18,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.3);o.start(c.currentTime+t);o.stop(c.currentTime+t+.32)})}catch(x){}}
+function dt(s){var d=new Date(s);return isNaN(d)?'':(d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)}
+function span(ms){var d=Math.floor(ms/864e5),h=Math.floor(ms%864e5/H);return d?d+'日'+h+'時間':h+'時間'}
+function open_(x){return x.status!=='完了'&&x.status!=='見送り'}
+function alerts(x){var a=[],now=Date.now();if(!open_(x))return a;
+ if(x.status==='新規受付'){var g=now-new Date(x.ts);a.push({lv:g>24*H?'red':'yel',t:g>24*H?'未対応 '+span(g):'未対応'})}
+ var idle=(now-new Date(x.updated||x.ts))/864e5;if(x.status!=='新規受付'&&idle>=7)a.push({lv:'red',t:'放置 '+Math.floor(idle)+'日'});else if(x.status!=='新規受付'&&idle>=3)a.push({lv:'yel',t:'進捗の記録なし '+Math.floor(idle)+'日'});
+ if(x.next&&new Date(x.next+'T23:59:59')<new Date())a.push({lv:'red',t:'予定日を過ぎた（'+x.next.slice(5).replace('-','/')+'）'});
+ if(x.status!=='新規受付'&&x.email){var lc=x.contacted?(now-new Date(x.contacted))/864e5:(now-new Date(x.ts))/864e5;if(lc>=7)a.push({lv:'yel',t:'お客様へ'+Math.floor(lc)+'日報告なし'})}
+ if(!x.partner&&['振分け済み','提携先対応中','提案・見積り中'].indexOf(x.status)>=0)a.push({lv:'yel',t:'振分け先が未設定'});
+ return a}
+function inbox(){api('admin.cases').then(function(r){IN=r.rows||[];ROUTES=r.routes||{};drawRoute();drawIn()}).catch(function(e){$('errB').textContent=e.message})}
+function drawIn(){var st=$('fSt').value,pt=$('fPt').value,q=$('fQ').value.trim().toLowerCase();
+ var red=0,nw=0;IN.forEach(function(x){x._a=alerts(x);if(x._a.some(function(y){return y.lv==='red'}))red++;if(x.status==='新規受付')nw++});
+ $('newCnt').hidden=!nw;$('newCnt').textContent=nw;
+ $('alertBar').hidden=!red;$('alertBar').textContent='対応が遅れている案件が '+red+' 件あります。赤い印の案件から対応してください。';
+ if(red&&SND&&red!==lastRed)beep();lastRed=red;
+ var cnt={};STEPS.forEach(function(s){cnt[s]=0});IN.forEach(function(x){cnt[x.status]=(cnt[x.status]||0)+1});
+ $('sum').innerHTML=STEPS.map(function(s){return'<button type="button" data-st="'+s+'"'+(s==='新規受付'&&cnt[s]?' class="red"':'')+'>'+s+'<b>'+cnt[s]+'</b></button>'}).join('');
+ var pts={};IN.forEach(function(x){if(x.partner)pts[x.partner]=1});var cur=$('fPt').value;$('fPt').innerHTML='<option value="">すべて</option><option value="-"'+(cur==='-'?' selected':'')+'>振分け先なし</option>'+Object.keys(pts).sort().map(function(p){return'<option'+(p===cur?' selected':'')+'>'+esc(p)+'</option>'}).join('');
+ var rows=IN.filter(function(x){if(st===''&&!open_(x))return false;if(st==='alert'&&!x._a.length)return false;if(st&&st!=='all'&&st!=='alert'&&x.status!==st)return false;if(pt==='-'&&x.partner)return false;if(pt&&pt!=='-'&&x.partner!==pt)return false;return!q||[x.no,x.name,x.company,x.email,x.body,x.label,x.fields,x.partner].join(' ').toLowerCase().indexOf(q)>=0});
+ if(!rows.length){$('inbox').innerHTML='<p class="hint">'+(IN.length?'条件に合う案件はありません':'まだ受付はありません')+'</p>';return}
+ $('inbox').innerHTML=rows.map(function(x){var si=STEPS.indexOf(x.status),stop=x.status==='見送り',now=Date.now(),idle=now-new Date(x.updated||x.ts),id=Math.floor(idle/864e5);
+  var cls=x._a.some(function(y){return y.lv==='red'})||x.status==='新規受付'?'new':open_(x)?'doing':'done';
+  var sug=[];(x.fields||'').split('、').forEach(function(f){(ROUTES[f]||'').split(/[、,]/).forEach(function(p){p=p.trim();if(p&&sug.indexOf(p)<0)sug.push(p)})});
+  return'<div class="ib '+cls+'" data-no="'+esc(x.no)+'"><div class="ib-h"><b>'+(x.status==='新規受付'?'<span class="tg red">未対応</span> ':'')+esc(x.company?x.company+'　':'')+esc(x.name||'（お名前なし）')+'</b><span class="ib-m">'+esc(x.no)+'　受付 '+dt(x.ts)+'</span></div>'+
+  '<div class="bar'+(stop?' stop':'')+'" title="'+esc(x.status)+'">'+STEPS.slice(0,6).map(function(s,k){return'<i class="'+(k<=si||stop?'on':'')+'"></i>'}).join('')+'</div>'+
+  '<div class="ib-m"><b style="color:var(--ink)">'+esc(x.status)+'</b>　受付から '+span(now-new Date(x.ts))+'　<span class="age '+(open_(x)?(id>=7?'r':id>=3?'y':''):'')+'">最後の対応から '+span(idle)+'</span>'+(x.contacted?'　お客様へ最終連絡 '+dt(x.contacted):'')+'</div>'+
+  '<div class="tags">'+x._a.map(function(y){return'<span class="tg '+(y.lv==='red'?'red':'yel')+'">'+esc(y.t)+'</span>'}).join('')+(x.fields?x.fields.split('、').map(function(f){return'<span class="tg">'+esc(f)+'</span>'}).join(''):'<span class="tg">'+esc(x.label)+'</span>')+(x.partner?'<span class="tg pt">振分け先：'+esc(x.partner)+'</span>':(sug.length?'':'<span class="tg yel">振分け先の候補なし</span>'))+'</div>'+
+  '<div class="ib-m">'+(x.email?'<a href="mailto:'+esc(x.email)+'">'+esc(x.email)+'</a>':'')+(x.tel?'　<a href="tel:'+esc(String(x.tel).replace(/[^0-9+]/g,''))+'">'+esc(x.tel)+'</a>':'')+'</div>'+
+  '<details><summary>受付の内容を見る</summary><pre>'+esc(x.body)+'</pre></details>'+
+  '<div class="grid2"><div><label>状態</label><select data-k="status">'+STEPS.map(function(s){return'<option'+(s===x.status?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div>'+
+  '<div><label>振分け先'+(sug.length?'（候補：'+esc(sug.join('、'))+'）':'')+'</label><input type="text" data-k="partner" list="pl_'+esc(x.no)+'" value="'+esc(x.partner)+'" placeholder="提携企業・専門家"><datalist id="pl_'+esc(x.no)+'">'+sug.map(function(p){return'<option value="'+esc(p)+'">'}).join('')+'</datalist></div>'+
+  '<div><label>担当</label><input type="text" data-k="staff" value="'+esc(x.staff)+'" placeholder="例：中嶋"></div><div><label>次の対応予定日</label><input type="date" data-k="next" value="'+esc(x.next)+'"></div></div>'+
+  '<div class="ib-a"><input type="text" data-k="memo" value="'+esc(x.memo)+'" placeholder="対応メモ（何をしたか・次に何をするか）"><button type="button" class="small-btn" data-save>保存</button><button type="button" class="small-btn" data-rep>お客様へ報告を作る</button><button type="button" class="small-btn" data-his>対応の履歴</button></div><div class="hist-box"></div></div>'}).join('')}
+$('sum').addEventListener('click',function(e){var b=e.target.closest('[data-st]');if(!b)return;var o=$('fSt');if(![].some.call(o.options,function(op){return op.value===b.dataset.st}))o.insertAdjacentHTML('beforeend','<option>'+b.dataset.st+'</option>');o.value=b.dataset.st;drawIn()});
+['fSt','fPt'].forEach(function(id){$(id).addEventListener('change',drawIn)});$('fQ').addEventListener('input',drawIn);$('reloadIn').addEventListener('click',inbox);
+setInterval(function(){if(!$('panel').hidden)inbox()},300000);setInterval(function(){if(!$('panel').hidden&&IN.length)drawIn()},60000);
+function caseOf(no){return IN.filter(function(x){return x.no===no})[0]}
+$('inbox').addEventListener('click',function(e){var card=e.target.closest('.ib');if(!card)return;var no=card.dataset.no,x=caseOf(no),b;
+ if((b=e.target.closest('[data-save]'))){var v={no:no};card.querySelectorAll('[data-k]').forEach(function(el){v[el.dataset.k]=String(el.value).trim()});
+  var changedSt=v.status!==x.status;b.disabled=true;b.textContent='保存中…';
+  api('admin.caseSet',v).then(function(){Object.keys(v).forEach(function(k){x[k]=v[k]});x.updated=new Date().toISOString();b.textContent='保存しました';setTimeout(drawIn,600);if(changedSt&&v.status!=='新規受付')openRpt(x,v.status)})
+  .catch(function(er){$('errB').textContent=er.message;b.disabled=false;b.textContent='保存'})}
+ if(e.target.closest('[data-rep]'))openRpt(x,x.status==='新規受付'?'受付':x.status);
+ if(e.target.closest('[data-his]')){var hb=card.querySelector('.hist-box');hb.innerHTML='<p class="hint">読み込み中…</p>';api('admin.history',{no:no}).then(function(r){hb.innerHTML=r.rows.length?'<ul class="hist">'+r.rows.map(function(h){return'<li>'+dt(h.ts)+'　'+esc(h.kind)+(h.staff?'（'+esc(h.staff)+'）':'')+'　'+esc(h.text.split('\n')[0].slice(0,120))+'</li>'}).join('')+'</ul>':'<p class="hint">履歴はまだありません</p>'}).catch(function(er){hb.textContent=er.message})}});
+/* 進捗報告の文章を作る（担当者が直して、送るかどうかを決める） */
+var RP=null,ALT=0;
+var TX={'受付':['このたびは、医療介護総合支援会にご相談いただき、ありがとうございます。ご相談を受け付けました。\n担当者が内容を確認し、あらためてご連絡いたします。','ご相談をお寄せいただき、ありがとうございます。内容を拝見し、担当者から追ってご連絡いたします。今しばらくお待ちください。'],
+'内容確認中':['いただいたご相談の内容を、担当者が確認しております。\n確認のためにお伺いしたいことがある場合は、こちらからご連絡いたします。','ご相談の内容を確認しているところです。進め方の見通しが立ちましたら、あらためてご報告いたします。'],
+'振分け済み':['ご相談の内容に合わせて、対応できる提携先・専門家を選びました。\nお客様の情報を提携先へお伝えする前に、あらためてご了承の確認をさせていただきます。','ご相談に対応できる提携先・専門家の候補が決まりました。今後の進め方について、追ってご案内いたします。'],
+'提携先対応中':['現在、提携先・専門家とともに、具体的な進め方を検討しております。\n進み具合に応じて、あらためてご報告いたします。','提携先・専門家との間で、ご相談への対応を進めております。次の段階に進みましたら、ご報告いたします。'],
+'提案・見積り中':['ご提案の内容（必要に応じてお見積り）をまとめております。\nまとまりしだいお送りいたしますので、ご確認をお願いいたします。','ご提案とお見積りの準備を進めております。整いしだいお届けいたしますので、もうしばらくお待ちください。'],
+'完了':['このたびのご相談につきまして、対応が完了いたしましたのでご報告いたします。\nご相談いただき、ありがとうございました。今後もお困りのことがあれば、いつでもご相談ください。','ご相談への対応が完了いたしました。ご協力いただき、ありがとうございました。また何かございましたら、お気軽にお声がけください。'],
+'見送り':['ご相談の内容を検討いたしましたが、誠に恐れ入りますが、今回は当会および提携先でのお手伝いが難しいとの結論になりました。\nご期待に沿えず申し訳ございません。状況が変わった際は、あらためてご相談ください。','慎重に検討いたしましたが、今回のご相談は、当会と提携先での対応が難しい状況です。申し訳ございません。別のご相談がございましたら、いつでもお声がけください。']};
+var TT={'受付':'受付のお知らせ','内容確認中':'内容確認のご報告','振分け済み':'今後の進め方のご報告','提携先対応中':'進捗のご報告','提案・見積り中':'ご提案準備のご報告','完了':'対応完了のご報告','見送り':'ご相談へのご回答'};
+function makeRpt(x,kind){var who=(x.company?x.company+'\n':'')+(x.name&&x.name.indexOf('伏せ')<0?x.name+' 様':'ご相談者様');var t=TX[kind]||TX['提携先対応中'];
+ return{s:'【医療介護総合支援会】'+(TT[kind]||'進捗のご報告')+'（受付番号 '+x.no+'）',b:who+'\n\nいつもお世話になっております。医療介護総合支援会です。\n\n'+t[ALT%t.length]+'\n\n受付番号：'+x.no+(x.staff?'\n担当：'+x.staff:'')+'\n\nご不明な点は、このメールにご返信いただくか、お電話でお問い合わせください。\n\n――――――――――――――――\n医療介護総合支援会（運営 株式会社グローブ）\n電話 0120-933-496（受付 10:00〜19:00）\nメール ikshienkai@gmail.com\n――――――――――――――――'}}
+function openRpt(x,kind){RP={x:x,kind:kind};ALT=0;var r=makeRpt(x,kind);$('rptS').value=r.s;$('rptB').value=r.b;$('errRp').textContent='';
+ $('rptInfo').textContent=(x.company?x.company+'　':'')+x.name+'（'+x.no+'）への報告です。送るかどうかは、担当者が判断してください。';
+ var w='';if(!x.email)w='この案件にはメールアドレスがありません。電話で伝えた場合は「電話で伝えた」で記録してください。';else if(x.contacted&&Date.now()-new Date(x.contacted)<48*H)w='前回の連絡（'+dt(x.contacted)+'）から48時間たっていません。連絡が多すぎないか、確かめてから送ってください。';
+ $('rptWarn').hidden=!w;$('rptWarn').textContent=w;$('rpSend').disabled=!x.email;$('rpt').hidden=false;var tb=$('rptB');tb.focus();try{tb.setSelectionRange(0,0)}catch(x){}tb.scrollTop=0}
+$('rpAlt').addEventListener('click',function(){ALT++;var r=makeRpt(RP.x,RP.kind);$('rptB').value=r.b});
+function sendRpt(mode){var x=RP.x,b=mode==='send'?$('rpSend'):mode==='phone'?$('rpPhone'):$('rpSkip');b.disabled=true;
+ api('admin.report',{no:x.no,subject:$('rptS').value,body:$('rptB').value,send:mode==='send',phone:mode==='phone',staff:x.staff}).then(function(){if(mode!=='skip'){x.contacted=new Date().toISOString();x.updated=x.contacted}$('rpt').hidden=true;drawIn()}).catch(function(er){$('errRp').textContent=er.message}).then(function(){b.disabled=false})}
+$('rpSend').addEventListener('click',function(){if(confirm('この内容でお客様にメールを送りますか？'))sendRpt('send')});$('rpPhone').addEventListener('click',function(){sendRpt('phone')});$('rpSkip').addEventListener('click',function(){sendRpt('skip')});
+/* 振分け設定 */
+function drawRoute(){var used={};IN.forEach(function(x){if(open_(x))(x.fields||'').split('、').forEach(function(f){if(f)used[f]=(used[f]||0)+1})});
+ $('routeRows').innerHTML=Object.keys(ROUTES).map(function(f){return'<tr><td>'+esc(f)+'</td><td><input type="text" data-f="'+esc(f)+'" value="'+esc(ROUTES[f])+'" placeholder="例：〇〇株式会社、△△社労士事務所"></td><td>'+(used[f]||0)+'件</td></tr>'}).join('')}
+$('saveRt').addEventListener('click',function(){var b=this,rows=[].map.call($('routeRows').querySelectorAll('input'),function(i){return{field:i.dataset.f,partners:i.value.trim()}});b.disabled=true;$('errRt').textContent='';
+ api('admin.routeSet',{rows:rows}).then(function(r){if(r.routes)ROUTES=r.routes;$('errRt').textContent='保存しました。';drawIn()}).catch(function(er){$('errRt').textContent=er.message}).then(function(){b.disabled=false})});
+
 function showLogin(m){$('panel').hidden=true;$('gate').hidden=false;$('gateLink').href=window.KEIYAKU_ADMIN_URL||'#';if(m)$('errL').textContent=m;try{$('lid').focus()}catch(x){}}
 window.onNeedLogin=function(){try{sessionStorage.removeItem('iryo-adm')}catch(x){}started=false;showLogin('ログインの有効期限が切れました。もう一度ログインしてください。')};
 $('lf').addEventListener('submit',function(e){e.preventDefault();var b=$('doLogin');if(!$('lid').value.trim()||!$('lpw').value){$('errL').textContent='IDとパスワードを入れてください。';return}
