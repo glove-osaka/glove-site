@@ -124,6 +124,7 @@
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <script src="../keiyaku/config.js"></script>
 <script src="../keiyaku/api.js"></script>
+<script src="../keiyaku/areapick.js"></script>
 <script>
 (function(){
 var $=function(id){return document.getElementById(id)},TPL=[],FIELDS={},LINK='',DATA={case:[],ref:[],partner:[]},OPTS={caseStatus:[],refStatus:[]},CONTRACTS=[];
@@ -193,7 +194,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.cla
 /* ---------- 入力欄の決まり ---------- */
 var SPEC={
  case:[['name','お名前',1],['relation','ご関係','list:ご本人,ご家族（お子さま）,ご家族（その他）,ご親戚,ケアマネジャー・施設,その他'],['source','受付の方法','sel:電話,ホームページ,来店,紹介,その他'],['phone','電話','tel'],['email','メール','email'],['contact_pref','ご希望の連絡方法'],['area','場所（市区町村）'],['housing','住まい'],['timing','時期'],['fields','分野'],['services','内容'],['worries','お悩み','area'],['detail','ご相談の詳しい内容','area'],['status','状態','sel:@caseStatus'],['staff','担当者'],['next_action','次にやること'],['next_date','その期日','date'],['memo','メモ','area']],
- partner:[['kind','種類','sel:協力企業,士業'],['name','会社名・事務所名',1],['person','担当者のお名前'],['phone','電話','tel'],['email','メール','email'],['fields','対応分野（お客様がホームページで選ぶ「内容」と同じ名前です）','svc'],['area','対応地域'],['address','所在地'],['license','許認可・資格'],['web','ホームページ'],['active','取引の状態','sel:審査中,取引中,停止'],['intro','自己紹介・強み（申し込み時の内容）','area'],['memo','メモ（条件・注意点など）','area']],
+ partner:[['kind','種類','sel:協力企業,士業'],['name','会社名・事務所名',1],['person','担当者のお名前'],['phone','電話','tel'],['email','メール','email'],['fields','対応分野（お客様がホームページで選ぶ「内容」と同じ名前です）','svc'],['area','対応地域','areapick'],['address','所在地'],['license','許認可・資格'],['web','ホームページ'],['active','取引の状態','sel:審査中,取引中,停止'],['intro','自己紹介・強み（申し込み時の内容）','area'],['memo','メモ（条件・注意点など）','area']],
  ref:[['partner_id','取次ぎ先',1],['partner_name','取次ぎ先の名前（「その他」を選んだ時だけ）'],['service','頼む内容'],['date','依頼日','date'],['status','状態','sel:@refStatus'],['amount','金額（見積もり・成約）'],['memo','メモ','area']]
 };
 function input(t,s,v,extra){var k=s[0],ty=s[2]||'',id='e_'+t+'_'+k,lab='<label for="'+id+'">'+esc(s[1])+(ty===1?'<span class="req">必須</span>':'')+'</label>',h;
@@ -202,15 +203,16 @@ function input(t,s,v,extra){var k=s[0],ty=s[2]||'',id='e_'+t+'_'+k,lab='<label f
  else if(typeof ty==='string'&&ty.indexOf('list:')===0){h='<input type="text" id="'+id+'" list="'+id+'_l" value="'+esc(v)+'"><datalist id="'+id+'_l">'+ty.slice(5).split(',').map(function(x){return '<option value="'+esc(x)+'">'}).join('')+'</datalist>'}
  else if(ty==='svc'){var cur=String(v||'').split(/[、,，\n]+/).map(function(x){return x.trim()}).filter(String),ls=OPTS.services||[],other=cur.filter(function(x){return ls.indexOf(x)<0});
   h='<div class="chk svc" id="'+id+'">'+ls.map(function(x){return '<label><input type="checkbox" value="'+esc(x)+'"'+(cur.indexOf(x)>=0?' checked':'')+'>'+esc(x)+'</label>'}).join('')+'</div><input type="text" id="'+id+'_o" placeholder="ほかの分野（あれば、読点「、」で区切る）" value="'+esc(other.join('、'))+'" style="margin-top:8px">';return '<div class="fld wide"><label>'+esc(s[1])+'</label>'+h+'</div>'}
+ else if(ty==='areapick'){return '<div class="fld wide"><label>'+esc(s[1])+'</label><div class="apbox" id="'+id+'" data-v="'+esc(v)+'"></div></div>'}
  else if(ty==='area'){h='<textarea id="'+id+'">'+esc(v)+'</textarea>'}
  else{h='<input type="'+(ty==='tel'?'tel':ty==='email'?'email':ty==='date'?'date':'text')+'" id="'+id+'" value="'+esc(v)+'">'}
  return '<div class="fld'+(ty==='area'?' wide':'')+'">'+lab+h+'</div>'}
-function collect(t){var o={};SPEC[t].forEach(function(s){var e=$('e_'+t+'_'+s[0]);if(!e)return;if(s[2]==='svc'){var v=[].map.call(e.querySelectorAll('input:checked'),function(i){return i.value});var ot=$(e.id+'_o').value.split(/[、,，]+/).map(function(x){return x.trim()}).filter(String);o[s[0]]=v.concat(ot).join('、')}else o[s[0]]=e.value.trim()});return o}
+function collect(t){var o={};SPEC[t].forEach(function(s){var e=$('e_'+t+'_'+s[0]);if(!e)return;if(s[2]==='areapick'){o[s[0]]=AreaPick.value(e);return}if(s[2]==='svc'){var v=[].map.call(e.querySelectorAll('input:checked'),function(i){return i.value});var ot=$(e.id+'_o').value.split(/[、,，]+/).map(function(x){return x.trim()}).filter(String);o[s[0]]=v.concat(ot).join('、')}else o[s[0]]=e.value.trim()});return o}
 
 /* ---------- 1件の画面 ---------- */
 var CUR={};
 function closeEd(t){var ed=document.querySelector('[data-ed="'+t+'"]');ed.hidden=true;ed.innerHTML='';document.querySelector('[data-list="'+t+'"]').hidden=false;var b=document.querySelector('#v-'+t+' .bar');if(b)b.hidden=false}
-function showEd(t,html){var ed=document.querySelector('[data-ed="'+t+'"]');document.querySelector('[data-list="'+t+'"]').hidden=true;var b=document.querySelector('#v-'+t+' .bar');if(b)b.hidden=true;ed.innerHTML=html;ed.hidden=false;window.scrollTo(0,0);var h=ed.querySelector('h2');if(h){h.tabIndex=-1;h.focus({preventScroll:true})}}
+function showEd(t,html){var ed=document.querySelector('[data-ed="'+t+'"]');document.querySelector('[data-list="'+t+'"]').hidden=true;var b=document.querySelector('#v-'+t+' .bar');if(b)b.hidden=true;ed.innerHTML=html;ed.hidden=false;ed.querySelectorAll('.apbox').forEach(function(b){AreaPick.render(b,b.dataset.v||'')});window.scrollTo(0,0);var h=ed.querySelector('h2');if(h){h.tabIndex=-1;h.focus({preventScroll:true})}}
 function openEd(t,id){var ed=document.querySelector('[data-ed="'+t+'"]');showEd(t,'<p>読み込み中…</p>');
  (id?api('kanri.get',{table:t,id:id}):(t==='case'?Promise.resolve({row:{status:'新規',source:'電話'},refs:[],contracts:[]}):Promise.resolve({row:{kind:'協力企業',active:'取引中'},refs:[],contracts:[]})))
  .then(function(r){if(r.opts)OPTS=r.opts;CUR={t:t,row:r.row,partners:r.partners||[],builtins:r.builtins||[]};render(t,r)}).catch(function(e){ed.innerHTML='<p class="err">'+esc(e.message)+'</p><button class="btn o" type="button" data-close="'+t+'">一覧に戻る</button>'})}

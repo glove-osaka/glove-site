@@ -110,3 +110,16 @@ dialog.rep{width:min(760px,calc(100vw - 24px));max-height:calc(100vh - 24px);bor
 dialog.rep::backdrop{background:rgba(0,0,0,.45)}
 dialog.rep textarea{min-height:300px;font-size:1rem;line-height:1.8}
 .asg{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.small-btn.bi{border-style:dashed}
+/* 対応地域の選択 */
+.ap-row{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+.ap-chip{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border:2px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font:inherit;font-size:.95rem;cursor:pointer}
+.ap-chip .ap-mark{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;border:2px solid var(--line);font-size:.8rem;font-weight:700}
+.ap-chip.ap-on{border-color:var(--pine);background:var(--pine-soft);color:var(--pine);font-weight:700}.ap-chip.ap-on .ap-mark{background:var(--pine);border-color:var(--pine);color:var(--on-pine)}
+.ap-chip.ap-ex{border-color:#B3261E;background:#FBE3E1;color:#8C1D18;text-decoration:line-through}.ap-chip.ap-ex .ap-mark{background:#B3261E;border-color:#B3261E;color:#fff}
+.ap-chip small{text-decoration:none;font-size:.78rem}
+.ap-k{display:inline-block;padding:0 8px;border-radius:6px}.ap-k.on{background:var(--pine-soft);color:var(--pine)}.ap-k.ex{background:#FBE3E1;color:#8C1D18}
+.ap-pref{margin:8px 0;border:1px solid var(--line);border-radius:10px;padding:8px 12px}.ap-pref summary{cursor:pointer;font-weight:700;min-height:40px;display:flex;align-items:center}
+.ap-grp{margin:8px 0}.ap-grp b{font-size:.9rem;color:var(--muted)}
+.ap-memo{margin-top:8px}.ap-sum{margin:8px 0 0;font-weight:700}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ap-chip.ap-ex{background:#3d1b19;color:#ffb4ab}}
+.ap-chip small{display:inline-block}

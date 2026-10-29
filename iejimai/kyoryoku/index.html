@@ -35,7 +35,7 @@
 <div class="fld"><label for="address">所在地</label><input type="text" id="address" autocomplete="street-address"></div>
 <div class="fld"><label>対応できる分野<span class="req">必須</span>（いくつでも）</label><div class="chk svc" id="fields"><label><input type="checkbox" value="家財整理・不用品買取">家財整理・不用品買取</label><label><input type="checkbox" value="生前整理">生前整理</label><label><input type="checkbox" value="遺品整理">遺品整理</label><label><input type="checkbox" value="毎月の支出の見直し">毎月の支出の見直し</label><label><input type="checkbox" value="引越し・施設入居">引越し・施設入居</label><label><input type="checkbox" value="次の住まい探し">次の住まい探し</label><label><input type="checkbox" value="退去・住まいの整理">退去・住まいの整理</label><label><input type="checkbox" value="空き家管理">空き家管理</label><label><input type="checkbox" value="不動産の売却・活用">不動産の売却・活用</label><label><input type="checkbox" value="自宅を活かした資金づくり">自宅を活かした資金づくり</label><label><input type="checkbox" value="修繕・建替え・解体">修繕・建替え・解体</label><label><input type="checkbox" value="相続・遺言">相続・遺言</label><label><input type="checkbox" value="各種手続き">各種手続き</label><label><input type="checkbox" value="業者選び・連絡調整">業者選び・連絡調整</label><label><input type="checkbox" value="ご家族への支援">ご家族への支援</label><label><input type="checkbox" value="将来への備え">将来への備え</label><label><input type="checkbox" value="その他のご相談">その他のご相談</label><label><input type="checkbox" value="身元保証・身元引受">身元保証・身元引受</label><label><input type="checkbox" value="見守り・緊急連絡先代行">見守り・緊急連絡先代行</label><label><input type="checkbox" value="死後事務の手配">死後事務の手配</label><label><input type="checkbox" value="終活・生活支援">終活・生活支援</label></div>
 <input type="text" id="fields_other" placeholder="ほかの分野（あれば）" style="margin-top:8px"></div>
-<div class="fld"><label for="area">対応できる地域<span class="req">必須</span></label><input type="text" id="area" placeholder="例：大阪市内、大阪府全域、関西一円"></div>
+<div class="fld"><label>対応できる地域<span class="req">必須</span></label><div id="area"></div></div>
 <div class="fld"><label for="license">許認可・資格</label><input type="text" id="license" placeholder="例：古物商許可、一般廃棄物収集運搬、宅地建物取引業、司法書士 など"></div>
 <div class="fld"><label for="web">ホームページ</label><input type="text" id="web" placeholder="https://"></div>
 <div class="fld"><label for="intro">自己紹介・強み</label><textarea id="intro" placeholder="得意な作業、対応できる規模、ご高齢のお客様への配慮など"></textarea></div>
@@ -53,16 +53,18 @@
 </main>
 <script src="../keiyaku/config.js"></script>
 <script src="../keiyaku/api.js"></script>
+<script src="../keiyaku/areapick.js"></script>
 <script>
 (function(){
 var $=function(id){return document.getElementById(id)};
 if(window.KEIYAKU_DEMO)$('demoBar').hidden=false;
+AreaPick.render($('area'),'');
 $('f').addEventListener('submit',function(e){e.preventDefault();var b=$('send');$('err').textContent='';
  var v=function(id){return $(id).value.trim()};
  var form={kind:(document.querySelector('input[name=kind]:checked')||{}).value,name:v('name'),person:v('person'),phone:v('phone'),email:v('email'),address:v('address'),
-  fields:[].map.call($('fields').querySelectorAll('input:checked'),function(i){return i.value}),fields_other:v('fields_other'),area:v('area'),license:v('license'),web:v('web'),intro:v('intro'),website:v('website'),agree:$('agree').checked};
+  fields:[].map.call($('fields').querySelectorAll('input:checked'),function(i){return i.value}),fields_other:v('fields_other'),area:AreaPick.value($('area')),license:v('license'),web:v('web'),intro:v('intro'),website:v('website'),agree:$('agree').checked};
  var miss=!form.name?'name':!form.person?'person':!form.phone?'phone':!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)?'email':(!form.fields.length&&!form.fields_other)?'fields_other':!form.area?'area':'';
- if(miss){$('err').textContent={name:'会社名・事務所名',person:'ご担当者のお名前',phone:'電話番号',email:'メールアドレス',fields_other:'対応できる分野',area:'対応できる地域'}[miss]+'をご確認ください。';$(miss).focus();return}
+ if(miss){$('err').textContent={name:'会社名・事務所名',person:'ご担当者のお名前',phone:'電話番号',email:'メールアドレス',fields_other:'対応できる分野',area:'対応できる地域'}[miss]+'をご確認ください。';var fe=miss==='area'?$('area').querySelector('button'):$(miss);if(fe)fe.focus();return}
  if(!form.agree){$('err').textContent='同意の欄に印を付けてください。';return}
  b.disabled=true;b.textContent='送っています…';
  (window.KEIYAKU_DEMO?Promise.resolve({ok:true}):keiyakuApi('partner.apply',{form:form})).then(function(){$('formBox').hidden=true;$('done').hidden=false;window.scrollTo(0,0)})
