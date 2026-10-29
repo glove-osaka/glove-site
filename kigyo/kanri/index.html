@@ -22,7 +22,7 @@ a{color:var(--blue)}
 label.f{display:grid;gap:4px;font-size:.84rem;font-weight:700}
 label.f input,label.f select,label.f textarea{font-weight:400;font-size:.95rem}
 .route .p.sug{color:var(--gold2)}
-input[type=text],input[type=password],input[type=date],select,textarea{width:100%;padding:10px 12px;border:1px solid #C6D0DC;border-radius:8px;background:#fff}
+input[type=text],input[type=email],input[type=tel],input[type=url],input[type=password],input[type=date],select,textarea{width:100%;padding:10px 12px;border:1px solid #C6D0DC;border-radius:8px;background:#fff}
 textarea{min-height:110px;resize:vertical}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(199,154,74,.25)}
 .btn{border:1px solid transparent;border-radius:999px;padding:9px 18px;font-weight:700;background:#fff;border-color:var(--line)}
@@ -153,6 +153,22 @@ table.rt input{padding:7px 10px}
 .st-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
 .st-grid textarea{min-height:90px;font-size:.88rem}
 .stepbtns button{font-size:.8rem;padding:7px 8px}
+.iv-url{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.iv-url input{flex:1 1 260px;font-size:.88rem;padding:8px 10px}
+.iv-list{margin-top:10px;font-size:.88rem}.iv-list summary{cursor:pointer;color:var(--navy);font-weight:700}
+.iv-list ul{margin:8px 0 0;padding-left:1.2em;line-height:1.9}
+.ar-box{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;margin-top:6px}
+.ar-help{font-size:.8rem;color:var(--mute);margin-bottom:8px}
+.ar-on-s{color:var(--grn)}.ar-ex-s{color:var(--red)}
+.ar-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;align-items:center}
+.ar-reg{border-top:1px dashed var(--line);padding-top:6px}
+.ar-pref{padding-left:12px}
+.ar-chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:.84rem;cursor:pointer;min-height:34px;color:var(--ink)}
+.ar-chip.on{background:var(--grnbg);border-color:var(--grn);color:var(--grn);font-weight:700}
+.ar-chip.ex{background:var(--redbg);border-color:var(--red);color:var(--red);font-weight:700;text-decoration:line-through}
+.ar-more{background:none;border:0;color:var(--blue);font-size:.8rem;cursor:pointer;padding:4px 6px}
+.ar-free{display:grid;gap:4px;font-size:.84rem;margin-top:6px}
+.ar-sum{font-size:.82rem;color:var(--navy);margin-top:8px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -288,7 +304,7 @@ async function load(first) {
   if (first) busy(true);
   try {
     const prev = D;
-    D = await call("adminData", TOKEN);
+    D = await call("adminData", TOKEN); mergeBase();
     $("#login").classList.add("hide"); $("#app").classList.remove("hide");
     $("#who").textContent = D.me.name + " さん";
     paintSound();
@@ -411,7 +427,6 @@ function openCase(no, keep) {
   OPEN = no;
   const st = D.steps[c.kind], i = st.indexOf(c.status);
   const cands = candidates(c);
-  const partners = [...new Set(D.partners.filter(p => p.active !== "休止").map(p => p.name).concat(c.partner ? [c.partner] : []))];
   const mids = stageMids(c.status);
   const staffList = [...new Set(D.users.map(u => u.name).concat(c.staff ? [c.staff] : []))];
   const info = c.kind === "inbox"
@@ -434,7 +449,7 @@ function openCase(no, keep) {
         </div>
         <label class="f">詳細（いまの状況・決まったこと・相手の返事など）<textarea id="d-detail" style="min-height:64px" placeholder="例：〇〇行政書士事務所に紹介。11/5に初回面談の予定">${esc(c.detail || "")}</textarea></label>
         <div class="grid2">
-          ${c.kind === "inbox" ? `<label class="f">取次ぎ先（専門家・提携先）<select id="d-partner"><option value="">（未設定）</option>${partners.map(p => `<option ${p === c.partner ? "selected" : ""}>${esc(p)}</option>`).join("")}<option value="__other">ほかの取次ぎ先を入力…</option></select>
+          ${c.kind === "inbox" ? `<label class="f">取次ぎ先（専門家・提携先）<select id="d-partner">${partnerOptions(c.partner)}</select>
             <span class="hint">${partnerHint(c.partner)}</span></label>` : ""}
           <label class="f">担当者<select id="d-staff"><option value="">（未設定）</option>${staffList.map(s => `<option ${s === c.staff ? "selected" : ""}>${esc(s)}</option>`).join("")}</select></label>
           <label class="f">次の対応予定日<input type="date" id="d-next" value="${esc((c.next || "").replace(/\//g, "-").slice(0, 10))}"></label>
@@ -603,8 +618,11 @@ function neededTypes(c) {
 function candidates(c) {
   if (!D || !D.partners) return [];
   const need = neededTypes(c), cats = caseCats(c);
-  return D.partners.filter(p => p.active !== "休止").map(p => {
+  return D.partners.filter(usable).map(p => {
     let score = 0; const why = [];
+    const am = p.area ? areaMatch(p.area, c.body) : null;
+    if (am && am.ex) return { p, score: 0, why: [] };
+    if (am && am.ok) { score += 2; why.push("地域が対応：" + am.prefs.join("・")); }
     const pc = String(p.cats || "").split("、").filter(Boolean), m = cats.filter(x => pc.includes(x));
     if (m.length) { score += m.length * 5; why.push("分野が一致：" + m.join("・")); }
     const n = need.find(x => x.t === p.type); if (n) { score += Math.min(n.score, 6); why.push("必要そうな専門家：" + p.type); }
@@ -651,7 +669,7 @@ function issues(c) {
   if (!isEnd(c) && !next && !isNew(c)) out.push({ lv: 1, t: "次の対応予定日が入っていません", go: "#d-next" });
   if (!c.mid && !isNew(c)) out.push({ lv: 1, t: "中分類・小分類が選ばれていません", go: "#d-mid" });
   if (after(c, "対応先取次") && !c.partner && !isEnd(c)) out.push({ lv: 2, t: "取次先が決まっていません", go: "#d-partner" });
-  if (after(c, "対応先取次") && c.share !== "同意" && !hist(c.no).some(h => /同意/.test(h.text)) && !isEnd(c))
+  if (after(c, "対応先取次") && c.share !== "同意" && !((D.partners.find(x => x.name === c.partner) || {}).type === "自社") && !hist(c.no).some(h => /同意/.test(h.text)) && !isEnd(c))
     out.push({ lv: 2, t: "お客様は「専門家への共有」に同意していません。情報を渡す前に同意を確かめ、メモに残してください", go: "#d-memo" });
   if (c.status === "手数料入金") {
     const p = D.partners.find(x => x.name === c.partner);
@@ -693,43 +711,162 @@ function renderAssist() {
 }
 
 /* ===== 取次先の登録 ===== */
-let PT_EDIT = null;
+// 登録がなくても選べる基本の選択肢（同じ名称で登録すると、登録した内容が優先されます）
+const BASE_PARTNERS = [
+  { name: "自社対応（株式会社グローブ）", type: "自社", cats: "経費・固定費の見直し、業務改善・AI・システム、集客・営業・売上改善、新規事業・商品開発・知的財産、その他の企業相談", keywords: "整理、計画、相談", area: "対応：全国、オンライン（Zoomなど）", fee: "自社の業務" },
+  { name: "買取大吉", type: "提携事業者", cats: "経費・固定費の見直し、事業承継・会社の将来、経営リスク・トラブル・事業継続", keywords: "買取、在庫、処分、廃業、閉店、不用品、片付け、遺品、事務所移転、什器、貴金属、ブランド", area: "" },
+  { name: "提携企業（個別に選定）", type: "提携事業者", cats: "経費・固定費の見直し、業務改善・AI・システム、集客・営業・売上改善、海外展開・輸出、人材・採用・労務", keywords: "", area: "" },
+  { name: "提携行政書士（選定中）", type: "行政書士", cats: "許認可・行政手続き、補助金・公的支援", keywords: "", area: "" },
+  { name: "提携社会保険労務士（選定中）", type: "社会保険労務士", cats: "人材・採用・労務、補助金・公的支援", keywords: "", area: "" },
+  { name: "提携税理士（選定中）", type: "税理士", cats: "資金繰り・融資・資金調達、事業承継・会社の将来", keywords: "", area: "" },
+  { name: "提携司法書士（選定中）", type: "司法書士", cats: "事業承継・会社の将来、許認可・行政手続き", keywords: "", area: "" },
+  { name: "提携弁護士（選定中）", type: "弁護士", cats: "経営リスク・トラブル・事業継続", keywords: "", area: "" },
+  { name: "提携中小企業診断士（選定中）", type: "中小企業診断士", cats: "資金繰り・融資・資金調達、補助金・公的支援、新規事業・商品開発・知的財産", keywords: "", area: "" }
+];
+function mergeBase() {
+  if (!D) return;
+  D.partners = (D.partners || []).filter(p => !p.base);
+  BASE_PARTNERS.forEach(b => { if (!D.partners.some(p => p.name === b.name)) D.partners.push(Object.assign({ id: "", base: true, active: "有効", person: "", tel: "", email: "", note: "" }, b)); });
+  if (!(D.partnerTypes || []).includes("自社")) D.partnerTypes = ["自社"].concat(D.partnerTypes || []);
+}
+const usable = p => !p.active || p.active === "有効";
+function partnerOptions(cur) {
+  const reg = D.partners.filter(p => !p.base && usable(p)), base = D.partners.filter(p => p.base);
+  const opt = p => `<option ${p.name === cur ? "selected" : ""}>${esc(p.name)}</option>`;
+  const known = D.partners.some(p => p.name === cur && (p.base || usable(p)));
+  return `<option value="">（未設定）</option>${reg.length ? `<optgroup label="登録した取次先">${reg.map(opt).join("")}</optgroup>` : ""}<optgroup label="基本の選択肢">${base.map(opt).join("")}</optgroup>${cur && !known ? `<option selected>${esc(cur)}</option>` : ""}<option value="__other">ほかの取次先を入力…</option>`;
+}
+let PT_EDIT = null, PT_NEW = false, INV_URL = "";
 function renderPartners() {
-  const P = D.partners, e = PT_EDIT ? (P.find(x => x.id === PT_EDIT) || {}) : {};
+  const P = D.partners, e = PT_EDIT ? (P.find(x => (x.id || x.name) === PT_EDIT) || {}) : {};
   const used = name => D.cases.filter(c => c.partner === name && !isEnd(c)).length;
-  $("#main").innerHTML = `<div class="card" style="margin-bottom:12px"><h3>${PT_EDIT ? "取次先の修正" : "取次先の新規登録"} <small>登録すると、ご相談ごとに取次候補として自動で出てきます</small></h3>
+  const wait = P.filter(p => p.active === "審査待ち");
+  const badge = p => p.base ? `<span class="badge b-gray">基本</span>` : p.active === "休止" ? `<span class="badge b-gray">休止</span>` : p.active === "審査待ち" ? `<span class="badge b-yel">審査待ち</span>` : `<span class="badge b-grn">有効</span>`;
+  const inv = (D.invites || []).slice(0, 10);
+  const form = `<div class="card" id="pt-form" style="margin-bottom:12px"><h3>${PT_EDIT ? "取次先の修正" : "取次先をここで登録"} <small>${PT_EDIT ? "" : "自分で入力するとき"}</small></h3>
+      ${e.base ? `<div class="hint">基本の選択肢です。保存すると、登録した取次先として扱われます。</div>` : ""}
       <div class="grid2">
         <label class="f">名称（必須）<input type="text" id="p-name" value="${esc(e.name || "")}" placeholder="例：〇〇行政書士事務所"></label>
         <label class="f">種別<select id="p-type">${D.partnerTypes.map(t => `<option ${t === e.type ? "selected" : ""}>${esc(t)}</option>`).join("")}</select></label>
         <label class="f">先方の担当者<input type="text" id="p-person" value="${esc(e.person || "")}"></label>
         <label class="f">電話番号<input type="tel" id="p-tel" value="${esc(e.tel || "")}"></label>
         <label class="f">メール<input type="email" id="p-email" value="${esc(e.email || "")}"></label>
-        <label class="f">対応地域<input type="text" id="p-area" value="${esc(e.area || "")}" placeholder="例：大阪府・全国（Zoom）"></label>
+        <label class="f">状態<select id="p-active">${["有効", "審査待ち", "休止"].map(x => `<option ${x === (e.active || "有効") ? "selected" : ""}>${x}</option>`).join("")}</select></label>
       </div>
       <div class="f"><span>対応分野（当てはまるものをすべて）</span><div class="pt-cats">${D.categories.map(cat => `<label><input type="checkbox" value="${esc(cat)}" ${String(e.cats || "").split("、").includes(cat) ? "checked" : ""}> ${esc(cat)}</label>`).join("")}</div></div>
+      <div class="f"><span>対応地域</span><div class="ar-box" id="p-area"></div></div>
       <label class="f">得意なこと・キーワード（「、」で区切る。ご相談の文面と照らし合わせます）<input type="text" id="p-kw" value="${esc(e.keywords || "")}" placeholder="例：建設業許可、産廃、ものづくり補助金"></label>
-      <div class="grid2">
-        <label class="f">手数料・費用の扱い<input type="text" id="p-fee" value="${esc(e.fee || "")}" placeholder="例：紹介料なし・報酬は先方から直接ご案内"></label>
-        <label class="f">状態<select id="p-active"><option ${e.active !== "休止" ? "selected" : ""}>有効</option><option ${e.active === "休止" ? "selected" : ""}>休止</option></select></label>
-      </div>
+      <label class="f">手数料・費用の扱い<input type="text" id="p-fee" value="${esc(e.fee || "")}" placeholder="例：紹介料なし・報酬は先方から直接ご案内"></label>
       <label class="f">備考<textarea id="p-note" style="min-height:56px">${esc(e.note || "")}</textarea></label>
       <div class="err" id="p-err"></div>
-      <div class="row"><button class="btn btn-navy" id="p-save">${PT_EDIT ? "修正を保存する" : "登録する"}</button>${PT_EDIT ? `<button class="btn" id="p-new">新規登録に戻る</button>` : ""}</div>
-    </div>
-    <div class="card"><h3>登録済みの取次先 <small>${P.length}件</small></h3>
-      ${P.length ? `<table class="rt"><thead><tr><th>名称</th><th>種別</th><th>対応分野</th><th>連絡先</th><th>対応中</th><th>状態</th><th></th></tr></thead><tbody>${P.map(p => `<tr><td><b>${esc(p.name)}</b>${p.person ? "<br><small>" + esc(p.person) + "</small>" : ""}</td><td>${esc(p.type)}</td><td><small>${esc(p.cats)}</small></td><td><small>${esc(p.tel)}${p.email ? "<br>" + esc(p.email) : ""}</small></td><td>${used(p.name)}件</td><td>${p.active === "休止" ? `<span class="badge b-gray">休止</span>` : `<span class="badge b-grn">有効</span>`}</td><td><button class="btn btn-sm" data-pe="${esc(p.id)}">修正</button></td></tr>`).join("")}</tbody></table>` : `<div class="hint">まだ登録がありません。上の欄から登録してください。</div>`}
+      <div class="row"><button class="btn btn-navy" id="p-save">${PT_EDIT ? "修正を保存する" : "登録する"}</button><button class="btn" id="p-cancel">${PT_EDIT ? "やめる" : "閉じる"}</button></div>
     </div>`;
-  $$("[data-pe]").forEach(b => b.onclick = () => { PT_EDIT = b.dataset.pe; renderPartners(); window.scrollTo({ top: 0, behavior: "smooth" }); });
-  const nb = $("#p-new"); if (nb) nb.onclick = () => { PT_EDIT = null; renderPartners(); };
-  $("#p-save").onclick = async () => {
-    const o = { id: PT_EDIT || "", name: $("#p-name").value.trim(), type: $("#p-type").value, person: $("#p-person").value.trim(), tel: $("#p-tel").value.trim(), email: $("#p-email").value.trim(), area: $("#p-area").value.trim(),
-      cats: $$(".pt-cats input:checked").map(x => x.value).join("、"), keywords: $("#p-kw").value.trim(), fee: $("#p-fee").value.trim(), active: $("#p-active").value, note: $("#p-note").value.trim() };
-    $("#p-err").textContent = "";
-    if (!o.name) { $("#p-err").textContent = "名称を入れてください。"; return; }
+  $("#main").innerHTML = `
+    <div class="card" style="margin-bottom:12px"><h3>📨 協力企業に登録してもらう <small>URLを送ると、相手が入力して登録できます</small></h3>
+      <div class="grid2">
+        <label class="f">宛先（会社名など・メモ）<input type="text" id="iv-memo" placeholder="例：〇〇行政書士事務所"></label>
+        <label class="f">メールで送る場合の送り先（空ならURLだけ作ります）<input type="email" id="iv-to" placeholder="例：info@example.jp"></label>
+      </div>
+      <div class="row"><button class="btn btn-navy" id="iv-make">登録用のURLを作る</button><span class="hint">URLは${30}日間有効・1回の登録に使えます。届いた登録は「審査待ち」になり、承認すると取次候補に出ます。</span></div>
+      ${INV_URL ? `<div class="iv-url"><input type="text" id="iv-url" value="${esc(INV_URL)}" readonly><button class="btn btn-gold btn-sm" id="iv-copy">コピー</button><a class="btn btn-sm" href="https://line.me/R/msg/text/?${encodeURIComponent("協力企業のご登録のお願いです。下記から入力をお願いいたします。\n" + INV_URL)}" target="_blank" rel="noopener">LINEで送る</a></div>` : ""}
+      ${inv.length ? `<details class="iv-list"><summary>発行したURL（最新${inv.length}件）</summary><ul>${inv.map(v => `<li><b>${esc(v.memo || "（宛先なし）")}</b>　${esc(v.at.slice(0, 16))}　<span class="badge ${v.status === "未使用" ? "b-blue" : "b-grn"}">${esc(v.status)}</span>${v.to ? "　→ " + esc(v.to) : ""}${v.status === "未使用" ? ` <button class="lnk" data-cp="${esc(v.url)}">URLをコピー</button>` : ""}</li>`).join("")}</ul></details>` : ""}
+    </div>
+    ${wait.length ? `<div class="alertbar" style="margin-bottom:12px"><span class="bell">🔔</span>登録申込みが ${wait.length} 件届いています。内容を確かめて「承認する」を押してください。</div>` : ""}
+    ${PT_EDIT || PT_NEW ? form : `<div class="row" style="margin-bottom:12px"><button class="btn btn-navy" id="p-new">＋ 取次先をここで登録する</button></div>`}
+    <div class="card"><h3>取次先の一覧 <small>${P.filter(p => !p.base).length}件の登録＋基本の選択肢</small></h3>
+      <table class="rt"><thead><tr><th>名称</th><th>種別</th><th>対応分野・地域</th><th>連絡先</th><th>対応中</th><th>状態</th><th></th></tr></thead><tbody>${P.slice().sort((a, b) => (b.active === "審査待ち") - (a.active === "審査待ち") || (a.base ? 1 : 0) - (b.base ? 1 : 0)).map(p => `<tr><td><b>${esc(p.name)}</b>${p.person ? "<br><small>" + esc(p.person) + "</small>" : ""}</td><td>${esc(p.type)}</td><td><small>${esc(p.cats)}${p.area ? "<br>地域：" + esc(p.area) : ""}</small></td><td><small>${esc(p.tel || "")}${p.email ? "<br>" + esc(p.email) : ""}</small></td><td>${used(p.name)}件</td><td>${badge(p)}</td><td>${p.active === "審査待ち" ? `<button class="btn btn-gold btn-sm" data-ok="${esc(p.id)}">承認する</button> ` : ""}<button class="btn btn-sm" data-pe="${esc(p.id || p.name)}">${p.active === "審査待ち" ? "内容を見る" : "修正"}</button></td></tr>`).join("")}</tbody></table>
+    </div>`;
+  if (PT_EDIT || PT_NEW) {
+    areaPicker($("#p-area"), e.area || "");
+    $("#p-cancel").onclick = () => { PT_EDIT = null; PT_NEW = false; renderPartners(); };
+    $("#p-save").onclick = async () => {
+      const o = { id: e.base ? "" : (e.id || ""), name: $("#p-name").value.trim(), type: $("#p-type").value, person: $("#p-person").value.trim(), tel: $("#p-tel").value.trim(), email: $("#p-email").value.trim(), area: areaGet($("#p-area")),
+        cats: $$(".pt-cats input:checked").map(x => x.value).join("、"), keywords: $("#p-kw").value.trim(), fee: $("#p-fee").value.trim(), active: $("#p-active").value, note: $("#p-note").value.trim() };
+      $("#p-err").textContent = "";
+      if (!o.name) { $("#p-err").textContent = "名称を入れてください。"; return; }
+      busy(true);
+      try { const r = await call("savePartner", TOKEN, o); if (!r.ok) { $("#p-err").textContent = r.error; return; } D.partners = r.partners; mergeBase(); toast(PT_EDIT ? "保存しました" : "登録しました"); PT_EDIT = null; PT_NEW = false; renderPartners(); }
+      catch (err) { $("#p-err").textContent = "保存できませんでした。"; } finally { busy(false); }
+    };
+  } else $("#p-new").onclick = () => { PT_NEW = true; renderPartners(); $("#pt-form").scrollIntoView({ behavior: "smooth" }); };
+  $$("[data-pe]").forEach(b => b.onclick = () => { PT_EDIT = b.dataset.pe; PT_NEW = false; renderPartners(); $("#pt-form").scrollIntoView({ behavior: "smooth" }); });
+  $$("[data-ok]").forEach(b => b.onclick = async () => {
+    const p = D.partners.find(x => x.id === b.dataset.ok); if (!p || !confirm(`「${p.name}」を協力企業として承認しますか？`)) return;
+    busy(true); try { const r = await call("savePartner", TOKEN, Object.assign({}, p, { active: "有効" })); D.partners = r.partners; mergeBase(); toast("承認しました。取次候補に出るようになります"); renderPartners(); } catch (e2) { toast("承認できませんでした"); } finally { busy(false); }
+  });
+  const copy = t => { (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast("URLをコピーしました")).catch(() => { const i = $("#iv-url"); if (i) { i.select(); } toast("コピーできませんでした。URLを選んでコピーしてください"); }); };
+  $("#iv-make").onclick = async () => {
     busy(true);
-    try { const r = await call("savePartner", TOKEN, o); if (!r.ok) { $("#p-err").textContent = r.error; return; } D.partners = r.partners; toast(PT_EDIT ? "修正しました" : "登録しました"); PT_EDIT = null; renderPartners(); }
-    catch (err) { $("#p-err").textContent = "保存できませんでした。"; } finally { busy(false); }
+    try { const r = await call("createInvite", TOKEN, $("#iv-memo").value.trim(), $("#iv-to").value.trim()); if (!r.ok) { toast(r.error); return; } INV_URL = r.url; D.invites = r.invites; toast($("#iv-to").value.trim() ? "URLを作り、メールで送りました" : "URLを作りました。コピーして送ってください"); renderPartners(); }
+    catch (err) { toast("作れませんでした"); } finally { busy(false); }
   };
+  const cb = $("#iv-copy"); if (cb) cb.onclick = () => copy(INV_URL);
+  $$("[data-cp]").forEach(b => b.onclick = () => copy(b.dataset.cp));
+}
+
+/* ===== 対応地域の選択（押すたびに ✓対応 → ✕除外 → なし） ===== */
+const AREA_REG = [
+  ["北海道", ["北海道"]],
+  ["東北地区", ["青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県"]],
+  ["関東地区", ["茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県"]],
+  ["甲信越・北陸地区", ["新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県"]],
+  ["東海地区", ["岐阜県", "静岡県", "愛知県", "三重県"]],
+  ["関西地区", ["滋賀県", "京都府", "大阪府", "兵庫県", "奈良県", "和歌山県"]],
+  ["中国地区", ["鳥取県", "島根県", "岡山県", "広島県", "山口県"]],
+  ["四国地区", ["徳島県", "香川県", "愛媛県", "高知県"]],
+  ["九州・沖縄地区", ["福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"]]
+];
+const AREA_TOP = ["全国", "オンライン（Zoomなど）"];
+function areaParse(str) {
+  const o = { on: [], ex: [], free: "" };
+  String(str || "").split("／").forEach(part => {
+    const m = part.match(/^\s*(対応|除外|自由記載)：([\s\S]*)$/);
+    if (!m) { if (part.trim()) o.free = (o.free ? o.free + " " : "") + part.trim(); return; }
+    if (m[1] === "自由記載") o.free = m[2].trim();
+    else o[m[1] === "対応" ? "on" : "ex"] = m[2].split("、").map(x => x.trim()).filter(Boolean);
+  });
+  return o;
+}
+function areaString(o) {
+  return [o.on.length ? "対応：" + o.on.join("、") : "", o.ex.length ? "除外：" + o.ex.join("、") : "", o.free ? "自由記載：" + o.free.replace(/／/g, "/") : ""].filter(Boolean).join("／");
+}
+function areaPicker(box, value) {
+  const st = {}; const o = areaParse(value);
+  o.on.forEach(k => st[k] = 1); o.ex.forEach(k => st[k] = 2);
+  const chip = k => `<button type="button" class="ar-chip" data-ar="${k}" aria-pressed="false">${k}</button>`;
+  box.innerHTML = `<div class="ar-help">一度押すと <b class="ar-on-s">✓ 対応</b>、二度押すと <b class="ar-ex-s">✕ 除外</b>、三度押すと元に戻ります。</div>
+    <div class="ar-row">${AREA_TOP.map(chip).join("")}</div>
+    ${AREA_REG.map(([r, ps]) => `<div class="ar-reg"><div class="ar-row">${chip(r)}${ps.length > 1 ? `<button type="button" class="ar-more" aria-expanded="false">都道府県 ▾</button>` : ""}</div>${ps.length > 1 ? `<div class="ar-row ar-pref" hidden>${ps.map(chip).join("")}</div>` : ""}</div>`).join("")}
+    <label class="ar-free">自由記載（市区町村・細かい条件など）<input type="text" class="ar-free-in" value="${String(o.free || "").replace(/"/g, "&quot;")}" placeholder="例：大阪市内は訪問可、その他はZoom"></label>
+    <div class="ar-sum" aria-live="polite"></div>`;
+  const paint = () => {
+    box.querySelectorAll("[data-ar]").forEach(b => { const v = st[b.dataset.ar] || 0; b.className = "ar-chip" + (v === 1 ? " on" : v === 2 ? " ex" : ""); b.setAttribute("aria-pressed", v ? "true" : "false"); b.textContent = (v === 1 ? "✓ " : v === 2 ? "✕ " : "") + b.dataset.ar; });
+    const v = areaGet(box); box.querySelector(".ar-sum").textContent = v ? "登録内容：" + v : "まだ選ばれていません";
+  };
+  box._st = st;
+  box.querySelectorAll("[data-ar]").forEach(b => b.addEventListener("click", () => { const k = b.dataset.ar; st[k] = ((st[k] || 0) + 1) % 3; if (!st[k]) delete st[k]; paint(); }));
+  box.querySelectorAll(".ar-more").forEach(b => b.addEventListener("click", () => { const p = b.closest(".ar-reg").querySelector(".ar-pref"); p.hidden = !p.hidden; b.setAttribute("aria-expanded", !p.hidden); b.textContent = p.hidden ? "都道府県 ▾" : "閉じる ▴"; }));
+  // 選んだ都道府県がある地区は開いておく
+  AREA_REG.forEach(([r, ps], i) => { if (ps.some(p => st[p])) { const m = box.querySelectorAll(".ar-reg")[i].querySelector(".ar-more"); if (m) m.click(); } });
+  box.querySelector(".ar-free-in").addEventListener("input", paint);
+  paint();
+}
+function areaGet(box) {
+  const st = box._st || {}, order = AREA_TOP.concat(AREA_REG.flatMap(([r, ps]) => [r].concat(ps.length > 1 ? ps : [])));
+  const o = { on: order.filter(k => st[k] === 1), ex: order.filter(k => st[k] === 2), free: (box.querySelector(".ar-free-in") || {}).value || "" };
+  o.free = o.free.trim(); return areaString(o);
+}
+/** 文面に出てくる都道府県について、対応／除外を判定する（null は判断できない） */
+function areaMatch(str, text) {
+  const o = areaParse(str), t = String(text || "");
+  const prefs = AREA_REG.flatMap(([r, ps]) => ps.map(p => [p, r])).filter(([p]) => t.includes(p) || (p.length > 2 && t.includes(p.replace(/[都府県]$/, ""))));
+  if (!prefs.length) return null;
+  let ok = false, ex = false;
+  prefs.forEach(([p, r]) => {
+    if (o.ex.includes(p) || (o.ex.includes(r) && !o.on.includes(p))) ex = true;
+    else if (o.on.includes(p) || o.on.includes(r) || o.on.includes("全国")) ok = true;
+  });
+  return { ok, ex, prefs: prefs.map(x => x[0]) };
 }
 
 /* ===== 進み具合の設定 ===== */
