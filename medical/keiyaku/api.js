@@ -92,10 +92,12 @@ function buildBody(key, cond, note, party) {
   window.KEIYAKU_DEMO = DEMO;
   window.KEIYAKU_CORE = { TEMPLATES: TEMPLATES, FIELDS: FIELDS, normCond: normCond, buildBody: buildBody, yen: yen, MEMBER_LABEL: MEMBER_LABEL };
   function real(action, data) {
-    var body = JSON.stringify(Object.assign({ action: action }, data || {}));
+    var payload = Object.assign({ action: action }, data || {});
+    if (action.indexOf("admin.") === 0) { try { payload.adminToken = sessionStorage.getItem("iryo-adm") || ""; } catch (e) { } }
+    var body = JSON.stringify(payload);
     return fetch(URL_, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: body, redirect: "follow" })
       .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j.ok) throw new Error(j.error || "うまくいきませんでした"); return j; });
+      .then(function (j) { if (!j.ok) { var er = new Error(j.error || "うまくいきませんでした"); er.needLogin = !!j.needLogin; if (er.needLogin && window.onNeedLogin) window.onNeedLogin(); throw er; } return j; });
   }
   /* ---- お試し表示 ---- */
   var KEY = "iryo-keiyaku-demo";
@@ -106,6 +108,8 @@ function buildBody(key, cond, note, party) {
   function demo(action, d) {
     d = d || {};
     var list = load();
+    if (action === "admin.login") return d.id && d.pass ? wait({ ok: true, adminToken: "demo" }) : Promise.reject(new Error("IDとパスワードを入れてください"));
+    if (action === "admin.logout") return wait({ ok: true });
     if (action === "admin.templates") return wait({ ok: true, templates: TEMPLATES, fields: FIELDS });
     if (action === "admin.issue") {
       var t = tplOf(d.template), p = d.party || {};

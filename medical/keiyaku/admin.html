@@ -15,15 +15,20 @@
 <div class="demo" id="demoBar" hidden>お試し表示です（メールは送られず、この端末の中だけで動きます）</div>
 <header class="top"><div class="in"><span class="brand"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 4h7v8.5H28v7h-8.5V28h-7v-8.5H4v-7h8.5z"/><path class="ac" d="M16 23.5s-4-2.4-4-5.2a2.2 2.2 0 0 1 4-1.3 2.2 2.2 0 0 1 4 1.3c0 2.8-4 5.2-4 5.2z"/></svg><span><b>医療介護総合支援会</b><small>電子契約の管理（担当者用）</small></span></span></div></header>
 <main>
-<section class="card" id="gate" hidden>
+<section class="card" id="gate" hidden style="max-width:520px;margin:20px auto">
 <h2>担当者ログイン</h2>
-<p>電子契約と受付の管理画面は、支援会の Google アカウント（ikshienkai@gmail.com）で開きます。合言葉は要りません。</p>
-<p><a class="btn" id="gateLink" href="#">管理画面を開く</a></p>
-<div class="note" style="margin-top:14px"><b>開けないとき</b><br>ブラウザで複数の Google アカウントにログインしていると、「ファイルを開くことができません」と表示されます。次のどちらかで開いてください。<br>・シークレットウィンドウ（Chrome は Ctrl＋Shift＋N、Mac は ⌘＋Shift＋N）を開き、支援会のアカウントだけでログインして、このページから開く<br>・スマホで支援会のアカウントにログインして開く</div>
-<p class="hint">登録された担当者のアカウント以外では開けないようになっています。</p>
+<p class="hint">電子契約と受付の管理画面です。担当者のIDとパスワードを入れてください。</p>
+<form id="lf" autocomplete="on">
+<div class="fld"><label for="lid">ID</label><input type="text" id="lid" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="60"></div>
+<div class="fld"><label for="lpw">パスワード</label><input type="password" id="lpw" autocomplete="current-password" maxlength="100"></div>
+<p class="err" id="errL" role="alert"></p>
+<button class="btn" type="submit" id="doLogin" style="width:100%">ログイン</button>
+</form>
+<p class="hint" style="margin-top:16px">5回続けて間違えると、15分間ログインできなくなります。<br><a id="gateLink" href="#">支援会の Google アカウントで開く（別の方法）</a></p>
 </section>
 
 <div id="panel" hidden>
+<p style="text-align:right;margin:0 0 10px"><button type="button" class="small-btn" id="logout">ログアウト</button></p>
 <section class="card">
 <h2>契約書を送る</h2>
 <p class="hint">サイトの「会員登録の申込み」の通知メールを見ながら入れてください。</p>
@@ -109,7 +114,16 @@ $('rows').addEventListener('click',function(e){var b=e.target.closest('button');
  if(b.dataset.resend)api('admin.resend',{id:b.dataset.resend}).then(function(){$('errR').textContent='もう一度送りました。'}).catch(function(x){$('errR').textContent=x.message});
  if(b.dataset.cancel&&confirm('この契約書を取り消しますか？相手はもう開けなくなります。'))api('admin.cancel',{id:b.dataset.cancel}).then(list).catch(function(x){$('errR').textContent=x.message});
  if(b.dataset.pdf)api('admin.pdf',{id:b.dataset.pdf}).then(function(r){var bin=atob(r.pdf),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);var u=URL.createObjectURL(new Blob([a],{type:'application/pdf'}));var l=document.createElement('a');l.href=u;l.download=r.filename;document.body.appendChild(l);l.click();setTimeout(function(){URL.revokeObjectURL(u);l.remove()},2000)}).catch(function(x){$('errR').textContent=x.message})});
-if(IN_GAS||window.KEIYAKU_DEMO){start()}else{$('gate').hidden=false;$('gateLink').href=window.KEIYAKU_ADMIN_URL||'#'}
+var started=false;function go(){if(started){list();return}started=true;start()}
+function showLogin(m){$('panel').hidden=true;$('gate').hidden=false;$('gateLink').href=window.KEIYAKU_ADMIN_URL||'#';if(m)$('errL').textContent=m;try{$('lid').focus()}catch(x){}}
+window.onNeedLogin=function(){try{sessionStorage.removeItem('iryo-adm')}catch(x){}started=false;showLogin('ログインの有効期限が切れました。もう一度ログインしてください。')};
+$('lf').addEventListener('submit',function(e){e.preventDefault();var b=$('doLogin');if(!$('lid').value.trim()||!$('lpw').value){$('errL').textContent='IDとパスワードを入れてください。';return}
+ b.disabled=true;b.textContent='確認しています…';$('errL').textContent='';
+ api('admin.login',{id:$('lid').value.trim(),pass:$('lpw').value}).then(function(r){try{sessionStorage.setItem('iryo-adm',r.adminToken)}catch(x){}$('lpw').value='';$('gate').hidden=true;go()})
+ .catch(function(x){$('errL').textContent=x.message}).then(function(){b.disabled=false;b.textContent='ログイン'})});
+$('logout').addEventListener('click',function(){api('admin.logout',{}).catch(function(){});try{sessionStorage.removeItem('iryo-adm')}catch(x){}location.reload()});
+var tok='';try{tok=sessionStorage.getItem('iryo-adm')||''}catch(x){}
+if(IN_GAS){$('logout').hidden=true;go()}else if(tok){go()}else{showLogin()}
 })();
 </script>
 </body>
