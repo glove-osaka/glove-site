@@ -111,6 +111,13 @@ dialog.rep::backdrop{background:rgba(0,0,0,.45)}
 dialog.rep textarea{min-height:300px;font-size:1rem;line-height:1.8}
 
 [hidden]{display:none!important}
+.tabs{display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap}.tab{min-height:50px;padding:0 20px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+.tab.on{border-color:var(--pine);background:var(--pine);color:var(--on-pine)}.cnt{display:inline-block;margin-left:8px;min-width:24px;padding:0 7px;border-radius:12px;background:#B3261E;color:#fff;font-size:.85rem}
+.filters{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:14px}.filters label{display:flex;gap:8px;align-items:center;font-weight:700}.filters select,.filters input{min-height:44px;width:auto}
+.ib{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px;background:var(--surface)}.ib.new{border-left:6px solid #B3261E}.ib.doing{border-left:6px solid var(--gold-bright)}.ib.done{opacity:.75}
+.ib-h{display:flex;gap:10px;flex-wrap:wrap;align-items:baseline;justify-content:space-between}.ib-h b{font-size:1.05rem}.ib-m{font-size:.9rem;color:var(--muted)}
+.ib details{margin:8px 0}.ib pre{white-space:pre-wrap;font-family:var(--f-body);font-size:.95rem;background:var(--bg);border-radius:8px;padding:10px 12px;margin:6px 0 0}
+.ib-a{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}.ib-a select{width:auto;min-height:44px}.ib-a input{flex:1;min-width:180px;min-height:44px}
 .brand svg{width:40px;height:40px}.brand svg .ac{color:var(--gold-bright);stroke:var(--gold-bright)}
 .foot{max-width:880px;margin:0 auto;padding:0 16px 40px;text-align:right;font-size:.82rem;color:var(--muted)}
 .otp{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.otp input{max-width:220px;font-size:1.5rem;letter-spacing:.3em;text-align:center}
