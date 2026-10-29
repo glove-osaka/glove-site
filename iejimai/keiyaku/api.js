@@ -7,13 +7,32 @@
   function sess() { try { return sessionStorage.getItem("ij-admin-session") || ""; } catch (e) { return window.__ijs || ""; } }
   window.keiyakuSession = function (t) { window.__ijs = t || ""; try { if (t) sessionStorage.setItem("ij-admin-session", t); else sessionStorage.removeItem("ij-admin-session"); } catch (e) { } };
   window.keiyakuHasSession = function () { return !!sess(); };
+  // 通信は1つずつ順番に送る（同時に送ると、向こう側で順番待ちが長くなり失敗しやすいため）
+  var QUEUE = Promise.resolve();
+  var READ = /^(client\.pdf|admin\.(templates|list|pdf|login|logout)|kanri\.(dash|list|get|report\.draft))$/;
+  function once(body) {
+    return fetch(URL_, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: body, redirect: "follow" })
+      .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.text(); })
+      .then(function (t) { try { return JSON.parse(t); } catch (e) { throw new Error("bad json"); } });
+  }
   function real(action, data) {
     var extra = /^(admin|kanri)\./.test(action) && action !== "admin.login" ? { session: sess() } : {};
     var body = JSON.stringify(Object.assign({ action: action }, data || {}, extra));
-    return fetch(URL_, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: body, redirect: "follow" })
-      .then(function (r) { return r.json(); })
-      .then(function (j) { if (!j.ok) { if (j.relogin) { window.keiyakuSession(""); document.dispatchEvent(new Event("ij-relogin")); } throw new Error(j.error || "うまくいきませんでした"); } return j; });
+    var run = function () {
+      return once(body).catch(function (e) {
+        // 読むだけの操作は、通信が切れたら少し待ってもう一度だけ試す
+        if (READ.test(action)) return new Promise(function (r) { setTimeout(r, 1500); }).then(function () { return once(body); });
+        throw e;
+      }).catch(function () {
+        throw new Error(READ.test(action) ? "通信がうまくいきませんでした。電波の状態を確かめて、もう一度お試しください" :
+          "通信が途中で切れました。保存や送信ができたか分からないため、画面を開き直して確かめてから、必要ならもう一度押してください");
+      }).then(function (j) { if (!j.ok) { if (j.relogin) { window.keiyakuSession(""); document.dispatchEvent(new Event("ij-relogin")); } throw new Error(j.error || "うまくいきませんでした"); } return j; });
+    };
+    var p = QUEUE.then(run, run);
+    QUEUE = p.catch(function () { });
+    return p;
   }
+
 
   /* ---- お試し表示 ---- */
   var ISSUER = { name: "株式会社グローブ", service: "家じまい相談窓口", tel: "0120-933-496", hours: "10:00〜19:00" };
