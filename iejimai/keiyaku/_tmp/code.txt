@@ -1,0 +1,413 @@
+/**
+ * 家じまい相談窓口　電子契約（受け取り・保存・メール送信の仕組み）
+ * 動かす場所：家じまい専用の Google アカウントの Apps Script
+ *
+ * 【最初の設定】（手順書「電子契約の設定手順」も参照）
+ * 1. 家じまい専用の Google アカウントで Google ドライブを開き、新しいスプレッドシートを作る（名前：家じまい 電子契約 台帳）
+ * 2. 「拡張機能」→「Apps Script」を開き、最初からある文字を消して、このファイルの中身を貼り付ける
+ * 2b. 左の「＋」→「HTML」で「Admin」という名前のファイルを作り、Admin.html の中身を貼り付ける
+ * 3. 左の「プロジェクトの設定」（歯車）→「スクリプト プロパティ」に次の3つを登録する（合言葉は使いません）
+ *      NOTIFY_TO    … 契約が結ばれたときに知らせるメールアドレス（例：家じまい専用のGmail）
+ *      SIGN_URL     … お客様の契約画面のURL（https://glove-osaka.github.io/glove-site/iejimai/keiyaku/）
+ *      SHEET_ID     … （単独のスクリプトで動かす場合）台帳スプレッドシートのID
+ *      COMPANY_SEAL … （任意）会社の印影画像をドライブに置いたときのファイルID
+ * 4. 関数の選択で「setup」を選んで「実行」→ 権限を「許可」（保存用のフォルダとシートが作られます）
+ * 5. 「デプロイ」→「新しいデプロイ」→ 種類「ウェブアプリ」
+ *      次のユーザーとして実行：自分　／　アクセスできるユーザー：全員
+ *    → 表示された「ウェブアプリのURL」を、keiyaku/config.js の KEIYAKU_API_URL に入れる（お客様用）
+ * 6. もう一度「デプロイ」→「新しいデプロイ」→ ウェブアプリ
+ *      次のユーザーとして実行：自分　／　アクセスできるユーザー：自分のみ
+ *    → このURLの末尾に ?admin=1 を付けたものが「管理画面」。家じまい専用のGoogleアカウントでログインしていれば、合言葉なしで開けます
+ *      （keiyaku/config.js の KEIYAKU_ADMIN_URL に入れる）
+ */
+
+var SHEET = '契約';
+var COLS = ['id', 'token', 'template', 'title', 'party_name', 'party_email', 'party_company', 'fields', 'require_id',
+  'items', 'note', 'status', 'created', 'viewed', 'signed', 'values', 'hash', 'pdf_id', 'id_file_id', 'log', 'draft', 'link'];
+var ISSUER = {
+  name: '株式会社グローブ', service: '家じまい相談窓口', address: '大阪府大阪市生野区勝山南2-2-7',
+  rep: '代表取締役　藤原 重郎', tel: '0120-933-496', hours: '10:00〜19:00',
+  license: '古物商許可 大阪府公安委員会 第62102R050377号'
+};
+
+// 記入してもらえる項目（発行する人が選ぶ）
+var FIELD_DEFS = {
+  name: { label: 'お名前', type: 'text', required: true },
+  kana: { label: 'ふりがな', type: 'text' },
+  address: { label: 'ご住所', type: 'text' },
+  phone: { label: 'お電話番号', type: 'tel' },
+  birth: { label: '生年月日', type: 'date' },
+  company: { label: '会社名・屋号', type: 'text' },
+  title: { label: '役職', type: 'text' },
+  bank: { label: 'お振込先（銀行名・支店・口座番号・名義）', type: 'textarea' }
+};
+
+/* ---------- 入口 ---------- */
+// 書き込みをする操作だけ順番待ち（ロック）にする。読むだけの操作は待たずに同時に動く。
+var WRITE_ACTIONS = ['client.get', 'client.sign', 'admin.issue', 'admin.resend', 'admin.cancel', 'admin.password', 'admin.setlogin',
+  'kanri.save', 'kanri.note', 'kanri.remove', 'kanri.report.send', 'partner.apply'];
+function withLock_(action, fn) {
+  if (WRITE_ACTIONS.indexOf(action) < 0) return fn();
+  var lock = LockService.getScriptLock();
+  if (!lock.tryLock(25000)) return { ok: false, error: 'ただいま混み合っています。少し待ってから、もう一度押してください', busy: true };
+  try { return fn(); } finally { lock.releaseLock(); }
+}
+function doPost(e) {
+  var res;
+  try {
+    var req = {};
+    try { req = JSON.parse(e.postData.contents || '{}'); } catch (err) { return out_({ ok: false, error: '形式が正しくありません' }); }
+    var a = String(req.action || '');
+    res = withLock_(a, function () {
+      switch (a) {
+        case 'client.get': return clientGet_(req);
+        case 'client.sign': return clientSign_(req);
+        case 'client.pdf': return clientPdf_(req);
+        case 'admin.login': return adminLogin_(req);
+        case 'partner.apply': return kPartnerApply_(req);
+        case 'admin.logout': if (/^[0-9a-f]{64}$/.test(req.session || '')) CacheService.getScriptCache().remove('s_' + req.session); return { ok: true };
+        default:
+          if (a.indexOf('admin.') === 0 || a.indexOf('kanri.') === 0) {
+            if (!sessionOk_(req.session)) return { ok: false, error: 'ログインの有効時間が切れました。もう一度ログインしてください', relogin: true };
+            if (a === 'admin.password') return adminPassChange_(req);
+            return adminDispatch_(a, req);
+          }
+          return { ok: false, error: '不明な操作です' };
+      }
+    });
+  } catch (err) {
+    console.error(err && err.stack || err);
+    res = { ok: false, error: String(err && err.message || err) };
+  }
+  return out_(res);
+}
+function doGet(e) {
+  if (e && e.parameter && e.parameter.admin) {
+    return HtmlService.createHtmlOutputFromFile('Admin').setTitle('管理画面｜家じまい相談窓口')
+      .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+  }
+  return out_({ ok: true, service: '家じまい相談窓口 電子契約' });
+}
+
+/* ---------- 管理画面から呼ばれる（家じまい専用のGoogleアカウントだけが使える） ---------- */
+function adminCall(action, req) {
+  var me = Session.getActiveUser().getEmail(), owner = Session.getEffectiveUser().getEmail();
+  if (!me || me !== owner) return { ok: false, error: '家じまい専用の Google アカウントでログインして開いてください' };
+  try {
+    return withLock_(action, function () {
+      if (action === 'admin.setlogin') return adminSetLogin_(req || {});
+      if (action === 'admin.loginState') return { ok: true, ready: passReady_(), id: PropertiesService.getScriptProperties().getProperty('ADMIN_ID') || '' };
+      return adminDispatch_(action, req || {});
+    });
+  } catch (err) { console.error(err && err.stack || err); return { ok: false, error: String(err.message || err) }; }
+}
+function adminDispatch_(action, req) {
+  switch (action) {
+    case 'admin.templates': return { ok: true, templates: templateList_(), fields: FIELD_DEFS };
+    case 'admin.issue': return adminIssue_(req);
+    case 'admin.list': return adminList_();
+    case 'admin.resend': return adminResend_(req);
+    case 'admin.pdf': return adminPdf_(req);
+    case 'admin.cancel': return adminCancel_(req);
+    default:
+      if (action.indexOf('kanri.') === 0) return kanriCall_(action, req);
+      return { ok: false, error: '不明な操作です' };
+  }
+}
+
+/* ---------- 管理画面のログイン（ID とパスワード） ----------
+ * 「プロジェクトの設定」→「スクリプト プロパティ」に、次の2つを登録します。
+ *   ADMIN_ID   … ログインID（例：iejimai）
+ *   ADMIN_PASS … パスワード（最初のログインのときに暗号化され、この欄は自動で消えます）
+ */
+var SESSION_HOURS = 6, MAX_FAIL = 5, LOCK_MIN = 15;
+function hash_(pass, salt) {
+  var h = salt + '|' + pass;
+  for (var i = 0; i < 2000; i++) h = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, h, Utilities.Charset.UTF_8).map(function (b) { return ('0' + (b & 255).toString(16)).slice(-2); }).join('');
+  return h;
+}
+function passReady_() {
+  var P = PropertiesService.getScriptProperties(), plain = P.getProperty('ADMIN_PASS');
+  if (plain) { var salt = Utilities.getUuid(); P.setProperties({ ADMIN_SALT: salt, ADMIN_PASS_HASH: hash_(plain, salt) }); P.deleteProperty('ADMIN_PASS'); }
+  return !!(P.getProperty('ADMIN_ID') && P.getProperty('ADMIN_PASS_HASH'));
+}
+function adminLogin_(req) {
+  if (!passReady_()) return { ok: false, error: 'ログインIDとパスワードがまだ登録されていません' };
+  var C = CacheService.getScriptCache(), fk = 'fail', fails = +(C.get(fk) || 0);
+  if (fails >= MAX_FAIL) return { ok: false, error: '何度も間違えたため、' + LOCK_MIN + '分ほどログインできません。時間をおいてお試しください' };
+  var P = PropertiesService.getScriptProperties();
+  var good = String(req.id || '') === P.getProperty('ADMIN_ID') && hash_(String(req.pass || ''), P.getProperty('ADMIN_SALT')) === P.getProperty('ADMIN_PASS_HASH');
+  if (!good) { C.put(fk, String(fails + 1), LOCK_MIN * 60); Utilities.sleep(800); return { ok: false, error: 'ログインIDかパスワードが違います' }; }
+  C.remove(fk);
+  var t = Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '');
+  C.put('s_' + t, '1', SESSION_HOURS * 3600);
+  return { ok: true, session: t, hours: SESSION_HOURS };
+}
+function sessionOk_(t) {
+  if (!t || !/^[0-9a-f]{64}$/.test(t)) return false;
+  var C = CacheService.getScriptCache(); if (!C.get('s_' + t)) return false;
+  C.put('s_' + t, '1', SESSION_HOURS * 3600); return true;
+}
+// Google アカウント（家じまい専用）で開いた管理画面からだけ呼べる：ログインIDとパスワードの登録
+function adminSetLogin_(req) {
+  var id = String(req.id || '').trim(), n = String(req.pass || '');
+  if (!/^[A-Za-z0-9._-]{3,30}$/.test(id)) throw new Error('ログインIDは、半角の英字と数字で3〜30文字にしてください');
+  if (n.length < 10 || !/[A-Za-z]/.test(n) || !/[0-9]/.test(n)) throw new Error('パスワードは、英字と数字をまぜて10文字以上にしてください');
+  var salt = Utilities.getUuid(), P = PropertiesService.getScriptProperties();
+  P.setProperties({ ADMIN_ID: id, ADMIN_SALT: salt, ADMIN_PASS_HASH: hash_(n, salt) }); P.deleteProperty('ADMIN_PASS');
+  CacheService.getScriptCache().remove('fail');
+  return { ok: true };
+}
+function adminPassChange_(req) {
+  var P = PropertiesService.getScriptProperties();
+  if (hash_(String(req.current || ''), P.getProperty('ADMIN_SALT')) !== P.getProperty('ADMIN_PASS_HASH')) throw new Error('今のパスワードが違います');
+  var n = String(req.next || '');
+  if (n.length < 10 || !/[A-Za-z]/.test(n) || !/[0-9]/.test(n)) throw new Error('新しいパスワードは、英字と数字をまぜて10文字以上にしてください');
+  var salt = Utilities.getUuid(); P.setProperties({ ADMIN_SALT: salt, ADMIN_PASS_HASH: hash_(n, salt) });
+  return { ok: true };
+}
+function out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
+function prop_(k) { return PropertiesService.getScriptProperties().getProperty(k) || ''; }
+
+/* ---------- 最初の設定 ---------- */
+function setup() {
+  var ss = book_();
+  var sh = ss.getSheetByName(SHEET) || ss.insertSheet(SHEET);
+  if (sh.getLastRow() === 0) sh.appendRow(COLS);
+  folder_('契約書（押印済み）');
+  folder_('本人確認書類');
+  Logger.log('設定が終わりました。次はウェブアプリとしてデプロイしてください。');
+}
+function folder_(name) {
+  var root = DriveApp.getRootFolder();
+  var it = root.getFoldersByName('家じまい 電子契約');
+  var base = it.hasNext() ? it.next() : root.createFolder('家じまい 電子契約');
+  var it2 = base.getFoldersByName(name);
+  return it2.hasNext() ? it2.next() : base.createFolder(name);
+}
+
+/* ---------- 台帳 ---------- */
+function book_() { var id = prop_('SHEET_ID'); return id ? SpreadsheetApp.openById(id) : SpreadsheetApp.getActiveSpreadsheet(); }
+function sheet_() { var sh = book_().getSheetByName(SHEET); if (sh.getLastColumn() < COLS.length) sh.getRange(1, 1, 1, COLS.length).setValues([COLS]); return sh; }
+function rows_() {
+  var sh = sheet_(), v = sh.getDataRange().getValues(), out = [];
+  for (var i = 1; i < v.length; i++) {
+    var o = { _row: i + 1 };
+    COLS.forEach(function (c, j) { o[c] = v[i][j]; });
+    out.push(o);
+  }
+  return out;
+}
+function find_(key, val) { var r = rows_().filter(function (x) { return String(x[key]) === String(val); }); return r[0] || null; }
+function save_(o) {
+  var sh = sheet_(), line = COLS.map(function (c) { return o[c] === undefined ? '' : o[c]; });
+  if (o._row) sh.getRange(o._row, 1, 1, COLS.length).setValues([line]); else sh.appendRow(line);
+}
+function log_(o, ev) {
+  var l = []; try { l = JSON.parse(o.log || '[]'); } catch (e) { }
+  l.push({ t: new Date().toISOString(), ev: ev }); o.log = JSON.stringify(l);
+}
+
+/* ---------- 担当者 ---------- */
+function adminIssue_(req) {
+  var tp = TEMPLATES[req.template];
+  if (!tp) throw new Error('契約書の種類を選んでください');
+  var p = req.party || {};
+  if (!p.name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email || '')) throw new Error('相手のお名前とメールアドレスを入れてください');
+  var fields = (req.fields || []).filter(function (f) { return FIELD_DEFS[f]; });
+  if (fields.indexOf('name') < 0) fields.unshift('name');
+  var o = {
+    id: 'IJ-' + Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyyMMdd') + '-' + Math.floor(Math.random() * 9000 + 1000),
+    token: Utilities.getUuid().replace(/-/g, '') + Utilities.getUuid().replace(/-/g, '').slice(0, 8),
+    template: req.template, title: tp.title, party_name: p.name, party_email: p.email, party_company: p.company || '',
+    fields: JSON.stringify(fields), require_id: req.requireId ? 'yes' : '', items: JSON.stringify(req.items || []),
+    note: req.note || '', status: '送付済み', created: new Date(), viewed: '', signed: '', values: '', hash: '',
+    pdf_id: '', id_file_id: '', log: '[]', draft: req.draft ? 'yes' : '', link: /^(case|partner):[A-Z]-[0-9-]+$/.test(req.link || '') ? req.link : ''
+  };
+  log_(o, '発行');
+  save_(o);
+  sendInvite_(o);
+  return { ok: true, id: o.id, url: signUrl_(o) };
+}
+function signUrl_(o) { return (prop_('SIGN_URL') || '') + '?t=' + o.token; }
+function sendInvite_(o) {
+  var url = signUrl_(o);
+  var body = o.party_name + ' 様\n\n' + ISSUER.service + '（運営：' + ISSUER.name + '）です。\n' +
+    '「' + o.title + '」をお送りします。\n\n' +
+    '下のボタン（リンク）を押すと、契約書の画面が開きます。パスワードは要りません。\n' +
+    '内容をご確認のうえ、記入・押印・承認をお願いいたします。\n\n' + url + '\n\n' +
+    'このリンクは、' + o.party_name + ' 様だけのものです。ほかの方には転送しないでください。\n' +
+    '操作が分からないときは、お気軽にお電話ください。\n' + ISSUER.service + '　' + ISSUER.tel + '（受付 ' + ISSUER.hours + '）\n';
+  var html = '<div style="font-family:sans-serif;font-size:17px;line-height:1.9;color:#16201B">' +
+    '<p>' + esc_(o.party_name) + ' 様</p><p>' + ISSUER.service + '（運営：' + ISSUER.name + '）です。<br>「' + esc_(o.title) + '」をお送りします。</p>' +
+    '<p>下のボタンを押すと、契約書の画面が開きます。パスワードは要りません。</p>' +
+    '<p><a href="' + url + '" style="display:inline-block;background:#1D4A3D;color:#fff;text-decoration:none;font-weight:bold;font-size:19px;padding:16px 30px;border-radius:10px">契約書を開く</a></p>' +
+    '<p style="font-size:15px;color:#3B4740">このリンクは ' + esc_(o.party_name) + ' 様だけのものです。ほかの方には転送しないでください。<br>操作が分からないときは、お気軽にお電話ください。<br>' + ISSUER.service + '　<b>' + ISSUER.tel + '</b>（受付 ' + ISSUER.hours + '）</p></div>';
+  MailApp.sendEmail({ to: o.party_email, subject: '【' + ISSUER.service + '】' + o.title + 'のご確認のお願い', body: body, htmlBody: html, name: ISSUER.service });
+}
+function adminList_() {
+  return {
+    ok: true, rows: rows_().reverse().map(function (r) {
+      return { id: r.id, title: r.title, party_name: r.party_name, party_company: r.party_company, party_email: r.party_email, status: r.status, created: iso_(r.created), viewed: iso_(r.viewed), signed: iso_(r.signed), draft: r.draft, link: String(r.link || '') };
+    })
+  };
+}
+function adminResend_(req) { var o = find_('id', req.id); if (!o) throw new Error('見つかりません'); if (o.status === '締結済み') throw new Error('締結済みです'); sendInvite_(o); log_(o, '再送'); save_(o); return { ok: true }; }
+function adminCancel_(req) { var o = find_('id', req.id); if (!o) throw new Error('見つかりません'); if (o.status === '締結済み') throw new Error('締結済みのものは取り消せません'); o.status = '取り消し'; log_(o, '取り消し'); save_(o); return { ok: true }; }
+function adminPdf_(req) { var o = find_('id', req.id); if (!o || !o.pdf_id) throw new Error('まだ締結されていません'); return pdfOut_(o); }
+
+/* ---------- お客様 ---------- */
+function getByToken_(t) {
+  var o = t ? find_('token', t) : null;
+  if (!o) throw new Error('この契約書は見つかりません。リンクをご確認いただくか、お電話ください。');
+  if (o.status === '取り消し') throw new Error('この契約書は取り消されました。お電話でお問い合わせください。');
+  return o;
+}
+function clientGet_(req) {
+  var o = getByToken_(req.token);
+  if (!o.viewed) { o.viewed = new Date(); if (o.status === '送付済み') o.status = '確認中'; log_(o, '開封'); save_(o); }
+  var tp = TEMPLATES[o.template];
+  return {
+    ok: true, contract: {
+      id: o.id, title: o.title, status: o.status, draft: o.draft === 'yes', party_name: o.party_name, party_company: o.party_company,
+      body: fill_(tp.body, o, null), fields: JSON.parse(o.fields || '[]').map(function (k) { var d = FIELD_DEFS[k]; return { key: k, label: d.label, type: d.type, required: !!d.required }; }),
+      requireId: o.require_id === 'yes', issuer: ISSUER, signed: !!o.signed
+    }
+  };
+}
+function clientSign_(req) {
+  var o = getByToken_(req.token);
+  if (o.status === '締結済み') throw new Error('この契約書は、すでに締結済みです。');
+  if (o.draft === 'yes') throw new Error('この書面は下書きの確認用です。締結はできません。');
+  var fields = JSON.parse(o.fields || '[]'), v = req.values || {};
+  fields.forEach(function (k) { if (FIELD_DEFS[k].required && !String(v[k] || '').trim()) throw new Error(FIELD_DEFS[k].label + 'を入れてください'); });
+  if (!req.agree) throw new Error('内容に同意のうえ、承認してください');
+  if (!req.sealPng) throw new Error('押印がまだです');
+  if (o.require_id === 'yes' && !req.idImage) throw new Error('本人確認書類の写真を添付してください');
+  var clean = {}; fields.forEach(function (k) { clean[k] = String(v[k] || '').slice(0, 500); });
+  o.values = JSON.stringify(clean);
+  o.signed = new Date();
+  if (req.idImage) {
+    var m = String(req.idImage).match(/^data:(image\/[a-z]+);base64,(.+)$/);
+    if (m) { var f = folder_('本人確認書類').createFile(Utilities.newBlob(Utilities.base64Decode(m[2]), m[1], o.id + '_本人確認.' + m[1].split('/')[1])); o.id_file_id = f.getId(); }
+  }
+  var text = fill_(TEMPLATES[o.template].body, o, clean);
+  o.hash = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, text + JSON.stringify(clean), Utilities.Charset.UTF_8)
+    .map(function (b) { return ('0' + (b & 255).toString(16)).slice(-2); }).join('');
+  var seal = Utilities.newBlob(Utilities.base64Decode(String(req.sealPng).split(',')[1]), 'image/png', 'seal.png');
+  o.pdf_id = makePdf_(o, text, clean, seal, req.ua || '');
+  o.status = '締結済み';
+  log_(o, '押印・承認（締結）');
+  save_(o);
+  var pdf = DriveApp.getFileById(o.pdf_id).getBlob();
+  MailApp.sendEmail({ to: o.party_email, subject: '【' + ISSUER.service + '】' + o.title + '（締結済み）', name: ISSUER.service,
+    body: o.party_name + ' 様\n\nご契約の手続きが完了しました。押印済みの契約書をお送りします。大切に保管してください。\n\n' + ISSUER.service + '　' + ISSUER.tel, attachments: [pdf] });
+  var to = prop_('NOTIFY_TO'); if (to) MailApp.sendEmail({ to: to, subject: '【締結】' + o.id + ' ' + o.title + '（' + o.party_name + '）', body: '契約が締結されました。\n\n' + o.id + '\n' + o.title + '\n' + o.party_name + '\n' + o.party_email, attachments: [pdf] });
+  return pdfOut_(o);
+}
+function clientPdf_(req) { var o = getByToken_(req.token); if (!o.pdf_id) throw new Error('まだ締結されていません'); return pdfOut_(o); }
+function pdfOut_(o) { var b = DriveApp.getFileById(o.pdf_id).getBlob(); return { ok: true, filename: o.id + '_' + o.title + '.pdf', pdf: Utilities.base64Encode(b.getBytes()) }; }
+
+/* ---------- 契約書（PDF）をつくる ---------- */
+function makePdf_(o, text, vals, sealBlob, ua) {
+  var doc = DocumentApp.create(o.id + '_' + o.title), b = doc.getBody();
+  b.setMarginTop(56).setMarginBottom(56).setMarginLeft(60).setMarginRight(60);
+  var st = {}; st[DocumentApp.Attribute.FONT_SIZE] = 10.5; st[DocumentApp.Attribute.FONT_FAMILY] = 'Noto Serif JP'; b.setAttributes(st);
+  b.appendParagraph(o.title).setHeading(DocumentApp.ParagraphHeading.HEADING1).setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+  b.appendParagraph('契約番号　' + o.id).setAlignment(DocumentApp.HorizontalAlignment.RIGHT);
+  text.split('\n').forEach(function (line) {
+    var p = b.appendParagraph(line);
+    if (/^第[0-9０-９一二三四五六七八九十]+条/.test(line)) p.setBold(true); else p.setBold(false);
+  });
+  b.appendParagraph('');
+  b.appendParagraph('締結日　' + Utilities.formatDate(o.signed, 'Asia/Tokyo', 'yyyy年M月d日 HH:mm'));
+  b.appendParagraph('');
+  b.appendParagraph('【甲】').setBold(true);
+  var tp = TEMPLATES[o.template] || {};
+  b.appendParagraph(ISSUER.address + '\n' + ISSUER.name + (tp.issuer ? '\n買取大吉 大阪勝山南店' : '') + '\n' + ISSUER.rep + (tp.issuer ? '\n' + ISSUER.license : '')).setBold(false);
+  var cs = prop_('COMPANY_SEAL'); if (cs) { try { b.appendImage(DriveApp.getFileById(cs).getBlob()).setWidth(72).setHeight(72); } catch (e) { } }
+  b.appendParagraph('【乙】').setBold(true);
+  var lines = []; Object.keys(vals).forEach(function (k) { if (vals[k]) lines.push(FIELD_DEFS[k].label + '：' + vals[k]); });
+  b.appendParagraph(lines.join('\n')).setBold(false);
+  b.appendImage(sealBlob).setWidth(64).setHeight(64);
+  b.appendParagraph('');
+  b.appendParagraph('本契約は電子契約により締結されました。契約書の内容の指紋（SHA-256）：' + o.hash + '\n通知先メールアドレス：' + o.party_email + '\n端末情報：' + String(ua).slice(0, 180)).setFontSize(8);
+  doc.saveAndClose();
+  var pdf = DriveApp.getFileById(doc.getId()).getAs('application/pdf').setName(o.id + '_' + o.title + '.pdf');
+  var f = folder_('契約書（押印済み）').createFile(pdf);
+  DriveApp.getFileById(doc.getId()).setTrashed(true);
+  return f.getId();
+}
+
+/* ---------- 書面の差し込み ---------- */
+function fill_(body, o, vals) {
+  var items = []; try { items = JSON.parse(o.items || '[]'); } catch (e) { }
+  var itemText = items.length ? items.map(function (it, i) { return '　' + (i + 1) + '. ' + it.name + '　数量 ' + (it.qty || 1) + '　金額 ' + Number(it.price || 0).toLocaleString('ja-JP') + '円' + (it.note ? '（' + it.note + '）' : ''); }).join('\n') +
+    '\n　合計 ' + items.reduce(function (s, it) { return s + Number(it.price || 0); }, 0).toLocaleString('ja-JP') + '円' : '　（別紙のとおり）';
+  var name = (vals && vals.name) || o.party_name;
+  var t = body.replace(/{{party}}/g, (o.party_company ? o.party_company + '　' : '') + name)
+    .replace(/{{items}}/g, itemText).replace(/{{note}}/g, o.note || 'なし')
+    .replace(/{{date}}/g, Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy年M月d日'))
+    .replace(/{{issuer}}/g, (TEMPLATES[o.template] && TEMPLATES[o.template].issuer) || ISSUER.name).replace(/{{tel}}/g, ISSUER.tel).replace(/{{address}}/g, ISSUER.address).replace(/{{license}}/g, ISSUER.license);
+  if (o.draft === 'yes') t = '【下書き：確認用】\n' + t;
+  return t;
+}
+function iso_(d) { return d instanceof Date ? d.toISOString() : String(d || ''); }
+function esc_(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function templateList_() { return Object.keys(TEMPLATES).map(function (k) { return { key: k, title: TEMPLATES[k].title, items: !!TEMPLATES[k].items, defaultFields: TEMPLATES[k].fields, requireId: !!TEMPLATES[k].requireId }; }); }
+
+/* ---------- 契約書のひな形（弁護士確認済み） ---------- */
+var TEMPLATES = {
+  nda: {
+    title: '秘密保持契約書', fields: ['name', 'address', 'phone'],
+    body: '{{issuer}}（以下「甲」という。）と {{party}}（以下「乙」という。）は、甲が運営する家じまい相談窓口でのご相談に関し、次のとおり秘密保持契約を結ぶ。\n\n' +
+      '第1条（秘密情報）\n本契約で秘密情報とは、ご相談の内容、乙およびその家族の氏名・住所・健康や介護の状況・資産・住まいに関する情報など、相談を通じて甲が知った一切の情報をいう。\n\n' +
+      '第2条（秘密の保持）\n甲は、秘密情報を厳重に管理し、乙の事前の同意なく第三者に開示・漏えいしない。ただし、法令に基づき開示が求められた場合はこの限りでない。\n\n' +
+      '第3条（目的外利用の禁止）\n甲は、秘密情報を乙のご相談への対応以外の目的に利用しない。\n\n' +
+      '第4条（提携先・専門家への提供）\n甲は、乙の依頼により提携事業者または専門家へ取り次ぐ場合、提供する相手と情報の範囲をあらかじめ乙に示し、同意を得たうえで提供する。提供先にも本契約と同等の秘密保持を求める。\n\n' +
+      '第5条（返還・廃棄）\n乙から求めがあった場合、甲は、法令で保存が義務づけられたものを除き、秘密情報を返還または廃棄する。\n\n' +
+      '第6条（有効期間）\n本契約は締結日から効力を生じ、ご相談の終了後も5年間有効とする。\n\n' +
+      '第7条（協議）\n本契約に定めのない事項は、甲乙が誠実に協議して定める。\n\n' +
+      '第8条（管轄）\n本契約に関する紛争は、大阪地方裁判所を第一審の専属的合意管轄裁判所とする。'
+  },
+  kaitori: {
+    title: '物品売買契約書（買取）', issuer: '株式会社グローブ（買取大吉 大阪勝山南店）', items: true, requireId: true, fields: ['name', 'kana', 'address', 'phone', 'birth', 'bank'],
+    body: '{{party}}（以下「乙」という。）は、{{issuer}}（以下「甲」という。）に対し、次の物品を売り渡し、甲はこれを買い受ける。\n\n' +
+      '第1条（売買の目的物と代金）\n売買の目的物（物品の種類・数量・特徴）と代金は、次のとおりとする。\n{{items}}\n\n' +
+      '第2条（代金の支払い）\n甲は、物品の引渡しを受けた日から7日以内に、乙が指定する乙名義の口座へ振り込んで代金を支払う。振込手数料は甲が負担する。\n\n' +
+      '第3条（物品の引渡し）\n乙は、本契約の締結後、甲と取り決めた日時・方法で物品を甲に引き渡す。\n\n' +
+      '第4条（本人確認）\n乙は、古物営業法に基づく本人確認のため、甲の求める本人確認書類を提示する。\n\n' +
+      '第5条（乙の表明）\n乙は、物品が乙の所有物であり、盗品その他の不正な物品でないことを表明する。\n\n' +
+      '第6条（訪問購入の場合のクーリング・オフ）\n甲が乙の自宅等を訪問して買い取る場合（訪問購入）、乙は、この契約書を受け取った日から起算して8日を経過するまでの間、書面または電磁的記録により、無条件で契約の申込みの撤回または契約の解除（クーリング・オフ）ができる。この場合、乙は損害賠償や違約金を支払う必要はなく、すでに支払われた代金を返還し、甲は物品を乙に返還する。クーリング・オフの期間中、乙は物品の引渡しを拒むことができる。甲が物品を第三者に引き渡したときは、甲はその旨を乙に通知する。\n\n' +
+      '第7条（電磁的方法による書面の交付への同意）\n乙は、本契約書および法令で交付が必要な書面を、電磁的方法により受け取ることに同意する。\n\n' +
+      '第8条（特記事項）\n{{note}}\n\n' +
+      '第9条（管轄）\n本契約に関する紛争は、大阪地方裁判所を第一審の専属的合意管轄裁判所とする。\n\n' +
+      '甲：株式会社グローブ　買取大吉 大阪勝山南店　{{address}}　電話 {{tel}}　{{license}}'
+  },
+  chosei: {
+    title: '相談・調整業務委託契約書', fields: ['name', 'address', 'phone'],
+    body: '{{party}}（以下「乙」という。）は、{{issuer}}（以下「甲」という。）に対し、家じまいに関する相談・調整業務を委託し、甲はこれを受託する。\n\n' +
+      '第1条（業務の内容）\n甲は、次の業務を行う。\n　1. ご相談内容の整理と、進め方のご提案\n　2. 業者・専門家の選定と見積りの比較、日程の調整\n　3. 乙およびその家族との連絡・取りまとめ\n\n' +
+      '第2条（業務の範囲外）\n片付け・引越し・工事・不動産取引・身元保証・見守り・生活支援、および法律・登記・税務に関する業務は、甲の業務に含まれない。これらは、乙と各提携事業者または専門家との間の契約による。\n\n' +
+      '第3条（費用）\n本業務の費用は、次のとおりとする。\n　{{note}}\n\n' +
+      '第4条（秘密保持）\n甲は、業務を通じて知った乙の情報を秘密として扱い、乙の同意なく第三者に開示しない。\n\n' +
+      '第5条（解約）\n乙は、いつでも本契約を解約できる。この場合、乙は解約までに行われた業務の費用を支払う。\n\n' +
+      '第6条（責任の範囲）\n甲は、提携事業者・専門家が提供するサービスの内容や結果について、契約の当事者としての責任を負わない。ただし、甲の故意または重過失による損害はこの限りでない。\n\n' +
+      '第7条（管轄）\n本契約に関する紛争は、大阪地方裁判所を第一審の専属的合意管轄裁判所とする。'
+  },
+  teikei: {
+    title: '業務提携契約書（秘密保持条項付き）', fields: ['company', 'name', 'title', 'address', 'phone'],
+    body: '{{issuer}}（以下「甲」という。）と {{party}}（以下「乙」という。）は、甲が運営する家じまい相談窓口における業務提携について、次のとおり契約を結ぶ。\n\n' +
+      '第1条（目的）\n甲は、家じまい相談窓口に寄せられた相談のうち、乙の業務分野に関するものを、相談者の同意を得て乙に取り次ぐ。\n\n' +
+      '第2条（乙の業務）\n乙は、取り次がれた相談者に対し、自らの責任で見積り・契約・業務の提供を行う。相談者との契約は、乙と相談者との間で結ぶ。\n\n' +
+      '第3条（遵守事項）\n乙は、法令および必要な許可・登録を遵守し、相談者の意向を尊重し、不当な勧誘や必要のない契約の勧誘をしない。費用は事前に書面で示す。\n\n' +
+      '第4条（報告）\n乙は、取り次がれた相談の対応状況を、相談者の同意の範囲で甲に報告する。\n\n' +
+      '第5条（紹介料）\n甲は、乙から紹介料を受け取らない。その他の条件は、次のとおりとする。\n　{{note}}\n\n' +
+      '第6条（秘密保持）\n甲および乙は、本契約により知った相手方および相談者の情報を秘密として扱い、目的外に利用せず、相手方の同意なく第三者に開示しない。本条は契約終了後も5年間有効とする。\n\n' +
+      '第7条（個人情報）\n乙は、相談者の個人情報を個人情報保護法その他の法令に従い適切に取り扱う。\n\n' +
+      '第8条（契約期間）\n本契約の期間は締結日から1年間とし、期間満了の1か月前までにいずれからも申出がないときは、同じ条件で1年間更新し、以後も同様とする。\n\n' +
+      '第9条（解除）\n甲または乙が本契約に違反し、相当の期間を定めた催告後も是正しないときは、相手方は本契約を解除できる。\n\n' +
+      '第10条（反社会的勢力の排除）\n甲および乙は、自らが反社会的勢力に該当しないことを表明し、将来にわたっても該当しないことを確約する。\n\n' +
+      '第11条（管轄）\n本契約に関する紛争は、大阪地方裁判所を第一審の専属的合意管轄裁判所とする。'
+  }
+};

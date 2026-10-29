@@ -16,7 +16,7 @@ var K_TABLES = {
   },
   partner: {
     sheet: '協力企業', prefix: 'P',
-    cols: ['id', 'created', 'kind', 'name', 'person', 'phone', 'email', 'fields', 'area', 'memo', 'active', 'updated']
+    cols: ['id', 'created', 'kind', 'name', 'person', 'phone', 'email', 'fields', 'area', 'memo', 'active', 'updated', 'address', 'license', 'web', 'intro', 'source']
   }
 };
 var K_CASE_STATUS = ['新規', '連絡済み', '面談予定', '対応中', '取次ぎ中', '完了', '見送り'];
@@ -144,7 +144,7 @@ function kEnrich_(c, refs, partners) {
   }
   var assigned = {}; (refs || []).forEach(function (r) { if (['不成約', '取り下げ'].indexOf(String(r.status)) < 0) assigned[String(r.service)] = String(r.partner_name); });
   var suggest = kSplit_(c.services).map(function (s) {
-    var ps = (partners || []).filter(function (p) { return String(p.active) !== '停止' && kSplit_(p.fields).indexOf(s) >= 0; }).map(function (p) { return { id: String(p.id), name: String(p.name) }; });
+    var ps = (partners || []).filter(function (p) { return String(p.active) === '取引中' && kSplit_(p.fields).indexOf(s) >= 0; }).map(function (p) { return { id: String(p.id), name: String(p.name) }; });
     return { service: s, assigned: assigned[s] || '', partners: ps, builtins: kBuiltinFor_(s) };
   });
   var o = kOut_(c);
@@ -179,6 +179,7 @@ function kDash_() {
       yellow: open.filter(function (c) { return c.level === 'yellow'; }).length,
       open: open.length,
       refOpen: refs.filter(function (r) { return ['依頼済み', '見積もり中'].indexOf(String(r.status)) >= 0; }).length,
+      pendingPartner: kRows_('partner').filter(function (p) { return String(p.active) === '審査中'; }).length,
       waiting: contracts.filter(function (x) { return ['送付済み', '確認中'].indexOf(String(x.status)) >= 0; }).length,
       signedMonth: contracts.filter(function (x) { return x.signed instanceof Date && kDay_(x.signed).slice(0, 7) === month; }).length
     },
@@ -200,7 +201,7 @@ function kGet_(req) {
   if (req.table === 'partner') r.refs = refs.filter(function (x) { return String(x.partner_id) === String(o.id); }).map(kOut_);
   r.contracts = rows_().filter(function (x) { return String(x.link || '') === link; }).map(function (x) { return { id: x.id, title: x.title, status: x.status, created: iso_(x.created), signed: iso_(x.signed) }; });
   if (req.table === 'case' || req.table === 'ref') r.builtins = K_BUILTIN.map(function (b) { return { id: b.id, name: b.name, kind: b.kind }; });
-  if (req.table === 'case' || req.table === 'ref') r.partners = partners.filter(function (p) { return String(p.active) !== '停止'; }).map(function (p) { return { id: String(p.id), name: String(p.name), kind: String(p.kind), fields: String(p.fields) }; });
+  if (req.table === 'case' || req.table === 'ref') r.partners = partners.filter(function (p) { return String(p.active) === '取引中'; }).map(function (p) { return { id: String(p.id), name: String(p.name), kind: String(p.kind), fields: String(p.fields) }; });
   return r;
 }
 
@@ -307,5 +308,44 @@ function kReportSend_(req) {
   } else throw new Error('送り方を選んでください');
   c.last_report = kNow_(); c.reports = String(+(c.reports || 0) + 1); c.updated = kNow_();
   kPut_('case', c);
+  return { ok: true };
+}
+
+/* ---------- 協力企業の申し込み（登録用のページから。ログイン不要） ---------- */
+function kPartnerApply_(req) {
+  var d = req.form || {}, g = function (k, n) { return String(d[k] || '').trim().slice(0, n || 300); };
+  if (g('website')) return { ok: true }; // 迷惑投稿よけ（人には見えない欄）
+  var C = CacheService.getScriptCache(), hour = +(C.get('apply_n') || 0);
+  if (hour >= 30) throw new Error('ただいま申し込みが集中しています。時間をおいてお試しください');
+  var name = g('name', 100), person = g('person', 60), phone = g('phone', 30), email = g('email', 120);
+  if (!name || !person) throw new Error('会社名（事務所名）と、ご担当者のお名前を入れてください');
+  if (!phone) throw new Error('電話番号を入れてください');
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new Error('メールアドレスの形をご確認ください');
+  var fields = (d.fields || []).map(String).filter(function (x) { return K_SERVICES.indexOf(x) >= 0; });
+  var extra = kSplit_(g('fields_other', 200));
+  if (!fields.length && !extra.length) throw new Error('対応できる分野を1つ以上選んでください');
+  if (!g('area')) throw new Error('対応できる地域を入れてください');
+  if (!d.agree) throw new Error('個人情報の取り扱いと、秘密保持についての内容に同意してください');
+  var key = 'apply_' + email.toLowerCase();
+  if (C.get(key)) throw new Error('このメールアドレスからは、すでにお申し込みを受け付けています。しばらくお待ちください');
+  var dup = kRows_('partner').filter(function (p) { return String(p.email).toLowerCase() === email.toLowerCase() && String(p.active) !== '停止'; })[0];
+  var o = {
+    id: kId_('partner'), created: kNow_(), kind: g('kind', 20) === '士業' ? '士業' : '協力企業', name: name, person: person, phone: kTel_(phone), email: email,
+    fields: fields.concat(extra).join('、'), area: g('area', 200), memo: (dup ? '※同じメールアドレスの登録あり（' + dup.id + '）\n' : ''),
+    active: '審査中', updated: kNow_(), address: g('address', 200), license: g('license', 300), web: g('web', 200), intro: g('intro', 1500), source: '登録ページ'
+  };
+  kPut_('partner', o);
+  C.put(key, '1', 600); C.put('apply_n', String(hour + 1), 3600);
+  var to = prop_('NOTIFY_TO') || Session.getEffectiveUser().getEmail();
+  try {
+    MailApp.sendEmail({ to: to, name: ISSUER.service, subject: '【家じまい 管理】協力企業の申し込み：' + name,
+      body: '協力企業の申し込みが届きました。管理画面の「協力企業・士業」で内容を確かめ、「承認する」を押すと取引中になります。\n\n' +
+        '種類：' + o.kind + '\n会社名：' + name + '\n担当：' + person + '\n電話：' + o.phone + '\nメール：' + email + '\n分野：' + o.fields + '\n地域：' + o.area +
+        '\n許認可・資格：' + o.license + '\nホームページ：' + o.web + '\n\n管理画面：https://glove-osaka.github.io/glove-site/iejimai/kanri/' });
+    MailApp.sendEmail({ to: email, name: ISSUER.service, subject: '【家じまい相談窓口】協力企業のお申し込みを受け付けました',
+      body: person + ' 様\n\n' + ISSUER.service + '（運営：' + ISSUER.name + '）です。\nこのたびは、協力企業のお申し込みをいただき、ありがとうございます。\n\n' +
+        '内容を確認のうえ、担当者からご連絡いたします。提携の契約は、電子契約でお送りします。\n\n【お申し込み内容】\n会社名：' + name + '\n対応分野：' + o.fields + '\n対応地域：' + o.area +
+        '\n\nお心当たりのない場合は、このメールを破棄してください。\n\n' + ISSUER.service + '　' + ISSUER.tel + '（受付 ' + ISSUER.hours + '）' });
+  } catch (e) { console.error(e); }
   return { ok: true };
 }

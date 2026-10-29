@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>協力企業のお申し込み｜家じまい相談窓口</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDPMincho:wght@700&display=swap">
+<link rel="stylesheet" href="../keiyaku/keiyaku.css">
+</head>
+<body>
+<div class="demo" id="demoBar" hidden>お試し表示です（入力した内容は送信されません）</div>
+<header class="top"><div class="in">
+<a class="brand" href="../index.html"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><circle cx="24" cy="24" r="22.5" stroke="currentColor" stroke-width="1.6"/><path d="M10 24 24 13l14 11" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 21.5V35h20V21.5" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M21 35v-7h6v7" stroke="#C99A45" stroke-width="2.4" stroke-linejoin="round"/></svg><span><b>家じまい相談窓口</b><small>協力企業のお申し込み</small></span></a>
+<a class="tel" href="tel:0120933496">お問い合わせ <b>0120-933-496</b> <small>受付 10:00〜19:00</small></a>
+</div></header>
+<main>
+<div id="formBox">
+<h1>協力企業・士業のお申し込み</h1>
+<p>家じまい相談窓口は、ご高齢の方やそのご家族から、住まいの片付け・住み替え・相続などのご相談をお受けしています。ご相談の内容に合わせて、協力企業・士業の皆さまへおつなぎします。</p>
+<div class="note">
+<b>お申し込みの流れ</b><br>
+① このページで申し込む　→　② 担当者が内容を確認してご連絡　→　③ 業務提携契約を電子契約で結ぶ　→　④ ご相談のおつなぎを始めます<br>
+紹介料はいただいていません。取次ぎの条件は、ご相談のうえで決めます。
+</div>
+
+<form id="f" class="card" style="margin-top:20px" novalidate>
+<div class="fld"><label>種類<span class="req">必須</span></label><div class="chk"><label><input type="radio" name="kind" value="協力企業" checked> 協力企業（事業者）</label><label><input type="radio" name="kind" value="士業"> 士業（弁護士・司法書士・税理士・行政書士など）</label></div></div>
+<div class="fld"><label for="name">会社名・事務所名<span class="req">必須</span></label><input type="text" id="name" autocomplete="organization"></div>
+<div class="fld"><label for="person">ご担当者のお名前<span class="req">必須</span></label><input type="text" id="person" autocomplete="name"></div>
+<div class="fld"><label for="phone">電話番号<span class="req">必須</span></label><input type="tel" id="phone" autocomplete="tel"></div>
+<div class="fld"><label for="email">メールアドレス<span class="req">必須</span></label><input type="email" id="email" autocomplete="email"><p class="hint">受付のお知らせと、電子契約のご案内をお送りします。</p></div>
+<div class="fld"><label for="address">所在地</label><input type="text" id="address" autocomplete="street-address"></div>
+<div class="fld"><label>対応できる分野<span class="req">必須</span>（いくつでも）</label><div class="chk svc" id="fields"><label><input type="checkbox" value="家財整理・不用品買取">家財整理・不用品買取</label><label><input type="checkbox" value="生前整理">生前整理</label><label><input type="checkbox" value="遺品整理">遺品整理</label><label><input type="checkbox" value="毎月の支出の見直し">毎月の支出の見直し</label><label><input type="checkbox" value="引越し・施設入居">引越し・施設入居</label><label><input type="checkbox" value="次の住まい探し">次の住まい探し</label><label><input type="checkbox" value="退去・住まいの整理">退去・住まいの整理</label><label><input type="checkbox" value="空き家管理">空き家管理</label><label><input type="checkbox" value="不動産の売却・活用">不動産の売却・活用</label><label><input type="checkbox" value="自宅を活かした資金づくり">自宅を活かした資金づくり</label><label><input type="checkbox" value="修繕・建替え・解体">修繕・建替え・解体</label><label><input type="checkbox" value="相続・遺言">相続・遺言</label><label><input type="checkbox" value="各種手続き">各種手続き</label><label><input type="checkbox" value="業者選び・連絡調整">業者選び・連絡調整</label><label><input type="checkbox" value="ご家族への支援">ご家族への支援</label><label><input type="checkbox" value="将来への備え">将来への備え</label><label><input type="checkbox" value="その他のご相談">その他のご相談</label><label><input type="checkbox" value="身元保証・身元引受">身元保証・身元引受</label><label><input type="checkbox" value="見守り・緊急連絡先代行">見守り・緊急連絡先代行</label><label><input type="checkbox" value="死後事務の手配">死後事務の手配</label><label><input type="checkbox" value="終活・生活支援">終活・生活支援</label></div>
+<input type="text" id="fields_other" placeholder="ほかの分野（あれば）" style="margin-top:8px"></div>
+<div class="fld"><label for="area">対応できる地域<span class="req">必須</span></label><input type="text" id="area" placeholder="例：大阪市内、大阪府全域、関西一円"></div>
+<div class="fld"><label for="license">許認可・資格</label><input type="text" id="license" placeholder="例：古物商許可、一般廃棄物収集運搬、宅地建物取引業、司法書士 など"></div>
+<div class="fld"><label for="web">ホームページ</label><input type="text" id="web" placeholder="https://"></div>
+<div class="fld"><label for="intro">自己紹介・強み</label><textarea id="intro" placeholder="得意な作業、対応できる規模、ご高齢のお客様への配慮など"></textarea></div>
+<div style="position:absolute;left:-9999px" aria-hidden="true"><label>空欄のまま<input type="text" id="website" tabindex="-1" autocomplete="off"></label></div>
+<label class="agree" for="agree"><input type="checkbox" id="agree"><span>個人情報の取り扱いに同意します。また、おつなぎしたお客様の情報は、ご依頼の対応のためだけに使い、ほかに漏らさないことを約束します。</span></label>
+<p class="err" id="err" role="alert"></p>
+<div class="btns"><button class="btn" type="submit" id="send">この内容で申し込む</button></div>
+</form>
+</div>
+<section class="card ok" id="done" hidden>
+<h2>お申し込みを受け付けました</h2>
+<p>ありがとうございます。受付のメールをお送りしました。内容を確認のうえ、担当者からご連絡いたします。</p>
+<p class="hint">メールが届かない場合は、<a href="tel:0120933496">0120-933-496</a>（受付 10:00〜19:00）までお電話ください。</p>
+</section>
+</main>
+<script src="../keiyaku/config.js"></script>
+<script src="../keiyaku/api.js"></script>
+<script>
+(function(){
+var $=function(id){return document.getElementById(id)};
+if(window.KEIYAKU_DEMO)$('demoBar').hidden=false;
+$('f').addEventListener('submit',function(e){e.preventDefault();var b=$('send');$('err').textContent='';
+ var v=function(id){return $(id).value.trim()};
+ var form={kind:(document.querySelector('input[name=kind]:checked')||{}).value,name:v('name'),person:v('person'),phone:v('phone'),email:v('email'),address:v('address'),
+  fields:[].map.call($('fields').querySelectorAll('input:checked'),function(i){return i.value}),fields_other:v('fields_other'),area:v('area'),license:v('license'),web:v('web'),intro:v('intro'),website:v('website'),agree:$('agree').checked};
+ var miss=!form.name?'name':!form.person?'person':!form.phone?'phone':!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)?'email':(!form.fields.length&&!form.fields_other)?'fields_other':!form.area?'area':'';
+ if(miss){$('err').textContent={name:'会社名・事務所名',person:'ご担当者のお名前',phone:'電話番号',email:'メールアドレス',fields_other:'対応できる分野',area:'対応できる地域'}[miss]+'をご確認ください。';$(miss).focus();return}
+ if(!form.agree){$('err').textContent='同意の欄に印を付けてください。';return}
+ b.disabled=true;b.textContent='送っています…';
+ (window.KEIYAKU_DEMO?Promise.resolve({ok:true}):keiyakuApi('partner.apply',{form:form})).then(function(){$('formBox').hidden=true;$('done').hidden=false;window.scrollTo(0,0)})
+ .catch(function(x){$('err').textContent=x.message;b.disabled=false;b.textContent='この内容で申し込む'})});
+})();
+</script>
+</body>
+</html>

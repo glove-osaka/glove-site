@@ -62,7 +62,8 @@
 <div class="view" id="v-partner" hidden>
 <div class="bar"><button class="btn" type="button" data-new="partner">＋ 協力企業・士業を登録する</button>
 <input type="text" class="q" data-q="partner" placeholder="名前・分野・地域で探す" aria-label="協力企業を探す">
-<select class="fs" data-f="partner" aria-label="絞り込む"><option value="">すべて</option><option value="協力企業">協力企業</option><option value="士業">士業</option><option value="停止">停止中</option></select></div>
+<select class="fs" data-f="partner" aria-label="絞り込む"><option value="">すべて</option><option value="協力企業">協力企業</option><option value="士業">士業</option><option value="停止">停止中</option><option value="審査中">審査中（申し込み）</option></select></div>
+<div class="note" style="margin-bottom:14px">協力企業に登録してもらう時は、このURLを送ってください：<br><b id="applyUrl"></b>　<button type="button" class="small-btn" id="copyApply">URLをコピー</button></div>
 <section class="card" data-list="partner"><div class="tbl"><table class="list"><thead><tr><th>種類</th><th>名前</th><th>担当者・連絡先</th><th>対応分野</th><th>地域</th><th>契約</th></tr></thead><tbody></tbody></table></div></section>
 <section class="card ed" data-ed="partner" hidden></section>
 </div>
@@ -150,7 +151,7 @@ function idle(c){if(c.status==='完了'||c.status==='見送り')return '';var d=
 function caseLine(c){return '<li class="lv-'+(c.level||'none')+'"><button type="button" class="lnk" data-open="case" data-id="'+esc(c.id)+'"><b>'+esc(c.name)+'</b>　'+esc(short(c.services||c.fields,24))+'</button>　'+steps(c.status)+'<br>'+badges(c)+'</li>'}
 var LASTRED=-1;
 function dash(quiet){if(!quiet)$('errD').textContent='';return api('kanri.dash').then(function(r){var c=r.counts;
- var t=[['急ぎ',c.red,'case','alert','red'],['気をつける',c.yellow,'case','alert','yellow'],['未対応の新しい相談',c.newCase,'case','new',c.newCase?'red':''],['対応中の相談',c.open,'case','open',''],['進行中の取次ぎ',c.refOpen,'ref','',''],['返事待ちの契約書',c.waiting,'keiyaku','',''],['今月の締結',c.signedMonth,'keiyaku','','']];
+ var t=[['急ぎ',c.red,'case','alert','red'],['気をつける',c.yellow,'case','alert','yellow'],['未対応の新しい相談',c.newCase,'case','new',c.newCase?'red':''],['対応中の相談',c.open,'case','open',''],['進行中の取次ぎ',c.refOpen,'ref','',''],['協力企業の申し込み',c.pendingPartner||0,'partner','審査中',c.pendingPartner?'yellow':''],['返事待ちの契約書',c.waiting,'keiyaku','',''],['今月の締結',c.signedMonth,'keiyaku','','']];
  $('tiles').innerHTML=t.map(function(x){return '<button type="button" class="tile'+(x[1]&&x[4]?' t-'+x[4]:'')+'" data-go="'+x[2]+'" data-filter="'+x[3]+'"><b>'+x[1]+'</b><span>'+x[0]+'</span></button>'}).join('');
  var max=Math.max.apply(null,r.stages.map(function(s){return s.n}).concat([1]));
  $('stages').innerHTML=r.stages.map(function(s){return '<div class="stg"><span>'+esc(s.status)+'</span><i style="width:'+Math.round(s.n/max*100)+'%"></i><b>'+s.n+'</b></div>'}).join('');
@@ -173,11 +174,11 @@ var COLS={
   return '<td>'+day(c.created)+'</td><td><b>'+esc(c.name)+'</b>'+(c.status==='新規'?' <span class="al al-red">未対応</span>':'')+(c.relation?'<br><small>'+esc(c.relation)+'</small>':'')+'</td><td>'+(sg||esc(short(c.services||c.fields,30)))+'</td><td>'+steps(c.status)+'</td><td>'+idle(c)+'</td><td>'+badges(c)+'</td><td>'+esc(c.staff)+(c.next_action?'<br><small>'+(c.next_date?day(c.next_date)+' ':'')+esc(short(c.next_action,18))+'</small>':'')+'</td>'},
  ref:function(r){return '<td>'+day(r.date||r.created)+'</td><td>'+esc(r.case_name)+'</td><td>'+esc(r.partner_name)+'</td><td>'+esc(short(r.service,24))+'</td><td><span class="tag st-'+esc(r.status)+'">'+esc(r.status)+'</span></td><td>'+esc(r.amount)+'</td>'},
  partner:function(p){var ks=CONTRACTS.filter(function(k){return k.link==='partner:'+p.id&&k.status==='締結済み'}).map(function(k){return short(k.title,8)});
-  return '<td>'+esc(p.kind)+'</td><td><b>'+esc(p.name)+'</b>'+(p.active==='停止'?' <span class="tag cancel">停止</span>':'')+'</td><td>'+esc(p.person)+'<br><small>'+esc(p.phone||p.email)+'</small></td><td>'+esc(short(p.fields,24))+'</td><td>'+esc(short(p.area,14))+'</td><td>'+(ks.length?'<span class="tag done">'+esc(ks.join('・'))+'</span>':'<small>未</small>')+'</td>'}
+  return '<td>'+esc(p.kind)+'</td><td><b>'+esc(p.name)+'</b>'+(p.active==='停止'?' <span class="tag cancel">停止</span>':p.active==='審査中'?' <span class="al al-yellow">審査中</span>':'')+'</td><td>'+esc(p.person)+'<br><small>'+esc(p.phone||p.email)+'</small></td><td>'+esc(short(p.fields,24))+'</td><td>'+esc(short(p.area,14))+'</td><td>'+(ks.length?'<span class="tag done">'+esc(ks.join('・'))+'</span>':'<small>未</small>')+'</td>'}
 };
 var DONE={case:['完了','見送り'],ref:['完了','不成約','取り下げ']};
 function draw(t){var q=(document.querySelector('[data-q="'+t+'"]').value||'').trim(),f=document.querySelector('[data-f="'+t+'"]').value;
- var rows=DATA[t].filter(function(x){if(f==='open'&&DONE[t]&&DONE[t].indexOf(x.status)>=0)return false;if(f==='alert'&&!x.level)return false;if(f==='new'&&x.status!=='新規')return false;if(f==='closed'&&DONE[t]&&DONE[t].indexOf(x.status)<0)return false;if(t==='partner'&&f){if(f==='停止')return x.active==='停止';if(x.kind!==f)return false}
+ var rows=DATA[t].filter(function(x){if(f==='open'&&DONE[t]&&DONE[t].indexOf(x.status)>=0)return false;if(f==='alert'&&!x.level)return false;if(f==='new'&&x.status!=='新規')return false;if(f==='closed'&&DONE[t]&&DONE[t].indexOf(x.status)<0)return false;if(t==='partner'&&f){if(f==='停止')return x.active==='停止';if(f==='審査中')return x.active==='審査中';if(x.kind!==f)return false}
   if(q){var all=Object.keys(x).map(function(k){return typeof x[k]==='string'?x[k]:''}).join(' ');return all.indexOf(q)>=0}return true});
  var tb=document.querySelector('[data-list="'+t+'"] tbody');
  tb.innerHTML=rows.length?rows.map(function(x){return '<tr class="row'+(x.level?' lv-'+x.level:'')+(x.status==='新規'?' is-new':'')+'" tabindex="0" data-open="'+t+'" data-id="'+esc(x.id)+'">'+COLS[t](x)+'</tr>'}).join(''):'<tr><td colspan="7">'+(DATA[t].length?'当てはまるものはありません':'まだありません')+'</td></tr>'}
@@ -192,7 +193,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.cla
 /* ---------- 入力欄の決まり ---------- */
 var SPEC={
  case:[['name','お名前',1],['relation','ご関係','list:ご本人,ご家族（お子さま）,ご家族（その他）,ご親戚,ケアマネジャー・施設,その他'],['source','受付の方法','sel:電話,ホームページ,来店,紹介,その他'],['phone','電話','tel'],['email','メール','email'],['contact_pref','ご希望の連絡方法'],['area','場所（市区町村）'],['housing','住まい'],['timing','時期'],['fields','分野'],['services','内容'],['worries','お悩み','area'],['detail','ご相談の詳しい内容','area'],['status','状態','sel:@caseStatus'],['staff','担当者'],['next_action','次にやること'],['next_date','その期日','date'],['memo','メモ','area']],
- partner:[['kind','種類','sel:協力企業,士業'],['name','会社名・事務所名',1],['person','担当者のお名前'],['phone','電話','tel'],['email','メール','email'],['fields','対応分野（お客様がホームページで選ぶ「内容」と同じ名前です）','svc'],['area','対応地域'],['active','取引の状態','sel:取引中,停止'],['memo','メモ（条件・注意点など）','area']],
+ partner:[['kind','種類','sel:協力企業,士業'],['name','会社名・事務所名',1],['person','担当者のお名前'],['phone','電話','tel'],['email','メール','email'],['fields','対応分野（お客様がホームページで選ぶ「内容」と同じ名前です）','svc'],['area','対応地域'],['address','所在地'],['license','許認可・資格'],['web','ホームページ'],['active','取引の状態','sel:審査中,取引中,停止'],['intro','自己紹介・強み（申し込み時の内容）','area'],['memo','メモ（条件・注意点など）','area']],
  ref:[['partner_id','取次ぎ先',1],['partner_name','取次ぎ先の名前（「その他」を選んだ時だけ）'],['service','頼む内容'],['date','依頼日','date'],['status','状態','sel:@refStatus'],['amount','金額（見積もり・成約）'],['memo','メモ','area']]
 };
 function input(t,s,v,extra){var k=s[0],ty=s[2]||'',id='e_'+t+'_'+k,lab='<label for="'+id+'">'+esc(s[1])+(ty===1?'<span class="req">必須</span>':'')+'</label>',h;
@@ -228,6 +229,7 @@ function render(t,r){var o=r.row,isNew=!o.id,h='';
   var lg=[];try{lg=JSON.parse(o.log||'[]')}catch(e){}
   h+=sub('対応の記録','<div class="fld"><label for="eNote">対応したことを書く（例：電話でご連絡、来週訪問の約束）</label><textarea id="eNote"></textarea></div><button type="button" class="small-btn" id="eNoteBtn">記録に残す</button><ul class="log">'+lg.slice().reverse().map(function(x){return '<li><small>'+esc(x.t)+'</small>'+esc(x.text).replace(/\n/g,'<br>')+'</li>'}).join('')+'</ul>');
  }
+ if(!isNew&&t==='partner'&&o.active==='審査中'){h+='<div class="note" style="margin-top:16px">この協力企業は、登録ページから申し込みがありました（'+esc(o.created)+'）。内容を確かめて問題なければ「承認する」を押してください。<div class="btns"><button type="button" class="btn" id="eApprove">承認する（取引中にする）</button></div></div>'}
  if(!isNew&&t==='partner'){
   h+=sub('電子契約',conList(r.contracts)+'<button type="button" class="small-btn" data-sendp="teikei">業務提携契約書を送る</button><button type="button" class="small-btn" data-sendp="nda">秘密保持契約書を送る</button>');
   h+=sub('この取次ぎ先への取次ぎ',r.refs.length?'<ul class="ul">'+r.refs.map(function(x){return '<li><button type="button" class="lnk" data-open="ref" data-id="'+esc(x.id)+'">'+esc(x.case_name)+'</button>　'+esc(x.service)+'　<span class="tag st-'+esc(x.status)+'">'+esc(x.status)+'</span></li>'}).join('')+'</ul>':'<p class="hint">まだありません</p>');
@@ -244,6 +246,8 @@ document.addEventListener('click',function(e){var b=e.target.closest('button');i
  if(b.id==='eNoteBtn'){var tx=$('eNote').value.trim();if(!tx)return;b.disabled=true;api('kanri.note',{id:CUR.row.id,text:tx}).then(function(){toast('記録しました');openEd('case',CUR.row.id)}).catch(function(x){$('errE').textContent=x.message;b.disabled=false})}
  if(b.dataset.assign){var c3=CUR.row;CUR={t:'ref',row:{case_id:c3.id,case_name:c3.name,status:'依頼済み',date:new Date().toISOString().slice(0,10),service:b.dataset.svc,partner_id:b.dataset.assign},partners:CUR.partners,builtins:CUR.builtins};if(VIEW!=='ref')go('ref');render('ref',{row:CUR.row});return}
  if(b.id==='eReport'){openReport(CUR.row.id);return}
+ if(b.id==='eApprove'){var pr=Object.assign({},CUR.row,{active:'取引中'});b.disabled=true;api('kanri.save',{table:'partner',row:pr}).then(function(){toast('承認しました');if(confirm('続けて、この協力企業に業務提携契約書を送りますか？')){prefill({link:'partner:'+pr.id,label:pr.name,name:pr.person||'',company:pr.name,email:pr.email,tpl:'teikei'})}else openEd('partner',pr.id)}).catch(function(x){$('errE').textContent=x.message;b.disabled=false});return}
+ if(b.id==='copyApply'){var u=$('applyUrl').textContent;(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(function(){toast('URLをコピーしました')}).catch(function(){prompt('このURLをコピーしてください',u)});return}
  if(b.id==='eAddRef'){var c=CUR.row;CUR={t:'ref',row:{case_id:c.id,case_name:c.name,status:'依頼済み',date:new Date().toISOString().slice(0,10),service:c.services||''},partners:CUR.partners,builtins:CUR.builtins};
   if(VIEW!=='ref')go('ref');render('ref',{row:CUR.row})}
  if(b.id==='eSendK'){var c2=CUR.row;prefill({link:'case:'+c2.id,label:c2.name+' 様の相談',name:c2.name,email:c2.email,tpl:'nda'})}
@@ -302,7 +306,7 @@ $('rows').addEventListener('click',function(e){var b=e.target.closest('button');
  if(b.dataset.cancel&&confirm('この契約書を取り消しますか？相手はもう開けなくなります。'))api('admin.cancel',{id:b.dataset.cancel}).then(list).catch(function(x){$('errR').textContent=x.message});
  if(b.dataset.pdf)api('admin.pdf',{id:b.dataset.pdf}).then(function(r){var bin=atob(r.pdf),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);var u=URL.createObjectURL(new Blob([a],{type:'application/pdf'}));var l=document.createElement('a');l.href=u;l.download=r.filename;document.body.appendChild(l);l.click();setTimeout(function(){URL.revokeObjectURL(u);l.remove()},2000)}).catch(function(x){$('errR').textContent=x.message})});
 
-function start(){$('tabs').hidden=false;soundLabel();
+function start(){$('tabs').hidden=false;soundLabel();$('applyUrl').textContent=(window.KEIYAKU_SITE_URL||'https://glove-osaka.github.io/glove-site/iejimai/')+'kyoryoku/';
  api('admin.templates').then(function(r){TPL=r.templates;FIELDS=r.fields;$('tpl').innerHTML=TPL.map(function(t){return'<option value="'+t.key+'">'+esc(t.title)+'</option>'}).join('');onTpl()}).catch(function(e){$('errI').textContent=e.message});
  go('dash')}
 function showLogin(msg){$('tabs').hidden=true;document.querySelectorAll('.view').forEach(function(x){x.hidden=true});$('gate').hidden=false;$('errL').textContent=msg||'';$('lpw').value='';setTimeout(function(){$('lid').focus()},50)}
