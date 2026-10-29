@@ -109,3 +109,4 @@ li.lv-red{border-left:6px solid #B3261E;padding-left:10px}li.lv-yellow{border-le
 dialog.rep{width:min(760px,calc(100vw - 24px));max-height:calc(100vh - 24px);border:0;border-radius:14px;padding:22px 20px;background:var(--surface);color:var(--ink)}
 dialog.rep::backdrop{background:rgba(0,0,0,.45)}
 dialog.rep textarea{min-height:300px;font-size:1rem;line-height:1.8}
+.asg{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.small-btn.bi{border-style:dashed}
