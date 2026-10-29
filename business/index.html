@@ -1285,6 +1285,7 @@ html.lite body *:not(#intro):not(#intro *){animation-iteration-count:1!important
 html.lite .hero2 h1 .g{animation:none!important}
 html.lite #scene #stars{display:none}
 </style>
+<style>.ftr .copy .adm-link{color:var(--on-dark-mute,#A7B4C7);font-size:.78rem;text-decoration:none;border-bottom:1px solid rgba(167,180,199,.4)}.ftr .copy .adm-link:hover{color:#fff}</style>
 </head><body>
 <a class="skip" href="#view">本文へスキップ</a>
 <div id="glow" aria-hidden="true"></div><div id="scene" aria-hidden="true"><div class="ly space"><canvas id="stars"></canvas></div><div class="ly earth"></div><div class="ly city"></div></div>
@@ -1472,7 +1473,7 @@ html.lite #scene #stars{display:none}
     <div><h4>BUSINESS</h4><ul><li><a href="#business">事業領域</a></li><li><a href="#business-reuse">リユース・買取事業</a></li><li><a href="#business-care">医療・介護総合支援</a></li><li><a href="#business-management">企業経営支援</a></li><li><a href="#finder">法人向けサービス</a></li></ul></div>
     <div><h4>SUPPORT</h4><ul><li><a href="#contact">お問い合わせ</a></li><li><a href="#privacy">プライバシーポリシー</a></li><li><a href="#terms">利用規約</a></li><li><a href="#disclaimer">免責事項</a></li><li><a href="#sitemap">サイトマップ</a></li><li><a href="#admin-login">管理者ログイン</a></li></ul></div>
   </div>
-  <div class="copy"><span>© <span id="year"></span> 株式会社グローブ</span><span id="f-kobutsu">古物商許可　株式会社グローブ　大阪府公安委員会 第62102R050377号</span></div>
+  <div class="copy"><span>© <span id="year"></span> 株式会社グローブ</span><a class="adm-link" href="#admin-login">管理者ログイン</a><span id="f-kobutsu">古物商許可　株式会社グローブ　大阪府公安委員会 第62102R050377号</span></div>
 </div></footer>
 <script>
 /* ===== テーマ曲（オリジナル）：トップ到着時に再生を試み、ブラウザが止めた場合は最初のタップで開始。ボタンでいつでも停止 ===== */
@@ -3520,7 +3521,7 @@ function paintFooter() {
 $("#menu-btn").addEventListener("click", () => { const n = $("#gnav"); n.classList.toggle("open"); $("#menu-btn").setAttribute("aria-expanded", n.classList.contains("open")); });
 addEventListener("hashchange", () => { if (globeStop && route() !== "home") { globeStop(); globeStop = null; } render(); });
 $("#year").textContent = new Date().getFullYear();
-if (PATH_MODE) $$('footer a[href="#admin-login"], footer a[data-r="admin-login"]').forEach(a => (a.closest("li") || a).remove());
+if (PATH_MODE) $$('footer a[href="#admin-login"]').forEach(a => { a.setAttribute("href", BASE + "kanri/"); a.setAttribute("rel", "nofollow"); });
 fixLinks(document); jaLabels(document.body); foldFooter(); initScene();
 if ("IntersectionObserver" in window) { const vio = new IntersectionObserver(es => es.forEach(e => { const v = e.target; if (e.isIntersecting) { if (v.dataset.auto !== "0") { const pr = v.play(); pr && pr.catch(() => {}); } } else v.pause(); }), { rootMargin: "100px" });
   new MutationObserver(() => $$("video").forEach(v => { if (!v.dataset.vio) { v.dataset.vio = "1"; vio.observe(v); } })).observe(document.body, { childList: true, subtree: true });
