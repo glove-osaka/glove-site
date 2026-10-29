@@ -134,6 +134,25 @@ table.rt input{padding:7px 10px}
 .lg-note{font-size:.8rem;color:var(--mute);margin:10px 0 0}
 .lg-link{display:block;margin:12px auto 0;background:none;border:0;color:var(--blue);text-decoration:underline;font:inherit;font-size:.88rem;cursor:pointer;padding:6px}
 #rgf .btn{width:100%;margin:6px 0}
+.assist{border-color:#C9D8EE;background:linear-gradient(#F7FAFF,#fff)}
+.as-iss{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:6px}
+.as-iss li{padding:8px 10px;border-radius:8px;font-size:.88rem;line-height:1.6}
+.as-iss li.lv2{background:var(--redbg);color:#8E2A20}.as-iss li.lv1{background:var(--yelbg);color:#7A5210}
+.lnk{background:none;border:0;color:var(--blue);text-decoration:underline;font:inherit;font-size:.84rem;cursor:pointer;padding:0 4px}
+.hint.ok{color:var(--grn)}
+.as-todo{margin:4px 0 10px;padding-left:1.4em;font-size:.9rem;line-height:1.8}
+.as-sub{font-size:.88rem;margin:8px 0 4px;color:var(--navy)}
+.as-cand{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:6px}
+.as-cand li{display:flex;gap:10px;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff}
+.as-list{display:grid;gap:8px;margin-bottom:14px}
+.as-row{display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;border:1px solid var(--line);border-left:4px solid var(--line);border-radius:10px;background:#fff;padding:10px 12px;font-size:.9rem;line-height:1.7;cursor:pointer;color:var(--ink)}
+.as-row.lv2{border-left-color:var(--red)}.as-row.lv1{border-left-color:var(--yel)}
+.as-h{font-size:1rem;color:var(--navy);margin:16px 0 8px}
+.pt-cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:4px 12px;margin-top:6px;font-size:.88rem}
+.pt-cats label{display:flex;gap:6px;align-items:center;font-weight:400}
+.st-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.st-grid textarea{min-height:90px;font-size:.88rem}
+.stepbtns button{font-size:.8rem;padding:7px 8px}
 </style>
 </head>
 <body>
@@ -173,7 +192,9 @@ table.rt input{padding:7px 10px}
   </header>
   <nav class="tabs" role="tablist">
     <button role="tab" data-tab="inbox" aria-selected="true">ご相談<span class="cnt hide" id="cnt-inbox"></span></button>
-    <button role="tab" data-tab="routes" aria-selected="false">取次ぎ先の設定</button>
+    <button role="tab" data-tab="assist" aria-selected="false">🧭 アシスト<span class="cnt hide" id="cnt-assist"></span></button>
+    <button role="tab" data-tab="pt" aria-selected="false">取次先の登録</button>
+    <button role="tab" data-tab="stages" aria-selected="false">進み具合の設定</button>
     <button role="tab" data-tab="users" aria-selected="false">担当者・パスワード</button>
   </nav>
   <main id="main"></main>
@@ -290,7 +311,7 @@ $("#b-reload").addEventListener("click", () => load(false));
 setInterval(() => { if (TOKEN && D && !document.hidden) load(false); }, 3 * 60 * 1000);
 
 /* ===== 注意度 ===== */
-function isEnd(c) { return c.status === D.stopped[c.kind] || c.status === D.steps[c.kind][D.steps[c.kind].length - 1]; }
+function isEnd(c) { return (D.ends || []).includes(c.status) || c.status === D.stopped[c.kind]; }
 function level(c) {
   if (isEnd(c)) return { lv: 0, why: "" };
   const R = D.rules, now = Date.now(), ts = parseTs(c.ts), up = parseTs(c.updated) || ts;
@@ -310,7 +331,10 @@ function render() {
     const el = $("#cnt-" + k); el.textContent = n; el.classList.toggle("hide", !n); });
   const reds = D.cases.filter(c => c.lv === 2).length;
   document.title = (reds ? `(${reds}) ` : "") + "相談管理｜企業支援 総合相談窓口";
-  if (TAB === "routes") return renderRoutes();
+  const ac = assistAll().filter(x => x.lv >= 2).length; const ea = $("#cnt-assist"); ea.textContent = ac; ea.classList.toggle("hide", !ac);
+  if (TAB === "assist") return renderAssist();
+  if (TAB === "pt") return renderPartners();
+  if (TAB === "stages") return renderStages();
   if (TAB === "users") return renderUsers();
   renderList();
 }
@@ -354,7 +378,7 @@ function renderList() {
 }
 
 function catFirst(c) { return String(c.cat || "").split("、")[0]; }
-function sugg(c) { const r = D.routes.find(x => x.cat === catFirst(c)); return r && r.partner ? r.partner : ""; }
+function sugg(c) { const k = candidates(c)[0]; return k ? k.p.name : ""; }
 function stepsBar(c) {
   const st = D.steps[c.kind], i = st.indexOf(c.status), stop = c.status === D.stopped[c.kind];
   return `<div class="steps ${stop ? "stop" : ""}" title="${esc(st.join(" → "))}">${st.map((s, j) => `<i class="${j < i ? "on" : j === i ? "cur" : ""}"></i>`).join("")}</div>`;
@@ -372,8 +396,8 @@ function row(c) {
   const contact = c.contacted ? `最終連絡 ${ago(c.contacted)}前` : "お客様へ未連絡";
   return `<button class="case lv${c.lv} ${isNew(c) ? "new" : ""} ${isEnd(c) ? "done" : ""}" data-no="${esc(c.no)}">
     <div><div class="c-top"><span>${esc(c.no)}</span><span>受付 ${jst(c.ts)}</span><span class="badge b-gray">受付から ${ago(c.ts)}</span>${warn}</div>
-      <div class="c-name">${esc(name)}</div><div class="c-sub">${esc(person)} 様${c.method ? "　希望：" + esc(c.method) : ""}</div></div>
-    <div class="route">${c.kind === "inbox" ? `<span>${esc(cat)}</span><span class="arr">→</span>${c.partner ? `<span class="p">${esc(c.partner)}</span>` : sugg(c) ? `<span class="p sug">${esc(sugg(c))}（設定から・未確定）</span>` : `<span class="p none">取次ぎ先 未設定</span>`}` : `<span>業種：${esc(cat)}</span>`}
+      <div class="c-name">${esc(name)}</div><div class="c-sub">${esc(person)} 様${c.mid ? "　" + esc(c.mid) + (c.sub ? "／" + esc(c.sub) : "") : ""}</div></div>
+    <div class="route">${c.kind === "inbox" ? `<span>${esc(cat)}</span><span class="arr">→</span>${c.partner ? `<span class="p">${esc(c.partner)}</span>` : sugg(c) ? `<span class="p sug">候補：${esc(sugg(c))}</span>` : `<span class="p none">取次ぎ先 未設定</span>`}` : `<span>業種：${esc(cat)}</span>`}
       ${c.staff ? `<span class="badge b-gray">担当 ${esc(c.staff)}</span>` : ""}</div>
     <div>${stepsBar(c)}<div class="c-st">${stBadge(c)}<span>更新 ${ago(c.updated)}前・${contact}</span></div></div>
   </button>`;
@@ -386,8 +410,9 @@ function openCase(no, keep) {
   const c = D.cases.find(x => x.no === no); if (!c) return;
   OPEN = no;
   const st = D.steps[c.kind], i = st.indexOf(c.status);
-  const routeHint = D.routes.find(r => r.cat === catFirst(c)) || null;
-  const partners = [...new Set(D.routes.map(r => r.partner).filter(Boolean).concat(c.partner ? [c.partner] : []))];
+  const cands = candidates(c);
+  const partners = [...new Set(D.partners.filter(p => p.active !== "休止").map(p => p.name).concat(c.partner ? [c.partner] : []))];
+  const mids = stageMids(c.status);
   const staffList = [...new Set(D.users.map(u => u.name).concat(c.staff ? [c.staff] : []))];
   const info = c.kind === "inbox"
     ? [["会社名・屋号", c.company], ["お名前", c.name + " 様"], ["メール", c.email], ["電話番号", c.tel], ["分野", c.cat], ["専門家への共有", c.share === "同意" ? "同意あり" : "あとで確認（共有の前に要確認）"], ["ご相談内容", c.body]]
@@ -399,12 +424,18 @@ function openCase(no, keep) {
     <div class="dr-head"><h2>${esc(c.no)}　${esc(c.company || c.name)}</h2><button class="btn btn-sm" id="d-close">閉じる ✕</button></div>
     <div class="dr-body">
       ${c.lv ? `<div class="alertbar" style="margin:0;${c.lv === 1 ? "background:var(--yelbg);border-color:#F1D59A;color:#7A5210" : ""}"><span class="bell">${c.lv === 2 ? "🔔" : "△"}</span>${esc(c.why)}　受付から ${ago(c.ts)}・最終更新から ${ago(c.updated)}</div>` : ""}
-      <div class="card"><h3>進み具合 <small>押すとその段階に進めます</small></h3>
+      ${assistCard(c, cands)}
+      <div class="card"><h3>進み具合 <small>大分類を押すとその段階に進めます</small></h3>
         <div class="stepbtns">${st.map((s, j) => `<button data-step="${esc(s)}" class="${j < i ? "past" : j === i ? "cur" : ""}">${j + 1}. ${esc(s)}</button>`).join("")}
           <button data-step="${esc(D.stopped[c.kind])}" class="stop ${c.status === D.stopped[c.kind] ? "cur" : ""}">${esc(D.stopped[c.kind])}</button></div>
+        <div class="grid2" style="margin-top:10px">
+          <label class="f">中分類<select id="d-mid"><option value="">（選ぶ）</option>${mids.map(m => `<option ${m.mid === c.mid ? "selected" : ""}>${esc(m.mid)}</option>`).join("")}${c.mid && !mids.some(m => m.mid === c.mid) ? `<option selected>${esc(c.mid)}</option>` : ""}</select></label>
+          <label class="f">小分類<select id="d-sub"></select></label>
+        </div>
+        <label class="f">詳細（いまの状況・決まったこと・相手の返事など）<textarea id="d-detail" style="min-height:64px" placeholder="例：〇〇行政書士事務所に紹介。11/5に初回面談の予定">${esc(c.detail || "")}</textarea></label>
         <div class="grid2">
-          ${c.kind === "inbox" ? `<label class="f">取次ぎ先（専門家・提携先）<select id="d-partner"><option value="">（未設定）</option>${partners.map(p => `<option ${p === (c.partner || sugg(c)) ? "selected" : ""}>${esc(p)}</option>`).join("")}<option value="__other">ほかの取次ぎ先を入力…</option></select>
-            <span class="hint">${routeHint && routeHint.partner ? `分野「${esc(catFirst(c))}」の取次ぎ先：<b>${esc(routeHint.partner)}</b>${routeHint.person ? "（" + esc(routeHint.person) + "）" : ""}${routeHint.contact ? "　" + esc(routeHint.contact) : ""}` : `分野「${esc(catFirst(c))}」の取次ぎ先は未設定です（取次ぎ先の設定で登録できます）`}</span></label>` : ""}
+          ${c.kind === "inbox" ? `<label class="f">取次ぎ先（専門家・提携先）<select id="d-partner"><option value="">（未設定）</option>${partners.map(p => `<option ${p === c.partner ? "selected" : ""}>${esc(p)}</option>`).join("")}<option value="__other">ほかの取次ぎ先を入力…</option></select>
+            <span class="hint">${partnerHint(c.partner)}</span></label>` : ""}
           <label class="f">担当者<select id="d-staff"><option value="">（未設定）</option>${staffList.map(s => `<option ${s === c.staff ? "selected" : ""}>${esc(s)}</option>`).join("")}</select></label>
           <label class="f">次の対応予定日<input type="date" id="d-next" value="${esc((c.next || "").replace(/\//g, "-").slice(0, 10))}"></label>
         </div>
@@ -414,7 +445,7 @@ function openCase(no, keep) {
       <div class="card compose" id="compose"><h3>📨 お客様への進捗報告 <small>文面は自動で作ります。送るかどうかは担当者が決めます</small></h3>
         <div class="hint ${lcH != null && lcH < D.rules.recontactHours ? "warn" : ""}">${lc ? `前回の連絡：${jst(lc)}（${ago(lc)}前）${lcH < D.rules.recontactHours ? `　※${D.rules.recontactHours}時間以内です。連絡が多すぎないか確かめてください` : ""}` : "まだお客様へ連絡していません"}</div>
         ${!c.email ? `<div class="hint red">メールアドレスの入力がないため、お電話でご連絡ください。電話で伝えた内容は「送らずに記録」で残せます。</div>` : ""}
-        <label class="f">報告の内容<select id="r-kind">${st.concat([D.stopped[c.kind], "途中経過のお知らせ"]).map(s => `<option ${s === c.status ? "selected" : ""}>${esc(s)}</option>`).join("")}</select></label>
+        <label class="f">報告の内容<select id="r-kind">${st.filter(x => !INTERNAL.includes(x)).concat([D.stopped[c.kind], "途中経過のお知らせ"]).map(s => `<option ${s === (INTERNAL.includes(c.status) ? "途中経過のお知らせ" : c.status) ? "selected" : ""}>${esc(s)}</option>`).join("")}</select></label>
         <label class="f">件名<input type="text" id="r-sub"></label>
         <label class="f">本文<textarea id="r-body" rows="12" style="min-height:260px"></textarea></label>
         <div class="row">
@@ -440,11 +471,16 @@ function openCase(no, keep) {
   $("#d-close").onclick = closeCase;
   const ps = $("#d-partner");
   if (ps) ps.onchange = () => { if (ps.value === "__other") { const v = prompt("取次ぎ先（事務所名・会社名）を入れてください"); if (v) { const o = document.createElement("option"); o.textContent = v.trim(); o.selected = true; ps.insertBefore(o, ps.lastElementChild); } else ps.value = c.partner || ""; } };
+  const paintSub = () => { const m = mids.find(x => x.mid === $("#d-mid").value); const subs = m ? m.subs : []; const cur = $("#d-mid").value === c.mid ? c.sub : "";
+    $("#d-sub").innerHTML = `<option value="">（選ぶ）</option>` + subs.map(x => `<option ${x === cur ? "selected" : ""}>${esc(x)}</option>`).join("") + (cur && !subs.includes(cur) ? `<option selected>${esc(cur)}</option>` : ""); };
+  paintSub(); $("#d-mid").onchange = paintSub;
+  $$("[data-pick]").forEach(b => b.onclick = () => { const v = b.dataset.pick, sel = $("#d-partner"); if (![...sel.options].some(o => o.value === v)) { const o = document.createElement("option"); o.textContent = v; sel.insertBefore(o, sel.lastElementChild); } sel.value = v; $(".hint", sel.parentNode).innerHTML = partnerHint(v); toast("取次先を「" + v + "」にしました。保存を押すと確定します"); sel.scrollIntoView({ behavior: "smooth", block: "center" }); });
+  $$("[data-goto]").forEach(b => b.onclick = () => { const t = $(b.dataset.goto); if (t) { t.scrollIntoView({ behavior: "smooth", block: "center" }); if (t.focus) t.focus(); } });
   $("#d-save").onclick = () => save(c, {});
   $$("[data-step]").forEach(b => b.onclick = () => {
     const s = b.dataset.step; if (s === c.status) return;
     if (s === D.stopped[c.kind] && !confirm("「" + s + "」にしますか？")) return;
-    save(c, { status: s }, true);
+    save(c, { status: s, mid: "", sub: "" }, true);
   });
   $("#d-memo-add").onclick = async () => { const m = $("#d-memo").value.trim(); if (!m) return; busy(true); try { await call("updateCase", TOKEN, c.kind, c.no, { memo: m }); toast("メモを追加しました"); await load(false); } catch (e) { toast("保存できませんでした"); } finally { busy(false); } };
   let variant = 0;
@@ -466,10 +502,10 @@ function closeCase() { OPEN = null; $("#drawer").classList.add("hide"); $("#draw
 document.addEventListener("keydown", e => { if (e.key === "Escape" && OPEN) closeCase(); });
 
 async function save(c, extra, stepped) {
-  const patch = Object.assign({ staff: $("#d-staff").value, next: $("#d-next").value ? $("#d-next").value.replace(/-/g, "/") : "" }, extra);
+  const patch = Object.assign({ staff: $("#d-staff").value, next: $("#d-next").value ? $("#d-next").value.replace(/-/g, "/") : "", mid: $("#d-mid").value, sub: $("#d-sub").value, detail: $("#d-detail").value.trim() }, extra);
   const ps = $("#d-partner"); if (ps) patch.partner = ps.value === "__other" ? c.partner : ps.value;
   // 取次ぎの段階に進めたとき、取次ぎ先が空なら設定から自動で入れる
-  if (patch.status === "専門家へ取次ぎ済み" && !patch.partner) { const r = D.routes.find(x => x.cat === catFirst(c)); if (r && r.partner) patch.partner = r.partner; }
+  if (patch.status === "対応先取次" && !patch.partner) { const k = candidates(c)[0]; if (k) patch.partner = k.p.name; }
   busy(true);
   try {
     await call("updateCase", TOKEN, c.kind, c.no, patch);
@@ -497,38 +533,216 @@ function genReport(c, kind, v) {
   ][(v + 1) % 3];
   const B = {
     "未対応": `${topic}を確かに受け付けました。\n内容を確認のうえ、窓口の担当者より改めてご連絡いたします。`,
-    "内容確認中": `いただいた内容を、担当の${staff}が確認しております。\n必要に応じて、詳しい状況をお電話・メール・Zoomでお伺いすることがございます。2〜3営業日を目安に、今後の進め方をご案内いたします。`,
-    "専門家へ取次ぎ済み": share
-      ? `ご相談の内容に合わせて、対応する専門家（提携先）を選び、おつなぎいたしました。\n専門家から直接ご連絡を差し上げる場合は、事前にお知らせいたします。報酬・費用は、専門家から直接ご案内いたします。`
+    "内容確認": `いただいた内容を、担当の${staff}が確認しております。\n必要に応じて、詳しい状況をお電話・メール・Zoomでお伺いすることがございます。2〜3営業日を目安に、今後の進め方をご案内いたします。`,
+    "対応選定": `ご相談の内容をもとに、対応の方法と、おつなぎする専門家・提携先を検討しております。\n候補が決まりましたら、進め方とあわせてご案内いたします。`,
+    "対応先取次": share
+      ? `ご相談の内容に合わせて、対応する専門家（提携先）を選び、おつなぎいたしました${c.partner ? "（" + c.partner + "）" : ""}。\n専門家から直接ご連絡を差し上げる場合は、事前にお知らせいたします。専門家の報酬・費用は、専門家から直接ご案内いたします。`
       : `ご相談の内容に合わせて、対応できる専門家（提携先）の候補を選びました。\nお客様の情報を専門家へお伝えする前に、改めてご了承のご確認をさせていただきます。追ってご連絡いたしますので、少々お待ちください。`,
-    "専門家対応中": `現在、専門家とともに、具体的な進め方や必要な準備について検討を進めております。\n進み具合に応じて、改めてご報告いたします。`,
-    "提案・見積り中": `ご提案内容（必要に応じてお見積り）を取りまとめております。\nまとまり次第お送りいたしますので、ご確認をお願いいたします。ご契約は電子契約で行えますので、来社や書類の郵送は不要です。`,
-    "完了": `このたびのご相談につきまして、対応が完了いたしましたのでご報告いたします。\nご相談いただき、誠にありがとうございました。今後も、経営や事業のことでお困りの際は、いつでもお気軽にご相談ください。`,
+    "取次先対応中": `現在、専門家とともに、具体的な進め方や必要な準備について検討を進めております。\n進み具合に応じて、改めてご報告いたします。`,
+    "提案見積中": `ご提案内容（必要に応じてお見積り）を取りまとめております。\nまとまり次第お送りいたしますので、ご確認をお願いいたします。ご契約は電子契約で行えますので、来社や書類の郵送は不要です。`,
+    "実行中": `ご契約いただいた内容について、手続き・作業を進めております。\n節目ごとに、進み具合をご報告いたします。`,
+    "対応完了": `このたびのご相談につきまして、対応が完了いたしましたのでご報告いたします。\n今後のお手続き（お支払いなど）がございます場合は、改めてご案内いたします。`,
+    "支払い": `ご依頼いただいた内容につきまして、お支払いのご案内をお送りいたします。\n内容をご確認のうえ、期日までにお手続きをお願いいたします。ご不明な点はお気軽にお問い合わせください。`,
+    "完了": `このたびのご相談につきまして、すべてのお手続きが完了いたしました。\nご相談いただき、誠にありがとうございました。今後も、経営や事業のことでお困りの際は、いつでもお気軽にご相談ください。`,
+    "次回アプローチ": `以前ご相談いただいた件につきまして、その後のご状況はいかがでしょうか。\n更新の時期や、新しく使える制度・サービスなど、お役に立てる情報がございましたらご案内いたします。お気軽にご返信ください。`,
     "見送り": `ご相談の内容を慎重に検討いたしましたが、誠に恐縮ながら、今回は当窓口および提携先でのお手伝いが難しいとの結論となりました。\nご期待に沿えず申し訳ございません。状況が変わった際や、別のご相談がございましたら、改めてお声がけください。`,
-    "途中経過のお知らせ": `ご相談につきまして、引き続き対応を進めております。\n現在の状況：${c.status}\n次の段階に進み次第、改めてご報告いたします。`
+    "途中経過のお知らせ": `ご相談につきまして、引き続き対応を進めております。\n現在の状況：${c.status}${c.mid ? "（" + c.mid + (c.sub ? "・" + c.sub : "") + "）" : ""}\n次の段階に進み次第、改めてご報告いたします。`
   };
   const title = {
-    "未対応": "受付のお知らせ", "内容確認中": "内容確認のご報告", "専門家へ取次ぎ済み": "今後の進め方のご報告", "専門家対応中": "進捗のご報告",
-    "提案・見積り中": "ご提案準備のご報告", "完了": "対応完了のご報告", "見送り": "ご相談へのご回答", "途中経過のお知らせ": "途中経過のご報告"
+    "未対応": "受付のお知らせ", "内容確認": "内容確認のご報告", "対応選定": "進め方のご検討状況", "対応先取次": "今後の進め方のご報告", "取次先対応中": "進捗のご報告",
+    "提案見積中": "ご提案準備のご報告", "実行中": "進捗のご報告", "対応完了": "対応完了のご報告", "支払い": "お支払いのご案内", "完了": "お手続き完了のご報告",
+    "次回アプローチ": "その後のご状況について", "見送り": "ご相談へのご回答", "途中経過のお知らせ": "途中経過のご報告"
   }[kind] || "進捗のご報告";
   const subject = `【企業支援 総合相談窓口】${title}（受付番号 ${c.no}）`;
   const body = `${who}\n\n${open}\n\n${B[kind] || B["途中経過のお知らせ"]}\n\n受付番号：${c.no}\n担当：${staff}\n\n${close}\n\n${D.signature}`;
   return { subject, body };
 }
 
-/* ===== 取次ぎ先の設定 ===== */
-function renderRoutes() {
-  const open = D.cases.filter(c => c.kind === "inbox" && !isEnd(c));
-  const cats = [...new Set(D.categories.concat(D.routes.map(r => r.cat)))];
-  const rows = cats.map(cat => Object.assign({ cat, partner: "", person: "", contact: "", note: "" }, D.routes.find(r => r.cat === cat) || {}));
-  $("#main").innerHTML = `<div class="card" style="margin-bottom:12px"><h3>取次ぎ先の設定 <small>お客様が選んだ分野ごとに、どの専門家・提携先へおつなぎするかを決めます</small></h3>
-    <div class="hint">新しいご相談には、選ばれた分野（複数のときは最初の分野）の取次ぎ先が自動で入ります。相談ごとに変えることもできます。</div></div>
-    <table class="rt"><thead><tr><th>分野</th><th>取次ぎ先（専門家・提携先）</th><th>先方の担当者</th><th>先方の連絡先</th><th>備考</th><th>対応中</th></tr></thead>
-    <tbody>${rows.map((r, i) => `<tr data-i="${i}"><td><b>${esc(r.cat)}</b></td><td><input type="text" data-k="partner" value="${esc(r.partner)}" placeholder="例：〇〇行政書士事務所"></td><td><input type="text" data-k="person" value="${esc(r.person)}" placeholder="先方の担当者"></td><td><input type="text" data-k="contact" value="${esc(r.contact)}" placeholder="電話・メール"></td><td><input type="text" data-k="note" value="${esc(r.note)}" placeholder="備考"></td><td>${open.filter(c => catFirst(c) === r.cat).length}件</td></tr>`).join("")}</tbody></table>
-    <div class="row" style="margin-top:12px"><button class="btn btn-navy" id="rt-save">保存する</button></div>`;
-  $("#rt-save").onclick = async () => {
-    const out = rows.map((r, i) => { const o = { cat: r.cat }; $$(`tr[data-i="${i}"] input`).forEach(inp => o[inp.dataset.k] = inp.value.trim()); return o; });
-    busy(true); try { const r = await call("saveRoutes", TOKEN, out); D.routes = r.routes; toast("保存しました"); } catch (e) { toast("保存できませんでした"); } finally { busy(false); }
+/* ===== 対応アシスト ===== */
+// お客様向けの報告を出さない社内の段階
+const INTERNAL = ["手数料入金", "分配"];
+// 分野ごとに、関わることが多い専門家の種別
+const CAT_TYPES = {
+  "補助金・公的支援": ["行政書士", "中小企業診断士", "社会保険労務士", "税理士"],
+  "許認可・行政手続き": ["行政書士", "司法書士"],
+  "士業・専門家への相談": ["行政書士", "税理士", "社会保険労務士", "司法書士", "弁護士"],
+  "資金繰り・融資・資金調達": ["中小企業診断士", "税理士"],
+  "経費・固定費の見直し": ["提携事業者", "税理士"],
+  "人材・採用・労務": ["社会保険労務士", "提携事業者"],
+  "業務改善・AI・システム": ["提携事業者", "中小企業診断士"],
+  "集客・営業・売上改善": ["提携事業者", "中小企業診断士"],
+  "新規事業・商品開発・知的財産": ["中小企業診断士", "弁理士", "行政書士"],
+  "海外展開・輸出": ["提携事業者", "行政書士"],
+  "事業承継・会社の将来": ["税理士", "司法書士", "中小企業診断士", "弁護士"],
+  "経営リスク・トラブル・事業継続": ["弁護士", "社会保険労務士", "提携事業者"],
+  "その他の企業相談": []
+};
+// 相談の文面から、必要な専門家を見つけるための言葉
+const TYPE_KW = {
+  "行政書士": ["許可", "許認可", "建設業", "産廃", "産業廃棄物", "古物", "飲食店", "運送", "宅建", "届出", "補助金", "申請書", "在留", "ビザ", "経審", "入札"],
+  "社会保険労務士": ["助成金", "労務", "就業規則", "雇用", "社会保険", "労働保険", "残業", "給与計算", "採用", "解雇", "労災", "人事評価"],
+  "税理士": ["税", "決算", "確定申告", "経理", "記帳", "相続税", "節税", "インボイス", "消費税", "会計"],
+  "司法書士": ["登記", "設立", "役員変更", "本店移転", "相続登記", "増資", "定款"],
+  "弁護士": ["訴訟", "裁判", "トラブル", "未払い", "債権回収", "損害賠償", "契約違反", "紛争", "クレーム", "示談"],
+  "中小企業診断士": ["事業計画", "経営改善", "認定支援", "経営計画", "資金繰り", "融資", "事業再構築", "ものづくり"],
+  "弁理士": ["特許", "商標", "意匠", "知的財産", "知財", "ブランド名"],
+  "提携事業者": ["システム", "ホームページ", "集客", "広告", "設備", "電気代", "通信費", "保険", "リース", "輸出", "AI", "人材紹介", "コスト"]
+};
+function caseCats(c) { return String(c.cat || "").split("、").filter(Boolean); }
+function hits(text, words) { const t = String(text || ""); return [...new Set(words.filter(w => w && t.includes(w)))]; }
+function splitWords(s) { return String(s || "").split(/[、,，\s\/・]+/).map(x => x.trim()).filter(x => x.length >= 2); }
+
+/** 必要そうな専門家の種別（分野と文面から） */
+function neededTypes(c) {
+  const out = {};
+  caseCats(c).forEach(cat => (CAT_TYPES[cat] || []).forEach((t, i) => { out[t] = out[t] || { t, score: 0, why: [] }; out[t].score += 3 - Math.min(i, 2); if (!out[t].why.includes("分野")) out[t].why.push("分野"); }));
+  Object.entries(TYPE_KW).forEach(([t, kw]) => { const h = hits(c.body, kw); if (h.length) { out[t] = out[t] || { t, score: 0, why: [] }; out[t].score += h.length * 2; out[t].why.push("「" + h.slice(0, 3).join("」「") + "」"); } });
+  return Object.values(out).sort((a, b) => b.score - a.score).slice(0, 4);
+}
+/** 取次候補（登録した取次先から、点数の高い順） */
+function candidates(c) {
+  if (!D || !D.partners) return [];
+  const need = neededTypes(c), cats = caseCats(c);
+  return D.partners.filter(p => p.active !== "休止").map(p => {
+    let score = 0; const why = [];
+    const pc = String(p.cats || "").split("、").filter(Boolean), m = cats.filter(x => pc.includes(x));
+    if (m.length) { score += m.length * 5; why.push("分野が一致：" + m.join("・")); }
+    const n = need.find(x => x.t === p.type); if (n) { score += Math.min(n.score, 6); why.push("必要そうな専門家：" + p.type); }
+    const kh = hits(c.body, splitWords(p.keywords)); if (kh.length) { score += kh.length * 3; why.push("得意なことと一致：" + kh.slice(0, 4).join("・")); }
+    if (c.partner && c.partner === p.name) why.push("今の取次先");
+    return { p, score, why };
+  }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, 5);
+}
+function partnerHint(name) {
+  const p = D.partners.find(x => x.name === name);
+  if (!name) return "取次先は「取次先の登録」で登録できます。上のアシストに候補が出ます。";
+  if (!p) return "登録されていない取次先です（「取次先の登録」で登録すると、連絡先がここに出ます）。";
+  return `<b>${esc(p.type || "")}</b>${p.person ? "　担当：" + esc(p.person) : ""}${p.tel ? "　☎ " + esc(p.tel) : ""}${p.email ? "　" + esc(p.email) : ""}${p.fee ? "<br>費用・手数料：" + esc(p.fee) : ""}`;
+}
+function stageMids(big) {
+  return (D.stages || []).filter(x => x.big === big).map(x => ({ mid: x.mid, subs: String(x.subs || "").split(/[、,，]/).map(s => s.trim()).filter(Boolean) }));
+}
+const sIdx = c => D.steps.inbox.indexOf(c.status);
+const after = (c, step) => sIdx(c) >= D.steps.inbox.indexOf(step);
+const NEXT_TODO = {
+  "未対応": ["お客様へ受付の連絡をする（電話・メール）", "ご相談内容を読み、足りない情報を書き出す", "担当者を決める"],
+  "内容確認": ["電話・メール・Zoomで詳しい状況を聞く", "必要な資料（決算書・許可証など）を依頼する", "中分類で「ヒアリング」か「資料確認」を選ぶ"],
+  "対応選定": ["自社で対応するか、取次ぐかを決める", "下の取次候補から先を選び、先方へ打診する", "専門家へ情報を渡すことの同意をお客様に確かめる"],
+  "対応先取次": ["取次先へご相談の要点を伝える（同意の範囲で）", "初回面談の日程を決め、次の対応予定日に入れる", "お客様へ「今後の進め方のご報告」を送る"],
+  "取次先対応中": ["取次先に進み具合を確かめる", "お客様の書類待ちがあれば、催促の連絡をする", "詳細に、決まったことを書き残す"],
+  "提案見積中": ["見積・提案の内容を確かめる", "お客様の判断の期日を決めて予定日に入れる", "契約は電子契約で送る"],
+  "実行中": ["申請・作業の節目（提出日・審査結果の予定）を予定日に入れる", "節目ごとにお客様へ報告する"],
+  "対応完了": ["結果をお客様へ報告する", "請求の準備をする（支払いへ）"],
+  "支払い": ["請求書を送り、入金期日を予定日に入れる", "入金を確かめたら小分類を「入金確認済み」に"],
+  "手数料入金": ["手数料の請求先・金額を確かめる", "入金を確かめたら小分類を「入金確認済み」に"],
+  "分配": ["分配額を確定し、詳細に書き残す", "振込が済んだら「完了」へ"],
+  "完了": ["書類を保管する", "次の提案の時期があれば「次回アプローチ」にして予定日を入れる"],
+  "次回アプローチ": ["予定日にご状況を伺う連絡をする", "更新時期・新しい制度などの情報を添える"],
+  "見送り": ["見送りの理由を小分類と詳細に残す"]
+};
+/** 相談1件の注意点（lv 2=急ぎ 1=注意） */
+function issues(c) {
+  const out = [], today = new Date(Date.now() + 9 * 36e5).toISOString().slice(0, 10), next = (c.next || "").replace(/\//g, "-").slice(0, 10);
+  if (c.lv === 2) out.push({ lv: 2, t: c.why, go: "#d-detail" });
+  if (next && next < today && !isEnd(c)) out.push({ lv: 2, t: `予定日（${next.slice(5).replace("-", "/")}）を過ぎています`, go: "#d-next" });
+  if (next && next === today) out.push({ lv: 1, t: "今日が対応予定日です", go: "#d-next" });
+  if (!c.email && !c.tel) out.push({ lv: 2, t: "連絡先（電話・メール）がありません", go: null });
+  if (!c.staff && !isEnd(c)) out.push({ lv: 1, t: "担当者が決まっていません", go: "#d-staff" });
+  if (!isEnd(c) && !next && !isNew(c)) out.push({ lv: 1, t: "次の対応予定日が入っていません", go: "#d-next" });
+  if (!c.mid && !isNew(c)) out.push({ lv: 1, t: "中分類・小分類が選ばれていません", go: "#d-mid" });
+  if (after(c, "対応先取次") && !c.partner && !isEnd(c)) out.push({ lv: 2, t: "取次先が決まっていません", go: "#d-partner" });
+  if (after(c, "対応先取次") && c.share !== "同意" && !hist(c.no).some(h => /同意/.test(h.text)) && !isEnd(c))
+    out.push({ lv: 2, t: "お客様は「専門家への共有」に同意していません。情報を渡す前に同意を確かめ、メモに残してください", go: "#d-memo" });
+  if (c.status === "手数料入金") {
+    const p = D.partners.find(x => x.name === c.partner);
+    if (p && ["行政書士", "社会保険労務士", "税理士", "司法書士", "弁護士", "弁理士"].includes(p.type))
+      out.push({ lv: 2, t: `取次先が士業（${p.type}）です。士業から紹介料を受け取ることは法律や会則で制限されている場合があり、サイトでも「紹介料なし」としています。手数料の相手と名目を確かめてください`, go: null });
+  }
+  if (c.status === "次回アプローチ" && !next) out.push({ lv: 1, t: "次回の連絡日を予定日に入れてください", go: "#d-next" });
+  return out;
+}
+function assistCard(c, cands) {
+  const iss = issues(c), todo = NEXT_TODO[c.status] || [], need = neededTypes(c);
+  return `<div class="card assist"><h3>🧭 対応アシスト <small>いまの段階「${esc(c.status)}」でやること</small></h3>
+    ${iss.length ? `<ul class="as-iss">${iss.map(x => `<li class="lv${x.lv}">${x.lv === 2 ? "⚠" : "△"} ${esc(x.t)}${x.go ? ` <button class="lnk" data-goto="${x.go}">入力へ</button>` : ""}</li>`).join("")}</ul>` : `<div class="hint ok">✓ 抜けている項目はありません</div>`}
+    ${todo.length ? `<ol class="as-todo">${todo.map(t => `<li>${esc(t)}</li>`).join("")}</ol>` : ""}
+    <div class="as-sub"><b>取次候補</b>（ご相談の分野と文面から）</div>
+    ${cands.length ? `<ul class="as-cand">${cands.map((k, i) => `<li><div><b>${i + 1}. ${esc(k.p.name)}</b> <span class="badge b-gray">${esc(k.p.type || "")}</span><div class="hint">${k.why.map(esc).join("／")}</div></div>${c.partner === k.p.name ? `<span class="badge b-grn">取次先</span>` : `<button class="btn btn-sm" data-pick="${esc(k.p.name)}">この先にする</button>`}</li>`).join("")}</ul>`
+      : `<div class="hint">${D.partners.length ? "登録した取次先の中に、合う先が見つかりませんでした。" : "取次先がまだ登録されていません。「取次先の登録」で登録すると、ここに候補が出ます。"}</div>`}
+    ${need.length ? `<div class="hint">必要そうな専門家：${need.map(n => `<b>${esc(n.t)}</b>（${esc(n.why.join("・"))}）`).join("、")}</div>` : ""}
+  </div>`;
+}
+/** すべての相談から、今やることを集める */
+function assistAll() {
+  if (!D) return [];
+  const list = [];
+  D.cases.filter(c => !isEnd(c) || c.status === "次回アプローチ").forEach(c => issues(c).forEach(x => list.push(Object.assign({ c }, x))));
+  D.cases.filter(isNew).forEach(c => { if (!list.some(x => x.c === c && x.lv === 2)) list.push({ c, lv: 1, t: "未対応の新しいご相談" }); });
+  return list.sort((a, b) => b.lv - a.lv || (parseTs(a.c.ts) || 0) - (parseTs(b.c.ts) || 0));
+}
+function renderAssist() {
+  const L = assistAll(), red = L.filter(x => x.lv === 2), yel = L.filter(x => x.lv === 1);
+  const free = D.cases.filter(c => !isEnd(c) && !c.partner && (after(c, "対応選定")));
+  const item = x => `<button class="as-row lv${x.lv}" data-no="${esc(x.c.no)}"><span class="badge ${x.lv === 2 ? "b-red" : "b-yel"}">${x.lv === 2 ? "急ぎ" : "注意"}</span><span><b>${esc(x.c.company || x.c.name)}</b>　${esc(x.c.no)}　<span class="badge b-blue">${esc(x.c.status)}</span><br>${esc(x.t)}</span></button>`;
+  $("#main").innerHTML = `<div class="card" style="margin-bottom:12px"><h3>🧭 アシスト <small>すべての相談から、今やることをまとめています</small></h3>
+      <div class="hint">急ぎ ${red.length} 件・注意 ${yel.length} 件。押すとその相談が開きます。</div></div>
+    ${red.length ? `<div class="as-list">${red.map(item).join("")}</div>` : `<div class="empty">急ぎの対応はありません。</div>`}
+    ${yel.length ? `<h3 class="as-h">注意</h3><div class="as-list">${yel.map(item).join("")}</div>` : ""}
+    ${free.length ? `<h3 class="as-h">取次先が決まっていない相談と、その候補</h3><div class="as-list">${free.map(c => { const k = candidates(c)[0]; return `<button class="as-row" data-no="${esc(c.no)}"><span class="badge b-gray">${esc(c.status)}</span><span><b>${esc(c.company || c.name)}</b>　${esc(caseCats(c).join("・"))}<br>${k ? "第1候補：" + esc(k.p.name) + "（" + esc(k.why[0] || "") + "）" : "候補なし（取次先を登録してください）"}</span></button>`; }).join("")}</div>` : ""}`;
+  $$(".as-row").forEach(b => b.onclick = () => openCase(b.dataset.no));
+}
+
+/* ===== 取次先の登録 ===== */
+let PT_EDIT = null;
+function renderPartners() {
+  const P = D.partners, e = PT_EDIT ? (P.find(x => x.id === PT_EDIT) || {}) : {};
+  const used = name => D.cases.filter(c => c.partner === name && !isEnd(c)).length;
+  $("#main").innerHTML = `<div class="card" style="margin-bottom:12px"><h3>${PT_EDIT ? "取次先の修正" : "取次先の新規登録"} <small>登録すると、ご相談ごとに取次候補として自動で出てきます</small></h3>
+      <div class="grid2">
+        <label class="f">名称（必須）<input type="text" id="p-name" value="${esc(e.name || "")}" placeholder="例：〇〇行政書士事務所"></label>
+        <label class="f">種別<select id="p-type">${D.partnerTypes.map(t => `<option ${t === e.type ? "selected" : ""}>${esc(t)}</option>`).join("")}</select></label>
+        <label class="f">先方の担当者<input type="text" id="p-person" value="${esc(e.person || "")}"></label>
+        <label class="f">電話番号<input type="tel" id="p-tel" value="${esc(e.tel || "")}"></label>
+        <label class="f">メール<input type="email" id="p-email" value="${esc(e.email || "")}"></label>
+        <label class="f">対応地域<input type="text" id="p-area" value="${esc(e.area || "")}" placeholder="例：大阪府・全国（Zoom）"></label>
+      </div>
+      <div class="f"><span>対応分野（当てはまるものをすべて）</span><div class="pt-cats">${D.categories.map(cat => `<label><input type="checkbox" value="${esc(cat)}" ${String(e.cats || "").split("、").includes(cat) ? "checked" : ""}> ${esc(cat)}</label>`).join("")}</div></div>
+      <label class="f">得意なこと・キーワード（「、」で区切る。ご相談の文面と照らし合わせます）<input type="text" id="p-kw" value="${esc(e.keywords || "")}" placeholder="例：建設業許可、産廃、ものづくり補助金"></label>
+      <div class="grid2">
+        <label class="f">手数料・費用の扱い<input type="text" id="p-fee" value="${esc(e.fee || "")}" placeholder="例：紹介料なし・報酬は先方から直接ご案内"></label>
+        <label class="f">状態<select id="p-active"><option ${e.active !== "休止" ? "selected" : ""}>有効</option><option ${e.active === "休止" ? "selected" : ""}>休止</option></select></label>
+      </div>
+      <label class="f">備考<textarea id="p-note" style="min-height:56px">${esc(e.note || "")}</textarea></label>
+      <div class="err" id="p-err"></div>
+      <div class="row"><button class="btn btn-navy" id="p-save">${PT_EDIT ? "修正を保存する" : "登録する"}</button>${PT_EDIT ? `<button class="btn" id="p-new">新規登録に戻る</button>` : ""}</div>
+    </div>
+    <div class="card"><h3>登録済みの取次先 <small>${P.length}件</small></h3>
+      ${P.length ? `<table class="rt"><thead><tr><th>名称</th><th>種別</th><th>対応分野</th><th>連絡先</th><th>対応中</th><th>状態</th><th></th></tr></thead><tbody>${P.map(p => `<tr><td><b>${esc(p.name)}</b>${p.person ? "<br><small>" + esc(p.person) + "</small>" : ""}</td><td>${esc(p.type)}</td><td><small>${esc(p.cats)}</small></td><td><small>${esc(p.tel)}${p.email ? "<br>" + esc(p.email) : ""}</small></td><td>${used(p.name)}件</td><td>${p.active === "休止" ? `<span class="badge b-gray">休止</span>` : `<span class="badge b-grn">有効</span>`}</td><td><button class="btn btn-sm" data-pe="${esc(p.id)}">修正</button></td></tr>`).join("")}</tbody></table>` : `<div class="hint">まだ登録がありません。上の欄から登録してください。</div>`}
+    </div>`;
+  $$("[data-pe]").forEach(b => b.onclick = () => { PT_EDIT = b.dataset.pe; renderPartners(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+  const nb = $("#p-new"); if (nb) nb.onclick = () => { PT_EDIT = null; renderPartners(); };
+  $("#p-save").onclick = async () => {
+    const o = { id: PT_EDIT || "", name: $("#p-name").value.trim(), type: $("#p-type").value, person: $("#p-person").value.trim(), tel: $("#p-tel").value.trim(), email: $("#p-email").value.trim(), area: $("#p-area").value.trim(),
+      cats: $$(".pt-cats input:checked").map(x => x.value).join("、"), keywords: $("#p-kw").value.trim(), fee: $("#p-fee").value.trim(), active: $("#p-active").value, note: $("#p-note").value.trim() };
+    $("#p-err").textContent = "";
+    if (!o.name) { $("#p-err").textContent = "名称を入れてください。"; return; }
+    busy(true);
+    try { const r = await call("savePartner", TOKEN, o); if (!r.ok) { $("#p-err").textContent = r.error; return; } D.partners = r.partners; toast(PT_EDIT ? "修正しました" : "登録しました"); PT_EDIT = null; renderPartners(); }
+    catch (err) { $("#p-err").textContent = "保存できませんでした。"; } finally { busy(false); }
+  };
+}
+
+/* ===== 進み具合の設定 ===== */
+function renderStages() {
+  const bigs = D.steps.inbox.concat([D.stopped.inbox]);
+  $("#main").innerHTML = `<div class="card" style="margin-bottom:12px"><h3>進み具合の設定 <small>大分類ごとに、中分類と小分類を決めます</small></h3>
+      <div class="hint">1行に1つの中分類を書きます。書き方：<b>中分類：小分類、小分類、小分類</b>（例：見積：見積の作成中、見積の提出済み）</div></div>
+    <div class="st-grid">${bigs.map((b, i) => `<label class="f card"><span><b>${i < D.steps.inbox.length ? (i + 1) + ". " : ""}${esc(b)}</b></span><textarea data-big="${esc(b)}" rows="4">${esc((D.stages || []).filter(x => x.big === b).map(x => x.mid + "：" + x.subs).join("\n"))}</textarea></label>`).join("")}</div>
+    <div class="row" style="margin-top:12px"><button class="btn btn-navy" id="st-save">保存する</button></div>`;
+  $("#st-save").onclick = async () => {
+    const rows = [];
+    $$("[data-big]").forEach(t => t.value.split("\n").map(l => l.trim()).filter(Boolean).forEach(l => { const m = l.split(/[：:]/); rows.push({ big: t.dataset.big, mid: m[0].trim(), subs: (m.slice(1).join("：") || "").trim() }); }));
+    busy(true); try { const r = await call("saveStages", TOKEN, rows); D.stages = r.stages; toast("保存しました"); } catch (e) { toast("保存できませんでした"); } finally { busy(false); }
   };
 }
 
