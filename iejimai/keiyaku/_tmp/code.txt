@@ -76,7 +76,7 @@ function doPost(e) {
     });
   } catch (err) {
     console.error(err && err.stack || err);
-    res = { ok: false, error: 'うまくいきませんでした（' + String(err && err.message || err) + '）。もう一度お試しください' };
+    res = { ok: false, error: String(err && err.message || err) };
   }
   return out_(res);
 }
