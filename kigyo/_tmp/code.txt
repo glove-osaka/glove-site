@@ -1,0 +1,380 @@
+/**
+ * 企業支援 総合相談窓口 — 相談フォームの受付 ＋ 相談管理（Google Apps Script・無料）
+ * 設置先：kigyosoudan@gmail.com の Apps Script「企業支援 総合相談窓口 受付」
+ *
+ * 役割
+ *   ・サイトから送られた相談を、受付用の表「企業支援 総合相談窓口 相談受付」に1件1行で記録する
+ *   ・窓口へお知らせのメールを送り、メールアドレスを入力したお客様には受付のお知らせを返す
+ *   ・相談管理の画面（ID とパスワードでログイン）：一覧・進み具合・取次ぎ先・放置の警告・進捗報告の作成と送信
+ *
+ * 相談管理の画面：このウェブアプリの住所の末尾に ?p=admin を付けたもの（サイトの /kigyo/kanri/ から開けます）
+ * 最初の ID とパスワードは、ログイン画面の「はじめての登録・パスワードを忘れたとき」から登録します
+ * （確認コードが NOTIFY_EMAIL に届き、そのコードを持つ人だけが登録できます）
+ *
+ * 中身を直したときは、保存後「デプロイ」→「デプロイを管理」→ 編集 → バージョン「新バージョン」→「デプロイ」（住所は変わりません）
+ */
+
+const NOTIFY_EMAIL = 'kigyosoudan@gmail.com';  // 相談のお知らせを受け取るアドレス
+const SHEET_NAME = '相談受付';
+const SHEET_ID = '1RgoJAPcvjCw4neqc1fbTLo5jjxX9CmyEUbUo2mm5y8A';  // 受付用の表（企業支援 総合相談窓口 相談受付）
+const SITE_NAME = '企業支援 総合相談窓口';
+const OPERATOR = '株式会社グローブ';
+const APP_URL = 'https://script.google.com/macros/s/AKfycbyrAW_oUbA5ZXBFZ1KLcR6nfnMEnbsjAfMY9F0rYYq-RSp7P_m3SuNFh9RRy1q4ar3m/exec';
+const ADMIN_URL = 'https://glove-osaka.github.io/glove-site/kigyo/kanri/';
+const MAX_PER_HOUR = 30;               // いたずらの連続送信を止める上限（1時間あたり）
+
+// ▼ 警告の基準
+const ALERT_NEW_HOURS = 24;     // 未対応のまま、この時間を過ぎたら「警告」
+const ALERT_STALE_DAYS = 3;     // 最後の更新からこの日数が過ぎたら「注意」
+const ALERT_STALE_RED_DAYS = 7; // この日数を過ぎたら「放置の警告」
+const RECONTACT_HOURS = 48;     // 前回お客様へ連絡してから、この時間内の再連絡は確認を出す
+
+const SIGNATURE = [
+  '――――――――――――――――',
+  SITE_NAME + '（運営：' + OPERATOR + '）',
+  '〒544-0033 大阪府大阪市生野区勝山南2-2-7',
+  '電話 06-6355-0779',
+  'メール ' + NOTIFY_EMAIL,
+  '受付時間 平日10:00〜18:00（土日祝休み）',
+  '――――――――――――――――'
+].join('\n');
+
+// 表の列（左の名前はプログラム用、右は表の見出し）。既存の11列はそのまま、管理用の列を後ろに足す
+const COLS = [['ts', '受付日時'], ['no', '受付番号'], ['status', '対応状況'], ['name', 'お名前'], ['company', '会社名・屋号'], ['tel', '電話番号'],
+  ['email', 'メール'], ['cat', '分野'], ['share', '専門家への共有'], ['body', '相談内容（全文）'], ['ua', '端末'],
+  ['memo', '対応メモ'], ['partner', '取次ぎ先'], ['staff', '担当者'], ['updated', '最終更新日時'], ['contacted', '最終連絡日時'], ['next', '次の対応予定日']];
+const STEPS = ['未対応', '内容確認中', '専門家へ取次ぎ済み', '専門家対応中', '提案・見積り中', '完了'];
+const STOPPED = '見送り';
+const HISTORY_SHEET = '対応履歴';
+const ROUTE_SHEET = '取次ぎ先の設定';
+const CATEGORIES = ['補助金・公的支援', '許認可・行政手続き', '士業・専門家への相談', '資金繰り・融資・資金調達', '経費・固定費の見直し', '人材・採用・労務',
+  '業務改善・AI・システム', '集客・営業・売上改善', '新規事業・商品開発・知的財産', '海外展開・輸出', '事業承継・会社の将来', '経営リスク・トラブル・事業継続', 'その他の企業相談'];
+
+/* ============================== 準備 ============================== */
+
+function book_() { return SpreadsheetApp.openById(SHEET_ID); }
+
+/** 表・見出し・管理用の列を整える（何度実行しても安全） */
+function setup() {
+  const ss = book_();
+  const sh = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
+  const want = COLS.map(c => c[1]);
+  const have = sh.getLastColumn() ? header_(sh) : [];
+  if (!have[0]) sh.getRange(1, 1, 1, want.length).setValues([want]);
+  else want.forEach(h => { if (have.indexOf(h) < 0) { have.push(h); sh.getRange(1, have.length).setValue(h); } });
+  sh.getRange(1, 1, 1, sh.getLastColumn()).setFontWeight('bold').setBackground('#E6EBF4');
+  sh.setFrozenRows(1);
+  const hs = ss.getSheetByName(HISTORY_SHEET) || ss.insertSheet(HISTORY_SHEET);
+  if (!hs.getRange(1, 1).getValue()) {
+    hs.getRange(1, 1, 1, 6).setValues([['日時', '種類', '受付番号', '内容', '担当者', '送信先']]).setFontWeight('bold').setBackground('#E6EBF4');
+    hs.setFrozenRows(1);
+  }
+  const rs = ss.getSheetByName(ROUTE_SHEET) || ss.insertSheet(ROUTE_SHEET);
+  if (!rs.getRange(1, 1).getValue()) {
+    rs.getRange(1, 1, 1, 5).setValues([['分野', '取次ぎ先（専門家・提携先）', '先方の担当者', '先方の連絡先', '備考']]).setFontWeight('bold').setBackground('#E6EBF4');
+    rs.getRange(2, 1, CATEGORIES.length, 5).setValues(CATEGORIES.map(c => [c, '', '', '', '']));
+    rs.setFrozenRows(1);
+  }
+  MailApp.getRemainingDailyQuota();
+}
+
+/* ============================== 受付（サイトから） ============================== */
+
+function doPost(e) {
+  const p = (e && e.parameter) || {};
+  // 機械による送信を防ぐ：必要な項目がないもの、長すぎるものは記録しない
+  if (!p.no || !p.text || !p.name || p.text.length > 20000) return out_('ng');
+  if (!p.tel && !p.mail) return out_('ng');
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const cache = CacheService.getScriptCache();
+    const n = Number(cache.get('count') || 0);
+    if (n >= MAX_PER_HOUR) return out_('busy');
+    cache.put('count', String(n + 1), 3600);
+
+    const sh = book_().getSheetByName(SHEET_NAME);
+    if (!sh || header_(sh).indexOf('対応メモ') < 0) setup();
+    const sheet = book_().getSheetByName(SHEET_NAME);
+    const clean = v => String(v || '').replace(/^[=+\-@]/, "'$&").slice(0, 20000);
+    const now = new Date();
+    const rec = { ts: now, no: p.no, status: STEPS[0], name: p.name, company: p.company, tel: p.tel, email: p.mail, cat: p.cats, share: p.share,
+      body: p.text, ua: p.ua, partner: routeFor_(p.cats), updated: fmt_(now) };
+    const head = header_(sheet);
+    sheet.appendRow(head.map(h => { const k = keyOf_(h); if (!k || rec[k] == null) return ''; return k === 'ts' ? rec.ts : clean(rec[k]); }));
+  } finally {
+    lock.releaseLock();
+  }
+
+  // 窓口へのお知らせ
+  if (NOTIFY_EMAIL) {
+    MailApp.sendEmail({
+      to: NOTIFY_EMAIL,
+      subject: '【' + SITE_NAME + '】新しいご相談 ' + p.no + '（' + (p.name || '') + ' 様）',
+      body: '新しいご相談を受け付けました。\n受付番号：' + p.no + '\n\n' + p.text + '\n\n――\nこの内容は相談受付の表にも記録されています。\n相談管理の画面：' + ADMIN_URL,
+      replyTo: p.mail || undefined
+    });
+  }
+  // お客様への受付のお知らせ
+  if (p.mail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.mail)) {
+    MailApp.sendEmail({
+      to: p.mail,
+      subject: '【' + SITE_NAME + '】ご相談を受け付けました（受付番号 ' + p.no + '）',
+      body: (p.name || '') + ' 様\n\n' + SITE_NAME + 'へのご相談、ありがとうございます。\n下記の内容で受け付けました。内容を確認し、窓口の担当者からご連絡いたします。\n\n受付番号：' + p.no + '\n\n' + p.text +
+            '\n\n――――――――――\n' + SITE_NAME + '（運営：' + OPERATOR + '）\nこのメールは送信専用です。お心当たりのない場合は、お手数ですが破棄してください。',
+      name: SITE_NAME,
+      replyTo: NOTIFY_EMAIL || undefined
+    });
+  }
+  return out_('ok');
+}
+
+function out_(s) {
+  return ContentService.createTextOutput(JSON.stringify({ result: s })).setMimeType(ContentService.MimeType.JSON);
+}
+
+/* ============================== 画面の出し分け ============================== */
+
+function doGet(e) {
+  if (e && e.parameter && e.parameter.p === 'admin') {
+    return HtmlService.createHtmlOutputFromFile('admin')
+      .setTitle('相談管理｜' + SITE_NAME)
+      .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+  }
+  return out_('ok');
+}
+
+/* ============================== ログイン ============================== */
+
+function users_() { try { return JSON.parse(PropertiesService.getScriptProperties().getProperty('ADMIN_USERS') || '[]'); } catch (e) { return []; } }
+function hash_(salt, pw) {
+  let h = salt + ':' + pw;
+  for (let i = 0; i < 1000; i++) h = Utilities.base64Encode(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, h + salt, Utilities.Charset.UTF_8));
+  return h;
+}
+function saveUser_(u, pw) {
+  const list = users_().filter(x => x.id !== u.id);
+  const salt = Utilities.getUuid();
+  list.push({ id: u.id, name: u.name || u.id, salt, hash: hash_(salt, pw) });
+  PropertiesService.getScriptProperties().setProperty('ADMIN_USERS', JSON.stringify(list));
+}
+function pwOk_(pw) { return String(pw || '').length >= 10 && /[A-Za-z]/.test(pw) && /[0-9]/.test(pw); }
+const PW_RULE = 'パスワードは、英字と数字をまぜて10文字以上にしてください。';
+
+/** 画面から呼ぶ：ID とパスワードを確かめ、8時間有効の合い札を返す */
+function login(id, pw) {
+  id = String(id || '').trim(); pw = String(pw || '');
+  const cache = CacheService.getScriptCache();
+  const key = 'fail_' + id;
+  const fails = Number(cache.get(key) || 0);
+  if (fails >= 5) return { ok: false, error: '続けて間違えたため、15分間ログインできません。時間をおいてお試しください。' };
+  const u = users_().find(x => x.id === id);
+  if (!u || hash_(u.salt, pw) !== u.hash) {
+    cache.put(key, String(fails + 1), 900);
+    Utilities.sleep(800);
+    return { ok: false, error: users_().length ? 'ID またはパスワードが違います。' : 'まだ ID が登録されていません。下の「はじめての登録・パスワードを忘れたとき」から登録してください。' };
+  }
+  cache.remove(key);
+  const token = Utilities.getUuid() + Utilities.getUuid();
+  cache.put('tok_' + token, JSON.stringify({ id: u.id, name: u.name }), 8 * 3600);
+  return { ok: true, token, name: u.name, id: u.id };
+}
+function logout(token) { CacheService.getScriptCache().remove('tok_' + token); return { ok: true }; }
+function auth_(token) {
+  const v = token && CacheService.getScriptCache().get('tok_' + token);
+  if (!v) throw new Error('LOGIN_REQUIRED');
+  const u = JSON.parse(v);
+  CacheService.getScriptCache().put('tok_' + token, v, 8 * 3600); // 使うたびに延長
+  return u;
+}
+
+/** 画面から呼ぶ：登録用の確認コードを窓口のメールへ送る（10分有効・1時間に3回まで） */
+function requestCode() {
+  const C = CacheService.getScriptCache();
+  const n = Number(C.get('code_sent') || 0);
+  if (n >= 3) return { ok: false, error: '確認コードは1時間に3回までです。届いたメールをご確認ください。' };
+  const code = String(Math.floor(100000 + Math.random() * 900000));
+  C.put('reg_code', code, 600); C.put('reg_fail', '0', 600); C.put('code_sent', String(n + 1), 3600);
+  MailApp.sendEmail({
+    to: NOTIFY_EMAIL,
+    subject: '【' + SITE_NAME + '】相談管理の確認コード ' + code,
+    body: '相談管理の画面で、ID とパスワードを登録するための確認コードです。\n\n確認コード：' + code + '\n\nこのコードは10分間有効です。心当たりがない場合は、このメールを破棄してください（コードがなければ登録はできません）。'
+  });
+  return { ok: true, to: NOTIFY_EMAIL.replace(/^(.{2}).*(@.*)$/, '$1…$2') };
+}
+/** 画面から呼ぶ：確認コードを確かめて、ID とパスワードを登録（同じ ID ならパスワードの再設定） */
+function registerWithCode(code, id, name, pw) {
+  const C = CacheService.getScriptCache();
+  const real = C.get('reg_code');
+  const fails = Number(C.get('reg_fail') || 0);
+  if (!real || fails >= 5) return { ok: false, error: '確認コードの期限が切れました。もう一度コードを送ってください。' };
+  if (String(code || '').trim() !== real) { C.put('reg_fail', String(fails + 1), 600); return { ok: false, error: '確認コードが違います。' }; }
+  id = String(id || '').trim();
+  if (!/^[A-Za-z0-9_.-]{3,30}$/.test(id)) return { ok: false, error: 'ID は半角の英字・数字で3〜30文字にしてください。' };
+  if (!pwOk_(pw)) return { ok: false, error: PW_RULE };
+  const old = users_().find(x => x.id === id);
+  saveUser_({ id, name: String(name || (old && old.name) || id).trim() }, String(pw));
+  C.remove('reg_code'); C.remove('fail_' + id);
+  return { ok: true, reset: !!old };
+}
+
+/** 画面から呼ぶ：パスワード変更・担当者の追加と削除 */
+function changePassword(token, oldPw, newPw) {
+  const me = auth_(token);
+  const u = users_().find(x => x.id === me.id);
+  if (!u || hash_(u.salt, String(oldPw || '')) !== u.hash) return { ok: false, error: '今のパスワードが違います。' };
+  if (!pwOk_(newPw)) return { ok: false, error: PW_RULE };
+  saveUser_({ id: u.id, name: u.name }, String(newPw));
+  return { ok: true };
+}
+function addUser(token, id, name, pw) {
+  auth_(token);
+  id = String(id || '').trim();
+  if (!/^[A-Za-z0-9_.-]{3,30}$/.test(id)) return { ok: false, error: 'ID は半角の英字・数字で3〜30文字にしてください。' };
+  if (!pwOk_(pw)) return { ok: false, error: PW_RULE };
+  saveUser_({ id, name: String(name || id).trim() }, String(pw));
+  return { ok: true, users: users_().map(x => ({ id: x.id, name: x.name })) };
+}
+function removeUser(token, id) {
+  const me = auth_(token);
+  if (id === me.id) return { ok: false, error: '自分自身は削除できません。' };
+  const list = users_().filter(x => x.id !== id);
+  PropertiesService.getScriptProperties().setProperty('ADMIN_USERS', JSON.stringify(list));
+  return { ok: true, users: list.map(x => ({ id: x.id, name: x.name })) };
+}
+
+/* ============================== 管理画面のデータ ============================== */
+
+function fmt_(d) { return Utilities.formatDate(d, 'Asia/Tokyo', 'yyyy/MM/dd HH:mm:ss'); }
+function parse_(v) {
+  if (!v) return null;
+  if (v instanceof Date) return v;
+  const m = String(v).match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/);
+  if (!m) { const d = new Date(v); return isNaN(d) ? null : d; }
+  return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], (+(m[4] || 0)) - 9, +(m[5] || 0), +(m[6] || 0)));
+}
+function header_(sh) { return sh.getRange(1, 1, 1, Math.max(sh.getLastColumn(), 1)).getValues()[0].map(String); }
+function keyOf_(label) { const f = COLS.find(c => c[1] === label); return f ? f[0] : null; }
+function routes_() {
+  const sh = book_().getSheetByName(ROUTE_SHEET);
+  if (!sh || sh.getLastRow() < 2) return [];
+  return sh.getRange(2, 1, sh.getLastRow() - 1, 5).getValues().filter(r => r[0]).map(r => ({ cat: String(r[0]), partner: String(r[1]), person: String(r[2]), contact: String(r[3]), note: String(r[4]) }));
+}
+function routeFor_(cats) {
+  const first = String(cats || '').split('、')[0];
+  const r = routes_().find(x => x.cat === first);
+  return r ? r.partner : '';
+}
+
+function readCases_() {
+  const sh = book_().getSheetByName(SHEET_NAME);
+  if (!sh || sh.getLastRow() < 2) return [];
+  const head = header_(sh);
+  const rows = sh.getRange(2, 1, sh.getLastRow() - 1, head.length).getValues();
+  const out = [];
+  rows.forEach((r, i) => {
+    const o = { kind: 'inbox', row: i + 2 };
+    head.forEach((h, j) => { const k = keyOf_(h); if (k) o[k] = r[j] instanceof Date ? fmt_(r[j]) : String(r[j] == null ? '' : r[j]); });
+    if (!o.no) return;
+    if (!o.status) o.status = STEPS[0];
+    if (!o.updated) o.updated = o.ts;
+    out.push(o);
+  });
+  return out;
+}
+function history_() {
+  const sh = book_().getSheetByName(HISTORY_SHEET);
+  if (!sh || sh.getLastRow() < 2) return [];
+  return sh.getRange(2, 1, sh.getLastRow() - 1, 6).getValues().map(r => ({ at: r[0] instanceof Date ? fmt_(r[0]) : String(r[0]), type: String(r[1]), no: String(r[2]), text: String(r[3]), by: String(r[4]), to: String(r[5]) }));
+}
+function log_(no, type, text, by, to) {
+  const sh = book_().getSheetByName(HISTORY_SHEET);
+  if (sh) sh.appendRow([fmt_(new Date()), type, no, String(text || '').slice(0, 5000), by || '', to || '']);
+}
+function rowOf_(sh, no) {
+  const head = header_(sh);
+  const c = head.indexOf('受付番号') + 1;
+  if (!c || sh.getLastRow() < 2) return 0;
+  const nos = sh.getRange(2, c, sh.getLastRow() - 1, 1).getValues().map(r => String(r[0]));
+  const i = nos.indexOf(String(no));
+  return i < 0 ? 0 : i + 2;
+}
+
+/** 画面から呼ぶ：一覧と設定をまとめて返す */
+function adminData(token) {
+  const me = auth_(token);
+  if (header_(book_().getSheetByName(SHEET_NAME)).indexOf('対応メモ') < 0) setup();
+  return {
+    me, now: Date.now(),
+    cases: readCases_(),
+    history: history_(),
+    routes: routes_(),
+    steps: { inbox: STEPS }, stopped: { inbox: STOPPED }, categories: CATEGORIES,
+    rules: { newHours: ALERT_NEW_HOURS, staleDays: ALERT_STALE_DAYS, staleRedDays: ALERT_STALE_RED_DAYS, recontactHours: RECONTACT_HOURS },
+    signature: SIGNATURE, users: users_().map(x => ({ id: x.id, name: x.name })),
+    sheetUrl: book_().getUrl()
+  };
+}
+
+/** 画面から呼ぶ：対応状況・取次ぎ先・担当者・次の予定日・メモの更新 */
+function updateCase(token, kind, no, patch) {
+  const me = auth_(token);
+  const lock = LockService.getScriptLock(); lock.waitLock(10000);
+  try {
+    const sh = book_().getSheetByName(SHEET_NAME);
+    const head = header_(sh);
+    const row = rowOf_(sh, no); if (!row) throw new Error('相談が見つかりません：' + no);
+    const col = label => head.indexOf(label) + 1;
+    const get = label => { const c = col(label); return c ? String(sh.getRange(row, c).getValue()) : ''; };
+    const set = (label, v) => { const c = col(label); if (c) sh.getRange(row, c).setValue(v); };
+    const notes = [];
+    const cur = get('対応状況') || STEPS[0];
+    if (patch.status != null && patch.status !== cur) { notes.push('対応状況：' + cur + ' → ' + patch.status); set('対応状況', patch.status); }
+    if (patch.partner != null && patch.partner !== get('取次ぎ先')) { notes.push('取次ぎ先：' + (patch.partner || '（なし）')); set('取次ぎ先', patch.partner); }
+    if (patch.staff != null && patch.staff !== get('担当者')) { notes.push('担当者：' + (patch.staff || '（なし）')); set('担当者', patch.staff); }
+    if (patch.next != null && patch.next !== get('次の対応予定日')) { notes.push('次の対応予定日：' + (patch.next || '（なし）')); set('次の対応予定日', patch.next); }
+    if (patch.memo) {
+      const old = get('対応メモ');
+      const line = '[' + Utilities.formatDate(new Date(), 'Asia/Tokyo', 'MM/dd HH:mm') + ' ' + me.name + '] ' + patch.memo;
+      set('対応メモ', old ? old + '\n' + line : line);
+      log_(no, 'メモ', patch.memo, me.name, '');
+    }
+    if (notes.length || patch.memo) set('最終更新日時', fmt_(new Date()));
+    if (notes.length) log_(no, '更新', notes.join('／'), me.name, '');
+    return { ok: true };
+  } finally { lock.releaseLock(); }
+}
+
+/** 画面から呼ぶ：お客様への進捗報告。send=false のときは送らずに記録だけ残す */
+function sendReport(token, kind, no, subject, body, send) {
+  const me = auth_(token);
+  const c = readCases_().find(x => x.no === no);
+  if (!c) throw new Error('相談が見つかりません：' + no);
+  if (!send) { log_(no, '連絡見送り', '（送らずに記録）' + String(body || '').slice(0, 300), me.name, ''); touch_(no, false); return { ok: true, sent: false }; }
+  const to = String(c.email || '').trim();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)) return { ok: false, error: 'お客様のメールアドレスがありません。電話で連絡した場合は「送らずに記録」を押してください。' };
+  if (!String(subject || '').trim() || !String(body || '').trim()) return { ok: false, error: '件名と本文を入れてください。' };
+  MailApp.sendEmail({ to, subject: String(subject), body: String(body), name: SITE_NAME, replyTo: NOTIFY_EMAIL });
+  log_(no, 'お客様へ連絡', '件名：' + subject + '\n' + body, me.name, to);
+  touch_(no, true);
+  return { ok: true, sent: true, left: MailApp.getRemainingDailyQuota() };
+}
+function touch_(no, contacted) {
+  const sh = book_().getSheetByName(SHEET_NAME);
+  const head = header_(sh);
+  const row = rowOf_(sh, no); if (!row) return;
+  const now = fmt_(new Date());
+  const cu = head.indexOf('最終更新日時') + 1; if (cu) sh.getRange(row, cu).setValue(now);
+  if (contacted) { const cc = head.indexOf('最終連絡日時') + 1; if (cc) sh.getRange(row, cc).setValue(now); }
+}
+
+/** 画面から呼ぶ：取次ぎ先の設定の保存 */
+function saveRoutes(token, rows) {
+  auth_(token);
+  const sh = book_().getSheetByName(ROUTE_SHEET);
+  if (sh.getLastRow() > 1) sh.getRange(2, 1, sh.getLastRow() - 1, 5).clearContent();
+  const vals = (rows || []).filter(r => r.cat).map(r => [r.cat, r.partner || '', r.person || '', r.contact || '', r.note || '']);
+  if (vals.length) sh.getRange(2, 1, vals.length, 5).setValues(vals);
+  return { ok: true, routes: routes_() };
+}
