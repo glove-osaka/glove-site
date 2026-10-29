@@ -1286,6 +1286,37 @@ html.lite .hero2 h1 .g{animation:none!important}
 html.lite #scene #stars{display:none}
 </style>
 <style>.ftr .copy .adm-link{color:var(--on-dark-mute,#A7B4C7);font-size:.78rem;text-decoration:none;border-bottom:1px solid rgba(167,180,199,.4)}.ftr .copy .adm-link:hover{color:#fff}</style>
+<style id="guide-css">
+/* ご案内係：右下のボタンから、知りたいことへ案内する */
+#gd-btn{position:fixed;right:clamp(12px,2vw,24px);bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:67;display:flex;align-items:center;gap:8px;padding:10px 16px 10px 10px;border-radius:999px;border:0;background:#0E2A52;color:#fff;box-shadow:0 10px 26px rgba(14,42,82,.32);font:700 .9rem/1 "Zen Kaku Gothic New","Hiragino Sans",sans-serif;letter-spacing:.06em;cursor:pointer;transition:transform .2s}
+#gd-btn:hover{transform:translateY(-2px)}#gd-btn:focus-visible{outline:3px solid #C79A4A;outline-offset:3px}
+#gd-btn .gd-ic{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#C79A4A;color:#fff;font-size:1rem}
+#gd-btn[hidden]{display:none}
+#gd-panel{position:fixed;right:clamp(12px,2vw,24px);bottom:calc(118px + env(safe-area-inset-bottom,0px));z-index:70;width:min(370px,calc(100vw - 24px));max-height:min(580px,calc(100vh - 140px));display:flex;flex-direction:column;background:#fff;color:#0E2A52;border-radius:18px;box-shadow:0 24px 60px rgba(14,42,82,.32);border:1px solid rgba(199,154,74,.45);overflow:hidden;font-family:"Zen Kaku Gothic New","Hiragino Sans",sans-serif;animation:gdIn .22s ease-out}
+#gd-panel[hidden]{display:none}
+@keyframes gdIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.gd-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:14px 16px;background:linear-gradient(135deg,#0E2A52,#163A6B);color:#fff}
+.gd-hd b{display:block;font-size:1.02rem;letter-spacing:.08em}.gd-hd small{display:block;margin-top:4px;font-size:.78rem;opacity:.85;line-height:1.5}
+.gd-x{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.4);background:transparent;color:#fff;font-size:1.2rem;line-height:1;cursor:pointer}
+.gd-log{flex:1;overflow-y:auto;padding:14px 14px 6px;display:flex;flex-direction:column;gap:10px;background:#F7F4EE;overscroll-behavior:contain}
+.gd-m{max-width:92%;padding:10px 12px;border-radius:14px;font-size:.9rem;line-height:1.7;word-break:break-word}
+.gd-m.bot{align-self:flex-start;background:#fff;border:1px solid #E6DFD2;border-top-left-radius:4px}
+.gd-m.me{align-self:flex-end;background:#0E2A52;color:#fff;border-top-right-radius:4px}
+.gd-m small{display:block;color:#5B6B82;font-size:.8rem;line-height:1.6;margin-top:4px}
+.gd-m a{color:#0E2A52;font-weight:700}
+.gd-acts{display:flex;flex-wrap:wrap;gap:6px;align-self:flex-start;max-width:100%}
+.gd-acts button,.gd-acts a{display:inline-flex;align-items:center;min-height:36px;padding:7px 12px;border-radius:999px;border:1px solid #C79A4A;background:#fff;color:#0E2A52;font:700 .82rem/1.3 inherit;font-family:inherit;text-decoration:none;cursor:pointer;text-align:left}
+.gd-acts button:hover,.gd-acts a:hover{background:#FBF5EA}
+.gd-acts .gd-main{background:#C79A4A;color:#fff;border-color:#C79A4A}
+.gd-in{display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid #E6DFD2;background:#fff}
+.gd-in input{flex:1;min-width:0;padding:10px 12px;border-radius:10px;border:1px solid #CFC6B5;font:16px/1.3 inherit;font-family:inherit}
+.gd-in button{flex:none;padding:0 16px;border-radius:10px;border:0;background:#0E2A52;color:#fff;font:700 .9rem inherit;font-family:inherit;cursor:pointer}
+@media (max-width:560px){#gd-btn .gd-tx{font-size:.85rem}
+ #gd-panel{left:10px;right:10px;width:auto;bottom:calc(10px + env(safe-area-inset-bottom,0px));max-height:calc(100dvh - 80px)}}
+html.gd-big{font-size:112.5%}
+@media (max-width:560px){html.gd-big .hdr>.wrap{zoom:.889}}
+@media print{#gd-btn,#gd-panel{display:none!important}}
+</style>
 </head><body>
 <a class="skip" href="#view">本文へスキップ</a>
 <div id="glow" aria-hidden="true"></div><div id="scene" aria-hidden="true"><div class="ly space"><canvas id="stars"></canvas></div><div class="ly earth"></div><div class="ly city"></div></div>
@@ -1302,11 +1333,11 @@ html.lite #scene #stars{display:none}
   <div class="en">免責事項</div><h1>免責事項</h1>
 </div></header>
 <section class="page"><div class="wrap"><div class="prose"><button type="button" class="gl-more fold-all">すべて開く</button>
-<h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-8iwdir">掲載情報について<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-8iwdir" class="fold-body" hidden=""><p>当社は、本サイトに掲載する情報の正確性に努めていますが、その完全性・最新性を保証するものではありません。サービス内容・提供状況は予告なく変更することがあります。</p></div>
-<h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-7erkrf">資格・許認可を要する業務について<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-7erkrf" class="fold-body" hidden=""><p>法律・税務・登記・社会保険・不動産取引・職業紹介・労働者派遣・医療・介護・保険・金融など、法令上の資格または許認可を必要とする業務は、当社が直接行うものではなく、該当する資格・許認可を有する事業者または専門家が行います。当社はご相談の受付およびお取次ぎを行います。</p></div>
-<h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-uqnjzq">提携事業者・専門家のサービスについて<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-uqnjzq" class="fold-body" hidden=""><p>提携事業者・専門家が提供するサービスの内容・品質・成果については、当該事業者・専門家が責任を負います。</p></div>
-<h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-z1awas">外部リンクについて<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-z1awas" class="fold-body" hidden=""><p>本サイトからリンクする外部サイトの内容について、当社は責任を負いません。</p></div>
-<h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-jnj0y2">損害について<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-jnj0y2" class="fold-body" hidden=""><p>本サイトの利用により生じた損害について、当社に故意または重大な過失がある場合を除き、当社は責任を負いません。</p></div>
+<h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-mnclkm">掲載情報について<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-mnclkm" class="fold-body" hidden=""><p>当社は、本サイトに掲載する情報の正確性に努めていますが、その完全性・最新性を保証するものではありません。サービス内容・提供状況は予告なく変更することがあります。</p></div>
+<h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-70n36y">資格・許認可を要する業務について<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-70n36y" class="fold-body" hidden=""><p>法律・税務・登記・社会保険・不動産取引・職業紹介・労働者派遣・医療・介護・保険・金融など、法令上の資格または許認可を必要とする業務は、当社が直接行うものではなく、該当する資格・許認可を有する事業者または専門家が行います。当社はご相談の受付およびお取次ぎを行います。</p></div>
+<h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-4pq1fe">提携事業者・専門家のサービスについて<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-4pq1fe" class="fold-body" hidden=""><p>提携事業者・専門家が提供するサービスの内容・品質・成果については、当該事業者・専門家が責任を負います。</p></div>
+<h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-ulbgzi">外部リンクについて<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-ulbgzi" class="fold-body" hidden=""><p>本サイトからリンクする外部サイトの内容について、当社は責任を負いません。</p></div>
+<h2 class="fold-head"><button type="button" class="fold-btn" aria-expanded="false" aria-controls="fold-hk4sb6">損害について<span class="fold-ic" aria-hidden="true"></span></button></h2><div id="fold-hk4sb6" class="fold-body" hidden=""><p>本サイトの利用により生じた損害について、当社に故意または重大な過失がある場合を除き、当社は責任を負いません。</p></div>
 </div></div></section></main>
 <footer class="ftr"><div class="wrap">
   <div class="cols">
@@ -2632,6 +2663,158 @@ function applyLimits(form) {
 }
 const HP = id => `<div class="hp" aria-hidden="true"><label for="${id}">この欄は空のままにしてください</label><input id="${id}" type="text" tabindex="-1" autocomplete="off"></div>`;
 
+
+/* ---------- ご案内係（サイトの利用を手伝う案内） ---------- */
+function initGuide() {
+  if (document.getElementById("gd-btn")) return;
+  const STORE = "https://www.kaitori-daikichi.jp/store/katsuyamaminami/";
+  const co = () => Object.assign({}, COMPANY_DEFAULT, (typeof S !== "undefined" && S && S.company) || {});
+  const big = { get: () => { try { return localStorage.getItem("glove-big") === "1"; } catch (e) { return false; } },
+    set: v => { document.documentElement.classList.toggle("gd-big", v); try { localStorage.setItem("glove-big", v ? "1" : "0"); } catch (e) {} } };
+  if (big.get()) document.documentElement.classList.add("gd-big");
+  /* 困りごとの言葉 → 事業 */
+  const SYN = {
+    management: ["経営", "売上", "赤字", "資金", "融資", "借入", "m&a", "承継", "後継", "効率", "ai", "dx", "自動化", "業務改善", "事業計画", "組織"],
+    care: ["医療", "介護", "病院", "クリニック", "診療所", "施設", "看護", "ヘルパー", "福祉", "退院"],
+    reuse: ["買取", "リユース", "中古", "在庫", "備品", "査定", "ブランド", "貴金属", "時計", "骨董", "美術品", "催事"],
+    experts: ["許認可", "補助金", "助成金", "行政書士", "申請", "許可", "届出", "契約書", "税理士", "司法書士", "社労士", "社会保険労務士", "弁護士", "士業", "専門家"],
+    shukatsu: ["家じまい", "空き家", "実家", "相続", "不動産", "片付け", "遺品", "生前整理", "終活", "解体", "リフォーム"],
+    export: ["輸出", "海外販売", "海外に売", "貿易", "通関", "輸入", "国際輸送"],
+    hr: ["採用", "求人", "人手", "人材", "派遣", "人が足りない", "離職", "定着", "研修", "福利厚生"],
+    planning: ["企画", "広告", "宣伝", "集客", "ブランド", "ホームページ", "チラシ", "パンフレット", "動画", "line", "oem", "商品開発", "販促"],
+    region: ["地域", "まちづくり", "商店街", "地方", "観光", "特産", "自治体"],
+    global: ["国際", "海外企業", "外国", "海外進出", "海外展開", "海外市場", "海外"],
+    alliance: ["連携", "協業", "提携", "マッチング", "代理店", "取引先", "販路", "送客"],
+    newbiz: ["新規事業", "新しい事業", "起業", "立ち上げ", "創業", "アイデア", "実証", "出資", "投資"]
+  };
+  const NEEDS = [["売上・経営を立て直したい", "management"], ["人手が足りない・採用したい", "hr"], ["補助金・許認可を申請したい", "experts"], ["医療・介護の事業をしている", "care"],
+    ["実家・空き家・相続のこと", "shukatsu"], ["在庫や備品を売りたい（法人）", "reuse"], ["海外に売りたい", "export"], ["集客・宣伝・ホームページ", "planning"],
+    ["新しい事業を始めたい", "newbiz"], ["他の会社と組みたい", "alliance"], ["地域を元気にしたい", "region"], ["海外の会社とつながりたい", "global"]];
+
+  const btn = document.createElement("button");
+  btn.id = "gd-btn"; btn.type = "button";
+  btn.setAttribute("aria-controls", "gd-panel"); btn.setAttribute("aria-expanded", "false");
+  btn.innerHTML = '<span class="gd-ic" aria-hidden="true">？</span><span class="gd-tx">ご案内</span>';
+  const pn = document.createElement("section");
+  pn.id = "gd-panel"; pn.hidden = true; pn.setAttribute("role", "dialog"); pn.setAttribute("aria-label", "サイトのご案内");
+  pn.innerHTML = '<header class="gd-hd"><div><b>ご案内係</b><small>知りたいことを選ぶか、言葉で入力してください</small></div><button type="button" class="gd-x" aria-label="閉じる">×</button></header>'
+    + '<div class="gd-log" aria-live="polite"></div>'
+    + '<form class="gd-in" autocomplete="off"><input type="text" maxlength="60" placeholder="例：補助金、採用、場所、電話番号" aria-label="知りたいこと"><button type="submit">探す</button></form>';
+  document.body.append(btn, pn);
+  const log = pn.querySelector(".gd-log"), inp = pn.querySelector("input");
+
+  const scroll = () => { log.scrollTop = log.scrollHeight; };
+  const say = (html, acts) => {
+    const m = document.createElement("div"); m.className = "gd-m bot"; m.innerHTML = html; log.append(m);
+    if (acts && acts.length) {
+      const w = document.createElement("div"); w.className = "gd-acts";
+      acts.forEach(a => {
+        let el;
+        if (a.href) { el = document.createElement("a"); el.href = a.href; if (a.ext) { el.target = "_blank"; el.rel = "noopener"; } }
+        else { el = document.createElement("button"); el.type = "button"; }
+        el.textContent = a.t; if (a.main) el.className = "gd-main";
+        el.addEventListener("click", e => {
+          if (a.go) { e.preventDefault(); close(); go(a.go); }
+          else if (a.fn) { me(a.t); a.fn(); }
+        });
+        w.append(el);
+      });
+      log.append(w);
+    }
+    scroll();
+  };
+  const me = t => { const m = document.createElement("div"); m.className = "gd-m me"; m.textContent = t; log.append(m); scroll(); };
+  const HOME = { t: "最初に戻る", fn: () => menu() };
+
+  const bizCard = b => {
+    const sv = []; (b.groups || []).forEach(g => g[1].forEach(x => sv.push(x[0])));
+    say(`<b>${esc(b.no)} ${esc(b.ja)}</b><br>${esc(b.lead)}<small>主なご相談：${esc(sv.slice(0, 4).join("・"))}など</small>`,
+      [{ t: "詳しく見る", go: "business-" + b.id, main: true }, { t: "この内容で相談する", go: "contact-service-" + b.id }]);
+  };
+  const contact = () => { const c = co();
+    say(`お電話・メール・フォームで受け付けています。<br>電話：<a href="tel:${esc(c.tel.replace(/-/g, ""))}">${esc(c.tel)}</a><br>フリーダイヤル：<a href="tel:${esc(c.freeDial.replace(/-/g, ""))}">${esc(c.freeDial)}</a><br>ファックス：${esc(c.fax)}<br>メール：<a href="mailto:${esc(c.email)}">${esc(c.email)}</a><small>受付時間：${esc(c.hours)}<br>フォームは24時間受け付けます。送信すると受付番号が表示されます。</small>`,
+      [{ t: "お問い合わせフォームへ", go: "contact", main: true }, HOME]); };
+  const place = () => { const c = co();
+    say(`${esc(c.address)}<br>${esc(c.access).replace(/\n/g, "<br>")}<small>営業時間：${esc(c.hours)}</small>`,
+      [{ t: "地図を見る（会社概要）", go: "company", main: true }, { t: "お店のページ", href: STORE, ext: true }, HOME]); };
+  const personal = () => say("個人のお客様のお品物の買取・査定は、当社が運営する買取専門店「買取大吉 大阪勝山南店」で承っています。店頭での査定のほか、お店のページで詳しくご案内しています。",
+    [{ t: "お店のページを開く", href: STORE, ext: true, main: true }, { t: "場所・営業時間", fn: place }, HOME]);
+  const partner = () => say("業務提携・販売代理店のご相談は「ビジネスパートナー募集」のページで、提携の内容とお申し込みの流れをご案内しています。",
+    [{ t: "ビジネスパートナー募集へ", go: "partnership", main: true }, { t: "事業連携・協業支援の説明", fn: () => bizCard(bizById("alliance")) }, HOME]);
+  const allBiz = () => { say("株式会社グローブでは、次の12の分野でご相談を受け付けています。気になるものを押してください。",
+    BUSINESSES.map(b => ({ t: `${b.no} ${b.ja}`, fn: () => bizCard(b) })).concat([HOME])); };
+  const needs = () => say("いちばん近いものを選んでください。",
+    NEEDS.map(([t, id]) => ({ t, fn: () => bizCard(bizById(id)) })).concat([{ t: "品物を売りたい（個人）", fn: personal }, HOME]));
+  const textSize = () => { const v = !document.documentElement.classList.contains("gd-big"); big.set(v);
+    say(v ? "文字を大きくしました。もう一度押すと元に戻ります。" : "文字の大きさを標準に戻しました。", [HOME]); };
+  const company = () => { const c = co();
+    say(`<b>${esc(c.name)}</b><br>${esc(c.representative)}<br>設立：${esc(c.founded)}<br>${esc(c.address)}`, [{ t: "会社概要を見る", go: "company", main: true }, { t: "企業理念", go: "philosophy" }, HOME]); };
+
+  let menuAt = "";
+  function menu(first) {
+    const r = route(), acts = []; menuAt = r;
+    if (r.startsWith("business-") && bizById(r.slice(9))) { const b = bizById(r.slice(9)); acts.push({ t: `このページ（${b.ja}）について相談する`, go: "contact-service-" + b.id, main: true }); }
+    acts.push({ t: "どんな相談ができる？", fn: allBiz }, { t: "困りごとから探す", fn: needs }, { t: "電話番号・問い合わせ方法", fn: contact },
+      { t: "場所・営業時間", fn: place }, { t: "品物を売りたい（個人の方）", fn: personal }, { t: "提携・代理店をしたい", fn: partner },
+      { t: "会社について", fn: company }, { t: document.documentElement.classList.contains("gd-big") ? "文字を標準の大きさに戻す" : "文字を大きくする", fn: textSize });
+    say(first ? "こんにちは。株式会社グローブのご案内係です。<br>どのようなことをお知りになりたいですか？" : "ほかに知りたいことはありますか？", acts);
+  }
+
+  const INTENTS = [
+    [/電話|でんわ|連絡|問い?合わ?せ|フリーダイヤル|ファックス|fax|メール|番号/, contact],
+    [/場所|住所|アクセス|行き方|どこ|駅|駐車|地図|道/, place],
+    [/営業時間|何時|なんじ|休み|定休|開いて|あいて|受付時間/, place],
+    [/個人|売りたい|うりたい|査定して|買い取って|かいとって|持ち込/, personal],
+    [/代理店|パートナー|提携したい|提携先|協力会社/, partner],
+    [/会社概要|代表|社長|設立|法人番号|古物|会社について/, company],
+    [/文字|字が小さ|見えにく|大きく/, textSize],
+    [/料金|費用|値段|いくら|無料|見積/, () => say("料金はご相談の内容によって異なります。内容をうかがったうえで、ご案内いたします。まずはお気軽にお問い合わせください。", [{ t: "お問い合わせフォームへ", go: "contact", main: true }, { t: "電話番号を見る", fn: contact }, HOME])],
+    [/個人情報|プライバシー/, () => say("個人情報の取り扱いは「プライバシーポリシー」に定めています。", [{ t: "プライバシーポリシーへ", go: "privacy", main: true }, HOME])],
+    [/一覧|サイトマップ|全部のページ/, () => say("すべてのページの一覧はこちらです。", [{ t: "サイトマップへ", go: "sitemap", main: true }, HOME])]
+  ];
+  function answer(q) {
+    const n = q.normalize("NFKC").toLowerCase().replace(/\s+/g, "");
+    if (!n) return;
+    const hit = INTENTS.find(([re]) => re.test(n));
+    const scores = BUSINESSES.map(b => {
+      let sc = 0;
+      (SYN[b.id] || []).forEach(w => { if (n.includes(w)) sc += 3 + w.length / 10; });
+      if (n.length >= 2) {
+        if (b.ja.includes(n)) sc += 4;
+        (b.groups || []).forEach(g => g[1].forEach(x => { const t = x[0].toLowerCase(); if (t.includes(n)) sc += 2; else if (n.length >= 3 && n.includes(t)) sc += 2; }));
+        if ((b.lead + b.overview).includes(n)) sc += 1;
+      }
+      return [sc, b];
+    }).filter(x => x[0] > 0).sort((a, b) => b[0] - a[0]).slice(0, 3);
+    if (hit && !(hit[1] === personal && scores.length && /法人|会社|在庫|備品/.test(n))) { hit[1](); return; }
+    if (scores.length) {
+      say(scores.length === 1 ? "こちらの分野が近いと思います。" : `近い分野が${scores.length}つあります。`);
+      scores.forEach(([, b]) => bizCard(b));
+      say("ほかにも探せます。", [{ t: "困りごとから探す", fn: needs }, HOME]);
+      return;
+    }
+    say("すみません、うまく見つけられませんでした。言葉を変えて入力するか、次から選んでください。お問い合わせフォームの分類で「その他・分からない」を選んでいただいても大丈夫です。",
+      [{ t: "困りごとから探す", fn: needs }, { t: "どんな相談ができる？", fn: allBiz }, { t: "お問い合わせフォームへ", go: "contact" }, HOME]);
+  }
+
+  let started = false;
+  function open() {
+    pn.hidden = false; btn.setAttribute("aria-expanded", "true");
+    if (!started) { started = true; menu(true); }
+    else if (menuAt !== route() || (log.lastElementChild && !log.lastElementChild.classList.contains("gd-acts"))) menu();
+    scroll();
+    if (matchMedia("(min-width: 561px)").matches) inp.focus(); else pn.querySelector(".gd-x").focus();
+  }
+  function close() { if (pn.hidden) return; pn.hidden = true; btn.setAttribute("aria-expanded", "false"); }
+  btn.addEventListener("click", () => { if (pn.hidden) open(); else { close(); btn.focus(); } });
+  pn.querySelector(".gd-x").addEventListener("click", () => { close(); btn.focus(); });
+  pn.addEventListener("keydown", e => { if (e.key === "Escape") { close(); btn.focus(); } });
+  pn.querySelector("form").addEventListener("submit", e => { e.preventDefault(); const q = inp.value.trim(); if (!q) return; inp.value = ""; me(q); answer(q); });
+  const vis = () => { const r = route(); btn.hidden = r === "admin" || r === "admin-login"; if (btn.hidden) close(); };
+  addEventListener("hashchange", vis); vis();
+  window.gdAnswer = q => { if (pn.hidden) open(); me(q); answer(q); };
+}
+
 /* ---------- CONTACT ---------- */
 function pageContact(r) {
   const entries = [["service", "法人向けサービスのご相談", "企業・事業者専用"], ["corporate", "法人の経営・事業相談", "経営・採用・制作・AIなど"], ["partner", "業務提携・代理店に関するご相談", "提携をご検討の企業・専門家"]];
@@ -3368,7 +3551,7 @@ $("#menu-btn").addEventListener("click", () => { const n = $("#gnav"); n.classLi
 addEventListener("hashchange", () => { if (globeStop && route() !== "home") { globeStop(); globeStop = null; } render(); });
 $("#year").textContent = new Date().getFullYear();
 if (PATH_MODE) $$('footer a[href="#admin-login"]').forEach(a => { a.setAttribute("href", BASE + "kanri/"); a.setAttribute("rel", "nofollow"); });
-fixLinks(document); jaLabels(document.body); foldFooter(); initScene();
+fixLinks(document); jaLabels(document.body); foldFooter(); initScene(); try { initGuide(); } catch (e) { console.warn(e); }
 if ("IntersectionObserver" in window) { const vio = new IntersectionObserver(es => es.forEach(e => { const v = e.target; if (e.isIntersecting) { if (v.dataset.auto !== "0") { const pr = v.play(); pr && pr.catch(() => {}); } } else v.pause(); }), { rootMargin: "100px" });
   new MutationObserver(() => $$("video").forEach(v => { if (!v.dataset.vio) { v.dataset.vio = "1"; vio.observe(v); } })).observe(document.body, { childList: true, subtree: true });
   $$("video").forEach(v => { v.dataset.vio = "1"; vio.observe(v); }); } paintLogo(); paintFooter(); render(); boot();
