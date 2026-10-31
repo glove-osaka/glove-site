@@ -526,6 +526,13 @@ html.op-on body *{visibility:hidden}
 .news li{display:grid;grid-template-columns:9.5em 1fr;gap:4px 18px;padding:14px 4px;border-bottom:1px solid var(--line)}
 .news time{color:var(--muted);font-variant-numeric:tabular-nums}
 .news a{color:var(--pine);display:block;min-height:44px}
+.voices-h{font-family:var(--f-display);font-size:1.3rem;margin:0 0 4px}
+.voices{display:grid;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));gap:16px;margin-top:14px}
+.voice{position:relative;margin:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px 20px 18px}
+.voice blockquote{margin:6px 0 10px;font-family:var(--f-display);font-size:1.08rem;line-height:1.8;color:var(--ink)}
+.voice figcaption{font-size:.9rem;color:var(--muted);margin-bottom:10px}
+.voice dl{margin:0;display:grid;gap:4px;font-size:.95rem}.voice dt{font-weight:700;color:var(--pine)}.voice dd{margin:0 0 6px}
+.tag-ex{display:inline-block;font-size:.78rem;font-weight:700;border-radius:6px;padding:1px 8px;background:var(--pine-soft);color:var(--pine)}
 @media (max-width:560px){.news li{grid-template-columns:1fr}}
 
 /* トップをスマホで短く */
