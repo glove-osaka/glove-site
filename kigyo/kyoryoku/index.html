@@ -76,6 +76,7 @@ textarea{min-height:80px;resize:vertical}
 <div class="f">対応地域<div class="ar-box" id="area"></div></div>
 </div>
 <div class="card"><h2>そのほか</h2>
+<label class="f">費用・手数料の扱い<small>例：報酬はご相談者へ直接ご案内、紹介料なし など</small><input type="text" id="fee"></label>
 <label class="f">備考<textarea id="note" placeholder="対応できる時間帯、得意な業種など"></textarea></label>
 <label class="agree"><input type="checkbox" id="agree"><span>ご登録の内容を、当窓口がご相談者へのおつなぎのために使うことに同意します。ご相談者の情報は、ご相談者の同意の範囲でお伝えします。（必須）</span></label>
 </div>
@@ -177,7 +178,7 @@ $("#f").addEventListener("submit", async e => {
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v("email"))) { $("#err").textContent = "メールアドレスが正しくありません。"; $("#email").focus(); return; }
   if (!$("#agree").checked) { $("#err").textContent = "同意の確認にチェックを入れてください。"; return; }
   const p = { name: v("name"), type: $("#type").value, person: v("person"), tel: v("tel"), email: v("email"), url: v("url"), address: v("address"),
-    cats: $$("#cats input:checked").map(x => x.value), keywords: v("keywords"), area: areaGet($("#area")), note: v("note"), agree: true };
+    cats: $$("#cats input:checked").map(x => x.value), keywords: v("keywords"), area: areaGet($("#area")), fee: v("fee"), note: v("note"), agree: true };
   const b = $("#go"); b.disabled = true; b.textContent = "送信しています…";
   try { const r = await call("partnerApply", code, p); if (!r.ok) { $("#err").textContent = r.error; return; } $("#f").hidden = true; $("#done").hidden = false; window.scrollTo(0, 0); }
   catch (err) { $("#err").textContent = "送信できませんでした。時間をおいてお試しください。"; }

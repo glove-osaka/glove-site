@@ -635,7 +635,7 @@ function partnerHint(name) {
   const p = D.partners.find(x => x.name === name);
   if (!name) return "取次先は「取次先の登録」で登録できます。上のアシストに候補が出ます。";
   if (!p) return "登録されていない取次先です（「取次先の登録」で登録すると、連絡先がここに出ます）。";
-  return `<b>${esc(p.type || "")}</b>${p.person ? "　担当：" + esc(p.person) : ""}${p.tel ? "　☎ " + esc(p.tel) : ""}${p.email ? "　" + esc(p.email) : ""}`;
+  return `<b>${esc(p.type || "")}</b>${p.person ? "　担当：" + esc(p.person) : ""}${p.tel ? "　☎ " + esc(p.tel) : ""}${p.email ? "　" + esc(p.email) : ""}${p.fee ? "<br>費用・手数料：" + esc(p.fee) : ""}`;
 }
 function stageMids(big) {
   return (D.stages || []).filter(x => x.big === big).map(x => ({ mid: x.mid, subs: String(x.subs || "").split(/[、,，]/).map(s => s.trim()).filter(Boolean) }));
@@ -756,6 +756,7 @@ function renderPartners() {
       <div class="f"><span>対応分野（当てはまるものをすべて）</span><div class="pt-cats">${D.categories.map(cat => `<label><input type="checkbox" value="${esc(cat)}" ${String(e.cats || "").split("、").includes(cat) ? "checked" : ""}> ${esc(cat)}</label>`).join("")}</div></div>
       <div class="f"><span>対応地域</span><div class="ar-box" id="p-area"></div></div>
       <label class="f">得意なこと・キーワード（「、」で区切る。ご相談の文面と照らし合わせます）<input type="text" id="p-kw" value="${esc(e.keywords || "")}" placeholder="例：建設業許可、産廃、ものづくり補助金"></label>
+      <label class="f">手数料・費用の扱い<input type="text" id="p-fee" value="${esc(e.fee || "")}" placeholder="例：紹介料なし・報酬は先方から直接ご案内"></label>
       <label class="f">備考<textarea id="p-note" style="min-height:56px">${esc(e.note || "")}</textarea></label>
       <div class="err" id="p-err"></div>
       <div class="row"><button class="btn btn-navy" id="p-save">${PT_EDIT ? "修正を保存する" : "登録する"}</button><button class="btn" id="p-cancel">${PT_EDIT ? "やめる" : "閉じる"}</button></div>
@@ -780,7 +781,7 @@ function renderPartners() {
     $("#p-cancel").onclick = () => { PT_EDIT = null; PT_NEW = false; renderPartners(); };
     $("#p-save").onclick = async () => {
       const o = { id: e.base ? "" : (e.id || ""), name: $("#p-name").value.trim(), type: $("#p-type").value, person: $("#p-person").value.trim(), tel: $("#p-tel").value.trim(), email: $("#p-email").value.trim(), area: areaGet($("#p-area")),
-        cats: $$(".pt-cats input:checked").map(x => x.value).join("、"), keywords: $("#p-kw").value.trim(), fee: e.fee || "", active: $("#p-active").value, note: $("#p-note").value.trim() };
+        cats: $$(".pt-cats input:checked").map(x => x.value).join("、"), keywords: $("#p-kw").value.trim(), fee: $("#p-fee").value.trim(), active: $("#p-active").value, note: $("#p-note").value.trim() };
       $("#p-err").textContent = "";
       if (!o.name) { $("#p-err").textContent = "名称を入れてください。"; return; }
       busy(true);
