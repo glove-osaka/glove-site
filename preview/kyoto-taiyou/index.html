@@ -277,6 +277,54 @@ html,body{margin:0;background:var(--kt-paper)}
   .kt-site{padding-bottom:52px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* 相談フォーム（選んで進む形） */
+.kt-sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.kt-form{gap:0;padding:8px 20px 24px}
+.kt-step{padding:20px 0;border-bottom:1px dashed var(--kt-line)}
+.kt-step-label{font-weight:700;color:var(--kt-sumi);font-size:16px;display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin-bottom:12px}
+.kt-step-n{width:26px;height:26px;border-radius:50%;background:var(--kt-green);color:#fff;font-size:13px;display:inline-flex;align-items:center;justify-content:center;font-family:var(--kt-display)}
+.kt-hint{font-size:13px;font-weight:400;color:var(--kt-text)}
+.kt-sub{font-size:14px;font-weight:700;color:var(--kt-sumi);margin:14px 0 8px!important}
+.kt-type{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.kt-type label{cursor:pointer;position:relative}
+.kt-type input{position:absolute;opacity:0}
+.kt-type span{display:grid;gap:2px;text-align:center;padding:18px 10px;border-radius:12px;border:2px solid var(--kt-line);background:var(--kt-white)}
+.kt-type b{font-family:var(--kt-display);font-size:19px;color:var(--kt-sumi);font-weight:600}
+.kt-type small{font-size:12.5px}
+.kt-type-biz input:checked+span{border-color:var(--kt-green);background:var(--kt-green-pale)}
+.kt-type-per input:checked+span{border-color:var(--kt-sakura);background:var(--kt-sakura-pale)}
+.kt-type input:focus-visible+span{outline:3px solid var(--kt-gold);outline-offset:2px}
+@media (max-width:420px){.kt-type b{font-size:16px}}
+.kt-chipsel{display:flex;flex-wrap:wrap;gap:8px}
+.kt-chipsel label{cursor:pointer;position:relative}
+.kt-chipsel input{position:absolute;opacity:0}
+.kt-chipsel span{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:999px;border:1px solid #d8d0bf;background:var(--kt-white);font-size:15px;color:var(--kt-sumi);line-height:1.4}
+.kt-chipsel span::before{content:"";width:14px;height:14px;border-radius:4px;border:1.5px solid #bfb6a3;flex:none}
+.kt-one span::before{border-radius:50%}
+.kt-chipsel input:checked+span{background:var(--kt-green);border-color:var(--kt-green);color:#fff}
+.kt-chipsel input:checked+span::before{background:#fff;border-color:#fff;box-shadow:inset 0 0 0 3px var(--kt-green)}
+.kt-chipsel input:focus-visible+span{outline:3px solid var(--kt-gold);outline-offset:2px}
+.kt-fields{display:grid;gap:14px}
+.kt-drop{display:grid;justify-items:center;gap:2px;padding:20px;border:2px dashed #cfc6b2;border-radius:12px;background:var(--kt-paper);cursor:pointer;text-align:center}
+.kt-drop b{color:var(--kt-green);font-size:16px}
+.kt-drop small{font-size:13px}
+.kt-filelist{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}
+.kt-filelist li{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--kt-white);border:1px solid var(--kt-line);border-radius:8px;padding:8px 12px;font-size:14px}
+.kt-filelist button{border:0;background:none;color:var(--kt-sakura);font:inherit;font-weight:700;cursor:pointer;flex:none}
+.kt-btn-wide{width:100%;margin:20px 0 12px}
+.kt-confirm{background:var(--kt-white);border:1px solid var(--kt-line);border-radius:12px;padding:24px 20px}
+.kt-confirm h3{font-size:20px;margin-bottom:12px}
+.kt-confirm dl{margin:0 0 20px;display:grid;grid-template-columns:8em 1fr;border-top:1px solid var(--kt-line)}
+.kt-confirm dt,.kt-confirm dd{margin:0;padding:10px 4px;border-bottom:1px solid var(--kt-line);font-size:15px}
+.kt-confirm dt{font-weight:700;color:var(--kt-sumi)}
+.kt-confirm dd{white-space:pre-wrap;word-break:break-word}
+@media (max-width:480px){.kt-confirm dl{grid-template-columns:1fr}.kt-confirm dt{border-bottom:0;padding-bottom:0}}
+.kt-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.kt-no{font-family:var(--kt-display);font-size:22px;color:var(--kt-green);letter-spacing:.05em}
+.kt-done:not([hidden]){display:block}
+.kt-site [hidden]{display:none!important}
+.kt-confirm,.kt-done,.kt-err{scroll-margin-top:90px}
 </style>
 </head>
 <body>
@@ -288,7 +336,7 @@ html,body{margin:0;background:var(--kt-paper)}
       <svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true"><defs><linearGradient id="ktg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d2ad62"/><stop offset="1" stop-color="#a77d33"/></linearGradient><clipPath id="ktc"><circle cx="26" cy="26" r="25"/></clipPath></defs><circle cx="26" cy="26" r="25" fill="url(#ktg)"/><g clip-path="url(#ktc)"><circle cx="26" cy="27" r="7" fill="#fffdf9"/><g stroke="#fffdf9" stroke-width="1.6" stroke-linecap="round"><line x1="26" y1="11" x2="26" y2="16"/><line x1="16" y1="15" x2="19" y2="19"/><line x1="36" y1="15" x2="33" y2="19"/><line x1="10" y1="23" x2="15" y2="25"/><line x1="42" y1="23" x2="37" y2="25"/><line x1="20.5" y1="12.5" x2="22" y2="17"/><line x1="31.5" y1="12.5" x2="30" y2="17"/></g><path d="M0 36 C 10 28, 18 30, 26 34 C 34 29, 42 28, 52 33 V52 H0Z" fill="#fffdf9"/><path d="M0 41 C 12 35, 20 37, 28 40 C 36 36, 44 36, 52 39 V52 H0Z" fill="#a77d33"/></g></svg>
       <span><span class="kt-logo-name">京都太陽行政書士事務所</span><span class="kt-logo-sub">Kyoto Taiyou Administrative Scrivener Office</span></span>
     </a>
-    <a class="kt-head-tel" href="tel:0753126647"><b><svg width="0.9em" height="0.9em" viewBox="0 0 24 24" aria-hidden="true" style="flex:none"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 006.6 6.6l2.2-2.2a1 1 0 011-.25 11.4 11.4 0 003.6.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.6a1 1 0 01-.25 1z"/></svg>075-312-6647</b><small>平日 9:00〜18:00</small></a>
+    <a class="kt-head-tel" href="tel:0753126647"><b><svg width="0.9em" height="0.9em" viewBox="0 0 24 24" aria-hidden="true" style="flex:none"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 006.6 6.6l2.2-2.2a1 1 0 011-.25 11.4 11.4 0 003.6.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.6a1 1 0 01-.25 1z"/></svg>075-312-6647</b><small>9:00〜18:00（暦通り）</small></a>
     <button class="kt-burger" id="kt-burger" aria-label="メニューを開く" aria-expanded="false" aria-controls="kt-drawer"><span></span><span></span><span></span></button>
   </div>
 </header>
@@ -314,7 +362,7 @@ html,body{margin:0;background:var(--kt-paper)}
       <a href="#profile">代表紹介・行政書士とは</a>
       <a href="#contact">お問い合わせ</a>
     </nav>
-    <div class="kt-drawer-tel"><a href="tel:0753126647">075-312-6647</a><br><small>平日 9:00〜18:00 ／ 初回相談無料</small></div>
+    <div class="kt-drawer-tel"><a href="tel:0753126647">075-312-6647</a><br><small>電話 9:00〜18:00（暦通り）<br>メールはいつでも受付 ／ 初回相談無料</small></div>
   </div>
 </div>
 
@@ -657,28 +705,102 @@ html,body{margin:0;background:var(--kt-paper)}
   <div class="kt-sec">
     <div class="kt-wrap kt-narrow" style="display:grid;gap:22px">
       <div class="kt-grid kt-g2">
-        <div class="kt-card" style="text-align:center"><span class="kt-card-n">お電話</span><a class="kt-cta-tel" style="margin:0;justify-content:center" href="tel:0753126647">075-312-6647</a><small>平日 9:00〜18:00（電話・FAX共通）</small></div>
-        <div class="kt-card" style="text-align:center"><span class="kt-card-n">メール</span><p style="font-weight:700;color:var(--kt-sumi);word-break:break-all;font-size:17px">contact@kyoto-taiyou.com</p><small>24時間受け付けています</small></div>
+        <div class="kt-card" style="text-align:center"><span class="kt-card-n">お電話</span><a class="kt-cta-tel" style="margin:0;justify-content:center" href="tel:0753126647">075-312-6647</a><small>9:00〜18:00（暦通り・電話／FAX共通）</small></div>
+        <div class="kt-card" style="text-align:center"><span class="kt-card-n">メール</span><p style="font-weight:700;color:var(--kt-sumi);word-break:break-all;font-size:17px">contact@kyoto-taiyou.com</p><small>いつでも受け付けています</small></div>
       </div>
       <form class="kt-form" id="kt-form" novalidate>
-        <div class="kt-field">
-          <span>ご相談の種類<span class="kt-req">必須</span></span>
-          <div class="kt-radios">
-            <label><input type="radio" name="kind" value="経営者のご相談" id="kt-k1">経営者のご相談</label>
-            <label><input type="radio" name="kind" value="個人のご相談" id="kt-k2">個人のご相談</label>
-            <label><input type="radio" name="kind" value="その他" id="kt-k3">その他</label>
+        <div class="kt-step" id="kt-step1">
+          <p class="kt-step-label"><span class="kt-step-n">1</span>どちらのご相談ですか<span class="kt-req">必須</span></p>
+          <div class="kt-type">
+            <label class="kt-type-biz"><input type="radio" name="type" value="企業" id="kt-type-biz"><span><b>企業のご相談</b><small>法人・事業者の方</small></span></label>
+            <label class="kt-type-per"><input type="radio" name="type" value="個人" id="kt-type-per"><span><b>個人のご相談</b><small>相続・終活・暮らしの手続き</small></span></label>
           </div>
         </div>
-        <div class="kt-field"><label for="kt-name">お名前<span class="kt-req">必須</span></label><input id="kt-name" name="name" autocomplete="name"></div>
-        <div class="kt-field"><label for="kt-company">会社名（法人の方）</label><input id="kt-company" name="company" autocomplete="organization"></div>
-        <div class="kt-field"><label for="kt-tel">お電話番号<span class="kt-req">必須</span></label><input id="kt-tel" name="tel" type="tel" autocomplete="tel" inputmode="tel"></div>
-        <div class="kt-field"><label for="kt-mail">メールアドレス</label><input id="kt-mail" name="mail" type="email" autocomplete="email"></div>
-        <div class="kt-field"><label for="kt-msg">ご相談内容<span class="kt-req">必須</span></label><textarea id="kt-msg" name="msg" placeholder="分かる範囲で結構です。"></textarea></div>
-        <p class="kt-err" id="kt-err" role="alert">必須の項目をご記入ください。</p>
-        <button class="kt-btn kt-btn-main" type="submit">この内容で送信する</button>
-        <p class="kt-note" style="margin:0">お預かりした情報は、守秘義務のもとでご相談への対応にのみ使用します。</p>
+
+        <div id="kt-rest" hidden>
+          <div class="kt-step">
+            <p class="kt-step-label"><span class="kt-step-n">2</span>ご相談の種類<span class="kt-req">必須</span><small class="kt-hint">いくつでも選べます</small></p>
+            <div class="kt-chipsel" id="kt-topics"></div>
+          </div>
+
+          <div class="kt-step">
+            <p class="kt-step-label"><span class="kt-step-n">3</span>ご相談の時期</p>
+            <div class="kt-chipsel kt-one">
+              <label><input type="radio" name="timing" value="すぐに相談したい" id="kt-t1"><span>すぐに相談したい</span></label>
+              <label><input type="radio" name="timing" value="1ヶ月以内" id="kt-t2"><span>1ヶ月以内</span></label>
+              <label><input type="radio" name="timing" value="まずは情報を知りたい" id="kt-t3"><span>まずは情報を知りたい</span></label>
+            </div>
+          </div>
+
+          <div class="kt-step">
+            <p class="kt-step-label"><span class="kt-step-n">4</span>ご希望の相談方法</p>
+            <div class="kt-chipsel kt-one">
+              <label><input type="radio" name="how" value="事務所へ来所" id="kt-h1"><span>事務所へ来所</span></label>
+              <label><input type="radio" name="how" value="訪問してほしい" id="kt-h2"><span>訪問してほしい</span></label>
+              <label><input type="radio" name="how" value="オンライン" id="kt-h3"><span>オンライン</span></label>
+              <label><input type="radio" name="how" value="まずは電話で" id="kt-h4"><span>まずは電話で</span></label>
+            </div>
+          </div>
+
+          <div class="kt-step">
+            <p class="kt-step-label"><span class="kt-step-n">5</span>お客様の情報</p>
+            <div class="kt-fields">
+              <div class="kt-field"><label for="kt-name">お名前<span class="kt-req">必須</span></label><input id="kt-name" name="name" autocomplete="name"></div>
+              <div class="kt-field" id="kt-company-wrap"><label for="kt-company">会社名</label><input id="kt-company" name="company" autocomplete="organization"></div>
+              <div class="kt-field"><label for="kt-tel">お電話番号</label><input id="kt-tel" name="tel" type="tel" autocomplete="tel" inputmode="tel"></div>
+              <div class="kt-field"><label for="kt-mail">メールアドレス</label><input id="kt-mail" name="mail" type="email" autocomplete="email" inputmode="email"></div>
+              <p class="kt-hint" style="margin:0">お電話番号かメールアドレスのどちらかをご記入ください。</p>
+            </div>
+          </div>
+
+          <div class="kt-step">
+            <p class="kt-step-label"><span class="kt-step-n">6</span>ご連絡の希望</p>
+            <div class="kt-chipsel kt-one">
+              <label><input type="radio" name="contact" value="電話" id="kt-c1"><span>電話で</span></label>
+              <label><input type="radio" name="contact" value="メール" id="kt-c2"><span>メールで</span></label>
+              <label><input type="radio" name="contact" value="どちらでも" id="kt-c3"><span>どちらでも</span></label>
+            </div>
+            <p class="kt-sub">つながりやすい時間帯</p>
+            <div class="kt-chipsel">
+              <label><input type="checkbox" name="time" value="午前（9〜12時）" id="kt-w1"><span>午前</span></label>
+              <label><input type="checkbox" name="time" value="昼（12〜15時）" id="kt-w2"><span>昼</span></label>
+              <label><input type="checkbox" name="time" value="夕方（15〜18時）" id="kt-w3"><span>夕方</span></label>
+              <label><input type="checkbox" name="time" value="いつでも" id="kt-w4"><span>いつでも</span></label>
+            </div>
+          </div>
+
+          <div class="kt-step">
+            <p class="kt-step-label"><span class="kt-step-n">7</span>ご相談の内容<small class="kt-hint">分かる範囲で結構です</small></p>
+            <div class="kt-field"><label for="kt-msg" class="kt-sr">ご相談の内容</label><textarea id="kt-msg" name="msg" placeholder="例）ベテラン社員が辞めそうで、技術をどう残すか相談したい"></textarea></div>
+          </div>
+
+          <div class="kt-step">
+            <p class="kt-step-label"><span class="kt-step-n">8</span>資料の添付<small class="kt-hint">任意・3点まで・1点3MBまで</small></p>
+            <label class="kt-drop" for="kt-files"><b>ファイルを選ぶ</b><small>写真・PDF（jpg・png・gif・pdf）</small></label>
+            <input id="kt-files" type="file" accept=".jpg,.jpeg,.png,.gif,.pdf,image/jpeg,image/png,image/gif,application/pdf" multiple class="kt-sr">
+            <ul class="kt-filelist" id="kt-filelist"></ul>
+          </div>
+
+          <p class="kt-err" id="kt-err" role="alert"></p>
+          <button class="kt-btn kt-btn-main kt-btn-wide" type="submit">入力内容を確認する</button>
+          <p class="kt-note" style="margin:0;text-align:center">お預かりした情報は、守秘義務のもとでご相談への対応にのみ使用します。</p>
+        </div>
       </form>
-      <div class="kt-done" id="kt-done" role="status"><h3 style="font-size:20px">ご相談を受け付けました</h3><p style="margin-top:8px">内容を確認のうえ、2営業日以内にご連絡いたします。お急ぎの方はお電話でどうぞ。</p></div>
+
+      <div class="kt-confirm" id="kt-confirm" hidden>
+        <h3>入力内容のご確認</h3>
+        <dl id="kt-confirm-list"></dl>
+        <div class="kt-btns">
+          <button class="kt-btn kt-btn-sub" type="button" id="kt-back">修正する</button>
+          <button class="kt-btn kt-btn-main" type="button" id="kt-send">この内容で送信する</button>
+        </div>
+      </div>
+
+      <div class="kt-done" id="kt-done" role="status" hidden>
+        <h3 style="font-size:20px">ご相談を受け付けました</h3>
+        <p style="margin-top:8px">受付番号 <b id="kt-no" class="kt-no"></b></p>
+        <p style="margin-top:8px">内容を確認のうえ、ご連絡いたします。お急ぎの方はお電話（075-312-6647／9:00〜18:00・暦通り）でどうぞ。</p>
+      </div>
     </div>
   </div>
 </section>
@@ -691,7 +813,7 @@ html,body{margin:0;background:var(--kt-paper)}
       <h2>ひとりで抱えず、まずはお話しください</h2>
       <p>初回相談は1時間まで無料です。</p>
       <a class="kt-cta-tel" href="tel:0753126647"><svg width="0.9em" height="0.9em" viewBox="0 0 24 24" aria-hidden="true" style="flex:none"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 006.6 6.6l2.2-2.2a1 1 0 011-.25 11.4 11.4 0 003.6.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.6a1 1 0 01-.25 1z"/></svg>075-312-6647</a>
-      <p class="kt-cta-sub">平日 9:00〜18:00 ／ contact@kyoto-taiyou.com</p>
+      <p class="kt-cta-sub">電話 9:00〜18:00（暦通り）／ メールはいつでも contact@kyoto-taiyou.com</p>
       <a class="kt-btn kt-btn-main" href="#contact">フォームで相談する</a>
     </div>
   </div>
@@ -727,14 +849,61 @@ html,body{margin:0;background:var(--kt-paper)}
   window.addEventListener('hashchange',show);show();
   burger.addEventListener('click',function(){drawer.classList.add('is-open');drawer.setAttribute('aria-hidden','false');burger.setAttribute('aria-expanded','true');});
   drawer.querySelectorAll('[data-close],nav a').forEach(function(el){el.addEventListener('click',closeDrawer);});
-  var form=document.getElementById('kt-form');
+  var TOPICS={
+    '企業':['人が辞めない対策','事業承継・M&A','財務改善','補助金の申請','契約書・内容証明','許認可（経審・産廃など）','会社設立・変更','外国人の雇用・在留資格','社員向けセミナー','社長の終活','その他'],
+    '個人':['終活に関する相談','遺言・相続','任意後見・家族信託','空き家・自宅の管理や売却','施設への入居','墓じまい・死後の手続き','契約書・内容証明','女性の起業','在留資格','詐欺被害の防止','その他']
+  };
+  var form=document.getElementById('kt-form'),rest=document.getElementById('kt-rest'),topics=document.getElementById('kt-topics');
+  var err=document.getElementById('kt-err'),confirmBox=document.getElementById('kt-confirm'),done=document.getElementById('kt-done');
+  var files=[],fileInput=document.getElementById('kt-files'),fileList=document.getElementById('kt-filelist');
+  function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  form.querySelectorAll('input[name="type"]').forEach(function(r){r.addEventListener('change',function(){
+    var list=TOPICS[r.value];
+    topics.innerHTML=list.map(function(t,i){return '<label><input type="checkbox" name="topic" value="'+esc(t)+'" id="kt-tp'+i+'"><span>'+esc(t)+'</span></label>';}).join('');
+    document.getElementById('kt-company-wrap').hidden=(r.value!=='企業');
+    rest.hidden=false;
+  });});
+  function drawFiles(){
+    fileList.innerHTML=files.map(function(f,i){return '<li><span>'+esc(f.name)+'（'+Math.ceil(f.size/1024)+'KB）</span><button type="button" data-i="'+i+'">外す</button></li>';}).join('');
+  }
+  fileInput.addEventListener('change',function(){
+    var msg='';
+    Array.prototype.forEach.call(fileInput.files,function(f){
+      if(!/\.(jpe?g|png|gif|pdf)$/i.test(f.name)){msg='写真（jpg・png・gif）かPDFを選んでください。';return;}
+      if(f.size>3*1024*1024){msg='「'+f.name+'」は3MBを超えています。';return;}
+      if(files.length>=3){msg='添付は3点までです。';return;}
+      files.push(f);
+    });
+    fileInput.value='';drawFiles();
+    err.textContent=msg;err.classList.toggle('is-on',!!msg);
+  });
+  fileList.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;files.splice(+b.dataset.i,1);drawFiles();});
+  function val(n){var el=form.querySelector('[name="'+n+'"]:checked');return el?el.value:'';}
+  function vals(n){return Array.prototype.map.call(form.querySelectorAll('[name="'+n+'"]:checked'),function(e){return e.value;});}
+  var data=null;
   form.addEventListener('submit',function(e){
     e.preventDefault();
-    var el=form.elements;
-    var ok=form.querySelector('input[name="kind"]:checked')&&el['name'].value.trim()&&el['tel'].value.trim()&&el['msg'].value.trim();
-    document.getElementById('kt-err').classList.toggle('is-on',!ok);
-    if(!ok)return;
-    form.style.display='none';document.getElementById('kt-done').classList.add('is-on');
+    var el=form.elements,msg='';
+    if(!val('type'))msg='企業か個人かを選んでください。';
+    else if(!vals('topic').length)msg='ご相談の種類を1つ以上選んでください。';
+    else if(!el['name'].value.trim())msg='お名前をご記入ください。';
+    else if(!el['tel'].value.trim()&&!el['mail'].value.trim())msg='お電話番号かメールアドレスのどちらかをご記入ください。';
+    err.textContent=msg;err.classList.toggle('is-on',!!msg);
+    if(msg){err.scrollIntoView({block:'center'});return;}
+    var type=val('type');
+    data=[['ご相談の区分',type+'のご相談'],['ご相談の種類',vals('topic').join('、')],['ご相談の時期',val('timing')],['ご希望の相談方法',val('how')],['お名前',el['name'].value.trim()]];
+    if(type==='企業')data.push(['会社名',el['company'].value.trim()]);
+    data.push(['お電話番号',el['tel'].value.trim()],['メールアドレス',el['mail'].value.trim()],['ご連絡の希望',val('contact')],['つながりやすい時間帯',vals('time').join('、')],['ご相談の内容',el['msg'].value.trim()],['添付資料',files.map(function(f){return f.name;}).join('、')]);
+    document.getElementById('kt-confirm-list').innerHTML=data.map(function(d){return '<dt>'+esc(d[0])+'</dt><dd>'+(d[1]?esc(d[1]):'（なし）')+'</dd>';}).join('');
+    form.hidden=true;confirmBox.hidden=false;confirmBox.scrollIntoView({block:'start'});
+  });
+  document.getElementById('kt-back').addEventListener('click',function(){confirmBox.hidden=true;form.hidden=false;});
+  document.getElementById('kt-send').addEventListener('click',function(){
+    var d=new Date(),p=function(n){return ('0'+n).slice(-2);};
+    var no=(val('type')==='企業'?'K':'P')+String(d.getFullYear()).slice(2)+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes());
+    document.getElementById('kt-no').textContent=no;
+    /* 送信先（受付台帳・通知メール）は公開先が決まったらここで接続する */
+    confirmBox.hidden=true;done.hidden=false;done.scrollIntoView({block:'start'});
   });
 })();
 </script>
