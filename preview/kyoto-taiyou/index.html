@@ -325,6 +325,70 @@ html,body{margin:0;background:var(--kt-paper)}
 .kt-done:not([hidden]){display:block}
 .kt-site [hidden]{display:none!important}
 .kt-confirm,.kt-done,.kt-err{scroll-margin-top:90px}
+
+/* 追加ページ共通 */
+.kt-stack{display:grid;gap:16px}
+.kt-mt{margin-top:32px}
+.kt-lead{font-family:var(--kt-display);font-size:18px;color:var(--kt-sumi);line-height:2}
+.kt-subhead{font-size:18px;margin:8px 0 12px;padding-left:12px;border-left:3px solid var(--kt-gold)}
+.kt-more-link{text-align:right;margin:10px 0 28px!important;font-size:15px}
+.kt-label{display:inline-block;font-size:11.5px;font-weight:700;border-radius:4px;padding:0 8px;margin-right:8px;background:#efe8da;color:var(--kt-sumi);vertical-align:1px;line-height:1.9}
+.kt-label-s{background:var(--kt-sakura-pale);color:#8e4a55}
+.kt-label-g{background:var(--kt-green-pale);color:var(--kt-green)}
+.kt-sns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.kt-sns a{border:1px solid currentColor;border-radius:999px;padding:4px 14px;font-size:14px;text-decoration:none}
+.kt-footer .kt-sns a{color:#eef0e6}
+.kt-admin-link{opacity:.6;font-size:12px}
+
+/* 目次 */
+.kt-toc{display:flex;gap:8px;overflow-x:auto;padding-top:16px;padding-bottom:4px;scrollbar-width:none}
+.kt-toc a{flex:none;font-size:14px;border:1px solid var(--kt-line);background:var(--kt-white);border-radius:999px;padding:6px 14px;text-decoration:none;color:var(--kt-sumi)}
+[id^="ph-"]{scroll-margin-top:90px}
+
+/* 損失の帯 */
+.kt-loss{background:var(--kt-paper);border:1px solid var(--kt-line);border-left:4px solid var(--kt-gold);border-radius:12px;padding:24px}
+.kt-loss h3{font-size:19px;margin-bottom:14px}
+.kt-loss-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.kt-loss-grid span{background:var(--kt-white);border:1px solid var(--kt-line);border-radius:8px;padding:6px 12px;font-weight:700;color:var(--kt-sumi);font-size:15px}
+
+/* 数字 */
+.kt-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.kt-stats div{background:var(--kt-white);border:1px solid var(--kt-line);border-radius:12px;padding:18px 10px;text-align:center;display:grid;gap:4px}
+.kt-stats b{font-family:var(--kt-display);font-size:clamp(28px,6vw,40px);color:var(--kt-green);font-weight:600;line-height:1.2;font-variant-numeric:tabular-nums}
+.kt-stats small{font-size:.45em;margin-left:2px}
+.kt-stats span{font-size:13px;line-height:1.5}
+@media (max-width:560px){.kt-stats{grid-template-columns:repeat(2,1fr)}}
+.kt-quote-box{font-family:var(--kt-display);font-size:clamp(18px,2.6vw,22px);line-height:2.1;color:var(--kt-sumi);text-align:center;border-top:1px solid var(--kt-gold);border-bottom:1px solid var(--kt-gold);padding:26px 4px}
+
+/* ブログ */
+.kt-blogtools{display:grid;gap:12px;margin-bottom:8px}
+.kt-blogtools input{font:inherit;font-size:16px;padding:12px 14px;border:1px solid #d8d0bf;border-radius:999px;background:var(--kt-white);color:var(--kt-sumi)}
+.kt-bloglist{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.kt-bloglist a{display:grid;gap:4px;background:var(--kt-white);border:1px solid var(--kt-line);border-radius:12px;padding:14px 18px;text-decoration:none;color:var(--kt-sumi)}
+.kt-bloglist a:hover{border-color:var(--kt-gold)}
+.kt-bloglist .kt-meta{font-size:13px;color:var(--kt-gold);display:flex;gap:10px;align-items:center;font-variant-numeric:tabular-nums}
+.kt-bloglist .kt-meta em{font-style:normal;background:var(--kt-green-pale);color:var(--kt-green);border-radius:4px;padding:0 8px;font-size:12px}
+.kt-bloglist b{font-weight:500;line-height:1.7}
+
+/* アクセス */
+.kt-access{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:start}
+.kt-map{border-radius:12px;overflow:hidden;border:1px solid var(--kt-line);background:var(--kt-green-pale);aspect-ratio:4/3}
+.kt-map iframe{width:100%;height:100%;border:0;display:block}
+@media (max-width:760px){.kt-access{grid-template-columns:1fr}}
+.kt-table-info th{width:9em;background:var(--kt-paper);font-weight:700}
+.kt-table-info td{text-align:left;font-weight:400;white-space:normal;color:var(--kt-text)}
+@media (max-width:480px){.kt-table-info th,.kt-table-info td{display:block;width:auto;border-bottom:0}.kt-table-info tr{display:block;border-bottom:1px solid var(--kt-line)}.kt-table-info th{padding-bottom:2px}}
+
+/* 個人情報 */
+.kt-offline{display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:center;background:var(--kt-green-pale);border:1px solid #c9d5bd;border-radius:12px;padding:18px 20px;color:var(--kt-green)}
+.kt-offline p{color:var(--kt-sumi)}
+.kt-offline b{color:var(--kt-green)}
+.kt-policy{margin:0;padding-left:1.3em;display:grid;gap:8px}
+
+/* 管理ページ */
+.kt-warn{background:#fff7e3;border:1px solid #ecd7a2;border-radius:10px;padding:14px 16px;font-size:14px;color:#6b5420}
+.kt-admin textarea{min-height:110px}
+.kt-err.is-ok{color:var(--kt-green);display:block}
 </style>
 </head>
 <body>
@@ -358,8 +422,12 @@ html,body{margin:0;background:var(--kt-paper)}
       <a href="#home">ホーム</a>
       <a href="#business">経営者のご相談</a>
       <a href="#personal">個人のご相談</a>
+      <a href="#philosophy">経営理念</a>
       <a href="#fees">料金一覧</a>
       <a href="#profile">代表紹介・行政書士とは</a>
+      <a href="#news">お知らせ・活動実績</a>
+      <a href="#blog">ブログ記事</a>
+      <a href="#access">アクセス</a>
       <a href="#contact">お問い合わせ</a>
     </nav>
     <div class="kt-drawer-tel"><a href="tel:0753126647">075-312-6647</a><br><small>電話 9:00〜18:00（暦通り）<br>メールはいつでも受付 ／ 初回相談無料</small></div>
@@ -415,10 +483,11 @@ html,body{margin:0;background:var(--kt-paper)}
   <div class="kt-sec">
     <div class="kt-wrap">
       <div class="kt-head"><small>選ばれる理由</small><h2>安心してお任せいただくために</h2></div>
-      <div class="kt-grid kt-g3">
+      <div class="kt-grid kt-g2">
         <div class="kt-reason"><span class="kt-reason-n">壱</span><div><h3>特定行政書士の確かさ</h3><p>書類の作成から、行政への不服申立ての代理まで対応できる資格者が担当します。</p></div></div>
         <div class="kt-reason"><span class="kt-reason-n">弐</span><div><h3>現場を知る実務経験</h3><p>大手メーカーの営業と労働局での就労支援を経験。約6,000人の支援に携わりました。</p></div></div>
         <div class="kt-reason"><span class="kt-reason-n">参</span><div><h3>会社とご家族を一緒に</h3><p>事業承継と相続・終活をまとめてご相談いただけます。専門外は信頼できる専門家へ同行してご紹介します。</p></div></div>
+        <div class="kt-reason"><span class="kt-reason-n">四</span><div><h3>情報を外に出さない書類づくり</h3><p>ご依頼者の資料は、インターネットにつながない専用のパソコンで作成しています。LINE・Zoom・メールにも接続しません。</p></div></div>
       </div>
     </div>
   </div>
@@ -431,7 +500,7 @@ html,body{margin:0;background:var(--kt-paper)}
         <p class="kt-greet-q">京都のものづくりと、<br>社長の人生を、次の世代へ。</p>
         <p>会社員時代、担当先の社長が相次いで亡くなられた経験。京都の伝統技術が途絶えてしまった現場。どちらも、問題は人がいないことではなく、受け継ぐ仕組みがなかったことでした。会社のこと、ご家族のこと、おひとりで抱え込まずに、まずはお話をお聞かせください。</p>
         <p class="kt-sign">代表 特定行政書士<b>松宮 紀代</b></p>
-        <p style="margin-top:12px"><a href="#profile">経歴・資格を見る 〉</a></p>
+        <p style="margin-top:12px;display:flex;gap:18px;flex-wrap:wrap"><a href="#philosophy">経営理念を読む 〉</a><a href="#profile">経歴・資格を見る 〉</a></p>
       </div>
     </div>
   </div>
@@ -451,12 +520,16 @@ html,body{margin:0;background:var(--kt-paper)}
   <div class="kt-sec">
     <div class="kt-wrap kt-narrow">
       <div class="kt-head"><small>お知らせ・コラム</small><h2>事務所だより</h2></div>
+      <h3 class="kt-subhead">お知らせ</h3>
       <ul class="kt-news">
-        <li><time datetime="2026-08-28">2026.08.28</time><span>生糸の中国依存と、着物・帯づくりへの影響</span></li>
-        <li><time datetime="2026-05-28">2026.05.28</time><span>融資は「事業性評価」の時代へ</span></li>
-        <li><time datetime="2026-04-30">2026.04.30</time><span>家族より会社に尽くした人への事業承継</span></li>
-        <li><time datetime="2026-03-01">2026.03.01</time><span>黒字廃業と、内部昇格による事業承継</span></li>
+        <li><time datetime="2025-08-16">2025.08.16</time><span><span class="kt-label kt-label-s">相談会</span>京都駅八条口のイオンモールで終活の無料相談会を行います</span></li>
+        <li><time datetime="2025-08-06">2025.08.06</time><span><span class="kt-label kt-label-g">相談会</span>七条ハローワークで外国人を雇用される事業主の方への無料相談を行います</span></li>
+        <li><time datetime="2025-05-04">2025.05.04</time><span><span class="kt-label">講演</span>公認会計士・市ノ澤翔氏による経営改善講演を主催します</span></li>
       </ul>
+      <p class="kt-more-link"><a href="#news">お知らせ・活動実績をすべて見る 〉</a></p>
+      <h3 class="kt-subhead">ブログ記事</h3>
+      <ul class="kt-bloglist" id="kt-blog-home"></ul>
+      <p class="kt-more-link"><a href="#blog">ブログ記事をすべて見る 〉</a></p>
     </div>
   </div>
 </section>
@@ -512,9 +585,21 @@ html,body{margin:0;background:var(--kt-paper)}
         <div class="kt-card"><h3>許認可申請</h3><p>経営事項審査（経審）、産業廃棄物などの許認可を申請します。</p></div>
         <div class="kt-card"><h3>会社設立・変更</h3><p>定款作成・認証、NPO法人・財団の設立と変更に対応します。</p></div>
         <div class="kt-card"><h3>補助金申請</h3><p>ものづくり補助金をはじめ、事業に合った補助金の申請を支援します。</p></div>
-        <div class="kt-card"><h3>在留資格</h3><p>申請取次行政書士として、外国人社員の手続きを行います。</p></div>
+        <div class="kt-card"><h3>在留資格</h3><p>申請取次行政書士として、外国人社員の在留資格の手続きを行います。</p></div>
         <div class="kt-card"><h3>社員向けセミナー</h3><p>内定者・社員向けの研修を行います。内容はご相談ください。</p></div>
       </div>
+    </div>
+  </div>
+
+  <div class="kt-sec kt-sec-white">
+    <div class="kt-wrap">
+      <div class="kt-head"><small>外国人を雇う会社へ</small><h2>外国人社員の採用と定着を支えます</h2><p>外国人雇用管理アドバイザーとして、ハローワークで事業主の方の相談員も務めています。在留資格の手続きだけでなく、受け入れから定着までご相談ください。</p></div>
+      <div class="kt-grid kt-g3">
+        <div class="kt-card kt-card-green"><span class="kt-card-n">雇う前に</span><h3>受け入れの準備</h3><p>採用できる在留資格の確認、雇用契約や社内ルールの整備をお手伝いします。</p></div>
+        <div class="kt-card kt-card-green"><span class="kt-card-n">手続き</span><h3>在留資格の申請取次</h3><p>申請取次行政書士として、在留資格の取得・変更・更新を代わりに行います。</p></div>
+        <div class="kt-card kt-card-green"><span class="kt-card-n">雇った後に</span><h3>定着と雇用管理</h3><p>日本人社員との意思疎通や評価のしかたなど、長く働いてもらうための雇用管理を助言します。</p></div>
+      </div>
+      <p class="kt-note">活動実績：七条ハローワークで、外国人を雇用している・検討中の事業主の方への無料相談を担当（2025年8月）。</p>
     </div>
   </div>
 
@@ -678,6 +763,10 @@ html,body{margin:0;background:var(--kt-paper)}
           <span class="kt-chip kt-chip-main">特定行政書士</span><span class="kt-chip kt-chip-main">申請取次行政書士</span><span class="kt-chip kt-chip-main">キャリアコンサルタント</span>
           <span class="kt-chip">外国人雇用管理アドバイザー</span><span class="kt-chip">ファイナンシャル・プランニング技能士</span><span class="kt-chip">知的財産管理技能士</span><span class="kt-chip">事業承継支援員</span><span class="kt-chip">生成AIコンサルタント</span><span class="kt-chip">財務改善アドバイザー</span>
         </div>
+        <h2 class="kt-h2s">活動実績</h2>
+        <p>終活の無料相談会（イオンモール）、外国人雇用の事業主相談（ハローワーク）、公認会計士による経営改善講演の主催、遺言・遺産分割協議書のセミナーなど。<a href="#news">活動実績を見る 〉</a></p>
+        <h2 class="kt-h2s">発信</h2>
+        <div class="kt-sns"><a href="https://www.facebook.com/matsumiya.kiyo" target="_blank" rel="noopener">Facebook</a><a href="https://note.com/__marn_1nma_ruk0" target="_blank" rel="noopener">note</a><a href="https://www.instagram.com/jinsei_planner/" target="_blank" rel="noopener">Instagram</a></div>
         <h2 class="kt-h2s">所属・役職</h2>
         <ul style="margin:0;padding-left:1.2em">
           <li>京都府行政書士会</li><li>京都商工会議所 電機・機械金属部会</li><li>大阪みなと倫理法人会 広報役員</li><li>環境系財団法人 京都府支部長</li><li>福祉系NPO法人 代表理事</li><li>コスモス成年後見サポートセンター</li>
@@ -708,6 +797,7 @@ html,body{margin:0;background:var(--kt-paper)}
         <div class="kt-card" style="text-align:center"><span class="kt-card-n">お電話</span><a class="kt-cta-tel" style="margin:0;justify-content:center" href="tel:0753126647">075-312-6647</a><small>9:00〜18:00（暦通り・電話／FAX共通）</small></div>
         <div class="kt-card" style="text-align:center"><span class="kt-card-n">メール</span><p style="font-weight:700;color:var(--kt-sumi);word-break:break-all;font-size:17px">contact@kyoto-taiyou.com</p><small>いつでも受け付けています</small></div>
       </div>
+      <p class="kt-note" style="margin:0;text-align:center">事務所：京都市右京区西院西平町24（阪急・嵐電「西院」駅から徒歩圏）<a href="#access">地図を見る 〉</a></p>
       <form class="kt-form" id="kt-form" novalidate>
         <div class="kt-step" id="kt-step1">
           <p class="kt-step-label"><span class="kt-step-n">1</span>どちらのご相談ですか<span class="kt-req">必須</span></p>
@@ -805,6 +895,313 @@ html,body{margin:0;background:var(--kt-paper)}
   </div>
 </section>
 
+
+<!-- ================= 経営理念 ================= -->
+<section class="kt-page" data-page="philosophy">
+  <div class="kt-pagehead kt-pagehead-biz"><div class="kt-wrap">
+    <small>経営理念</small><h1>京都のものづくりと、<br>社長の人生を守る</h1>
+    <p>製造業の技術を次の世代へ残し、社長の人生と会社の理念を守ること。</p>
+    <p class="kt-crumb"><a href="#home">ホーム</a> 〉 経営理念</p>
+  </div></div>
+
+  <nav class="kt-toc kt-wrap" aria-label="このページの目次">
+    <a href="#philosophy" data-jump="ph-origin">想いの原点</a>
+    <a href="#philosophy" data-jump="ph-reality">製造業の現実</a>
+    <a href="#philosophy" data-jump="ph-numbers">数字で見る</a>
+    <a href="#philosophy" data-jump="ph-succession">承継の考え方</a>
+    <a href="#philosophy" data-jump="ph-hearing">全社員ヒアリング</a>
+    <a href="#philosophy" data-jump="ph-mission">私の使命</a>
+  </nav>
+
+  <div class="kt-sec" id="ph-origin">
+    <div class="kt-wrap kt-narrow">
+      <div class="kt-head"><small>想いの原点</small><h2>本当に守りたいのは「社長の人生」</h2></div>
+      <div class="kt-stack">
+        <p class="kt-lead">離職によって社長が失うのは、人手だけではありません。築き上げた会社、社員を養うための借金、元請けの無理を飲み続けた日々、技術指導に費やした時間、そして家族を犠牲にしてきた人生そのものです。</p>
+        <p>「離職率」や「定着率」という一般論ではなく、社長が築いてきたものをどう守るか。社員が意欲と希望を持てなければ、社長の理念や創業の想いは社員に届きません。そのずれを埋めることが、私の仕事です。</p>
+      </div>
+      <div class="kt-grid kt-g3 kt-mt">
+        <div class="kt-card kt-card-sakura"><span class="kt-card-n">目撃した現実</span><h3>相次いだ社長の自死</h3><p>大阪勤務時代、元請けの無理な要求や金融機関・行政の理不尽が重なり、信頼してくださった取引先の社長が相次いで亡くなりました。責任感が強く優しい人ほど、追い詰められていきます。二度とこの理不尽を起こさせないと誓いました。</p></div>
+        <div class="kt-card kt-card-sakura"><span class="kt-card-n">途絶えた技術</span><h3>数百年続いた西陣織の技</h3><p>西陣織は、養蚕・生糸・金糸銀糸・意匠・織り機の製造と修理など、多くの職人の連携で成り立ちます。織り機の心臓部の部品を作る職人が亡くなり、高度な技術は事実上途絶えました。戦乱も物資不足も越えてきた技が、平和な平成の時代に失われたのです。</p></div>
+        <div class="kt-card kt-card-sakura"><span class="kt-card-n">技術流出</span><h3>外資による乗っ取り</h3><p>京都でも外資による企業の乗っ取りが進んでいます。航空機部品など先端技術を担う会社も例外ではありません。小さな部品こそ製造業の命です。</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="kt-sec kt-sec-white" id="ph-reality">
+    <div class="kt-wrap">
+      <div class="kt-head"><small>製造業社長が直面する現実</small><h2>こんなことが起きていませんか</h2></div>
+      <ul class="kt-worries kt-worries-g">
+        <li>給与を上げても、辞める人は辞める</li>
+        <li>暗黙知という目に見えない財産が消えていく</li>
+        <li>熟練社員の定年とともに、技術が衰える</li>
+        <li>外資による乗っ取りや、有能な社員の引き抜き</li>
+        <li>産業スパイやデータ流出の危険</li>
+        <li>事業承継が進まず、社内に将来への不安が広がる</li>
+        <li>働く意欲が下がり、社内に疑心暗鬼が生まれる</li>
+        <li>後継者がおらず、廃業を決断せざるを得ない</li>
+        <li>すべての負担が社長ひとりに集中している</li>
+      </ul>
+
+      <div class="kt-loss kt-mt">
+        <h3>一人の熟練工が辞めるとき、消えるのは「頭数」ではありません</h3>
+        <div class="kt-loss-grid">
+          <span>求人の費用</span><span>育成にかけた期間</span><span>資格取得への投資</span><span>取引先からの信頼</span><span>不良品を出さない勘</span>
+        </div>
+        <p>穴が埋まるまで、目に見えないコストが数百万円単位で出ていき続けます。1円単位で経費を削りながら、この流出を放置することは、財務の面からも最優先で手を打つべき課題です。社長が人事に割いている時間も、新しい事業に振り向けられるようになります。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="kt-sec" id="ph-numbers">
+    <div class="kt-wrap">
+      <div class="kt-head"><small>数字で見る</small><h2>中小企業が日本の雇用を支えている</h2></div>
+      <div class="kt-stats">
+        <div><b>約300<small>万社</small></b><span>日本の中小企業の数</span></div>
+        <div><b>99<small>%</small></b><span>企業のうち中小企業の割合</span></div>
+        <div><b>約70<small>%</small></b><span>中小企業で働く人の割合</span></div>
+        <div><b>73<small>%</small></b><span>社長が70歳を超える企業の割合</span></div>
+        <div><b>約70<small>%</small></b><span>そのうち廃業を予定している割合</span></div>
+        <div><b>650<small>万人</small></b><span>廃業で失われると言われる雇用</span></div>
+      </div>
+      <p class="kt-note" style="text-align:center">廃業による経済損失は、GDP比で22兆円と言われています。廃業すれば全年齢の社員が職を失い、人手不足どころか「人余り」が生まれます。中小企業の10年後の生存率が6%とされる一方、京都には50年、100年、200年を超える製造業が数多くあります。</p>
+    </div>
+  </div>
+
+  <div class="kt-sec kt-sec-green" id="ph-succession">
+    <div class="kt-wrap">
+      <div class="kt-head"><small>承継の考え方</small><h2>会社と技術を、誰に託すか</h2></div>
+      <div class="kt-grid kt-g2">
+        <div class="kt-card kt-card-green"><span class="kt-card-n">社内承継という道</span><h3>理念を継ぐのは、一番身近な社員かもしれない</h3><p>2025年の事業承継では、社内承継の件数が家族承継を上回りました。家族でなくても、社長の製品への想いは引き継げます。現場を知る後継者であれば、早くから社外に周知し、金融機関や取引先との交渉にも同行させることが大切です。社員と後継者がかみ合えば、社長の最大の理解者になります。</p></div>
+        <div class="kt-card"><span class="kt-card-n">外国企業への売却</span><h3>技術の価値を知る相手に託す</h3><p>技術の価値が分からない相手に、会社を差し出してよいのでしょうか。どうしても売却が必要な場合は、技術力と社員を最も高く評価する同業へ。人生を振り出しに戻さないためには、売らずに続けられる経営が最善だと考えています。</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="kt-sec" id="ph-hearing">
+    <div class="kt-wrap kt-narrow">
+      <div class="kt-head"><small>なぜ全社員ヒアリングか</small><h2>辞める理由は、社長には見えません</h2></div>
+      <div class="kt-stack">
+        <p>辞めていく社員は、無難な理由しか口にしません。本当の理由が分からないまま、採用と離職を繰り返している会社が多くあります。若手とベテランの意識の違いを、共通の言葉で理解し合うだけで改善することもあります。</p>
+        <p>京都労働局のキャリアコンサルタントとして、就職が難しい方約6,000人の就職・離職・再就職に向き合ってきました。辞める理由は一人ひとり重さも背景も違います。だからこそ、全社員から本音を聞かなければ、本当の原因も解決策も見つかりません。そのストレスは、社長おひとりに負わせず、私が引き受けます。</p>
+      </div>
+      <div class="kt-promise kt-mt" style="border-color:#c9d5bd">
+        <h3>目指す姿</h3>
+        <ul>
+          <li>全社員ヒアリングで離職を防ぐ</li>
+          <li>社員が自ら動く組織にし、戦力や後継候補に育てる</li>
+          <li>離職による財務の損失もまとめて解決する</li>
+          <li>技術承継と評価制度を一体で整え、評価のゆがみと不満をなくす</li>
+          <li>公正で明確なキャリアの道筋で、意欲と誇りを高める</li>
+          <li>さまざまな方法で技術流出を防ぐ</li>
+          <li>社内承継による事業承継も選べるようにする</li>
+        </ul>
+        <p style="margin-top:10px"><a href="#business">技術承継・定着支援プログラム（3ヶ月〜）を見る 〉</a></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="kt-sec kt-sec-white" id="ph-mission">
+    <div class="kt-wrap kt-narrow">
+      <div class="kt-head"><small>私の使命</small><h2>製造業の社長を守る</h2></div>
+      <p class="kt-quote-box">技術者が辞めていく現場も、社長が追い詰められる現場も、<br>数百年の技術が途絶える現場も、もう見たくありません。<br>社長の想いをこの世に残すために、<br>社員の定着に全力を尽くします。</p>
+      <p class="kt-sign">代表 特定行政書士<b>松宮 紀代</b></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= お知らせ・実績 ================= -->
+<section class="kt-page" data-page="news">
+  <div class="kt-pagehead"><div class="kt-wrap">
+    <small>お知らせ・活動実績</small><h1>お知らせ・活動実績</h1>
+    <p class="kt-crumb"><a href="#home">ホーム</a> 〉 お知らせ・活動実績</p>
+  </div></div>
+  <div class="kt-sec">
+    <div class="kt-wrap">
+      <div class="kt-head"><small>活動実績</small><h2>地域での相談会・講演</h2></div>
+      <div class="kt-grid kt-g3">
+        <div class="kt-card kt-card-sakura"><span class="kt-card-n">終活相談会</span><h3>イオンモールで終活の無料相談会</h3><p>京都駅八条口のイオンモールで、終活の無料相談会を開催しました（2025年8月）。</p></div>
+        <div class="kt-card kt-card-green"><span class="kt-card-n">外国人雇用</span><h3>ハローワークで事業主向け相談</h3><p>七条のハローワークで、外国人を雇用している、または検討中の事業主の方への無料相談を担当しました（2025年8月）。</p></div>
+        <div class="kt-card"><span class="kt-card-n">講演会の主催</span><h3>公認会計士による経営改善講演</h3><p>MAS監査数全国1位の公認会計士・市ノ澤翔氏を招き、京都で初めての経営改善講演を主催しました（2025年5月）。</p></div>
+        <div class="kt-card"><span class="kt-card-n">セミナー</span><h3>遺言・遺産分割協議書を1日でつくる</h3><p>遺言を1日で作るセミナー、遺産分割協議書を1日で作るセミナーを開催しました（2024年）。</p></div>
+        <div class="kt-card"><span class="kt-card-n">セミナー</span><h3>6月のセミナーが満席に</h3><p>2024年6月に開催した2回のセミナーは、いずれも満席となりました。</p></div>
+        <div class="kt-card"><span class="kt-card-n">就労支援</span><h3>約6,000人の就職を支援</h3><p>京都労働局のキャリアコンサルタントとして、就職が難しい方約6,000人を支援してきました。</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="kt-sec kt-sec-white">
+    <div class="kt-wrap kt-narrow">
+      <div class="kt-head"><small>お知らせ</small><h2>事務所からのお知らせ</h2></div>
+      <ul class="kt-news">
+        <li><time datetime="2025-08-16">2025.08.16</time><span><span class="kt-label kt-label-s">相談会</span>8月17日（日）10時〜17時半、京都駅八条口のイオンモールで終活の無料相談会を行います</span></li>
+        <li><time datetime="2025-08-06">2025.08.06</time><span><span class="kt-label kt-label-g">相談会</span>8月13日・20日（水）9時30分〜17時、七条ハローワークで外国人を雇用される事業主の方への無料相談を行います</span></li>
+        <li><time datetime="2025-07-11">2025.07.11</time><span><span class="kt-label">講演</span>公認会計士の特別講演へのご参加のお礼</span></li>
+        <li><time datetime="2025-05-24">2025.05.24</time><span><span class="kt-label">講演</span>いよいよ明日、特別講演を行います</span></li>
+        <li><time datetime="2025-05-04">2025.05.04</time><span><span class="kt-label">講演</span>京都初、MAS監査数全国1位の公認会計士・市ノ澤翔氏による経営改善講演を主催します</span></li>
+        <li><time datetime="2024-11-09">2024.11.09</time><span><span class="kt-label">ご案内</span>ご依頼について</span></li>
+        <li><time datetime="2024-10-16">2024.10.16</time><span><span class="kt-label">重要</span>メールアドレスが変わりました（新しいアドレス：contact@kyoto-taiyou.com）</span></li>
+        <li><time datetime="2024-07-10">2024.07.10</time><span><span class="kt-label">セミナー</span>遺言を1日で作るセミナー・遺産分割協議書を1日で作るセミナーへのご参加ありがとうございました</span></li>
+        <li><time datetime="2024-05-26">2024.05.26</time><span><span class="kt-label">セミナー</span>6月22日・24日のセミナー、満席のお礼</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ブログ ================= -->
+<section class="kt-page" data-page="blog">
+  <div class="kt-pagehead"><div class="kt-wrap">
+    <small>コラム</small><h1>ブログ記事</h1>
+    <p>経営・人材・承継・終活について、日々の現場から綴っています。</p>
+    <p class="kt-crumb"><a href="#home">ホーム</a> 〉 ブログ記事</p>
+  </div></div>
+  <div class="kt-sec">
+    <div class="kt-wrap kt-narrow">
+      <div class="kt-blogtools">
+        <label for="kt-blog-q" class="kt-sr">記事を探す</label>
+        <input id="kt-blog-q" type="search" placeholder="ことばで探す（例：事業承継）">
+        <div class="kt-chipsel kt-one" id="kt-blog-cats"></div>
+      </div>
+      <p class="kt-note" id="kt-blog-count"></p>
+      <ul class="kt-bloglist" id="kt-bloglist"></ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= アクセス ================= -->
+<section class="kt-page" data-page="access">
+  <div class="kt-pagehead"><div class="kt-wrap">
+    <small>アクセス</small><h1>事務所へのアクセス</h1>
+    <p class="kt-crumb"><a href="#home">ホーム</a> 〉 アクセス</p>
+  </div></div>
+  <div class="kt-sec">
+    <div class="kt-wrap">
+      <div class="kt-access">
+        <div class="kt-map">
+          <iframe src="https://maps.google.com/maps?q=%E4%BA%AC%E9%83%BD%E5%B8%82%E5%8F%B3%E4%BA%AC%E5%8C%BA%E8%A5%BF%E9%99%A2%E8%A5%BF%E5%B9%B3%E7%94%BA24&amp;z=16&amp;output=embed" title="京都太陽行政書士事務所の地図" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <div class="kt-stack">
+          <table class="kt-table kt-table-info">
+            <tbody>
+              <tr><th scope="row">事務所名</th><td>京都太陽行政書士事務所</td></tr>
+              <tr><th scope="row">住所</th><td>〒615-0023<br>京都府京都市右京区西院西平町24</td></tr>
+              <tr><th scope="row">最寄り駅</th><td>阪急京都線「西院」駅 徒歩約6分<br>嵐電（京福）「西院」駅 徒歩約8分</td></tr>
+              <tr><th scope="row">電話・FAX</th><td><a href="tel:0753126647">075-312-6647</a><br><small>9:00〜18:00（暦通り）</small></td></tr>
+              <tr><th scope="row">メール</th><td>contact@kyoto-taiyou.com<br><small>いつでも受け付けています</small></td></tr>
+            </tbody>
+          </table>
+          <p class="kt-note">ご来所の際は、事前にご予約をお願いいたします。訪問・オンラインでのご相談にも対応しています。</p>
+          <a class="kt-btn kt-btn-sub" href="https://www.google.com/maps/search/?api=1&amp;query=%E4%BA%AC%E9%83%BD%E5%B8%82%E5%8F%B3%E4%BA%AC%E5%8C%BA%E8%A5%BF%E9%99%A2%E8%A5%BF%E5%B9%B3%E7%94%BA24" target="_blank" rel="noopener">Googleマップで開く</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 特定商取引法・個人情報 ================= -->
+<section class="kt-page" data-page="legal">
+  <div class="kt-pagehead"><div class="kt-wrap">
+    <small>表記</small><h1>特定商取引法に基づく表記・<br>個人情報保護方針</h1>
+    <p class="kt-crumb"><a href="#home">ホーム</a> 〉 特定商取引法・個人情報</p>
+  </div></div>
+  <div class="kt-sec">
+    <div class="kt-wrap kt-narrow kt-stack">
+      <div class="kt-head" style="text-align:left;margin-bottom:8px"><small>特定商取引法に基づく表記</small><h2 style="font-size:22px">起業家支援・講座について</h2></div>
+      <div class="kt-tablebox"><table class="kt-table kt-table-info">
+        <tbody>
+          <tr><th scope="row">事業者名</th><td>京都太陽行政書士事務所</td></tr>
+          <tr><th scope="row">運営責任者</th><td>松宮 紀代</td></tr>
+          <tr><th scope="row">所在地</th><td>〒615-0023 京都府京都市右京区西院西平町24</td></tr>
+          <tr><th scope="row">連絡先</th><td>電話 075-312-6647（9:00〜18:00・暦通り）<br>メール contact@kyoto-taiyou.com</td></tr>
+          <tr><th scope="row">販売価格</th><td>各サービスの料金欄に記載しています（<a href="#fees">料金一覧</a>）</td></tr>
+          <tr><th scope="row">商品代以外の費用</th><td data-set="extraFees"></td></tr>
+          <tr><th scope="row">お支払い方法</th><td data-set="payList"></td></tr>
+          <tr><th scope="row">お支払い時期</th><td data-set="payTiming"></td></tr>
+          <tr><th scope="row">提供の時期</th><td data-set="delivery"></td></tr>
+          <tr><th scope="row">クーリングオフ・解約</th><td><a href="#terms">ご契約・お支払い・解約について</a>をご確認ください</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="kt-head kt-mt" style="text-align:left;margin-bottom:8px"><small>個人情報保護方針</small><h2 style="font-size:22px">お預かりする情報の守り方</h2></div>
+      <div class="kt-offline">
+        <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><rect x="6" y="8" width="32" height="22" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2 34h40" stroke="currentColor" stroke-width="2"/><path d="M14 19l16 0M30 13l-16 12" stroke="currentColor" stroke-width="2"/></svg>
+        <p><b>ご依頼者の資料は、インターネットにつながない専用のパソコンで作成しています。</b><br>このパソコンはLINE・Zoom・メールにも接続せず、情報が外へ漏れることを防いでいます。</p>
+      </div>
+      <ul class="kt-policy">
+        <li>個人情報保護法をはじめとする関係法令とガイドラインを守ります。</li>
+        <li>漏えい・滅失・き損を防ぐ安全管理を行い、従業者や委託先も監督します。</li>
+        <li>個人情報は、適法かつ公正な方法で取得します。</li>
+        <li>利用目的をはっきりさせ、その範囲を超えて利用しません。マイナンバーは法律で認められた目的以外には扱いません。</li>
+        <li>ご本人の同意がある場合や法令に基づく場合を除き、第三者に提供しません。</li>
+        <li>開示・訂正・利用停止のご請求には、ご本人確認のうえ速やかに対応します。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ご契約・お支払い・解約 ================= -->
+<section class="kt-page" data-page="terms">
+  <div class="kt-pagehead"><div class="kt-wrap">
+    <small>ご案内</small><h1>ご契約・お支払い・解約について</h1>
+    <p class="kt-crumb"><a href="#home">ホーム</a> 〉 <a href="#legal">特定商取引法</a> 〉 ご契約・お支払い・解約</p>
+  </div></div>
+  <div class="kt-sec">
+    <div class="kt-wrap kt-narrow kt-stack">
+      <div class="kt-grid kt-g2">
+        <div class="kt-card kt-card-green"><span class="kt-card-n">お支払い方法</span><div data-set="payChips" class="kt-chips"></div><p class="kt-note" style="margin:0" data-set="payNote"></p></div>
+        <div class="kt-card"><span class="kt-card-n">お支払い時期</span><p data-set="payTiming"></p></div>
+      </div>
+      <div class="kt-tablebox"><table class="kt-table kt-table-info">
+        <tbody>
+          <tr><th scope="row">クーリングオフ</th><td data-set="coolingOff"></td></tr>
+          <tr><th scope="row">中途解約・返金</th><td data-set="cancel"></td></tr>
+          <tr><th scope="row">提供の時期</th><td data-set="delivery"></td></tr>
+          <tr><th scope="row">提供内容の不備</th><td data-set="defect"></td></tr>
+          <tr><th scope="row">商品代以外の費用</th><td data-set="extraFees"></td></tr>
+        </tbody>
+      </table></div>
+      <p class="kt-note">ご不明な点は、ご契約前にお気軽にお尋ねください。お見積りにご納得いただくまで、契約は発生しません。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 管理ページ ================= -->
+<section class="kt-page" data-page="admin">
+  <div class="kt-pagehead"><div class="kt-wrap">
+    <small>事務所用</small><h1>管理ページ</h1>
+    <p>お支払い方法と、解約・返金などの記載項目を登録します。</p>
+  </div></div>
+  <div class="kt-sec">
+    <div class="kt-wrap kt-narrow kt-stack">
+      <div class="kt-warn" role="note">現在は確認用のため、登録した内容はこの端末のブラウザにだけ保存されます。公開先が決まったら、受付台帳と同じ保存先につなぎ、すべての閲覧者に反映されるようにします。</div>
+      <form class="kt-form kt-admin" id="kt-admin" novalidate>
+        <div class="kt-step">
+          <p class="kt-step-label"><span class="kt-step-n">1</span>お支払い方法<small class="kt-hint">サイトに表示するものを選ぶ</small></p>
+          <div class="kt-chipsel" id="kt-adm-pay"></div>
+          <div class="kt-field" style="margin-top:12px"><label for="kt-adm-payother">そのほかのお支払い方法（自由記入）</label><input id="kt-adm-payother" name="payOther" placeholder="例）分割払い（3回まで）"></div>
+          <div class="kt-field" style="margin-top:12px"><label for="kt-adm-paynote">お支払いの補足</label><input id="kt-adm-paynote" name="payNote"></div>
+        </div>
+        <div class="kt-step">
+          <p class="kt-step-label"><span class="kt-step-n">2</span>記載項目</p>
+          <div class="kt-fields">
+            <div class="kt-field"><label for="kt-adm-paytiming">お支払い時期</label><textarea id="kt-adm-paytiming" name="payTiming" rows="2"></textarea></div>
+            <div class="kt-field"><label for="kt-adm-cooling">クーリングオフ</label><textarea id="kt-adm-cooling" name="coolingOff" rows="3"></textarea></div>
+            <div class="kt-field"><label for="kt-adm-cancel">中途解約・返金</label><textarea id="kt-adm-cancel" name="cancel" rows="3"></textarea></div>
+            <div class="kt-field"><label for="kt-adm-delivery">提供の時期</label><textarea id="kt-adm-delivery" name="delivery" rows="2"></textarea></div>
+            <div class="kt-field"><label for="kt-adm-defect">提供内容の不備</label><textarea id="kt-adm-defect" name="defect" rows="3"></textarea></div>
+            <div class="kt-field"><label for="kt-adm-extra">商品代以外の費用</label><textarea id="kt-adm-extra" name="extraFees" rows="2"></textarea></div>
+          </div>
+        </div>
+        <p class="kt-err" id="kt-adm-msg" role="status"></p>
+        <div class="kt-btns" style="margin-top:18px">
+          <button class="kt-btn kt-btn-sub" type="button" id="kt-adm-reset">初期の内容に戻す</button>
+          <button class="kt-btn kt-btn-main" type="submit">登録する</button>
+        </div>
+        <p class="kt-note" style="text-align:center"><a href="#terms">表示を確認する 〉</a></p>
+      </form>
+    </div>
+  </div>
+</section>
+
 </main>
 
 <section class="kt-cta" aria-label="ご相談の案内">
@@ -821,9 +1218,9 @@ html,body{margin:0;background:var(--kt-paper)}
 
 <footer class="kt-footer">
   <div class="kt-wrap kt-footer-in">
-    <div><h3>京都太陽行政書士事務所</h3><p>代表 特定行政書士 松宮 紀代<br>〒615-0023 京都府京都市右京区西院西平町24<br>電話・FAX 075-312-6647<br>contact@kyoto-taiyou.com</p></div>
-    <div><h3>ご相談</h3><ul><li><a href="#business">経営者のご相談</a></li><li><a href="#personal">個人のご相談</a></li><li><a href="#fees">料金一覧</a></li></ul></div>
-    <div><h3>事務所</h3><ul><li><a href="#profile">代表紹介・行政書士とは</a></li><li><a href="#contact">お問い合わせ</a></li><li><a href="https://kyoto-taiyou.com/privecy-policy/">特定商取引法に基づく表記</a></li></ul></div>
+    <div><h3>京都太陽行政書士事務所</h3><p>代表 特定行政書士 松宮 紀代<br>〒615-0023 京都府京都市右京区西院西平町24<br>阪急・嵐電「西院」駅から徒歩圏<br>電話・FAX 075-312-6647（9:00〜18:00・暦通り）<br>contact@kyoto-taiyou.com（いつでも受付）</p><div class="kt-sns"><a href="https://www.facebook.com/matsumiya.kiyo" target="_blank" rel="noopener">Facebook</a><a href="https://note.com/__marn_1nma_ruk0" target="_blank" rel="noopener">note</a><a href="https://www.instagram.com/jinsei_planner/" target="_blank" rel="noopener">Instagram</a></div></div>
+    <div><h3>ご相談</h3><ul><li><a href="#business">経営者のご相談</a></li><li><a href="#personal">個人のご相談</a></li><li><a href="#fees">料金一覧</a></li><li><a href="#contact">お問い合わせ</a></li></ul></div>
+    <div><h3>事務所</h3><ul><li><a href="#philosophy">経営理念</a></li><li><a href="#profile">代表紹介・行政書士とは</a></li><li><a href="#news">お知らせ・活動実績</a></li><li><a href="#blog">ブログ記事</a></li><li><a href="#access">アクセス</a></li><li><a href="#legal">特定商取引法・個人情報保護方針</a></li><li><a href="#terms">ご契約・お支払い・解約</a></li><li><a href="#admin" class="kt-admin-link">管理ページ</a></li></ul></div>
   </div>
   <p class="kt-copy">© 京都太陽行政書士事務所</p>
 </footer>
@@ -905,6 +1302,68 @@ html,body{margin:0;background:var(--kt-paper)}
     /* 送信先（受付台帳・通知メール）は公開先が決まったらここで接続する */
     confirmBox.hidden=true;done.hidden=false;done.scrollIntoView({block:'start'});
   });
+  /* ===== 記載項目（管理ページで登録） ===== */
+  var PAY_ALL=['クレジットカード','銀行振込','現金（来所時）','口座振替','電子マネー・QR決済'];
+  var DEF={
+    pay:['クレジットカード','銀行振込'],payOther:'',payNote:'分割払いをご利用の場合は分割手数料がかかります。',
+    payTiming:'クレジットカード：ご注文時に確定します。\n銀行振込：お振込みの時点で確定します。',
+    coolingOff:'お申込み日から7日以内にご連絡いただければ、お支払い済みの金額を返金いたします。返金時の振込手数料はお客様のご負担となります。',
+    cancel:'中途解約の場合は、お支払い額を講座の回数で割った金額に、残りの回数をかけた金額を振込で返金いたします。振込手数料はお客様のご負担となります。',
+    delivery:'お支払いの確認後24時間以内に、メールまたはLINE公式アカウントでご案内いたします。',
+    defect:'お申込み内容と異なる場合や、データが破損していた場合は、7日以内にご連絡ください。状況を確認のうえ、改めて提供いたします。',
+    extraFees:'分割払いの手数料、振込手数料'
+  };
+  var KEY='kt-settings-v1';
+  function load(){var o={};try{o=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){}var r={};for(var k in DEF)r[k]=(o[k]!==undefined?o[k]:DEF[k]);return r;}
+  function save(o){try{localStorage.setItem(KEY,JSON.stringify(o));return true;}catch(e){return false;}}
+  function br(t){return esc(t).replace(/\n/g,'<br>');}
+  function render(){
+    var c=load(),list=c.pay.slice();if(c.payOther.trim())list.push(c.payOther.trim());
+    document.querySelectorAll('[data-set]').forEach(function(el){
+      var k=el.getAttribute('data-set');
+      if(k==='payList')el.innerHTML=list.length?esc(list.join('、')):'お問い合わせください';
+      else if(k==='payChips')el.innerHTML=list.map(function(x){return '<span class="kt-chip kt-chip-main">'+esc(x)+'</span>';}).join('');
+      else el.innerHTML=br(c[k]||'');
+    });
+  }
+  var adm=document.getElementById('kt-admin');
+  function fillAdmin(){
+    var c=load();
+    document.getElementById('kt-adm-pay').innerHTML=PAY_ALL.map(function(x,i){return '<label><input type="checkbox" name="pay" value="'+esc(x)+'" id="kt-ap'+i+'"'+(c.pay.indexOf(x)>-1?' checked':'')+'><span>'+esc(x)+'</span></label>';}).join('');
+    ['payOther','payNote','payTiming','coolingOff','cancel','delivery','defect','extraFees'].forEach(function(k){adm.elements[k].value=c[k];});
+  }
+  fillAdmin();render();
+  var admMsg=document.getElementById('kt-adm-msg');
+  adm.addEventListener('submit',function(e){
+    e.preventDefault();
+    var o={pay:Array.prototype.map.call(adm.querySelectorAll('[name="pay"]:checked'),function(x){return x.value;})};
+    ['payOther','payNote','payTiming','coolingOff','cancel','delivery','defect','extraFees'].forEach(function(k){o[k]=adm.elements[k].value;});
+    var ok=save(o);render();
+    admMsg.textContent=ok?'登録しました。':'このブラウザでは保存できませんでした。';
+    admMsg.className='kt-err '+(ok?'is-ok':'is-on');
+  });
+  document.getElementById('kt-adm-reset').addEventListener('click',function(){
+    try{localStorage.removeItem(KEY);}catch(e){}
+    fillAdmin();render();admMsg.textContent='初期の内容に戻しました。';admMsg.className='kt-err is-ok';
+  });
+
+  /* ===== ブログ ===== */
+  var POSTS=[{"d": "2026.08.28", "t": "生糸が中国産しか無くなる未来、中国が輸出を止めれば着物や帯は作れなくなる", "u": "https://kyoto-taiyou.com/%e7%94%9f%e7%b3%b8%e3%81%8c%e4%b8%ad%e5%9b%bd%e7%94%a3%e3%81%97%e3%81%8b%e7%84%a1%e3%81%8f%e3%81%aa%e3%82%8b%e6%9c%aa%e6%9d%a5%e3%80%81%e4%b8%ad%e5%9b%bd%e3%81%8c%e8%bc%b8%e5%87%ba%e3%82%92%e6%ad%a2/", "c": "コラム"}, {"d": "2026.05.28", "t": "2026年5月から、融資は「事業性評価融資」に移行していきます。", "u": "https://kyoto-taiyou.com/2026%e5%b9%b45%e6%9c%88%e3%81%8b%e3%82%89%e3%80%81%e8%9e%8d%e8%b3%87%e3%81%af%e3%80%8c%e4%ba%8b%e6%a5%ad%e6%80%a7%e8%a9%95%e4%be%a1%e8%9e%8d%e8%b3%87%e3%80%8d%e3%81%ab%e7%a7%bb%e8%a1%8c%e3%81%97/", "c": "経営・財務"}, {"d": "2026.04.30", "t": "廃業を考える前に、家族より会社に尽くした人への事業承継も考えてください", "u": "https://kyoto-taiyou.com/%e5%bb%83%e6%a5%ad%e3%82%92%e8%80%83%e3%81%88%e3%82%8b%e5%89%8d%e3%81%ab%e3%80%81%e5%ae%b6%e6%97%8f%e3%82%88%e3%82%8a%e4%bc%9a%e7%a4%be%e3%81%ab%e5%b0%bd%e3%81%8f%e3%81%97%e3%81%9f%e4%ba%ba%e3%81%b8/", "c": "事業承継"}, {"d": "2026.03.28", "t": "奥山を原生林に戻すことが、回り回って未来の子供達を守ることになる。全ては繋がっている", "u": "https://kyoto-taiyou.com/%e9%87%91%e6%ac%b2%e3%81%8b%e3%82%89%e8%87%aa%e5%88%86%e4%b8%96%e4%bb%a3%e3%81%a7%e9%a3%9f%e3%81%84%e5%b0%bd%e3%81%8f%e3%81%99%e3%81%ae%e3%81%a7%e3%81%aa%e3%81%8f%e3%80%81%e5%ad%90%e4%be%9b%e9%81%94/", "c": "コラム"}, {"d": "2026.03.01", "t": "黒字倒産、黒字廃業が50％、事業承継は内部昇格が身内承継を超えた。M&Aで外国に売り渡している企業も。さて、どうされますか？", "u": "https://kyoto-taiyou.com/%e9%bb%92%e5%ad%97%e5%80%92%e7%94%a3%e3%80%81%e9%bb%92%e5%ad%97%e5%bb%83%e6%a5%ad%e3%81%8c50%ef%bc%85%e3%80%81%e4%ba%8b%e6%a5%ad%e6%89%bf%e7%b6%99%e3%81%af%e5%86%85%e9%83%a8%e6%98%87%e6%a0%bc%e3%81%8c/", "c": "事業承継"}, {"d": "2026.03.01", "t": "市場縮小と副業解禁で、SNSは自分の商品を売りたい人で溢れている。その中で生き残る戦略は？", "u": "https://kyoto-taiyou.com/%e5%b8%82%e5%a0%b4%e7%b8%ae%e5%b0%8f%e3%81%a8%e5%89%af%e6%a5%ad%e8%a7%a3%e7%a6%81%e3%81%a7%e3%80%81sns%e3%81%af%e8%87%aa%e5%88%86%e3%81%ae%e5%95%86%e5%93%81%e3%82%92%e5%a3%b2%e3%82%8a%e3%81%9f/", "c": "経営・財務"}, {"d": "2026.01.22", "t": "今は経営者のあなたも新人の頃は理不尽と戦っていたはず。今の社員も同じです", "u": "https://kyoto-taiyou.com/%e4%bb%8a%e3%81%af%e7%b5%8c%e5%96%b6%e8%80%85%e3%81%ae%e3%81%82%e3%81%aa%e3%81%9f%e3%82%82%e6%96%b0%e4%ba%ba%e3%81%ae%e9%a0%83%e3%81%af%e7%90%86%e4%b8%8d%e5%b0%bd%e3%81%a8%e6%88%a6%e3%81%a3%e3%81%a6/", "c": "人材・定着"}, {"d": "2026.01.22", "t": "年計売上高が横ばいになったら次の手立てを考える時期です", "u": "https://kyoto-taiyou.com/%e5%b9%b4%e6%ac%a1%e5%a3%b2%e4%b8%8a%e9%ab%98%e3%81%8c%e6%a8%aa%e3%81%b0%e3%81%84%e3%81%ab%e3%81%aa%e3%81%a3%e3%81%9f%e3%82%89%e6%ac%a1%e3%81%ae%e6%89%8b%e7%ab%8b%e3%81%a6%e3%82%92%e8%80%83%e3%81%88/", "c": "経営・財務"}, {"d": "2025.12.09", "t": "社長の能力は利益剰余金で、人格は資本の項目で分かる", "u": "https://kyoto-taiyou.com/%e7%a4%be%e9%95%b7%e3%81%ae%e8%83%bd%e5%8a%9b%e3%81%af%e5%88%a9%e7%9b%8a%e5%89%b0%e4%bd%99%e9%87%91%e3%81%a7%e3%80%81%e4%ba%ba%e6%a0%bc%e3%81%af%e8%b3%87%e6%9c%ac%e3%81%ae%e9%a0%85%e7%9b%ae%e3%81%a7/", "c": "経営・財務"}, {"d": "2025.12.08", "t": "終活は、ご自身だけでなく離れた親のケアとしても必要。そんな終活の色々。", "u": "https://kyoto-taiyou.com/%e7%b5%82%e6%b4%bb%e3%81%af%e3%80%81%e3%81%94%e8%87%aa%e8%ba%ab%e3%81%a0%e3%81%91%e3%81%a7%e3%81%aa%e3%81%8f%e9%9b%a2%e3%82%8c%e3%81%9f%e8%a6%aa%e3%81%ae%e3%82%b1%e3%82%a2%e3%81%a8%e3%81%97%e3%81%a6/", "c": "終活・相続"}, {"d": "2025.11.23", "t": "売上低迷で販売職の正社員が余ったら、解雇すべき？それとも最初から販売職は非正規にするべき？", "u": "https://kyoto-taiyou.com/%e5%a3%b2%e4%b8%8a%e4%bd%8e%e8%bf%b7%e3%81%a7%e8%b2%a9%e5%a3%b2%e8%81%b7%e3%81%ae%e6%ad%a3%e7%a4%be%e5%93%a1%e3%81%8c%e4%bd%99%e3%81%a3%e3%81%9f%e3%82%89%e3%80%81%e8%a7%a3%e9%9b%87%e3%81%99%e3%81%b9/", "c": "人材・定着"}, {"d": "2025.10.12", "t": "製造業の生命線は、技術＝社員です", "u": "https://kyoto-taiyou.com/%e8%a3%bd%e9%80%a0%e6%a5%ad%e3%81%ae%e7%94%9f%e5%91%bd%e7%b7%9a%e3%81%af%e3%80%81%e6%8a%80%e8%a1%93%e7%a4%be%e5%93%a1%e3%81%a7%e3%81%99%e3%80%82/", "c": "人材・定着"}, {"d": "2025.09.29", "t": "社長さんへの問いかけ② 社員の心は離れていませんか？", "u": "https://kyoto-taiyou.com/%e7%a4%be%e9%95%b7%e3%81%95%e3%82%93%e3%81%b8%e3%81%ae%e5%95%8f%e3%81%84%e3%81%8b%e3%81%91%e2%91%a1-%e7%a4%be%e5%93%a1%e3%81%ae%e5%bf%83%e3%81%af%e9%9b%a2%e3%82%8c%e3%81%a6%e3%81%84%e3%81%be%e3%81%9b/", "c": "人材・定着"}, {"d": "2025.09.25", "t": "社長さんへの問いかけ① 起業時に立てた理念は何ですか？", "u": "https://kyoto-taiyou.com/%e7%a4%be%e9%95%b7%e3%81%95%e3%82%93%e3%81%b8%e3%81%ae%e5%95%8f%e3%81%84%e3%81%8b%e3%81%91%e2%91%a0/", "c": "起業"}, {"d": "2025.09.20", "t": "法定後見制度が改正されます", "u": "https://kyoto-taiyou.com/%e6%b3%95%e5%ae%9a%e5%be%8c%e8%a6%8b%e5%88%b6%e5%ba%a6%e3%81%8c%e6%94%b9%e6%ad%a3%e3%81%95%e3%82%8c%e3%81%be%e3%81%99/", "c": "終活・相続"}, {"d": "2025.07.11", "t": "京大総長が参列した父の葬儀、私も父のように生きたいと思う", "u": "https://kyoto-taiyou.com/%e4%ba%ac%e5%a4%a7%e7%b7%8f%e9%95%b7%e3%81%8c%e5%8f%82%e5%88%97%e3%81%97%e3%81%9f%e7%88%b6%e3%81%ae%e8%91%ac%e5%84%80%e7%a7%81%e3%82%82%e7%88%b6%e3%81%ae%e3%82%88%e3%81%86%e3%81%ab%e7%94%9f/", "c": "終活・相続"}, {"d": "2025.07.11", "t": "公務員がした処分に納得いかない時、「審査請求＝もう一回やり直して貰う」ことが出来ます", "u": "https://kyoto-taiyou.com/%e5%85%ac%e5%8b%99%e5%93%a1%e3%81%8c%e3%81%97%e3%81%9f%e5%87%a6%e5%88%86%e3%81%ab%e7%b4%8d%e5%be%97%e3%81%84%e3%81%8b%e3%81%aa%e3%81%84%e6%99%82%e3%80%81%e3%80%8c%e5%af%a9%e6%9f%bb%e8%ab%8b%e6%b1%82/", "c": "法律・手続き"}, {"d": "2025.07.11", "t": "成果が出るには時間差がある。あと少しの所に来ているかもしれないのに諦めないで。", "u": "https://kyoto-taiyou.com/%e6%88%90%e6%9e%9c%e3%81%8c%e5%87%ba%e3%82%8b%e3%81%ab%e3%81%af%e6%99%82%e9%96%93%e5%b7%ae%e3%81%8c%e3%81%82%e3%82%8b%e3%80%82%e3%81%82%e3%81%a8%e5%b0%91%e3%81%97%e3%81%ae%e6%89%80%e3%81%ab%e6%9d%a5/", "c": "コラム"}, {"d": "2025.07.11", "t": "「治に居て乱を忘れず」、「人は死して名を遺す」下請け、取引先も守ってこそ男です！", "u": "https://kyoto-taiyou.com/%e3%80%8c%e6%b2%bb%e3%81%ab%e5%b1%85%e3%81%a6%e4%b9%b1%e3%82%92%e5%bf%98%e3%82%8c%e3%81%9a%e3%80%8d%e3%80%81%e3%80%8c%e4%ba%ba%e3%81%af%e6%ad%bb%e3%81%97%e3%81%a6%e5%90%8d%e3%82%92%e9%81%ba%e3%81%99/", "c": "コラム"}, {"d": "2025.07.11", "t": "税理士は過去の税金を計算する人、社長は現在の数字を把握し未来を作る人。過去の人に未来を丸投げしていませんか？", "u": "https://kyoto-taiyou.com/%e7%a8%8e%e7%90%86%e5%a3%ab%e3%81%af%e9%81%8e%e5%8e%bb%e3%81%ae%e7%a8%8e%e9%87%91%e3%82%92%e8%a8%88%e7%ae%97%e3%81%99%e3%82%8b%e4%ba%ba%e3%80%81%e7%a4%be%e9%95%b7%e3%81%af%e7%8f%be%e5%9c%a8%e3%81%ae/", "c": "経営・財務"}, {"d": "2025.07.11", "t": "会社の現金が枯渇している時に、社長が絶対してはいけないこと5選", "u": "https://kyoto-taiyou.com/%e4%bc%9a%e7%a4%be%e3%81%ae%e7%8f%be%e9%87%91%e3%81%8c%e6%9e%af%e6%b8%87%e3%81%97%e3%81%a6%e3%81%84%e3%82%8b%e6%99%82%e3%81%ab%e3%80%81%e7%a4%be%e9%95%b7%e3%81%8c%e7%b5%b6%e5%af%be%e3%81%97%e3%81%a6/", "c": "経営・財務"}, {"d": "2025.07.11", "t": "「人は本音を言わない」は、自分を知る物差しになる", "u": "https://kyoto-taiyou.com/%e3%80%8c%e4%ba%ba%e3%81%af%e6%9c%ac%e9%9f%b3%e3%82%92%e8%a8%80%e3%82%8f%e3%81%aa%e3%81%84%e3%80%8d%e3%81%af%e3%80%81%e8%87%aa%e5%88%86%e3%82%92%e7%9f%a5%e3%82%8b%e7%89%a9%e5%b7%ae%e3%81%97%e3%81%ab/", "c": "人材・定着"}, {"d": "2025.05.14", "t": "危機に強いキャッシュフロー戦略", "u": "https://kyoto-taiyou.com/blog/", "c": "経営・財務"}, {"d": "2024.02.27", "t": "書式集通りの契約では裁判に勝てない。オリジナルの契約書だけが、あなたの事業を守る理由", "u": "https://kyoto-taiyou.com/blog-2/", "c": "法律・手続き"}, {"d": "2024.01.19", "t": "被災を乗り越えるために必要な法的知識と制度", "u": "https://kyoto-taiyou.com/%e8%a2%ab%e7%81%bd%e3%82%92%e4%b9%97%e3%82%8a%e8%b6%8a%e3%81%88%e3%82%8b%e3%81%9f%e3%82%81%e3%81%ab%e5%bf%85%e8%a6%81%e3%81%aa%e6%b3%95%e7%9a%84%e7%9f%a5%e8%ad%98%e3%81%a8%e5%88%b6%e5%ba%a6/", "c": "法律・手続き"}, {"d": "2023.12.18", "t": "著作権を侵害された時の対策3つと登録の勧め", "u": "https://kyoto-taiyou.com/%e8%91%97%e4%bd%9c%e6%a8%a9%e3%82%92%e4%be%b5%e5%ae%b3%e3%81%95%e3%82%8c%e3%81%9f%e6%99%82%e3%81%ae%e5%af%be%e7%ad%963%e3%81%a4%e3%81%a8%e7%99%bb%e9%8c%b2%e3%81%ae%e5%8b%a7%e3%82%81/", "c": "法律・手続き"}, {"d": "2023.12.18", "t": "個人起業家がサラリーマンと同レベルの安心を得る方法10個", "u": "https://kyoto-taiyou.com/%e5%80%8b%e4%ba%ba%e8%b5%b7%e6%a5%ad%e5%ae%b6%e3%81%8c%e3%82%b5%e3%83%a9%e3%83%aa%e3%83%bc%e3%83%9e%e3%83%b3%e3%81%a8%e5%90%8c%e3%83%ac%e3%83%99%e3%83%ab%e3%81%ae%e5%ae%89%e5%bf%83%e3%82%92%e5%be%97/", "c": "起業"}, {"d": "2023.12.02", "t": "お馴染みのお店の変化、それでも私はその店に行く", "u": "https://kyoto-taiyou.com/%e3%81%8a%e9%a6%b4%e6%9f%93%e3%81%bf%e3%81%ae%e3%81%8a%e5%ba%97%e3%81%ae%e5%a4%89%e5%8c%96%e3%80%81%e3%81%9d%e3%82%8c%e3%81%a7%e3%82%82%e7%a7%81%e3%81%af%e3%81%9d%e3%81%ae%e5%ba%97%e3%81%ab%e8%a1%8c/", "c": "コラム"}, {"d": "2023.10.14", "t": "転機の乗り切り方", "u": "https://kyoto-taiyou.com/__trashed-4/", "c": "起業"}, {"d": "2023.10.06", "t": "エンディングノートは不安払拭には役立たない", "u": "https://kyoto-taiyou.com/%e3%82%a8%e3%83%b3%e3%83%87%e3%82%a3%e3%83%b3%e3%82%b0%e3%83%8e%e3%83%bc%e3%83%88%e3%81%af%e7%9b%b8%e7%b6%9a%e4%ba%ba%e3%81%8c%e6%a5%bd%e3%81%99%e3%82%8b%e3%81%9f%e3%82%81%e3%81%ae%e3%82%82%e3%81%ae/", "c": "終活・相続"}];
+  var CATS=['すべて'];POSTS.forEach(function(p){if(CATS.indexOf(p.c)<0)CATS.push(p.c);});
+  function item(p){return '<li><a href="'+esc(p.u)+'" target="_blank" rel="noopener"><span class="kt-meta">'+esc(p.d)+'<em>'+esc(p.c)+'</em></span><b>'+esc(p.t)+'</b></a></li>';}
+  document.getElementById('kt-blog-home').innerHTML=POSTS.slice(0,4).map(item).join('');
+  var bq=document.getElementById('kt-blog-q'),bc=document.getElementById('kt-blog-cats'),bl=document.getElementById('kt-bloglist'),bn=document.getElementById('kt-blog-count');
+  bc.innerHTML=CATS.map(function(c,i){return '<label><input type="radio" name="bcat" value="'+esc(c)+'" id="kt-bc'+i+'"'+(i?'':' checked')+'><span>'+esc(c)+'</span></label>';}).join('');
+  function drawBlog(){
+    var q=bq.value.trim(),c=(bc.querySelector('input:checked')||{}).value||'すべて';
+    var r=POSTS.filter(function(p){return (c==='すべて'||p.c===c)&&(!q||p.t.indexOf(q)>-1);});
+    bl.innerHTML=r.map(item).join('')||'<li class="kt-note">該当する記事がありません。</li>';
+    bn.textContent=r.length+'件の記事';
+  }
+  bq.addEventListener('input',drawBlog);bc.addEventListener('change',drawBlog);drawBlog();
+
+  /* ===== 目次 ===== */
+  document.querySelectorAll('[data-jump]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var t=document.getElementById(a.getAttribute('data-jump'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'});});});
 })();
 </script>
 </body>
