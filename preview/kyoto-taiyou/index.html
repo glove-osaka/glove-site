@@ -277,6 +277,13 @@ html,body{margin:0;background:var(--kt-paper)}
   .kt-site{padding-bottom:52px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* 埋め込みフォーム */
+.kt-formbox{background:var(--kt-white);border:1px solid var(--kt-line);border-radius:12px;overflow:hidden}
+.kt-formbox-head{padding:20px 22px 12px;border-bottom:1px solid var(--kt-line)}
+.kt-gform{display:block;width:100%;height:1500px;border:0;background:var(--kt-white)}
+.kt-formbox-foot{padding:12px 22px;font-size:14px;border-top:1px solid var(--kt-line);text-align:center}
+@media (max-width:640px){.kt-gform{height:1800px}}
 </style>
 </head>
 <body>
@@ -654,25 +661,11 @@ html,body{margin:0;background:var(--kt-paper)}
         <div class="kt-card" style="text-align:center"><span class="kt-card-n">お電話</span><a class="kt-cta-tel" style="margin:0;justify-content:center" href="tel:0753126647">075-312-6647</a><small>平日 9:00〜18:00（電話・FAX共通）</small></div>
         <div class="kt-card" style="text-align:center"><span class="kt-card-n">メール</span><p style="font-weight:700;color:var(--kt-sumi);word-break:break-all;font-size:17px">contact@kyoto-taiyou.com</p><small>24時間受け付けています</small></div>
       </div>
-      <form class="kt-form" id="kt-form" novalidate>
-        <div class="kt-field">
-          <span>ご相談の種類<span class="kt-req">必須</span></span>
-          <div class="kt-radios">
-            <label><input type="radio" name="kind" value="経営者のご相談" id="kt-k1">経営者のご相談</label>
-            <label><input type="radio" name="kind" value="個人のご相談" id="kt-k2">個人のご相談</label>
-            <label><input type="radio" name="kind" value="その他" id="kt-k3">その他</label>
-          </div>
-        </div>
-        <div class="kt-field"><label for="kt-name">お名前<span class="kt-req">必須</span></label><input id="kt-name" name="name" autocomplete="name"></div>
-        <div class="kt-field"><label for="kt-company">会社名（法人の方）</label><input id="kt-company" name="company" autocomplete="organization"></div>
-        <div class="kt-field"><label for="kt-tel">お電話番号<span class="kt-req">必須</span></label><input id="kt-tel" name="tel" type="tel" autocomplete="tel" inputmode="tel"></div>
-        <div class="kt-field"><label for="kt-mail">メールアドレス</label><input id="kt-mail" name="mail" type="email" autocomplete="email"></div>
-        <div class="kt-field"><label for="kt-msg">ご相談内容<span class="kt-req">必須</span></label><textarea id="kt-msg" name="msg" placeholder="分かる範囲で結構です。"></textarea></div>
-        <p class="kt-err" id="kt-err" role="alert">必須の項目をご記入ください。</p>
-        <button class="kt-btn kt-btn-main" type="submit">この内容で送信する</button>
-        <p class="kt-note" style="margin:0">お預かりした情報は、守秘義務のもとでご相談への対応にのみ使用します。</p>
-      </form>
-      <div class="kt-done" id="kt-done" role="status"><h3 style="font-size:20px">ご相談を受け付けました</h3><p style="margin-top:8px">内容を確認のうえ、2営業日以内にご連絡いたします。お急ぎの方はお電話でどうぞ。</p></div>
+      <div class="kt-formbox">
+        <div class="kt-formbox-head"><h2 style="font-size:20px">相談フォーム</h2><p class="kt-note" style="margin:4px 0 0">必要な項目をご記入のうえ、送信してください。</p></div>
+        <iframe class="kt-gform" src="https://docs.google.com/forms/d/e/1FAIpQLSfGOftUz10K-oD_faA1N7A8QbkJbPUknMCx9_A56iKlO3dfdQ/viewform?embedded=true" title="京都太陽行政書士事務所 相談フォーム" loading="lazy">読み込んでいます…</iframe>
+        <p class="kt-formbox-foot">フォームが表示されない場合は <a href="https://docs.google.com/forms/d/e/1FAIpQLSfGOftUz10K-oD_faA1N7A8QbkJbPUknMCx9_A56iKlO3dfdQ/viewform" target="_blank" rel="noopener">こちらから開いてください</a></p>
+      </div>
     </div>
   </div>
 </section>
@@ -721,15 +714,6 @@ html,body{margin:0;background:var(--kt-paper)}
   window.addEventListener('hashchange',show);show();
   burger.addEventListener('click',function(){drawer.classList.add('is-open');drawer.setAttribute('aria-hidden','false');burger.setAttribute('aria-expanded','true');});
   drawer.querySelectorAll('[data-close],nav a').forEach(function(el){el.addEventListener('click',closeDrawer);});
-  var form=document.getElementById('kt-form');
-  form.addEventListener('submit',function(e){
-    e.preventDefault();
-    var el=form.elements;
-    var ok=form.querySelector('input[name="kind"]:checked')&&el['name'].value.trim()&&el['tel'].value.trim()&&el['msg'].value.trim();
-    document.getElementById('kt-err').classList.toggle('is-on',!ok);
-    if(!ok)return;
-    form.style.display='none';document.getElementById('kt-done').classList.add('is-on');
-  });
 })();
 </script>
 </body>
