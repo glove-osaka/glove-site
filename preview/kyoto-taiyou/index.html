@@ -432,6 +432,91 @@ html,body{margin:0;background:var(--kt-paper)}
 .kt-type-per input:checked+span{border-color:var(--kt-sakura);border-width:2px;border-top-width:5px}
 @media (max-width:420px){.kt-type b{font-size:17px}.kt-type small{font-size:12px}.kt-type-ico{width:28px;height:28px}}
 .kt-reason-n{font-variant-numeric:lining-nums;font-size:28px}
+
+/* ===== 管理画面 ===== */
+body.kt-in-admin .kt-fixbar,body.kt-in-admin .kt-cta,body.kt-in-admin .kt-tabs{display:none}
+body.kt-in-admin .kt-site{padding-bottom:0}
+.kt-adm-top{background:var(--kt-sumi);color:#fff;padding:18px 0}
+.kt-adm-top .kt-wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.kt-adm-top small{font-size:12px;color:#d9d3c4}
+.kt-adm-top h1{color:#fff;font-size:24px}
+.kt-adm-topbtns{display:flex;gap:8px}
+.kt-btn-s{padding:8px 14px;font-size:14px}
+.kt-btn-del{color:#a33a3a;border-color:#d9b2b2}
+#kt-adm-body{padding:20px 0 60px}
+#kt-adm-body .kt-warn{margin-bottom:16px}
+.kt-adm-gate{padding:48px 18px;display:flex;justify-content:center}
+.kt-adm-gate .kt-card{max-width:380px;width:100%}
+.kt-adm-tabs{display:flex;gap:6px;overflow-x:auto;border-bottom:2px solid var(--kt-line);margin-bottom:20px;scrollbar-width:none}
+.kt-adm-tabs button{flex:none;font:inherit;font-size:15px;font-weight:700;background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;padding:12px 12px;color:var(--kt-text);cursor:pointer;display:flex;align-items:center;gap:6px}
+.kt-adm-tabs button[aria-selected="true"]{color:var(--kt-green);border-bottom-color:var(--kt-green)}
+.kt-adm-badge{background:var(--kt-sakura);color:#fff;border-radius:999px;font-size:11px;min-width:20px;height:20px;padding:0 6px;display:inline-flex;align-items:center;justify-content:center}
+.kt-adm-box{background:var(--kt-white);border:1px solid var(--kt-line);border-radius:12px;padding:20px;display:grid;gap:14px;margin-bottom:18px}
+.kt-adm-h{font-size:18px;display:grid;gap:2px}
+.kt-adm-h small{font-family:var(--kt-body);font-size:13px;font-weight:400;color:var(--kt-text)}
+.kt-adm-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:480px){.kt-adm-row{grid-template-columns:1fr}}
+.kt-adm-box .kt-field>label,.kt-modal .kt-field>label{font-size:15px}
+.kt-field select{font:inherit;font-size:16px;padding:11px 12px;border:1px solid #d8d0bf;border-radius:8px;background:var(--kt-paper);color:var(--kt-sumi)}
+/* 集計 */
+.kt-adm-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kt-adm-stats div{background:var(--kt-white);border:1px solid var(--kt-line);border-radius:12px;padding:12px 8px;text-align:center;display:grid}
+.kt-adm-stats b{font-family:var(--kt-display);font-size:28px;font-weight:600;color:var(--kt-sumi);line-height:1.2;font-variant-numeric:tabular-nums}
+.kt-adm-stats b small{font-size:.6em}
+.kt-adm-stats span{font-size:12.5px}
+.kt-adm-stats .st-new{border-color:#e6c6cb;background:var(--kt-sakura-pale)}
+.kt-adm-stats .st-new b{color:#9a4f5b}
+@media (max-width:560px){.kt-adm-stats{grid-template-columns:repeat(2,1fr)}}
+.kt-adm-filter{display:grid;gap:10px;margin-bottom:14px}
+.kt-adm-filter input[type=search]{font:inherit;font-size:16px;padding:11px 14px;border:1px solid #d8d0bf;border-radius:999px;background:var(--kt-white)}
+/* 受付一覧 */
+.kt-inq-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.kt-inq-item{width:100%;text-align:left;font:inherit;color:var(--kt-sumi);background:var(--kt-white);border:1px solid var(--kt-line);border-radius:12px;padding:14px 16px;display:grid;gap:4px;cursor:pointer}
+.kt-inq-item:hover{border-color:var(--kt-gold)}
+.kt-inq-top{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.kt-inq-item b{font-size:17px;font-weight:700}
+.kt-inq-item b small{font-weight:400;font-size:14px}
+.kt-inq-topics{font-size:14px}
+.kt-inq-meta,.kt-inq-no{font-size:12.5px;color:var(--kt-text);font-variant-numeric:tabular-nums}
+.kt-st{font-size:12px;font-weight:700;border-radius:4px;padding:1px 8px;background:#efe8da}
+.kt-st.st-new{background:#a8505d;color:#fff}
+.kt-st.st-mid{background:#fff1cf;color:#7a5a12}
+.kt-st.st-ok{background:var(--kt-green);color:#fff}
+.kt-st.st-done{background:#e6e3dc;color:#6b675e}
+.kt-inq-type{font-size:12px;font-weight:700;border-radius:4px;padding:1px 8px}
+.kt-inq-b{background:var(--kt-green-pale);color:var(--kt-green)}
+.kt-inq-p{background:var(--kt-sakura-pale);color:#8e4a55}
+.kt-inq-sample{font-size:11px;border:1px dashed #b9b2a2;border-radius:4px;padding:0 6px;color:var(--kt-text)}
+/* 詳細 */
+.kt-modal{position:fixed;inset:0;z-index:60}
+.kt-modal-bg{position:absolute;inset:0;background:rgba(45,43,39,.45)}
+.kt-modal-panel{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(640px,94vw);max-height:90vh;overflow-y:auto;background:var(--kt-white);border-radius:14px;padding:20px;display:grid;gap:12px}
+.kt-modal-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.kt-inq-dl{margin:0;display:grid;grid-template-columns:8.5em 1fr;border-top:1px solid var(--kt-line)}
+.kt-inq-dl dt,.kt-inq-dl dd{margin:0;padding:8px 4px;border-bottom:1px solid var(--kt-line);font-size:14.5px}
+.kt-inq-dl dt{font-weight:700;color:var(--kt-sumi)}
+.kt-inq-dl dd{white-space:pre-wrap;word-break:break-word}
+@media (max-width:480px){.kt-inq-dl{grid-template-columns:1fr}.kt-inq-dl dt{border-bottom:0;padding-bottom:0}}
+/* お知らせ一覧 */
+.kt-adm-items{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.kt-adm-items li{background:var(--kt-white);border:1px solid var(--kt-line);border-radius:10px;padding:12px 14px;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.kt-adm-items .kt-meta{font-size:12.5px;color:var(--kt-gold-text)}
+.kt-adm-items p{font-size:14.5px;margin-top:2px}
+.kt-adm-itembtns{display:flex;gap:6px;flex:none}
+@media (max-width:520px){.kt-adm-items li{flex-direction:column;align-items:stretch}.kt-adm-itembtns{justify-content:flex-end}}
+/* 料金の編集 */
+.kt-fee-rows{display:grid;gap:10px}
+.kt-fee-row{display:grid;grid-template-columns:2fr 1.5fr 1fr 1fr auto;gap:8px;align-items:end;padding:10px;border:1px solid var(--kt-line);border-radius:10px;background:var(--kt-paper)}
+.kt-fee-row .kt-field>label{font-size:12px!important;font-weight:700}
+.kt-fee-row input{padding:9px 10px!important;font-size:15px!important;background:var(--kt-white)!important}
+.kt-fee-ops{display:flex;gap:4px}
+.kt-fee-ops .kt-btn-s{padding:8px 10px}
+@media (max-width:760px){.kt-fee-row{grid-template-columns:1fr 1fr}.kt-f-n,.kt-f-note{grid-column:1/-1}.kt-fee-ops{grid-column:1/-1;justify-content:flex-end}}
+.kt-label-r{background:#f6dede;color:#a33a3a}
+.kt-adm-box>*,.kt-fee-row>*,.kt-fee-rows{min-width:0}
+.kt-fee-row input,.kt-adm-box input,.kt-adm-box textarea,.kt-adm-box select{width:100%;min-width:0;box-sizing:border-box}
+.kt-adm-box>.kt-btn-s{justify-self:start}
+.kt-adm-box .kt-chipsel input{width:auto}
 </style>
 </head>
 <body>
@@ -443,7 +528,7 @@ html,body{margin:0;background:var(--kt-paper)}
       <svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true"><defs><linearGradient id="ktg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d2ad62"/><stop offset="1" stop-color="#a77d33"/></linearGradient><clipPath id="ktc"><circle cx="26" cy="26" r="25"/></clipPath></defs><circle cx="26" cy="26" r="25" fill="url(#ktg)"/><g clip-path="url(#ktc)"><circle cx="26" cy="27" r="7" fill="#fffdf9"/><g stroke="#fffdf9" stroke-width="1.6" stroke-linecap="round"><line x1="26" y1="11" x2="26" y2="16"/><line x1="16" y1="15" x2="19" y2="19"/><line x1="36" y1="15" x2="33" y2="19"/><line x1="10" y1="23" x2="15" y2="25"/><line x1="42" y1="23" x2="37" y2="25"/><line x1="20.5" y1="12.5" x2="22" y2="17"/><line x1="31.5" y1="12.5" x2="30" y2="17"/></g><path d="M0 36 C 10 28, 18 30, 26 34 C 34 29, 42 28, 52 33 V52 H0Z" fill="#fffdf9"/><path d="M0 41 C 12 35, 20 37, 28 40 C 36 36, 44 36, 52 39 V52 H0Z" fill="#a77d33"/></g></svg>
       <span><span class="kt-logo-name">京都太陽行政書士事務所</span><span class="kt-logo-sub">Kyoto Taiyou Administrative Scrivener Office</span></span>
     </a>
-    <a class="kt-head-tel" href="tel:0753126647"><b><svg width="0.9em" height="0.9em" viewBox="0 0 24 24" aria-hidden="true" style="flex:none"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 006.6 6.6l2.2-2.2a1 1 0 011-.25 11.4 11.4 0 003.6.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.6a1 1 0 01-.25 1z"/></svg>075-312-6647</b><small>9:00〜18:00（暦通り）</small></a>
+    <a class="kt-head-tel" href="tel:0753126647"><b><svg width="0.9em" height="0.9em" viewBox="0 0 24 24" aria-hidden="true" style="flex:none"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 006.6 6.6l2.2-2.2a1 1 0 011-.25 11.4 11.4 0 003.6.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.6a1 1 0 01-.25 1z"/></svg><span data-info="tel">075-312-6647</span></b><small><span data-info="hours">9:00〜18:00</span>（暦通り）</small></a>
     <button class="kt-burger" id="kt-burger" aria-label="メニューを開く" aria-expanded="false" aria-controls="kt-drawer"><span></span><span></span><span></span></button>
   </div>
 </header>
@@ -473,7 +558,7 @@ html,body{margin:0;background:var(--kt-paper)}
       <a href="#access">アクセス</a>
       <a href="#contact">お問い合わせ</a>
     </nav>
-    <div class="kt-drawer-tel"><a href="tel:0753126647">075-312-6647</a><br><small>電話 9:00〜18:00（暦通り）<br>メールはいつでも受付 ／ 初回相談無料</small></div>
+    <div class="kt-drawer-tel"><a href="tel:0753126647"><span data-info="tel">075-312-6647</span></a><br><small>電話 <span data-info="hours">9:00〜18:00</span>（暦通り）<br>メールはいつでも受付 ／ 初回相談無料</small></div>
   </div>
 </div>
 
@@ -565,12 +650,7 @@ html,body{margin:0;background:var(--kt-paper)}
     <div class="kt-wrap kt-narrow">
       <div class="kt-head"><small>お知らせ・コラム</small><h2>事務所だより</h2></div>
       <h3 class="kt-subhead">お知らせ</h3>
-      <ul class="kt-news">
-        <li><time datetime="2026-11-08">2026.11.08</time><span><span class="kt-label kt-label-g">ご案内</span>ホームページを新しくしました。企業・個人のご相談をフォームから受け付けています</span></li>
-        <li><time datetime="2025-08-16">2025.08.16</time><span><span class="kt-label kt-label-s">相談会</span>京都駅八条口のイオンモールで終活の無料相談会を行います</span></li>
-        <li><time datetime="2025-08-06">2025.08.06</time><span><span class="kt-label kt-label-g">相談会</span>七条ハローワークで外国人を雇用される事業主の方への無料相談を行います</span></li>
-        <li><time datetime="2025-05-04">2025.05.04</time><span><span class="kt-label">講演</span>公認会計士・市ノ澤翔氏による経営改善講演を主催します</span></li>
-      </ul>
+      <ul class="kt-news" id="kt-news-home"></ul>
       <p class="kt-more-link"><a href="#news">お知らせ・活動実績をすべて見る 〉</a></p>
       <h3 class="kt-subhead">ブログ記事</h3>
       <ul class="kt-bloglist" id="kt-blog-home"></ul>
@@ -662,18 +742,7 @@ html,body{margin:0;background:var(--kt-paper)}
       <div class="kt-head"><small>料金</small><h2>経営者のご相談の料金</h2></div>
       <div class="kt-tablebox"><table class="kt-table">
         <thead><tr><th scope="col">内容</th><th scope="col" style="text-align:right">料金の目安</th></tr></thead>
-        <tbody>
-          <tr><th scope="row">技術承継・定着支援プログラム 3ヶ月プラン<small>社員規模・距離・訪問回数によりお見積り</small></th><td>お見積り</td></tr>
-          <tr><th scope="row">技術承継・定着支援プログラム 6ヶ月プラン<small>返金保証つき。社員規模・距離・訪問回数によりお見積り</small></th><td>月額15万円〜</td></tr>
-          <tr><th scope="row">事業承継・M&amp;A支援</th><td>10万円〜<small>＋成功額の10%</small></td></tr>
-          <tr><th scope="row">補助金申請支援</th><td>10万円〜<small>＋採択額の10%</small></td></tr>
-          <tr><th scope="row">契約書の作成</th><td>10万円〜</td></tr>
-          <tr><th scope="row">定款作成・会社設立</th><td>10万円〜</td></tr>
-          <tr><th scope="row">経営事項審査（経審）</th><td>15万円〜</td></tr>
-          <tr><th scope="row">在留資格<small>日本語でやり取りできる方</small></th><td>25万円</td></tr>
-          <tr><th scope="row">ワーク付き 単発2回完結講座</th><td>6万円</td></tr>
-          <tr><th scope="row">内定者・社員向けセミナー</th><td>要相談</td></tr>
-        </tbody>
+        <tbody id="kt-fee-biz"></tbody>
       </table></div>
       <p class="kt-note">※内容の複雑さや緊急度により変わります。必ずお見積りにご納得いただいてからのご契約です。</p>
     </div>
@@ -738,17 +807,7 @@ html,body{margin:0;background:var(--kt-paper)}
       <div class="kt-head"><small>料金</small><h2>個人のご相談の料金</h2></div>
       <div class="kt-tablebox"><table class="kt-table">
         <thead><tr><th scope="col">内容</th><th scope="col" style="text-align:right">料金の目安</th></tr></thead>
-        <tbody>
-          <tr><th scope="row">ご相談（1時間まで）</th><td>無料</td></tr>
-          <tr><th scope="row">1時間を超える場合</th><td>5,000円<small>／60分</small></td></tr>
-          <tr><th scope="row">遺言・相続・終活 生前6点セット<small>単発のご依頼も可</small></th><td>30万円</td></tr>
-          <tr><th scope="row">公正証書遺言の起案</th><td>10万円</td></tr>
-          <tr><th scope="row">事業承継を踏まえた相続・遺言</th><td>20万円</td></tr>
-          <tr><th scope="row">契約書・内容証明</th><td>10万円〜</td></tr>
-          <tr><th scope="row">被害届の作成</th><td>5万円〜</td></tr>
-          <tr><th scope="row">女性起業 事業プランニングコース</th><td>19万円</td></tr>
-          <tr><th scope="row">高齢者向け 詐欺被害防止セミナー</th><td>無料</td></tr>
-        </tbody>
+        <tbody id="kt-fee-per"></tbody>
       </table></div>
       <p class="kt-note">※内容の複雑さや緊急度により変わります。必ずお見積りにご納得いただいてからのご契約です。</p>
     </div>
@@ -765,32 +824,11 @@ html,body{margin:0;background:var(--kt-paper)}
     <div class="kt-wrap kt-narrow" style="display:grid;gap:28px">
       <div class="kt-tablebox"><table class="kt-table">
         <thead><tr><th scope="col">経営者のご相談</th><th scope="col" style="text-align:right">料金の目安</th></tr></thead>
-        <tbody>
-          <tr><th scope="row">技術承継・定着支援プログラム 3ヶ月プラン</th><td>お見積り</td></tr>
-          <tr><th scope="row">技術承継・定着支援プログラム 6ヶ月プラン<small>返金保証つき</small></th><td>月額15万円〜</td></tr>
-          <tr><th scope="row">事業承継・M&amp;A支援</th><td>10万円〜<small>＋成功額の10%</small></td></tr>
-          <tr><th scope="row">補助金申請支援</th><td>10万円〜<small>＋採択額の10%</small></td></tr>
-          <tr><th scope="row">契約書の作成</th><td>10万円〜</td></tr>
-          <tr><th scope="row">定款作成・会社設立</th><td>10万円〜</td></tr>
-          <tr><th scope="row">経営事項審査（経審）</th><td>15万円〜</td></tr>
-          <tr><th scope="row">在留資格<small>日本語でやり取りできる方</small></th><td>25万円</td></tr>
-          <tr><th scope="row">ワーク付き 単発2回完結講座</th><td>6万円</td></tr>
-          <tr><th scope="row">内定者・社員向けセミナー</th><td>要相談</td></tr>
-        </tbody>
+        <tbody id="kt-fee-all-biz"></tbody>
       </table></div>
       <div class="kt-tablebox"><table class="kt-table">
         <thead><tr><th scope="col">個人のご相談</th><th scope="col" style="text-align:right">料金の目安</th></tr></thead>
-        <tbody>
-          <tr><th scope="row">ご相談（1時間まで）</th><td>無料</td></tr>
-          <tr><th scope="row">1時間を超える場合</th><td>5,000円<small>／60分</small></td></tr>
-          <tr><th scope="row">遺言・相続・終活 生前6点セット</th><td>30万円</td></tr>
-          <tr><th scope="row">公正証書遺言の起案</th><td>10万円</td></tr>
-          <tr><th scope="row">事業承継を踏まえた相続・遺言</th><td>20万円</td></tr>
-          <tr><th scope="row">契約書・内容証明</th><td>10万円〜</td></tr>
-          <tr><th scope="row">被害届の作成</th><td>5万円〜</td></tr>
-          <tr><th scope="row">女性起業 事業プランニングコース</th><td>19万円</td></tr>
-          <tr><th scope="row">高齢者向け 詐欺被害防止セミナー</th><td>無料</td></tr>
-        </tbody>
+        <tbody id="kt-fee-all-per"></tbody>
       </table></div>
       <p class="kt-note">※内容の複雑さや緊急度により変わります。必ずお見積りにご納得いただいてからのご契約です。</p>
     </div>
@@ -851,8 +889,8 @@ html,body{margin:0;background:var(--kt-paper)}
   <div class="kt-sec">
     <div class="kt-wrap kt-narrow" style="display:grid;gap:22px">
       <div class="kt-grid kt-g2">
-        <div class="kt-card" style="text-align:center"><span class="kt-card-n">お電話</span><a class="kt-cta-tel" style="margin:0;justify-content:center" href="tel:0753126647">075-312-6647</a><small>9:00〜18:00（暦通り・電話／FAX共通）</small></div>
-        <div class="kt-card" style="text-align:center"><span class="kt-card-n">メール</span><p style="font-weight:700;color:var(--kt-sumi);word-break:break-all;font-size:17px">contact@kyoto-taiyou.com</p><small>いつでも受け付けています</small></div>
+        <div class="kt-card" style="text-align:center"><span class="kt-card-n">お電話</span><a class="kt-cta-tel" style="margin:0;justify-content:center" href="tel:0753126647"><span data-info="tel">075-312-6647</span></a><small><span data-info="hours">9:00〜18:00</span>（暦通り・電話／FAX共通）</small></div>
+        <div class="kt-card" style="text-align:center"><span class="kt-card-n">メール</span><p style="font-weight:700;color:var(--kt-sumi);word-break:break-all;font-size:17px"><span data-info="mail">contact@kyoto-taiyou.com</span></p><small>いつでも受け付けています</small></div>
       </div>
       <p class="kt-note" style="margin:0;text-align:center">事務所：京都市右京区西院西平町24（阪急・嵐電「西院」駅から徒歩圏）<a href="#access">地図を見る 〉</a></p>
       <form class="kt-form" id="kt-form" novalidate>
@@ -947,7 +985,7 @@ html,body{margin:0;background:var(--kt-paper)}
       <div class="kt-done" id="kt-done" role="status" hidden>
         <h3 style="font-size:20px">ご相談を受け付けました</h3>
         <p style="margin-top:8px">受付番号 <b id="kt-no" class="kt-no"></b></p>
-        <p style="margin-top:8px">内容を確認のうえ、ご連絡いたします。お急ぎの方はお電話（075-312-6647／9:00〜18:00・暦通り）でどうぞ。</p>
+        <p style="margin-top:8px">内容を確認のうえ、ご連絡いたします。お急ぎの方はお電話（<span data-info="tel">075-312-6647</span>／<span data-info="hours">9:00〜18:00</span>・暦通り）でどうぞ。</p>
       </div>
     </div>
   </div>
@@ -1091,18 +1129,7 @@ html,body{margin:0;background:var(--kt-paper)}
   <div class="kt-sec kt-sec-white">
     <div class="kt-wrap kt-narrow">
       <div class="kt-head"><small>お知らせ</small><h2>事務所からのお知らせ</h2></div>
-      <ul class="kt-news">
-        <li><time datetime="2026-11-08">2026.11.08</time><span><span class="kt-label kt-label-g">ご案内</span>ホームページを新しくしました。企業・個人のご相談をフォームから受け付けています</span></li>
-        <li><time datetime="2025-08-16">2025.08.16</time><span><span class="kt-label kt-label-s">相談会</span>8月17日（日）10時〜17時半、京都駅八条口のイオンモールで終活の無料相談会を行います</span></li>
-        <li><time datetime="2025-08-06">2025.08.06</time><span><span class="kt-label kt-label-g">相談会</span>8月13日・20日（水）9時30分〜17時、七条ハローワークで外国人を雇用される事業主の方への無料相談を行います</span></li>
-        <li><time datetime="2025-07-11">2025.07.11</time><span><span class="kt-label">講演</span>公認会計士の特別講演へのご参加のお礼</span></li>
-        <li><time datetime="2025-05-24">2025.05.24</time><span><span class="kt-label">講演</span>いよいよ明日、特別講演を行います</span></li>
-        <li><time datetime="2025-05-04">2025.05.04</time><span><span class="kt-label">講演</span>公認会計士・市ノ澤翔氏による経営改善講演を主催します</span></li>
-        <li><time datetime="2024-11-09">2024.11.09</time><span><span class="kt-label">ご案内</span>ご依頼について</span></li>
-        <li><time datetime="2024-10-16">2024.10.16</time><span><span class="kt-label">重要</span>メールアドレスが変わりました（新しいアドレス：contact@kyoto-taiyou.com）</span></li>
-        <li><time datetime="2024-07-10">2024.07.10</time><span><span class="kt-label">セミナー</span>遺言を1日で作るセミナー・遺産分割協議書を1日で作るセミナーへのご参加ありがとうございました</span></li>
-        <li><time datetime="2024-05-26">2024.05.26</time><span><span class="kt-label">セミナー</span>6月22日・24日のセミナー、満席のお礼</span></li>
-      </ul>
+      <ul class="kt-news" id="kt-news-page"></ul>
     </div>
   </div>
 </section>
@@ -1145,8 +1172,8 @@ html,body{margin:0;background:var(--kt-paper)}
               <tr><th scope="row">事務所名</th><td>京都太陽行政書士事務所</td></tr>
               <tr><th scope="row">住所</th><td>〒615-0023<br>京都府京都市右京区西院西平町24</td></tr>
               <tr><th scope="row">最寄り駅</th><td>阪急京都線「西院」駅 徒歩約6分<br>嵐電（京福）「西院」駅 徒歩約8分</td></tr>
-              <tr><th scope="row">電話・FAX</th><td><a href="tel:0753126647">075-312-6647</a><br><small>9:00〜18:00（暦通り）</small></td></tr>
-              <tr><th scope="row">メール</th><td>contact@kyoto-taiyou.com<br><small>いつでも受け付けています</small></td></tr>
+              <tr><th scope="row">電話・FAX</th><td><a href="tel:0753126647"><span data-info="tel">075-312-6647</span></a><br><small><span data-info="hours">9:00〜18:00</span>（暦通り）</small></td></tr>
+              <tr><th scope="row">メール</th><td><span data-info="mail">contact@kyoto-taiyou.com</span><br><small>いつでも受け付けています</small></td></tr>
             </tbody>
           </table>
           <p class="kt-note">ご来所の際は、事前にご予約をお願いいたします。訪問・オンラインでのご相談にも対応しています。</p>
@@ -1171,7 +1198,7 @@ html,body{margin:0;background:var(--kt-paper)}
           <tr><th scope="row">事業者名</th><td>京都太陽行政書士事務所</td></tr>
           <tr><th scope="row">運営責任者</th><td>松宮 紀代</td></tr>
           <tr><th scope="row">所在地</th><td>〒615-0023 京都府京都市右京区西院西平町24</td></tr>
-          <tr><th scope="row">連絡先</th><td>電話 075-312-6647（9:00〜18:00・暦通り）<br>メール contact@kyoto-taiyou.com</td></tr>
+          <tr><th scope="row">連絡先</th><td>電話 <span data-info="tel">075-312-6647</span>（<span data-info="hours">9:00〜18:00</span>・暦通り）<br>メール <span data-info="mail">contact@kyoto-taiyou.com</span></td></tr>
           <tr><th scope="row">販売価格</th><td>各サービスの料金欄に記載しています（<a href="#fees">料金一覧</a>）</td></tr>
           <tr><th scope="row">商品代以外の費用</th><td data-set="extraFees"></td></tr>
           <tr><th scope="row">お支払い方法</th><td data-set="payList"></td></tr>
@@ -1208,7 +1235,7 @@ html,body{margin:0;background:var(--kt-paper)}
         <li>本サイトでは、閲覧状況を解析する仕組みは使用していません。導入する場合は、この方針に記載します。</li>
       </ul>
       <h3 class="kt-subhead" style="margin-top:12px">個人情報に関するお問い合わせ窓口</h3>
-      <p>京都太陽行政書士事務所　個人情報担当 松宮 紀代<br>電話 075-312-6647（9:00〜18:00・暦通り）／ メール contact@kyoto-taiyou.com</p>
+      <p>京都太陽行政書士事務所　個人情報担当 松宮 紀代<br>電話 <span data-info="tel">075-312-6647</span>（<span data-info="hours">9:00〜18:00</span>・暦通り）／ メール <span data-info="mail">contact@kyoto-taiyou.com</span></p>
       <p class="kt-note">この方針は、法令の改正などに応じて見直すことがあります。（2026年11月 制定）</p>
     </div>
   </div>
@@ -1242,41 +1269,144 @@ html,body{margin:0;background:var(--kt-paper)}
 
 <!-- ================= 管理ページ ================= -->
 <section class="kt-page" data-page="admin">
-  <div class="kt-pagehead"><div class="kt-wrap">
-    <small>事務所用</small><h1>管理ページ</h1>
-    <p>お支払い方法と、解約・返金などの記載項目を登録します。</p>
+  <div class="kt-adm-top"><div class="kt-wrap">
+    <div><small>京都太陽行政書士事務所</small><h1>管理画面</h1></div>
+    <div class="kt-adm-topbtns"><a class="kt-btn kt-btn-sub kt-btn-s" href="#home">サイトを見る</a><button class="kt-btn kt-btn-sub kt-btn-s" type="button" id="kt-adm-lockbtn" hidden>閉じる</button></div>
   </div></div>
-  <div class="kt-sec">
-    <div class="kt-wrap kt-narrow kt-stack">
-      <div class="kt-warn" role="note">現在は確認用のため、登録した内容はこの端末のブラウザにだけ保存されます。公開先が決まったら、受付台帳と同じ保存先につなぎ、すべての閲覧者に反映されるようにします。</div>
-      <form class="kt-form kt-admin" id="kt-admin" novalidate>
-        <div class="kt-step">
-          <p class="kt-step-label"><span class="kt-step-n">1</span>お支払い方法<small class="kt-hint">サイトに表示するものを選ぶ</small></p>
-          <div class="kt-chipsel" id="kt-adm-pay"></div>
-          <div class="kt-field" style="margin-top:12px"><label for="kt-adm-payother">そのほかのお支払い方法（自由記入）</label><input id="kt-adm-payother" name="payOther" placeholder="例）分割払い（3回まで）"></div>
-          <div class="kt-field" style="margin-top:12px"><label for="kt-adm-paynote">お支払いの補足</label><input id="kt-adm-paynote" name="payNote"></div>
-        </div>
-        <div class="kt-step">
-          <p class="kt-step-label"><span class="kt-step-n">2</span>記載項目</p>
-          <div class="kt-fields">
-            <div class="kt-field"><label for="kt-adm-paytiming">お支払い時期</label><textarea id="kt-adm-paytiming" name="payTiming" rows="2"></textarea></div>
-            <div class="kt-field"><label for="kt-adm-cooling">お申込みの取消し（独自の制度）</label><textarea id="kt-adm-cooling" name="coolingOff" rows="3"></textarea></div>
-            <div class="kt-field"><label for="kt-adm-cancel">中途解約・返金</label><textarea id="kt-adm-cancel" name="cancel" rows="3"></textarea></div>
-            <div class="kt-field"><label for="kt-adm-delivery">提供の時期</label><textarea id="kt-adm-delivery" name="delivery" rows="2"></textarea></div>
-            <div class="kt-field"><label for="kt-adm-defect">提供内容の不備</label><textarea id="kt-adm-defect" name="defect" rows="3"></textarea></div>
-            <div class="kt-field"><label for="kt-adm-extra">商品代以外の費用</label><textarea id="kt-adm-extra" name="extraFees" rows="2"></textarea></div>
+
+  <div class="kt-adm-gate" id="kt-adm-gate" hidden>
+    <form class="kt-card" id="kt-adm-gateform" novalidate>
+      <h2 style="font-size:20px">合言葉を入力してください</h2>
+      <div class="kt-field"><label for="kt-adm-pass" class="kt-sr">合言葉</label><input id="kt-adm-pass" type="password" autocomplete="current-password"></div>
+      <p class="kt-err" id="kt-adm-gatemsg" role="alert"></p>
+      <button class="kt-btn kt-btn-main" type="submit">開く</button>
+    </form>
+  </div>
+
+  <div id="kt-adm-body">
+    <div class="kt-wrap">
+      <div class="kt-warn" role="note">確認用のため、ここで登録した内容は<b>この端末のブラウザにだけ</b>保存されます。公開先が決まったら共通の保存先につなぎ、どの端末からでも同じ内容を見られるようにします。それまでは「設定」から保存データを書き出して控えてください。</div>
+
+      <nav class="kt-adm-tabs" role="tablist" aria-label="管理メニュー">
+        <button type="button" role="tab" data-tab="inq" aria-selected="true">相談受付<span class="kt-adm-badge" id="kt-adm-badge"></span></button>
+        <button type="button" role="tab" data-tab="news" aria-selected="false">お知らせ</button>
+        <button type="button" role="tab" data-tab="fees" aria-selected="false">料金</button>
+        <button type="button" role="tab" data-tab="info" aria-selected="false">基本情報</button>
+        <button type="button" role="tab" data-tab="pay" aria-selected="false">支払い・解約</button>
+        <button type="button" role="tab" data-tab="set" aria-selected="false">設定</button>
+      </nav>
+
+      <!-- 相談受付 -->
+      <div class="kt-adm-panel" data-panel="inq">
+        <div class="kt-adm-stats" id="kt-adm-stats"></div>
+        <div class="kt-adm-filter">
+          <label for="kt-inq-q" class="kt-sr">探す</label>
+          <input id="kt-inq-q" type="search" placeholder="名前・会社名・電話・内容で探す">
+          <div class="kt-chipsel kt-one" id="kt-inq-type">
+            <label><input type="radio" name="inqtype" value="" checked><span>すべて</span></label>
+            <label><input type="radio" name="inqtype" value="企業"><span>企業</span></label>
+            <label><input type="radio" name="inqtype" value="個人"><span>個人</span></label>
           </div>
+          <div class="kt-field"><label for="kt-inq-st" class="kt-sr">状況</label><select id="kt-inq-st"></select></div>
         </div>
-        <p class="kt-err" id="kt-adm-msg" role="status"></p>
-        <div class="kt-btns" style="margin-top:18px">
-          <button class="kt-btn kt-btn-sub" type="button" id="kt-adm-reset">初期の内容に戻す</button>
-          <button class="kt-btn kt-btn-main" type="submit">登録する</button>
+        <ul class="kt-inq-list" id="kt-inq-list"></ul>
+      </div>
+
+      <!-- お知らせ -->
+      <div class="kt-adm-panel" data-panel="news" hidden>
+        <form class="kt-adm-box" id="kt-news-form" novalidate>
+          <h2 class="kt-adm-h" id="kt-news-formtitle">お知らせを追加する</h2>
+          <div class="kt-adm-row">
+            <div class="kt-field"><label for="kt-news-date">日付</label><input id="kt-news-date" type="date"></div>
+            <div class="kt-field"><label for="kt-news-label">種類</label><select id="kt-news-label"><option>ご案内</option><option>相談会</option><option>セミナー</option><option>講演</option><option>重要</option></select></div>
+          </div>
+          <div class="kt-field"><label for="kt-news-text">内容</label><textarea id="kt-news-text" rows="3" placeholder="例）12月14日（日）に終活の無料相談会を行います"></textarea></div>
+          <p class="kt-err" id="kt-news-msg" role="status"></p>
+          <div class="kt-btns"><button class="kt-btn kt-btn-sub" type="button" id="kt-news-cancel" hidden>編集をやめる</button><button class="kt-btn kt-btn-main" type="submit" id="kt-news-submit">追加する</button></div>
+        </form>
+        <h2 class="kt-adm-h">掲載中のお知らせ<small>新しい順に、トップに4件、お知らせページに全件出ます</small></h2>
+        <ul class="kt-adm-items" id="kt-news-list"></ul>
+      </div>
+
+      <!-- 料金 -->
+      <div class="kt-adm-panel" data-panel="fees" hidden>
+        <p class="kt-note" style="margin-top:0">変更すると、経営者・個人の各ページと料金一覧の表に反映されます。「補足」は項目名の下、「価格の補足」は金額の下に小さく出ます。</p>
+        <div id="kt-fee-editor"></div>
+        <p class="kt-err" id="kt-fee-msg" role="status"></p>
+        <div class="kt-btns"><button class="kt-btn kt-btn-sub" type="button" id="kt-fee-reset">初期の料金に戻す</button><button class="kt-btn kt-btn-main" type="button" id="kt-fee-save">料金を登録する</button></div>
+      </div>
+
+      <!-- 基本情報 -->
+      <div class="kt-adm-panel" data-panel="info" hidden>
+        <form class="kt-adm-box" id="kt-info-form" novalidate>
+          <h2 class="kt-adm-h">連絡先と受付時間<small>サイト内のすべての表示に反映されます</small></h2>
+          <div class="kt-field"><label for="kt-info-tel">電話番号</label><input id="kt-info-tel" type="tel" inputmode="tel"></div>
+          <div class="kt-field"><label for="kt-info-hours">電話の受付時間</label><input id="kt-info-hours"></div>
+          <div class="kt-field"><label for="kt-info-mail">メールアドレス</label><input id="kt-info-mail" type="email" inputmode="email"></div>
+          <p class="kt-err" id="kt-info-msg" role="status"></p>
+          <div class="kt-btns"><button class="kt-btn kt-btn-main" type="submit">登録する</button></div>
+        </form>
+      </div>
+
+      <!-- 支払い・解約 -->
+      <div class="kt-adm-panel" data-panel="pay" hidden>
+        <form class="kt-adm-box kt-admin" id="kt-admin" novalidate>
+          <h2 class="kt-adm-h">お支払い方法<small>サイトに表示するものを選ぶ</small></h2>
+          <div class="kt-chipsel" id="kt-adm-pay"></div>
+          <div class="kt-field"><label for="kt-adm-payother">そのほかのお支払い方法（自由記入）</label><input id="kt-adm-payother" name="payOther" placeholder="例）分割払い（3回まで）"></div>
+          <div class="kt-field"><label for="kt-adm-paynote">お支払いの補足</label><input id="kt-adm-paynote" name="payNote"></div>
+          <h2 class="kt-adm-h">記載項目<small>特定商取引法のページと「ご契約・お支払い・解約」のページに出ます</small></h2>
+          <div class="kt-field"><label for="kt-adm-paytiming">お支払い時期</label><textarea id="kt-adm-paytiming" name="payTiming" rows="2"></textarea></div>
+          <div class="kt-field"><label for="kt-adm-cooling">お申込みの取消し（独自の制度）</label><textarea id="kt-adm-cooling" name="coolingOff" rows="3"></textarea></div>
+          <div class="kt-field"><label for="kt-adm-cancel">中途解約・返金</label><textarea id="kt-adm-cancel" name="cancel" rows="3"></textarea></div>
+          <div class="kt-field"><label for="kt-adm-delivery">提供の時期</label><textarea id="kt-adm-delivery" name="delivery" rows="2"></textarea></div>
+          <div class="kt-field"><label for="kt-adm-defect">提供内容の不備</label><textarea id="kt-adm-defect" name="defect" rows="3"></textarea></div>
+          <div class="kt-field"><label for="kt-adm-extra">商品代以外の費用</label><textarea id="kt-adm-extra" name="extraFees" rows="2"></textarea></div>
+          <p class="kt-err" id="kt-adm-msg" role="status"></p>
+          <div class="kt-btns"><button class="kt-btn kt-btn-sub" type="button" id="kt-adm-reset">初期の内容に戻す</button><button class="kt-btn kt-btn-main" type="submit">登録する</button></div>
+          <p class="kt-note" style="text-align:center"><a href="#terms">表示を確認する 〉</a></p>
+        </form>
+      </div>
+
+      <!-- 設定 -->
+      <div class="kt-adm-panel" data-panel="set" hidden>
+        <div class="kt-adm-box">
+          <h2 class="kt-adm-h">合言葉<small>この画面を開くときに入力を求めます（この端末だけの簡易な鍵です）</small></h2>
+          <div class="kt-field"><label for="kt-set-pass">新しい合言葉（空にすると鍵を外します）</label><input id="kt-set-pass" type="password" autocomplete="new-password"></div>
+          <p class="kt-err" id="kt-set-passmsg" role="status"></p>
+          <div class="kt-btns"><button class="kt-btn kt-btn-main" type="button" id="kt-set-passbtn">合言葉を設定する</button></div>
         </div>
-        <p class="kt-note" style="text-align:center"><a href="#terms">表示を確認する 〉</a></p>
-      </form>
+        <div class="kt-adm-box">
+          <h2 class="kt-adm-h">保存データの控え<small>受付・お知らせ・料金・基本情報・記載項目をまとめて書き出せます</small></h2>
+          <div class="kt-btns" style="justify-content:flex-start"><button class="kt-btn kt-btn-sub" type="button" id="kt-set-export">書き出して写す</button><button class="kt-btn kt-btn-sub" type="button" id="kt-set-csv">相談受付を表計算用に写す</button></div>
+          <div class="kt-field"><label for="kt-set-data">控えの文字（読み込むときはここに貼り付けます）</label><textarea id="kt-set-data" rows="5"></textarea></div>
+          <p class="kt-err" id="kt-set-msg" role="status"></p>
+          <div class="kt-btns" style="justify-content:flex-start"><button class="kt-btn kt-btn-main" type="button" id="kt-set-import">貼り付けた控えを読み込む</button></div>
+        </div>
+        <div class="kt-adm-box">
+          <h2 class="kt-adm-h">見本の受付<small>相談受付の見本（2件）を消します</small></h2>
+          <div class="kt-btns" style="justify-content:flex-start"><button class="kt-btn kt-btn-sub" type="button" id="kt-set-clearsample">見本を消す</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 受付の詳細 -->
+  <div class="kt-modal" id="kt-inq-modal" hidden>
+    <div class="kt-modal-bg" data-mclose></div>
+    <div class="kt-modal-panel" role="dialog" aria-labelledby="kt-inq-mtitle">
+      <div class="kt-modal-head"><h2 id="kt-inq-mtitle" style="font-size:19px"></h2><button class="kt-drawer-close" type="button" data-mclose>閉じる</button></div>
+      <dl class="kt-inq-dl" id="kt-inq-dl"></dl>
+      <div class="kt-adm-row">
+        <div class="kt-field"><label for="kt-inq-mst">対応状況</label><select id="kt-inq-mst"></select></div>
+        <div class="kt-field"><label for="kt-inq-mnext">次に連絡する日</label><input id="kt-inq-mnext" type="date"></div>
+      </div>
+      <div class="kt-field"><label for="kt-inq-mmemo">対応メモ</label><textarea id="kt-inq-mmemo" rows="4" placeholder="例）11/10 電話。来所面談を11/15 14時で予約"></textarea></div>
+      <div class="kt-btns" style="margin-top:14px"><button class="kt-btn kt-btn-sub" type="button" id="kt-inq-mdel">この受付を削除</button><button class="kt-btn kt-btn-main" type="button" id="kt-inq-msave">保存する</button></div>
     </div>
   </div>
 </section>
+
 
 </main>
 
@@ -1285,8 +1415,8 @@ html,body{margin:0;background:var(--kt-paper)}
     <div class="kt-cta-box">
       <h2>ひとりで抱えず、まずはお話しください</h2>
       <p>初回相談は1時間まで無料です。</p>
-      <a class="kt-cta-tel" href="tel:0753126647"><svg width="0.9em" height="0.9em" viewBox="0 0 24 24" aria-hidden="true" style="flex:none"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 006.6 6.6l2.2-2.2a1 1 0 011-.25 11.4 11.4 0 003.6.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.6a1 1 0 01-.25 1z"/></svg>075-312-6647</a>
-      <p class="kt-cta-sub">電話 9:00〜18:00（暦通り）／ メールはいつでも contact@kyoto-taiyou.com</p>
+      <a class="kt-cta-tel" href="tel:0753126647"><svg width="0.9em" height="0.9em" viewBox="0 0 24 24" aria-hidden="true" style="flex:none"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 006.6 6.6l2.2-2.2a1 1 0 011-.25 11.4 11.4 0 003.6.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.6a1 1 0 01-.25 1z"/></svg><span data-info="tel">075-312-6647</span></a>
+      <p class="kt-cta-sub">電話 <span data-info="hours">9:00〜18:00</span>（暦通り）／ メールはいつでも <span data-info="mail">contact@kyoto-taiyou.com</span></p>
       <a class="kt-btn kt-btn-main" href="#contact">フォームで相談する</a>
     </div>
   </div>
@@ -1294,7 +1424,7 @@ html,body{margin:0;background:var(--kt-paper)}
 
 <footer class="kt-footer">
   <div class="kt-wrap kt-footer-in">
-    <div><h3>京都太陽行政書士事務所</h3><p>代表 特定行政書士 松宮 紀代<br>〒615-0023 京都府京都市右京区西院西平町24<br>阪急・嵐電「西院」駅から徒歩圏<br>電話・FAX 075-312-6647（9:00〜18:00・暦通り）<br>contact@kyoto-taiyou.com（いつでも受付）</p><div class="kt-sns"><a href="https://www.facebook.com/matsumiya.kiyo" target="_blank" rel="noopener">Facebook</a><a href="https://note.com/__marn_1nma_ruk0" target="_blank" rel="noopener">note</a><a href="https://www.instagram.com/jinsei_planner/" target="_blank" rel="noopener">Instagram</a></div></div>
+    <div><h3>京都太陽行政書士事務所</h3><p>代表 特定行政書士 松宮 紀代<br>〒615-0023 京都府京都市右京区西院西平町24<br>阪急・嵐電「西院」駅から徒歩圏<br>電話・FAX <span data-info="tel">075-312-6647</span>（<span data-info="hours">9:00〜18:00</span>・暦通り）<br><span data-info="mail">contact@kyoto-taiyou.com</span>（いつでも受付）</p><div class="kt-sns"><a href="https://www.facebook.com/matsumiya.kiyo" target="_blank" rel="noopener">Facebook</a><a href="https://note.com/__marn_1nma_ruk0" target="_blank" rel="noopener">note</a><a href="https://www.instagram.com/jinsei_planner/" target="_blank" rel="noopener">Instagram</a></div></div>
     <div><h3>ご相談</h3><ul><li><a href="#business">経営者のご相談</a></li><li><a href="#personal">個人のご相談</a></li><li><a href="#fees">料金一覧</a></li><li><a href="#contact">お問い合わせ</a></li></ul></div>
     <div><h3>事務所</h3><ul><li><a href="#philosophy">経営理念</a></li><li><a href="#profile">代表紹介・行政書士とは</a></li><li><a href="#news">お知らせ・活動実績</a></li><li><a href="#blog">ブログ記事</a></li><li><a href="#access">アクセス</a></li><li><a href="#legal">特定商取引法・個人情報保護方針</a></li><li><a href="#terms">ご契約・お支払い・解約</a></li><li><a href="#admin" class="kt-admin-link">管理ページ</a></li></ul></div>
   </div>
@@ -1318,6 +1448,7 @@ html,body{margin:0;background:var(--kt-paper)}
     if(!found){h='home';document.querySelector('[data-page="home"]').classList.add('is-on');}
     var tab=(h==='fees'||h==='profile')?'':h;
     tabs.forEach(function(a){a.classList.toggle('is-on',a.dataset.tab===tab);});
+    document.body.classList.toggle('kt-in-admin',h==='admin');
     closeDrawer();window.scrollTo(0,0);
   }
   window.addEventListener('hashchange',show);show();
@@ -1380,54 +1511,11 @@ html,body{margin:0;background:var(--kt-paper)}
     var d=new Date(),p=function(n){return ('0'+n).slice(-2);};
     var no=(val('type')==='企業'?'K':'P')+String(d.getFullYear()).slice(2)+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes());
     document.getElementById('kt-no').textContent=no;
+    var el2=form.elements;
+    if(window.ktSaveInquiry)window.ktSaveInquiry({no:no,at:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes()),type:val('type'),topics:vals('topic'),timing:val('timing'),how:val('how'),name:el2['name'].value.trim(),company:val('type')==='企業'?el2['company'].value.trim():'',tel:el2['tel'].value.trim(),mail:el2['mail'].value.trim(),contact:val('contact'),time:vals('time'),msg:el2['msg'].value.trim(),files:files.map(function(f){return f.name;}),status:'未対応',next:'',memo:''});
     /* 送信先（受付台帳・通知メール）は公開先が決まったらここで接続する */
     confirmBox.hidden=true;done.hidden=false;done.scrollIntoView({block:'start'});
   });
-  /* ===== 記載項目（管理ページで登録） ===== */
-  var PAY_ALL=['クレジットカード','銀行振込','現金（来所時）','口座振替','電子マネー・QR決済'];
-  var DEF={
-    pay:['クレジットカード','銀行振込'],payOther:'',payNote:'分割払いをご利用の場合は分割手数料がかかります。',
-    payTiming:'クレジットカード：ご注文時に確定します。\n銀行振込：お振込みの時点で確定します。',
-    coolingOff:'インターネットでのお申込みには、法律上のクーリングオフ制度はありません。当事務所では独自の制度として、お申込み日から7日以内にご連絡いただければ、お支払い済みの金額を返金いたします。返金時の振込手数料はお客様のご負担となります。',
-    cancel:'中途解約の場合は、お支払い額を講座の回数で割った金額に、残りの回数をかけた金額を振込で返金いたします。振込手数料はお客様のご負担となります。',
-    delivery:'お支払いの確認後24時間以内に、メールまたはLINE公式アカウントでご案内いたします。',
-    defect:'お申込み内容と異なる場合や、データが破損していた場合は、7日以内にご連絡ください。状況を確認のうえ、改めて提供いたします。',
-    extraFees:'分割払いの手数料、振込手数料'
-  };
-  var KEY='kt-settings-v1';
-  function load(){var o={};try{o=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){}var r={};for(var k in DEF)r[k]=(o[k]!==undefined?o[k]:DEF[k]);return r;}
-  function save(o){try{localStorage.setItem(KEY,JSON.stringify(o));return true;}catch(e){return false;}}
-  function br(t){return esc(t).replace(/\n/g,'<br>');}
-  function render(){
-    var c=load(),list=c.pay.slice();if(c.payOther.trim())list.push(c.payOther.trim());
-    document.querySelectorAll('[data-set]').forEach(function(el){
-      var k=el.getAttribute('data-set');
-      if(k==='payList')el.innerHTML=list.length?esc(list.join('、')):'お問い合わせください';
-      else if(k==='payChips')el.innerHTML=list.map(function(x){return '<span class="kt-chip kt-chip-main">'+esc(x)+'</span>';}).join('');
-      else el.innerHTML=br(c[k]||'');
-    });
-  }
-  var adm=document.getElementById('kt-admin');
-  function fillAdmin(){
-    var c=load();
-    document.getElementById('kt-adm-pay').innerHTML=PAY_ALL.map(function(x,i){return '<label><input type="checkbox" name="pay" value="'+esc(x)+'" id="kt-ap'+i+'"'+(c.pay.indexOf(x)>-1?' checked':'')+'><span>'+esc(x)+'</span></label>';}).join('');
-    ['payOther','payNote','payTiming','coolingOff','cancel','delivery','defect','extraFees'].forEach(function(k){adm.elements[k].value=c[k];});
-  }
-  fillAdmin();render();
-  var admMsg=document.getElementById('kt-adm-msg');
-  adm.addEventListener('submit',function(e){
-    e.preventDefault();
-    var o={pay:Array.prototype.map.call(adm.querySelectorAll('[name="pay"]:checked'),function(x){return x.value;})};
-    ['payOther','payNote','payTiming','coolingOff','cancel','delivery','defect','extraFees'].forEach(function(k){o[k]=adm.elements[k].value;});
-    var ok=save(o);render();
-    admMsg.textContent=ok?'登録しました。':'このブラウザでは保存できませんでした。';
-    admMsg.className='kt-err '+(ok?'is-ok':'is-on');
-  });
-  document.getElementById('kt-adm-reset').addEventListener('click',function(){
-    try{localStorage.removeItem(KEY);}catch(e){}
-    fillAdmin();render();admMsg.textContent='初期の内容に戻しました。';admMsg.className='kt-err is-ok';
-  });
-
   /* ===== ブログ ===== */
   var POSTS=[{"d": "2026.08.28", "t": "生糸が中国産しか無くなる未来、中国が輸出を止めれば着物や帯は作れなくなる", "u": "https://kyoto-taiyou.com/%e7%94%9f%e7%b3%b8%e3%81%8c%e4%b8%ad%e5%9b%bd%e7%94%a3%e3%81%97%e3%81%8b%e7%84%a1%e3%81%8f%e3%81%aa%e3%82%8b%e6%9c%aa%e6%9d%a5%e3%80%81%e4%b8%ad%e5%9b%bd%e3%81%8c%e8%bc%b8%e5%87%ba%e3%82%92%e6%ad%a2/", "c": "コラム"}, {"d": "2026.05.28", "t": "2026年5月から、融資は「事業性評価融資」に移行していきます。", "u": "https://kyoto-taiyou.com/2026%e5%b9%b45%e6%9c%88%e3%81%8b%e3%82%89%e3%80%81%e8%9e%8d%e8%b3%87%e3%81%af%e3%80%8c%e4%ba%8b%e6%a5%ad%e6%80%a7%e8%a9%95%e4%be%a1%e8%9e%8d%e8%b3%87%e3%80%8d%e3%81%ab%e7%a7%bb%e8%a1%8c%e3%81%97/", "c": "経営・財務"}, {"d": "2026.04.30", "t": "廃業を考える前に、家族より会社に尽くした人への事業承継も考えてください", "u": "https://kyoto-taiyou.com/%e5%bb%83%e6%a5%ad%e3%82%92%e8%80%83%e3%81%88%e3%82%8b%e5%89%8d%e3%81%ab%e3%80%81%e5%ae%b6%e6%97%8f%e3%82%88%e3%82%8a%e4%bc%9a%e7%a4%be%e3%81%ab%e5%b0%bd%e3%81%8f%e3%81%97%e3%81%9f%e4%ba%ba%e3%81%b8/", "c": "事業承継"}, {"d": "2026.03.28", "t": "奥山を原生林に戻すことが、回り回って未来の子供達を守ることになる。全ては繋がっている", "u": "https://kyoto-taiyou.com/%e9%87%91%e6%ac%b2%e3%81%8b%e3%82%89%e8%87%aa%e5%88%86%e4%b8%96%e4%bb%a3%e3%81%a7%e9%a3%9f%e3%81%84%e5%b0%bd%e3%81%8f%e3%81%99%e3%81%ae%e3%81%a7%e3%81%aa%e3%81%8f%e3%80%81%e5%ad%90%e4%be%9b%e9%81%94/", "c": "コラム"}, {"d": "2026.03.01", "t": "黒字倒産、黒字廃業が50％、事業承継は内部昇格が身内承継を超えた。M&Aで外国に売り渡している企業も。さて、どうされますか？", "u": "https://kyoto-taiyou.com/%e9%bb%92%e5%ad%97%e5%80%92%e7%94%a3%e3%80%81%e9%bb%92%e5%ad%97%e5%bb%83%e6%a5%ad%e3%81%8c50%ef%bc%85%e3%80%81%e4%ba%8b%e6%a5%ad%e6%89%bf%e7%b6%99%e3%81%af%e5%86%85%e9%83%a8%e6%98%87%e6%a0%bc%e3%81%8c/", "c": "事業承継"}, {"d": "2026.03.01", "t": "市場縮小と副業解禁で、SNSは自分の商品を売りたい人で溢れている。その中で生き残る戦略は？", "u": "https://kyoto-taiyou.com/%e5%b8%82%e5%a0%b4%e7%b8%ae%e5%b0%8f%e3%81%a8%e5%89%af%e6%a5%ad%e8%a7%a3%e7%a6%81%e3%81%a7%e3%80%81sns%e3%81%af%e8%87%aa%e5%88%86%e3%81%ae%e5%95%86%e5%93%81%e3%82%92%e5%a3%b2%e3%82%8a%e3%81%9f/", "c": "経営・財務"}, {"d": "2026.01.22", "t": "今は経営者のあなたも新人の頃は理不尽と戦っていたはず。今の社員も同じです", "u": "https://kyoto-taiyou.com/%e4%bb%8a%e3%81%af%e7%b5%8c%e5%96%b6%e8%80%85%e3%81%ae%e3%81%82%e3%81%aa%e3%81%9f%e3%82%82%e6%96%b0%e4%ba%ba%e3%81%ae%e9%a0%83%e3%81%af%e7%90%86%e4%b8%8d%e5%b0%bd%e3%81%a8%e6%88%a6%e3%81%a3%e3%81%a6/", "c": "人材・定着"}, {"d": "2026.01.22", "t": "年計売上高が横ばいになったら次の手立てを考える時期です", "u": "https://kyoto-taiyou.com/%e5%b9%b4%e6%ac%a1%e5%a3%b2%e4%b8%8a%e9%ab%98%e3%81%8c%e6%a8%aa%e3%81%b0%e3%81%84%e3%81%ab%e3%81%aa%e3%81%a3%e3%81%9f%e3%82%89%e6%ac%a1%e3%81%ae%e6%89%8b%e7%ab%8b%e3%81%a6%e3%82%92%e8%80%83%e3%81%88/", "c": "経営・財務"}, {"d": "2025.12.09", "t": "社長の能力は利益剰余金で、人格は資本の項目で分かる", "u": "https://kyoto-taiyou.com/%e7%a4%be%e9%95%b7%e3%81%ae%e8%83%bd%e5%8a%9b%e3%81%af%e5%88%a9%e7%9b%8a%e5%89%b0%e4%bd%99%e9%87%91%e3%81%a7%e3%80%81%e4%ba%ba%e6%a0%bc%e3%81%af%e8%b3%87%e6%9c%ac%e3%81%ae%e9%a0%85%e7%9b%ae%e3%81%a7/", "c": "経営・財務"}, {"d": "2025.12.08", "t": "終活は、ご自身だけでなく離れた親のケアとしても必要。そんな終活の色々。", "u": "https://kyoto-taiyou.com/%e7%b5%82%e6%b4%bb%e3%81%af%e3%80%81%e3%81%94%e8%87%aa%e8%ba%ab%e3%81%a0%e3%81%91%e3%81%a7%e3%81%aa%e3%81%8f%e9%9b%a2%e3%82%8c%e3%81%9f%e8%a6%aa%e3%81%ae%e3%82%b1%e3%82%a2%e3%81%a8%e3%81%97%e3%81%a6/", "c": "終活・相続"}, {"d": "2025.11.23", "t": "売上低迷で販売職の正社員が余ったら、解雇すべき？それとも最初から販売職は非正規にするべき？", "u": "https://kyoto-taiyou.com/%e5%a3%b2%e4%b8%8a%e4%bd%8e%e8%bf%b7%e3%81%a7%e8%b2%a9%e5%a3%b2%e8%81%b7%e3%81%ae%e6%ad%a3%e7%a4%be%e5%93%a1%e3%81%8c%e4%bd%99%e3%81%a3%e3%81%9f%e3%82%89%e3%80%81%e8%a7%a3%e9%9b%87%e3%81%99%e3%81%b9/", "c": "人材・定着"}, {"d": "2025.10.12", "t": "製造業の生命線は、技術＝社員です", "u": "https://kyoto-taiyou.com/%e8%a3%bd%e9%80%a0%e6%a5%ad%e3%81%ae%e7%94%9f%e5%91%bd%e7%b7%9a%e3%81%af%e3%80%81%e6%8a%80%e8%a1%93%e7%a4%be%e5%93%a1%e3%81%a7%e3%81%99%e3%80%82/", "c": "人材・定着"}, {"d": "2025.09.29", "t": "社長さんへの問いかけ② 社員の心は離れていませんか？", "u": "https://kyoto-taiyou.com/%e7%a4%be%e9%95%b7%e3%81%95%e3%82%93%e3%81%b8%e3%81%ae%e5%95%8f%e3%81%84%e3%81%8b%e3%81%91%e2%91%a1-%e7%a4%be%e5%93%a1%e3%81%ae%e5%bf%83%e3%81%af%e9%9b%a2%e3%82%8c%e3%81%a6%e3%81%84%e3%81%be%e3%81%9b/", "c": "人材・定着"}, {"d": "2025.09.25", "t": "社長さんへの問いかけ① 起業時に立てた理念は何ですか？", "u": "https://kyoto-taiyou.com/%e7%a4%be%e9%95%b7%e3%81%95%e3%82%93%e3%81%b8%e3%81%ae%e5%95%8f%e3%81%84%e3%81%8b%e3%81%91%e2%91%a0/", "c": "起業"}, {"d": "2025.09.20", "t": "法定後見制度が改正されます", "u": "https://kyoto-taiyou.com/%e6%b3%95%e5%ae%9a%e5%be%8c%e8%a6%8b%e5%88%b6%e5%ba%a6%e3%81%8c%e6%94%b9%e6%ad%a3%e3%81%95%e3%82%8c%e3%81%be%e3%81%99/", "c": "終活・相続"}, {"d": "2025.07.11", "t": "京大総長が参列した父の葬儀、私も父のように生きたいと思う", "u": "https://kyoto-taiyou.com/%e4%ba%ac%e5%a4%a7%e7%b7%8f%e9%95%b7%e3%81%8c%e5%8f%82%e5%88%97%e3%81%97%e3%81%9f%e7%88%b6%e3%81%ae%e8%91%ac%e5%84%80%e7%a7%81%e3%82%82%e7%88%b6%e3%81%ae%e3%82%88%e3%81%86%e3%81%ab%e7%94%9f/", "c": "終活・相続"}, {"d": "2025.07.11", "t": "公務員がした処分に納得いかない時、「審査請求＝もう一回やり直して貰う」ことが出来ます", "u": "https://kyoto-taiyou.com/%e5%85%ac%e5%8b%99%e5%93%a1%e3%81%8c%e3%81%97%e3%81%9f%e5%87%a6%e5%88%86%e3%81%ab%e7%b4%8d%e5%be%97%e3%81%84%e3%81%8b%e3%81%aa%e3%81%84%e6%99%82%e3%80%81%e3%80%8c%e5%af%a9%e6%9f%bb%e8%ab%8b%e6%b1%82/", "c": "法律・手続き"}, {"d": "2025.07.11", "t": "成果が出るには時間差がある。あと少しの所に来ているかもしれないのに諦めないで。", "u": "https://kyoto-taiyou.com/%e6%88%90%e6%9e%9c%e3%81%8c%e5%87%ba%e3%82%8b%e3%81%ab%e3%81%af%e6%99%82%e9%96%93%e5%b7%ae%e3%81%8c%e3%81%82%e3%82%8b%e3%80%82%e3%81%82%e3%81%a8%e5%b0%91%e3%81%97%e3%81%ae%e6%89%80%e3%81%ab%e6%9d%a5/", "c": "コラム"}, {"d": "2025.07.11", "t": "「治に居て乱を忘れず」、「人は死して名を遺す」下請け、取引先も守ってこそ男です！", "u": "https://kyoto-taiyou.com/%e3%80%8c%e6%b2%bb%e3%81%ab%e5%b1%85%e3%81%a6%e4%b9%b1%e3%82%92%e5%bf%98%e3%82%8c%e3%81%9a%e3%80%8d%e3%80%81%e3%80%8c%e4%ba%ba%e3%81%af%e6%ad%bb%e3%81%97%e3%81%a6%e5%90%8d%e3%82%92%e9%81%ba%e3%81%99/", "c": "コラム"}, {"d": "2025.07.11", "t": "税理士は過去の税金を計算する人、社長は現在の数字を把握し未来を作る人。過去の人に未来を丸投げしていませんか？", "u": "https://kyoto-taiyou.com/%e7%a8%8e%e7%90%86%e5%a3%ab%e3%81%af%e9%81%8e%e5%8e%bb%e3%81%ae%e7%a8%8e%e9%87%91%e3%82%92%e8%a8%88%e7%ae%97%e3%81%99%e3%82%8b%e4%ba%ba%e3%80%81%e7%a4%be%e9%95%b7%e3%81%af%e7%8f%be%e5%9c%a8%e3%81%ae/", "c": "経営・財務"}, {"d": "2025.07.11", "t": "会社の現金が枯渇している時に、社長が絶対してはいけないこと5選", "u": "https://kyoto-taiyou.com/%e4%bc%9a%e7%a4%be%e3%81%ae%e7%8f%be%e9%87%91%e3%81%8c%e6%9e%af%e6%b8%87%e3%81%97%e3%81%a6%e3%81%84%e3%82%8b%e6%99%82%e3%81%ab%e3%80%81%e7%a4%be%e9%95%b7%e3%81%8c%e7%b5%b6%e5%af%be%e3%81%97%e3%81%a6/", "c": "経営・財務"}, {"d": "2025.07.11", "t": "「人は本音を言わない」は、自分を知る物差しになる", "u": "https://kyoto-taiyou.com/%e3%80%8c%e4%ba%ba%e3%81%af%e6%9c%ac%e9%9f%b3%e3%82%92%e8%a8%80%e3%82%8f%e3%81%aa%e3%81%84%e3%80%8d%e3%81%af%e3%80%81%e8%87%aa%e5%88%86%e3%82%92%e7%9f%a5%e3%82%8b%e7%89%a9%e5%b7%ae%e3%81%97%e3%81%ab/", "c": "人材・定着"}, {"d": "2025.05.14", "t": "危機に強いキャッシュフロー戦略", "u": "https://kyoto-taiyou.com/blog/", "c": "経営・財務"}, {"d": "2024.02.27", "t": "書式集通りの契約では裁判に勝てない。オリジナルの契約書だけが、あなたの事業を守る理由", "u": "https://kyoto-taiyou.com/blog-2/", "c": "法律・手続き"}, {"d": "2024.01.19", "t": "被災を乗り越えるために必要な法的知識と制度", "u": "https://kyoto-taiyou.com/%e8%a2%ab%e7%81%bd%e3%82%92%e4%b9%97%e3%82%8a%e8%b6%8a%e3%81%88%e3%82%8b%e3%81%9f%e3%82%81%e3%81%ab%e5%bf%85%e8%a6%81%e3%81%aa%e6%b3%95%e7%9a%84%e7%9f%a5%e8%ad%98%e3%81%a8%e5%88%b6%e5%ba%a6/", "c": "法律・手続き"}, {"d": "2023.12.18", "t": "著作権を侵害された時の対策3つと登録の勧め", "u": "https://kyoto-taiyou.com/%e8%91%97%e4%bd%9c%e6%a8%a9%e3%82%92%e4%be%b5%e5%ae%b3%e3%81%95%e3%82%8c%e3%81%9f%e6%99%82%e3%81%ae%e5%af%be%e7%ad%963%e3%81%a4%e3%81%a8%e7%99%bb%e9%8c%b2%e3%81%ae%e5%8b%a7%e3%82%81/", "c": "法律・手続き"}, {"d": "2023.12.18", "t": "個人起業家がサラリーマンと同レベルの安心を得る方法10個", "u": "https://kyoto-taiyou.com/%e5%80%8b%e4%ba%ba%e8%b5%b7%e6%a5%ad%e5%ae%b6%e3%81%8c%e3%82%b5%e3%83%a9%e3%83%aa%e3%83%bc%e3%83%9e%e3%83%b3%e3%81%a8%e5%90%8c%e3%83%ac%e3%83%99%e3%83%ab%e3%81%ae%e5%ae%89%e5%bf%83%e3%82%92%e5%be%97/", "c": "起業"}, {"d": "2023.12.02", "t": "お馴染みのお店の変化、それでも私はその店に行く", "u": "https://kyoto-taiyou.com/%e3%81%8a%e9%a6%b4%e6%9f%93%e3%81%bf%e3%81%ae%e3%81%8a%e5%ba%97%e3%81%ae%e5%a4%89%e5%8c%96%e3%80%81%e3%81%9d%e3%82%8c%e3%81%a7%e3%82%82%e7%a7%81%e3%81%af%e3%81%9d%e3%81%ae%e5%ba%97%e3%81%ab%e8%a1%8c/", "c": "コラム"}, {"d": "2023.10.14", "t": "転機の乗り切り方", "u": "https://kyoto-taiyou.com/__trashed-4/", "c": "起業"}, {"d": "2023.10.06", "t": "エンディングノートは不安払拭には役立たない", "u": "https://kyoto-taiyou.com/%e3%82%a8%e3%83%b3%e3%83%87%e3%82%a3%e3%83%b3%e3%82%b0%e3%83%8e%e3%83%bc%e3%83%88%e3%81%af%e7%9b%b8%e7%b6%9a%e4%ba%ba%e3%81%8c%e6%a5%bd%e3%81%99%e3%82%8b%e3%81%9f%e3%82%81%e3%81%ae%e3%82%82%e3%81%ae/", "c": "終活・相続"}];
   var CATS=['すべて'];POSTS.forEach(function(p){if(CATS.indexOf(p.c)<0)CATS.push(p.c);});
@@ -1445,6 +1533,225 @@ html,body{margin:0;background:var(--kt-paper)}
 
   /* ===== 目次 ===== */
   document.querySelectorAll('[data-jump]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var t=document.getElementById(a.getAttribute('data-jump'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'});});});
+  /* ===== 保存（確認用：この端末のブラウザ） ===== */
+  function getJ(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
+  function setJ(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){return false;}}
+  function br(t){return esc(t).replace(/\n/g,'<br>');}
+  function msg(id,t,ok){var el=document.getElementById(id);el.textContent=t;el.className='kt-err '+(ok?'is-ok':'is-on');}
+  function today(){var d=new Date(),p=function(n){return ('0'+n).slice(-2);};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
+
+  /* ===== 基本情報 ===== */
+  var K_INFO='kt-info-v1',DEF_INFO={tel:'075-312-6647',hours:'9:00〜18:00',mail:'contact@kyoto-taiyou.com'};
+  function info(){var o=getJ(K_INFO,{});return {tel:o.tel||DEF_INFO.tel,hours:o.hours||DEF_INFO.hours,mail:o.mail||DEF_INFO.mail};}
+  function renderInfo(){
+    var i=info();
+    document.querySelectorAll('[data-info]').forEach(function(el){el.textContent=i[el.getAttribute('data-info')]||'';});
+    document.querySelectorAll('a[href^="tel:"]').forEach(function(a){a.setAttribute('href','tel:'+i.tel.replace(/[^0-9+]/g,''));});
+  }
+  var infoForm=document.getElementById('kt-info-form');
+  function fillInfo(){var i=info();infoForm.querySelector('#kt-info-tel').value=i.tel;infoForm.querySelector('#kt-info-hours').value=i.hours;infoForm.querySelector('#kt-info-mail').value=i.mail;}
+  infoForm.addEventListener('submit',function(e){
+    e.preventDefault();
+    var o={tel:document.getElementById('kt-info-tel').value.trim(),hours:document.getElementById('kt-info-hours').value.trim(),mail:document.getElementById('kt-info-mail').value.trim()};
+    if(!o.tel||!o.hours||!o.mail){msg('kt-info-msg','3つとも入力してください。');return;}
+    setJ(K_INFO,o);renderInfo();msg('kt-info-msg','登録しました。サイト内の表示を更新しました。',true);
+  });
+
+  /* ===== お知らせ ===== */
+  var K_NEWS='kt-news-v1';
+  var DEF_NEWS=[
+    {d:'2026-11-08',l:'ご案内',t:'ホームページを新しくしました。企業・個人のご相談をフォームから受け付けています'},
+    {d:'2025-08-16',l:'相談会',t:'8月17日（日）10時〜17時半、京都駅八条口のイオンモールで終活の無料相談会を行います'},
+    {d:'2025-08-06',l:'相談会',t:'8月13日・20日（水）9時30分〜17時、七条ハローワークで外国人を雇用される事業主の方への無料相談を行います'},
+    {d:'2025-07-11',l:'講演',t:'公認会計士の特別講演へのご参加のお礼'},
+    {d:'2025-05-24',l:'講演',t:'いよいよ明日、特別講演を行います'},
+    {d:'2025-05-04',l:'講演',t:'公認会計士・市ノ澤翔氏による経営改善講演を主催します'},
+    {d:'2024-11-09',l:'ご案内',t:'ご依頼について'},
+    {d:'2024-10-16',l:'重要',t:'メールアドレスが変わりました（新しいアドレス：contact@kyoto-taiyou.com）'},
+    {d:'2024-07-10',l:'セミナー',t:'遺言を1日で作るセミナー・遺産分割協議書を1日で作るセミナーへのご参加ありがとうございました'},
+    {d:'2024-05-26',l:'セミナー',t:'6月22日・24日のセミナー、満席のお礼'}
+  ];
+  function news(){return getJ(K_NEWS,DEF_NEWS).slice().sort(function(a,b){return a.d<b.d?1:-1;});}
+  var LCLS={'相談会':'kt-label-s','ご案内':'kt-label-g','重要':'kt-label-r'};
+  function newsLi(n){return '<li><time datetime="'+esc(n.d)+'">'+esc(n.d.replace(/-/g,'.'))+'</time><span><span class="kt-label '+(LCLS[n.l]||'')+'">'+esc(n.l)+'</span>'+esc(n.t)+'</span></li>';}
+  function renderNews(){
+    var list=news();
+    var home=document.getElementById('kt-news-home'),pg=document.getElementById('kt-news-page');
+    if(home)home.innerHTML=list.slice(0,4).map(newsLi).join('');
+    if(pg)pg.innerHTML=list.map(newsLi).join('')||'<li><span>現在お知らせはありません。</span></li>';
+    document.getElementById('kt-news-list').innerHTML=list.map(function(n,i){return '<li><div><span class="kt-meta">'+esc(n.d.replace(/-/g,'.'))+'　'+esc(n.l)+'</span><p>'+esc(n.t)+'</p></div><div class="kt-adm-itembtns"><button type="button" class="kt-btn kt-btn-sub kt-btn-s" data-nedit="'+i+'">直す</button><button type="button" class="kt-btn kt-btn-sub kt-btn-s kt-btn-del" data-ndel="'+i+'">消す</button></div></li>';}).join('');
+  }
+  var newsEdit=-1;
+  function resetNewsForm(){newsEdit=-1;document.getElementById('kt-news-date').value=today();document.getElementById('kt-news-label').value='ご案内';document.getElementById('kt-news-text').value='';document.getElementById('kt-news-formtitle').textContent='お知らせを追加する';document.getElementById('kt-news-submit').textContent='追加する';document.getElementById('kt-news-cancel').hidden=true;}
+  document.getElementById('kt-news-form').addEventListener('submit',function(e){
+    e.preventDefault();
+    var n={d:document.getElementById('kt-news-date').value,l:document.getElementById('kt-news-label').value,t:document.getElementById('kt-news-text').value.trim()};
+    if(!n.d||!n.t){msg('kt-news-msg','日付と内容を入力してください。');return;}
+    var list=news();if(newsEdit>-1)list[newsEdit]=n;else list.push(n);
+    setJ(K_NEWS,list);msg('kt-news-msg',newsEdit>-1?'直しました。':'追加しました。',true);resetNewsForm();renderNews();
+  });
+  document.getElementById('kt-news-cancel').addEventListener('click',resetNewsForm);
+  document.getElementById('kt-news-list').addEventListener('click',function(e){
+    var b=e.target.closest('button');if(!b)return;var list=news();
+    if(b.dataset.ndel!==undefined){var i=+b.dataset.ndel;if(b.dataset.sure!=='1'){b.dataset.sure='1';b.textContent='本当に消す';return;}list.splice(i,1);setJ(K_NEWS,list);renderNews();msg('kt-news-msg','消しました。',true);}
+    if(b.dataset.nedit!==undefined){var j=+b.dataset.nedit,n=list[j];newsEdit=j;document.getElementById('kt-news-date').value=n.d;document.getElementById('kt-news-label').value=n.l;document.getElementById('kt-news-text').value=n.t;document.getElementById('kt-news-formtitle').textContent='お知らせを直す';document.getElementById('kt-news-submit').textContent='直して登録する';document.getElementById('kt-news-cancel').hidden=false;document.getElementById('kt-news-form').scrollIntoView({block:'start',behavior:'smooth'});}
+  });
+
+  /* ===== 料金 ===== */
+  var K_FEES='kt-fees-v1';
+  var DEF_FEES={biz:[{"n": "技術承継・定着支援プログラム 3ヶ月プラン", "note": "社員規模・距離・訪問回数によりお見積り", "p": "お見積り", "ps": ""}, {"n": "技術承継・定着支援プログラム 6ヶ月プラン", "note": "返金保証つき。社員規模・距離・訪問回数によりお見積り", "p": "月額15万円〜", "ps": ""}, {"n": "事業承継・M&A支援", "note": "", "p": "10万円〜", "ps": "＋成功額の10%"}, {"n": "補助金申請支援", "note": "", "p": "10万円〜", "ps": "＋採択額の10%"}, {"n": "契約書の作成", "note": "", "p": "10万円〜", "ps": ""}, {"n": "定款作成・会社設立", "note": "", "p": "10万円〜", "ps": ""}, {"n": "経営事項審査（経審）", "note": "", "p": "15万円〜", "ps": ""}, {"n": "在留資格", "note": "日本語でやり取りできる方", "p": "25万円", "ps": ""}, {"n": "ワーク付き 単発2回完結講座", "note": "", "p": "6万円", "ps": ""}, {"n": "内定者・社員向けセミナー", "note": "", "p": "要相談", "ps": ""}],per:[{"n": "ご相談（1時間まで）", "note": "", "p": "無料", "ps": ""}, {"n": "1時間を超える場合", "note": "", "p": "5,000円", "ps": "／60分"}, {"n": "遺言・相続・終活 生前6点セット", "note": "単発のご依頼も可", "p": "30万円", "ps": ""}, {"n": "公正証書遺言の起案", "note": "", "p": "10万円", "ps": ""}, {"n": "事業承継を踏まえた相続・遺言", "note": "", "p": "20万円", "ps": ""}, {"n": "契約書・内容証明", "note": "", "p": "10万円〜", "ps": ""}, {"n": "被害届の作成", "note": "", "p": "5万円〜", "ps": ""}, {"n": "女性起業 事業プランニングコース", "note": "", "p": "19万円", "ps": ""}, {"n": "高齢者向け 詐欺被害防止セミナー", "note": "", "p": "無料", "ps": ""}]};
+  function fees(){var o=getJ(K_FEES,null);return o&&o.biz&&o.per?o:JSON.parse(JSON.stringify(DEF_FEES));}
+  function feeRow(r,withNote){return '<tr><th scope="row">'+esc(r.n)+(withNote&&r.note?'<small>'+esc(r.note)+'</small>':'')+'</th><td>'+esc(r.p)+(r.ps?'<small>'+esc(r.ps)+'</small>':'')+'</td></tr>';}
+  function renderFees(){
+    var f=fees();
+    [['kt-fee-biz','biz',true],['kt-fee-per','per',true],['kt-fee-all-biz','biz',false],['kt-fee-all-per','per',false]].forEach(function(x){var el=document.getElementById(x[0]);if(el)el.innerHTML=f[x[1]].map(function(r){return feeRow(r,x[2]);}).join('');});
+  }
+  var GN={biz:'経営者のご相談',per:'個人のご相談'};
+  function feeEditor(f){
+    document.getElementById('kt-fee-editor').innerHTML=['biz','per'].map(function(g){
+      return '<div class="kt-adm-box"><h2 class="kt-adm-h">'+GN[g]+'</h2><div class="kt-fee-rows" data-g="'+g+'">'+f[g].map(function(r,i){return feeEdRow(g,r,i);}).join('')+'</div><button type="button" class="kt-btn kt-btn-sub kt-btn-s" data-fadd="'+g+'">＋ 項目を追加</button></div>';
+    }).join('');
+  }
+  function feeEdRow(g,r,i){
+    var id='kt-f-'+g+'-'+i+'-';
+    return '<div class="kt-fee-row"><div class="kt-field kt-f-n"><label for="'+id+'n">項目名</label><input id="'+id+'n" data-k="n" value="'+esc(r.n)+'"></div><div class="kt-field kt-f-note"><label for="'+id+'note">補足</label><input id="'+id+'note" data-k="note" value="'+esc(r.note||'')+'"></div><div class="kt-field kt-f-p"><label for="'+id+'p">価格</label><input id="'+id+'p" data-k="p" value="'+esc(r.p)+'"></div><div class="kt-field kt-f-ps"><label for="'+id+'ps">価格の補足</label><input id="'+id+'ps" data-k="ps" value="'+esc(r.ps||'')+'"></div><div class="kt-fee-ops"><button type="button" class="kt-btn kt-btn-sub kt-btn-s" data-fup aria-label="上へ">↑</button><button type="button" class="kt-btn kt-btn-sub kt-btn-s" data-fdown aria-label="下へ">↓</button><button type="button" class="kt-btn kt-btn-sub kt-btn-s kt-btn-del" data-fdel>消す</button></div></div>';
+  }
+  function readFeeEditor(){var o={};document.querySelectorAll('.kt-fee-rows').forEach(function(box){o[box.dataset.g]=Array.prototype.map.call(box.querySelectorAll('.kt-fee-row'),function(row){var r={};row.querySelectorAll('input[data-k]').forEach(function(inp){r[inp.dataset.k]=inp.value.trim();});return r;}).filter(function(r){return r.n||r.p;});});return o;}
+  document.getElementById('kt-fee-editor').addEventListener('click',function(e){
+    var b=e.target.closest('button');if(!b)return;var cur=readFeeEditor();
+    if(b.dataset.fadd){cur[b.dataset.fadd].push({n:'',note:'',p:'',ps:''});feeEditor(cur);var rows=document.querySelectorAll('.kt-fee-rows[data-g="'+b.dataset.fadd+'"] .kt-fee-row');rows[rows.length-1].querySelector('input').focus();return;}
+    var row=b.closest('.kt-fee-row');if(!row)return;var box=row.parentNode;
+    if(b.hasAttribute('data-fdel'))row.remove();
+    if(b.hasAttribute('data-fup')&&row.previousElementSibling)box.insertBefore(row,row.previousElementSibling);
+    if(b.hasAttribute('data-fdown')&&row.nextElementSibling)box.insertBefore(row.nextElementSibling,row);
+  });
+  document.getElementById('kt-fee-save').addEventListener('click',function(){var o=readFeeEditor();setJ(K_FEES,o);renderFees();feeEditor(o);msg('kt-fee-msg','料金を登録しました。各ページの表を更新しました。',true);});
+  document.getElementById('kt-fee-reset').addEventListener('click',function(){try{localStorage.removeItem(K_FEES);}catch(e){}renderFees();feeEditor(fees());msg('kt-fee-msg','初期の料金に戻しました。',true);});
+
+  /* ===== 支払い・記載項目 ===== */
+  var PAY_ALL=['クレジットカード','銀行振込','現金（来所時）','口座振替','電子マネー・QR決済'];
+  var DEF={
+    pay:['クレジットカード','銀行振込'],payOther:'',payNote:'分割払いをご利用の場合は分割手数料がかかります。',
+    payTiming:'クレジットカード：ご注文時に確定します。\n銀行振込：お振込みの時点で確定します。',
+    coolingOff:'インターネットでのお申込みには、法律上のクーリングオフ制度はありません。当事務所では独自の制度として、お申込み日から7日以内にご連絡いただければ、お支払い済みの金額を返金いたします。返金時の振込手数料はお客様のご負担となります。',
+    cancel:'中途解約の場合は、お支払い額を講座の回数で割った金額に、残りの回数をかけた金額を振込で返金いたします。振込手数料はお客様のご負担となります。',
+    delivery:'お支払いの確認後24時間以内に、メールまたはLINE公式アカウントでご案内いたします。',
+    defect:'お申込み内容と異なる場合や、データが破損していた場合は、7日以内にご連絡ください。状況を確認のうえ、改めて提供いたします。',
+    extraFees:'分割払いの手数料、振込手数料'
+  };
+  var KEY='kt-settings-v1';
+  function load(){var o=getJ(KEY,{})||{},r={};for(var k in DEF)r[k]=(o[k]!==undefined?o[k]:DEF[k]);return r;}
+  function render(){
+    var c=load(),list=c.pay.slice();if(c.payOther.trim())list.push(c.payOther.trim());
+    document.querySelectorAll('[data-set]').forEach(function(el){
+      var k=el.getAttribute('data-set');
+      if(k==='payList')el.innerHTML=list.length?esc(list.join('、')):'お問い合わせください';
+      else if(k==='payChips')el.innerHTML=list.map(function(x){return '<span class="kt-chip kt-chip-main">'+esc(x)+'</span>';}).join('');
+      else el.innerHTML=br(c[k]||'');
+    });
+  }
+  var adm=document.getElementById('kt-admin');
+  var PAYK=['payOther','payNote','payTiming','coolingOff','cancel','delivery','defect','extraFees'];
+  function fillAdmin(){
+    var c=load();
+    document.getElementById('kt-adm-pay').innerHTML=PAY_ALL.map(function(x,i){return '<label><input type="checkbox" name="pay" value="'+esc(x)+'" id="kt-ap'+i+'"'+(c.pay.indexOf(x)>-1?' checked':'')+'><span>'+esc(x)+'</span></label>';}).join('');
+    PAYK.forEach(function(k){adm.elements[k].value=c[k];});
+  }
+  adm.addEventListener('submit',function(e){
+    e.preventDefault();
+    var o={pay:Array.prototype.map.call(adm.querySelectorAll('[name="pay"]:checked'),function(x){return x.value;})};
+    PAYK.forEach(function(k){o[k]=adm.elements[k].value;});
+    var ok=setJ(KEY,o);render();msg('kt-adm-msg',ok?'登録しました。':'このブラウザでは保存できませんでした。',ok);
+  });
+  document.getElementById('kt-adm-reset').addEventListener('click',function(){try{localStorage.removeItem(KEY);}catch(e){}fillAdmin();render();msg('kt-adm-msg','初期の内容に戻しました。',true);});
+
+  /* ===== 相談受付 ===== */
+  var K_INQ='kt-inq-v1';
+  var STATUS=['未対応','連絡済','面談予定','見積提示','受任','完了','見送り'];
+  var STCLS={'未対応':'st-new','連絡済':'st-mid','面談予定':'st-mid','見積提示':'st-mid','受任':'st-ok','完了':'st-done','見送り':'st-done'};
+  var SAMPLE=[
+    {no:'K261105-1012',at:'2026-11-05 10:12',sample:1,type:'企業',topics:['人が辞めない対策','事業承継・M&A'],timing:'1ヶ月以内',how:'訪問してほしい',name:'見本 一郎',company:'見本精工株式会社',tel:'075-000-0001',mail:'',contact:'電話',time:['午前（9〜12時）'],msg:'ベテラン社員が来春に定年。若手に技術を残す方法を相談したい。（見本のデータです）',files:[],status:'面談予定',next:'2026-11-12',memo:'11/6 電話。11/12 10時に訪問で面談。'},
+    {no:'P261107-1530',at:'2026-11-07 15:30',sample:1,type:'個人',topics:['遺言・相続','任意後見・家族信託'],timing:'すぐに相談したい',how:'事務所へ来所',name:'見本 花子',company:'',tel:'',mail:'sample@example.com',contact:'メール',time:['いつでも'],msg:'母の今後に備えて、任意後見と遺言について知りたい。（見本のデータです）',files:['資産メモ.pdf'],status:'未対応',next:'',memo:''}
+  ];
+  function inqs(){return getJ(K_INQ,SAMPLE);}
+  function saveInqs(a){return setJ(K_INQ,a);}
+  window.ktSaveInquiry=function(rec){var a=inqs();a.unshift(rec);saveInqs(a);renderInq();};
+  var stSel=document.getElementById('kt-inq-st'),mSt=document.getElementById('kt-inq-mst');
+  stSel.innerHTML='<option value="">すべての状況</option>'+STATUS.map(function(x){return '<option>'+x+'</option>';}).join('');
+  mSt.innerHTML=STATUS.map(function(x){return '<option>'+x+'</option>';}).join('');
+  function renderInq(){
+    var a=inqs(),q=document.getElementById('kt-inq-q').value.trim(),ty=(document.querySelector('[name="inqtype"]:checked')||{}).value||'',st=stSel.value;
+    var ym=today().slice(0,7);
+    var cnt=function(f){return a.filter(f).length;};
+    var td=today();
+    document.getElementById('kt-adm-stats').innerHTML=
+      '<div class="st-new"><b>'+cnt(function(x){return x.status==='未対応';})+'</b><span>未対応</span></div>'+
+      '<div><b>'+cnt(function(x){return x.next&&x.next<=td&&['完了','見送り'].indexOf(x.status)<0;})+'</b><span>今日までに連絡</span></div>'+
+      '<div><b>'+cnt(function(x){return x.at.slice(0,7)===ym;})+'</b><span>今月の受付</span></div>'+
+      '<div><b>'+cnt(function(x){return x.type==='企業';})+'<small> / '+cnt(function(x){return x.type==='個人';})+'</small></b><span>企業 / 個人</span></div>';
+    var n=cnt(function(x){return x.status==='未対応';});var bd=document.getElementById('kt-adm-badge');bd.textContent=n?n:'';bd.hidden=!n;
+    var r=a.map(function(x,i){x._i=i;return x;}).filter(function(x){
+      if(ty&&x.type!==ty)return false;if(st&&x.status!==st)return false;
+      if(q){var hay=[x.name,x.company,x.tel,x.mail,x.msg,x.no,(x.topics||[]).join(' ')].join(' ');if(hay.indexOf(q)<0)return false;}
+      return true;});
+    document.getElementById('kt-inq-list').innerHTML=r.map(function(x){
+      return '<li><button type="button" class="kt-inq-item" data-i="'+x._i+'"><span class="kt-inq-top"><span class="kt-st '+(STCLS[x.status]||'')+'">'+esc(x.status)+'</span><span class="kt-inq-type kt-inq-'+(x.type==='企業'?'b':'p')+'">'+esc(x.type)+'</span><span class="kt-inq-no">'+esc(x.no)+'</span>'+(x.sample?'<span class="kt-inq-sample">見本</span>':'')+'</span><b>'+esc(x.name)+(x.company?'<small>（'+esc(x.company)+'）</small>':'')+'</b><span class="kt-inq-topics">'+esc((x.topics||[]).join('、'))+'</span><span class="kt-inq-meta">受付 '+esc(x.at)+(x.next?'　次の連絡 '+esc(x.next.replace(/-/g,'/')):'')+(x.files&&x.files.length?'　添付 '+x.files.length+'点':'')+'</span></button></li>';
+    }).join('')||'<li class="kt-note">該当する受付はありません。</li>';
+  }
+  ['input','change'].forEach(function(ev){document.getElementById('kt-inq-q').addEventListener(ev,renderInq);});
+  document.getElementById('kt-inq-type').addEventListener('change',renderInq);stSel.addEventListener('change',renderInq);
+  var modal=document.getElementById('kt-inq-modal'),cur=-1;
+  function openInq(i){
+    var x=inqs()[i];if(!x)return;cur=i;
+    document.getElementById('kt-inq-mtitle').textContent=x.type+'のご相談　'+x.no;
+    var rows=[['受付日時',x.at],['お名前',x.name],['会社名',x.company],['お電話',x.tel],['メール',x.mail],['ご相談の種類',(x.topics||[]).join('、')],['時期',x.timing],['相談方法',x.how],['ご連絡の希望',x.contact],['つながりやすい時間',(x.time||[]).join('、')],['ご相談の内容',x.msg],['添付資料',(x.files||[]).join('、')]];
+    document.getElementById('kt-inq-dl').innerHTML=rows.filter(function(r){return r[1];}).map(function(r){
+      var v=esc(r[1]);if(r[0]==='お電話')v='<a href="tel:'+esc(r[1].replace(/[^0-9+]/g,''))+'">'+v+'</a>';if(r[0]==='メール')v='<a href="mailto:'+esc(r[1])+'">'+v+'</a>';
+      return '<dt>'+r[0]+'</dt><dd>'+v+'</dd>';}).join('');
+    mSt.value=x.status;document.getElementById('kt-inq-mnext').value=x.next||'';document.getElementById('kt-inq-mmemo').value=x.memo||'';
+    var del=document.getElementById('kt-inq-mdel');del.dataset.sure='';del.textContent='この受付を削除';
+    modal.hidden=false;document.body.style.overflow='hidden';
+  }
+  function closeInq(){modal.hidden=true;document.body.style.overflow='';cur=-1;}
+  document.getElementById('kt-inq-list').addEventListener('click',function(e){var b=e.target.closest('[data-i]');if(b)openInq(+b.dataset.i);});
+  modal.querySelectorAll('[data-mclose]').forEach(function(el){el.addEventListener('click',closeInq);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!modal.hidden)closeInq();});
+  document.getElementById('kt-inq-msave').addEventListener('click',function(){var a=inqs();if(cur<0||!a[cur])return;a[cur].status=mSt.value;a[cur].next=document.getElementById('kt-inq-mnext').value;a[cur].memo=document.getElementById('kt-inq-mmemo').value;saveInqs(a);closeInq();renderInq();});
+  document.getElementById('kt-inq-mdel').addEventListener('click',function(){var b=this;if(b.dataset.sure!=='1'){b.dataset.sure='1';b.textContent='本当に削除する';return;}var a=inqs();a.splice(cur,1);saveInqs(a);closeInq();renderInq();});
+
+  /* ===== 設定 ===== */
+  var K_LOCK='kt-lock-v1';
+  function hashStr(t){var h=5381;for(var i=0;i<t.length;i++)h=((h<<5)+h+t.charCodeAt(i))|0;return 'h'+(h>>>0).toString(36)+t.length;}
+  var gate=document.getElementById('kt-adm-gate'),body=document.getElementById('kt-adm-body'),lockBtn=document.getElementById('kt-adm-lockbtn');
+  var unlocked=false;
+  try{unlocked=sessionStorage.getItem('kt-unlocked')==='1';}catch(e){}
+  function applyLock(){var h=getJ(K_LOCK,'');var locked=!!h&&!unlocked;gate.hidden=!locked;body.hidden=locked;lockBtn.hidden=!h;}
+  document.getElementById('kt-adm-gateform').addEventListener('submit',function(e){e.preventDefault();var v=document.getElementById('kt-adm-pass').value;if(hashStr(v)===getJ(K_LOCK,'')){unlocked=true;try{sessionStorage.setItem('kt-unlocked','1');}catch(e2){}document.getElementById('kt-adm-pass').value='';applyLock();}else msg('kt-adm-gatemsg','合言葉が違います。');});
+  lockBtn.addEventListener('click',function(){unlocked=false;try{sessionStorage.removeItem('kt-unlocked');}catch(e){}applyLock();});
+  document.getElementById('kt-set-passbtn').addEventListener('click',function(){var v=document.getElementById('kt-set-pass').value;if(!v){try{localStorage.removeItem(K_LOCK);}catch(e){}msg('kt-set-passmsg','鍵を外しました。',true);}else{setJ(K_LOCK,hashStr(v));unlocked=true;try{sessionStorage.setItem('kt-unlocked','1');}catch(e){}msg('kt-set-passmsg','合言葉を設定しました。次に開くときから入力が必要です。',true);}document.getElementById('kt-set-pass').value='';applyLock();});
+  var ALLK=[K_INQ,K_NEWS,K_FEES,K_INFO,KEY];
+  function copyText(t,okMsg){var ta=document.getElementById('kt-set-data');ta.value=t;try{navigator.clipboard.writeText(t).then(function(){msg('kt-set-msg',okMsg,true);},function(){ta.select();msg('kt-set-msg','下の欄に書き出しました。全部選んで写してください。',true);});}catch(e){ta.select();msg('kt-set-msg','下の欄に書き出しました。全部選んで写してください。',true);}}
+  document.getElementById('kt-set-export').addEventListener('click',function(){var o={};ALLK.forEach(function(k){var v=getJ(k,null);if(v!==null)o[k]=v;});o._saved=new Date().toLocaleString('ja-JP');copyText(JSON.stringify(o),'書き出して写しました。メモ帳などに貼り付けて保管してください。');});
+  document.getElementById('kt-set-csv').addEventListener('click',function(){
+    var head=['受付番号','受付日時','区分','状況','お名前','会社名','電話','メール','相談の種類','時期','相談方法','連絡の希望','内容','次の連絡日','対応メモ'];
+    var q=function(v){v=String(v==null?'':v);return '"'+v.replace(/"/g,'""')+'"';};
+    var lines=[head.map(q).join('\t')].concat(inqs().map(function(x){return [x.no,x.at,x.type,x.status,x.name,x.company,x.tel,x.mail,(x.topics||[]).join('、'),x.timing,x.how,x.contact,x.msg,x.next,x.memo].map(q).join('\t');}));
+    copyText(lines.join('\n'),'写しました。表計算ソフトの1行目に貼り付けてください。');
+  });
+  document.getElementById('kt-set-import').addEventListener('click',function(){
+    var t=document.getElementById('kt-set-data').value.trim();if(!t){msg('kt-set-msg','控えの文字を貼り付けてください。');return;}
+    var o;try{o=JSON.parse(t);}catch(e){msg('kt-set-msg','控えの形式が正しくありません。書き出した文字をそのまま貼り付けてください。');return;}
+    var n=0;ALLK.forEach(function(k){if(o[k]!==undefined){setJ(k,o[k]);n++;}});
+    refreshAll();msg('kt-set-msg',n?'読み込みました（'+n+'種類）。':'読み込める内容がありませんでした。',!!n);
+  });
+  document.getElementById('kt-set-clearsample').addEventListener('click',function(){var a=inqs().filter(function(x){return !x.sample;});saveInqs(a);renderInq();msg('kt-set-msg','見本を消しました。',true);});
+
+  /* ===== 管理画面のタブ ===== */
+  var tabs2=document.querySelectorAll('.kt-adm-tabs [data-tab]');
+  tabs2.forEach(function(t){t.addEventListener('click',function(){tabs2.forEach(function(x){x.setAttribute('aria-selected',x===t?'true':'false');});document.querySelectorAll('.kt-adm-panel').forEach(function(p){p.hidden=p.dataset.panel!==t.dataset.tab;});});});
+
+  function refreshAll(){renderInfo();fillInfo();renderNews();renderFees();feeEditor(fees());fillAdmin();render();renderInq();}
+  resetNewsForm();refreshAll();applyLock();
 })();
 </script>
 </body>
