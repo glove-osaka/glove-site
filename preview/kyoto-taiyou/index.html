@@ -517,6 +517,33 @@ body.kt-in-admin .kt-site{padding-bottom:0}
 .kt-fee-row input,.kt-adm-box input,.kt-adm-box textarea,.kt-adm-box select{width:100%;min-width:0;box-sizing:border-box}
 .kt-adm-box>.kt-btn-s{justify-self:start}
 .kt-adm-box .kt-chipsel input{width:auto}
+
+/* ===== 返信 ===== */
+.kt-rep-panel{width:min(720px,96vw)}
+.kt-rep-to{font-size:14.5px;background:var(--kt-paper);border-radius:8px;padding:10px 12px}
+.kt-rep-nomail{color:#a33a3a}
+.kt-rep-sec{border-top:1px dashed var(--kt-line);padding-top:14px;display:grid;gap:10px}
+.kt-rep-h{font-size:16px}
+.kt-rep-tabs{display:flex;gap:6px}
+.kt-rep-tabs button{font:inherit;font-size:14px;font-weight:700;border:1px solid #d8d0bf;background:var(--kt-white);border-radius:999px;padding:7px 14px;cursor:pointer;color:var(--kt-sumi)}
+.kt-rep-tabs button[aria-selected="true"]{background:var(--kt-green);border-color:var(--kt-green);color:#fff}
+.kt-rep-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:8px}
+@media (max-width:520px){.kt-rep-cards{grid-template-columns:1fr 1fr}.kt-rep-card span{font-size:12px}}
+.kt-rep-card{font:inherit;text-align:left;background:var(--kt-white);border:1.5px solid var(--kt-line);border-radius:10px;padding:10px 12px;cursor:pointer;display:grid;gap:4px;color:var(--kt-sumi)}
+.kt-rep-card b{font-size:14.5px}
+.kt-rep-card span{font-size:12.5px;color:var(--kt-text);line-height:1.6}
+.kt-rep-card.is-on{border-color:var(--kt-green);background:var(--kt-green-pale)}
+.kt-rep-panel .kt-field input,.kt-rep-panel .kt-field textarea{width:100%;box-sizing:border-box}
+.kt-rep-panel textarea{font-size:15px;line-height:1.8}
+.kt-rep-check{white-space:pre-wrap;background:#fff7e3;border:1px solid #ecd7a2;border-radius:10px;padding:12px 14px;font-size:14px;color:#5b4718}
+.kt-rep-send{display:flex;flex-wrap:wrap;gap:8px}
+.kt-btn[disabled]{opacity:.6;cursor:wait}
+.kt-inq-replies{display:grid;gap:8px}
+.kt-inq-replies h3{font-size:16px}
+.kt-inq-rep{background:var(--kt-paper);border:1px solid var(--kt-line);border-radius:10px;padding:10px 12px;font-size:14px}
+.kt-inq-rep summary{cursor:pointer;font-weight:700;color:var(--kt-sumi)}
+.kt-inq-rep summary small{font-weight:400;color:var(--kt-text);margin-left:6px}
+.kt-inq-rep pre{white-space:pre-wrap;font:inherit;margin:8px 0 0}
 </style>
 </head>
 <body>
@@ -1384,6 +1411,15 @@ body.kt-in-admin .kt-site{padding-bottom:0}
           <div class="kt-btns" style="justify-content:flex-start"><button class="kt-btn kt-btn-main" type="button" id="kt-set-import">貼り付けた控えを読み込む</button></div>
         </div>
         <div class="kt-adm-box">
+          <h2 class="kt-adm-h">メールの署名<small>返信文の最後に付きます</small></h2>
+          <div class="kt-field"><label for="kt-set-sign" class="kt-sr">署名</label><textarea id="kt-set-sign" rows="6"></textarea></div>
+          <div class="kt-btns" style="justify-content:flex-start"><button class="kt-btn kt-btn-main" type="button" id="kt-set-signbtn">署名を登録する</button></div>
+          <h2 class="kt-adm-h">AIの接続先<small id="kt-set-aistate">確認しています…</small></h2>
+          <div class="kt-field"><label for="kt-set-aiurl">接続先のアドレス（本番用。準備ができたら登録します）</label><input id="kt-set-aiurl" type="url" inputmode="url" placeholder="https://script.google.com/macros/s/…/exec"></div>
+          <div class="kt-btns" style="justify-content:flex-start"><button class="kt-btn kt-btn-sub" type="button" id="kt-set-aibtn">接続先を登録する</button></div>
+          <p class="kt-err" id="kt-set-signmsg" role="status"></p>
+        </div>
+        <div class="kt-adm-box">
           <h2 class="kt-adm-h">見本の受付<small>相談受付の見本（2件）を消します</small></h2>
           <div class="kt-btns" style="justify-content:flex-start"><button class="kt-btn kt-btn-sub" type="button" id="kt-set-clearsample">見本を消す</button></div>
         </div>
@@ -1396,13 +1432,58 @@ body.kt-in-admin .kt-site{padding-bottom:0}
     <div class="kt-modal-bg" data-mclose></div>
     <div class="kt-modal-panel" role="dialog" aria-labelledby="kt-inq-mtitle">
       <div class="kt-modal-head"><h2 id="kt-inq-mtitle" style="font-size:19px"></h2><button class="kt-drawer-close" type="button" data-mclose>閉じる</button></div>
+      <div class="kt-btns" style="justify-content:flex-start"><button class="kt-btn kt-btn-main" type="button" id="kt-inq-mreply">メールで返信する</button></div>
       <dl class="kt-inq-dl" id="kt-inq-dl"></dl>
+      <div class="kt-inq-replies" id="kt-inq-replies"></div>
       <div class="kt-adm-row">
         <div class="kt-field"><label for="kt-inq-mst">対応状況</label><select id="kt-inq-mst"></select></div>
         <div class="kt-field"><label for="kt-inq-mnext">次に連絡する日</label><input id="kt-inq-mnext" type="date"></div>
       </div>
       <div class="kt-field"><label for="kt-inq-mmemo">対応メモ</label><textarea id="kt-inq-mmemo" rows="4" placeholder="例）11/10 電話。来所面談を11/15 14時で予約"></textarea></div>
       <div class="kt-btns" style="margin-top:14px"><button class="kt-btn kt-btn-sub" type="button" id="kt-inq-mdel">この受付を削除</button><button class="kt-btn kt-btn-main" type="button" id="kt-inq-msave">保存する</button></div>
+    </div>
+  </div>
+  <!-- 返信を作る -->
+  <div class="kt-modal" id="kt-rep-modal" hidden>
+    <div class="kt-modal-bg" data-rclose></div>
+    <div class="kt-modal-panel kt-rep-panel" role="dialog" aria-labelledby="kt-rep-title">
+      <div class="kt-modal-head"><h2 id="kt-rep-title" style="font-size:19px">メールで返信する</h2><button class="kt-drawer-close" type="button" data-rclose>閉じる</button></div>
+      <p class="kt-rep-to" id="kt-rep-to"></p>
+
+      <div class="kt-rep-sec">
+        <h3 class="kt-rep-h">1. 返信文を選ぶ・作る</h3>
+        <div class="kt-rep-tabs" role="tablist">
+          <button type="button" data-rtab="tpl" aria-selected="true">文例から選ぶ</button>
+          <button type="button" data-rtab="ai" aria-selected="false">AIに作ってもらう</button>
+        </div>
+        <div data-rpanel="tpl"><div class="kt-rep-cards" id="kt-rep-tpls"></div></div>
+        <div data-rpanel="ai" hidden>
+          <div class="kt-field"><label for="kt-rep-hint">AIへの指示（任意）</label><input id="kt-rep-hint" placeholder="例）来週火曜か水曜の午後で面談を提案して"></div>
+          <div class="kt-btns" style="justify-content:flex-start;margin-top:10px"><button class="kt-btn kt-btn-main kt-btn-s" type="button" id="kt-rep-ai">AIに返信案を3つ作ってもらう</button></div>
+          <p class="kt-err" id="kt-rep-aimsg" role="status"></p>
+          <div class="kt-rep-cards" id="kt-rep-ais"></div>
+        </div>
+      </div>
+
+      <div class="kt-rep-sec">
+        <h3 class="kt-rep-h">2. 内容を確かめて直す</h3>
+        <div class="kt-field"><label for="kt-rep-subj">件名</label><input id="kt-rep-subj"></div>
+        <div class="kt-field"><label for="kt-rep-body">本文</label><textarea id="kt-rep-body" rows="12"></textarea></div>
+        <div class="kt-btns" style="justify-content:flex-start;margin-top:8px"><button class="kt-btn kt-btn-sub kt-btn-s" type="button" id="kt-rep-polish">AIに読みやすく整えてもらう</button><button class="kt-btn kt-btn-sub kt-btn-s" type="button" id="kt-rep-check">AIに送る前の点検をしてもらう</button></div>
+        <div class="kt-rep-check" id="kt-rep-checkout" hidden></div>
+      </div>
+
+      <div class="kt-rep-sec">
+        <h3 class="kt-rep-h">3. 送る</h3>
+        <div class="kt-rep-send">
+          <a class="kt-btn kt-btn-main" id="kt-rep-gmail" href="#" target="_blank" rel="noopener">Gmailで送る</a>
+          <a class="kt-btn kt-btn-sub" id="kt-rep-mailto" href="#">メールアプリで送る</a>
+          <button class="kt-btn kt-btn-sub" type="button" id="kt-rep-copy">件名と本文を写す</button>
+        </div>
+        <p class="kt-note">押すと、宛先・件名・本文が入った状態で開きます。送ったら、下の「送信済みにする」を押して記録してください。</p>
+        <p class="kt-err" id="kt-rep-msg" role="status"></p>
+        <div class="kt-btns"><button class="kt-btn kt-btn-main" type="button" id="kt-rep-done">送信済みにする（記録する）</button></div>
+      </div>
     </div>
   </div>
 </section>
@@ -1708,6 +1789,7 @@ body.kt-in-admin .kt-site{padding-bottom:0}
     document.getElementById('kt-inq-dl').innerHTML=rows.filter(function(r){return r[1];}).map(function(r){
       var v=esc(r[1]);if(r[0]==='お電話')v='<a href="tel:'+esc(r[1].replace(/[^0-9+]/g,''))+'">'+v+'</a>';if(r[0]==='メール')v='<a href="mailto:'+esc(r[1])+'">'+v+'</a>';
       return '<dt>'+r[0]+'</dt><dd>'+v+'</dd>';}).join('');
+    document.getElementById('kt-inq-replies').innerHTML=(x.replies&&x.replies.length)?'<h3>返信の記録（'+x.replies.length+'件）</h3>'+x.replies.map(function(r){return '<details class="kt-inq-rep"><summary>'+esc(r.at)+'　'+esc(r.s)+'<small>'+esc(r.via)+'</small></summary><pre>'+esc(r.b)+'</pre></details>';}).join(''):'';
     mSt.value=x.status;document.getElementById('kt-inq-mnext').value=x.next||'';document.getElementById('kt-inq-mmemo').value=x.memo||'';
     var del=document.getElementById('kt-inq-mdel');del.dataset.sure='';del.textContent='この受付を削除';
     modal.hidden=false;document.body.style.overflow='hidden';
@@ -1715,7 +1797,8 @@ body.kt-in-admin .kt-site{padding-bottom:0}
   function closeInq(){modal.hidden=true;document.body.style.overflow='';cur=-1;}
   document.getElementById('kt-inq-list').addEventListener('click',function(e){var b=e.target.closest('[data-i]');if(b)openInq(+b.dataset.i);});
   modal.querySelectorAll('[data-mclose]').forEach(function(el){el.addEventListener('click',closeInq);});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!modal.hidden)closeInq();});
+  document.addEventListener('keydown',function(e){if(e.key!=='Escape')return;var rm=document.getElementById('kt-rep-modal');if(rm&&!rm.hidden){rm.hidden=true;return;}if(!modal.hidden)closeInq();});
+  document.getElementById('kt-inq-mreply').addEventListener('click',function(){var a=inqs(),i=cur;if(a[i]){a[i].status=mSt.value;a[i].next=document.getElementById('kt-inq-mnext').value;a[i].memo=document.getElementById('kt-inq-mmemo').value;saveInqs(a);}closeInq();renderInq();openRep(i);});
   document.getElementById('kt-inq-msave').addEventListener('click',function(){var a=inqs();if(cur<0||!a[cur])return;a[cur].status=mSt.value;a[cur].next=document.getElementById('kt-inq-mnext').value;a[cur].memo=document.getElementById('kt-inq-mmemo').value;saveInqs(a);closeInq();renderInq();});
   document.getElementById('kt-inq-mdel').addEventListener('click',function(){var b=this;if(b.dataset.sure!=='1'){b.dataset.sure='1';b.textContent='本当に削除する';return;}var a=inqs();a.splice(cur,1);saveInqs(a);closeInq();renderInq();});
 
@@ -1729,7 +1812,7 @@ body.kt-in-admin .kt-site{padding-bottom:0}
   document.getElementById('kt-adm-gateform').addEventListener('submit',function(e){e.preventDefault();var v=document.getElementById('kt-adm-pass').value;if(hashStr(v)===getJ(K_LOCK,'')){unlocked=true;try{sessionStorage.setItem('kt-unlocked','1');}catch(e2){}document.getElementById('kt-adm-pass').value='';applyLock();}else msg('kt-adm-gatemsg','合言葉が違います。');});
   lockBtn.addEventListener('click',function(){unlocked=false;try{sessionStorage.removeItem('kt-unlocked');}catch(e){}applyLock();});
   document.getElementById('kt-set-passbtn').addEventListener('click',function(){var v=document.getElementById('kt-set-pass').value;if(!v){try{localStorage.removeItem(K_LOCK);}catch(e){}msg('kt-set-passmsg','鍵を外しました。',true);}else{setJ(K_LOCK,hashStr(v));unlocked=true;try{sessionStorage.setItem('kt-unlocked','1');}catch(e){}msg('kt-set-passmsg','合言葉を設定しました。次に開くときから入力が必要です。',true);}document.getElementById('kt-set-pass').value='';applyLock();});
-  var ALLK=[K_INQ,K_NEWS,K_FEES,K_INFO,KEY];
+  var ALLK=[K_INQ,K_NEWS,K_FEES,K_INFO,KEY,'kt-sign-v1','kt-aiurl-v1'];
   function copyText(t,okMsg){var ta=document.getElementById('kt-set-data');ta.value=t;try{navigator.clipboard.writeText(t).then(function(){msg('kt-set-msg',okMsg,true);},function(){ta.select();msg('kt-set-msg','下の欄に書き出しました。全部選んで写してください。',true);});}catch(e){ta.select();msg('kt-set-msg','下の欄に書き出しました。全部選んで写してください。',true);}}
   document.getElementById('kt-set-export').addEventListener('click',function(){var o={};ALLK.forEach(function(k){var v=getJ(k,null);if(v!==null)o[k]=v;});o._saved=new Date().toLocaleString('ja-JP');copyText(JSON.stringify(o),'書き出して写しました。メモ帳などに貼り付けて保管してください。');});
   document.getElementById('kt-set-csv').addEventListener('click',function(){
@@ -1749,6 +1832,101 @@ body.kt-in-admin .kt-site{padding-bottom:0}
   /* ===== 管理画面のタブ ===== */
   var tabs2=document.querySelectorAll('.kt-adm-tabs [data-tab]');
   tabs2.forEach(function(t){t.addEventListener('click',function(){tabs2.forEach(function(x){x.setAttribute('aria-selected',x===t?'true':'false');});document.querySelectorAll('.kt-adm-panel').forEach(function(p){p.hidden=p.dataset.panel!==t.dataset.tab;});});});
+
+  /* ===== 返信（文例・AI・送信の記録） ===== */
+  var K_SIGN='kt-sign-v1',K_AIURL='kt-aiurl-v1';
+  function sign(){var i=info();return getJ(K_SIGN,'')||('――――――――――――――――\n京都太陽行政書士事務所\n特定行政書士　松宮 紀代\n〒615-0023 京都府京都市右京区西院西平町24\n電話 '+i.tel+'（'+i.hours+'・暦通り）\nメール '+i.mail);}
+  function feeText(){var f=fees();return ['biz','per'].map(function(g){return GN[g]+'\n'+f[g].map(function(r){return '・'+r.n+(r.note?'（'+r.note+'）':'')+'：'+r.p+(r.ps?' '+r.ps:'');}).join('\n');}).join('\n\n');}
+  function sama(x){return x.name+' 様';}
+  function greet(x){return (x.company?x.company+'\n':'')+sama(x)+'\n\nこのたびは京都太陽行政書士事務所にご相談いただき、誠にありがとうございます。\n特定行政書士の松宮でございます。\n\n';}
+  function templates(x){
+    var topics=(x.topics||[]).join('、'),how=x.how||'',T=[];
+    T.push({k:'お礼と日程の調整',s:'【京都太陽行政書士事務所】ご相談ありがとうございます（受付番号 '+x.no+'）',b:greet(x)+'「'+topics+'」についてのご相談、確かに承りました。\nまずは初回のご相談（1時間まで無料）で、詳しいお話をお伺いできればと存じます。\n\n'+(how?'ご希望の「'+how+'」で承ります。\n':'')+'下記の日時のご都合はいかがでしょうか。\n\n・〇月〇日（〇）〇時〜\n・〇月〇日（〇）〇時〜\n・〇月〇日（〇）〇時〜\n\nご都合が合わない場合は、ご希望の日時をお知らせください。\n\nどうぞよろしくお願いいたします。\n\n'+sign()});
+    T.push({k:'詳しい内容の確認',s:'【京都太陽行政書士事務所】ご相談内容の確認（受付番号 '+x.no+'）',b:greet(x)+'より適切なご提案をするため、差し支えのない範囲で、次の点を教えていただけますでしょうか。\n\n'+(x.type==='企業'?'・社員の人数と、主な業種\n・現在いちばんお困りのこと\n・いつ頃までに解決したいか\n':'・ご相談の対象となる方（ご本人・ご家族など）\n・現在の状況と、いちばんご心配なこと\n・いつ頃までに進めたいか\n')+'\nお電話でお話しいただくことも可能です。ご都合のよい方法でお知らせください。\n\nどうぞよろしくお願いいたします。\n\n'+sign()});
+    T.push({k:'お見積りのご案内',s:'【京都太陽行政書士事務所】お見積りのご案内（受付番号 '+x.no+'）',b:greet(x)+'先日はお時間をいただき、ありがとうございました。\nお伺いした内容をもとに、お見積りをお送りいたします。\n\n・ご依頼内容：〇〇〇〇\n・費用：〇〇円（税込）\n・お支払い時期：〇〇〇〇\n・進め方と期間の目安：〇〇〇〇\n\nご納得いただけるまで、ご契約は発生いたしません。ご不明な点はお気軽にお尋ねください。\n\nどうぞよろしくお願いいたします。\n\n'+sign()});
+    T.push({k:'ほかの専門家のご紹介',s:'【京都太陽行政書士事務所】ご相談への回答（受付番号 '+x.no+'）',b:greet(x)+'お伺いした内容を確認いたしましたところ、〇〇〇〇の点については、〇〇（弁護士・税理士・司法書士・社会保険労務士など）の専門分野となります。\n\n信頼できる専門家を、私が同行してご紹介することができます。ご紹介に費用はかかりません。\nあわせて、当事務所でお手伝いできる〇〇〇〇については、引き続き対応いたします。\n\nご希望をお聞かせいただけましたら幸いです。\n\n'+sign()});
+    T.push({k:'面談日の確定',s:'【京都太陽行政書士事務所】面談日のご確認（受付番号 '+x.no+'）',b:greet(x)+'面談の日時を、下記のとおり承りました。\n\n・日時：〇月〇日（〇）〇時〜（1時間程度）\n・方法：'+(how||'〇〇〇〇')+'\n・場所：京都市右京区西院西平町24（阪急・嵐電「西院」駅から徒歩圏）\n\nお手元に関係する資料があれば、お持ちください（なくても構いません）。\nご都合が悪くなった場合は、お気軽にご連絡ください。\n\n当日お目にかかれますことを楽しみにしております。\n\n'+sign()});
+    return T;
+  }
+  var repModal=document.getElementById('kt-rep-modal'),rep=-1,repVia='';
+  function pv(b){var ps=String(b||'').split(/\n\s*\n/).map(function(x){return x.replace(/\s+/g,' ').trim();}).filter(function(x){return x&&!/様$|ありがとうございます|松宮でございます|^―/.test(x);});var t=ps[0]||'';return t.length>46?t.slice(0,46)+'…':t;}
+  function repCards(id,list){
+    document.getElementById(id).innerHTML=list.map(function(t,i){return '<button type="button" class="kt-rep-card" data-ri="'+i+'"><b>'+esc(t.k)+'</b><span>'+esc(pv(t.b))+'</span></button>';}).join('');
+    document.getElementById(id)._list=list;
+  }
+  function useDraft(t){document.getElementById('kt-rep-subj').value=t.s;document.getElementById('kt-rep-body').value=t.b;updateSend();document.getElementById('kt-rep-subj').scrollIntoView({block:'center',behavior:'smooth'});}
+  ['kt-rep-tpls','kt-rep-ais'].forEach(function(id){document.getElementById(id).addEventListener('click',function(e){var b=e.target.closest('[data-ri]');if(!b)return;this.querySelectorAll('.kt-rep-card').forEach(function(c){c.classList.toggle('is-on',c===b);});useDraft(this._list[+b.dataset.ri]);});});
+  function updateSend(){
+    var x=inqs()[rep];if(!x)return;var to=x.mail||'',s=document.getElementById('kt-rep-subj').value,b=document.getElementById('kt-rep-body').value;
+    document.getElementById('kt-rep-gmail').href='https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(to)+'&su='+encodeURIComponent(s)+'&body='+encodeURIComponent(b);
+    document.getElementById('kt-rep-mailto').href='mailto:'+encodeURIComponent(to)+'?subject='+encodeURIComponent(s)+'&body='+encodeURIComponent(b);
+  }
+  ['input','change'].forEach(function(ev){document.getElementById('kt-rep-subj').addEventListener(ev,updateSend);document.getElementById('kt-rep-body').addEventListener(ev,updateSend);});
+  function openRep(i){
+    var x=inqs()[i];if(!x)return;rep=i;
+    document.getElementById('kt-rep-to').innerHTML='宛先：'+(x.mail?'<b>'+esc(x.name)+' 様</b>（'+esc(x.mail)+'）':'<span class="kt-rep-nomail">メールアドレスの登録がありません。電話（'+esc(x.tel||'未登録')+'）でご連絡するか、宛先を入れて送ってください。</span>');
+    var tp=templates(x);repCards('kt-rep-tpls',tp);document.getElementById('kt-rep-ais').innerHTML='';
+    ['kt-rep-aimsg','kt-rep-msg'].forEach(function(id){document.getElementById(id).textContent='';});
+    document.getElementById('kt-rep-checkout').hidden=true;document.getElementById('kt-rep-hint').value='';
+    useDraft(tp[0]);document.querySelector('#kt-rep-tpls .kt-rep-card').classList.add('is-on');
+    repTab('tpl');repModal.hidden=false;repModal.querySelector('.kt-modal-panel').scrollTop=0;
+  }
+  function closeRep(){repModal.hidden=true;rep=-1;}
+  repModal.querySelectorAll('[data-rclose]').forEach(function(el){el.addEventListener('click',closeRep);});
+  function repTab(t){repModal.querySelectorAll('[data-rtab]').forEach(function(b){b.setAttribute('aria-selected',b.dataset.rtab===t?'true':'false');});repModal.querySelectorAll('[data-rpanel]').forEach(function(p){p.hidden=p.dataset.rpanel!==t;});}
+  repModal.querySelectorAll('[data-rtab]').forEach(function(b){b.addEventListener('click',function(){repTab(b.dataset.rtab);});});
+  ['kt-rep-gmail','kt-rep-mailto'].forEach(function(id){document.getElementById(id).addEventListener('click',function(){repVia=id==='kt-rep-gmail'?'Gmail':'メールアプリ';});});
+  document.getElementById('kt-rep-copy').addEventListener('click',function(){
+    var t='件名：'+document.getElementById('kt-rep-subj').value+'\n\n'+document.getElementById('kt-rep-body').value;repVia='写して送信';
+    try{navigator.clipboard.writeText(t).then(function(){msg('kt-rep-msg','写しました。メールに貼り付けて送ってください。',true);},function(){msg('kt-rep-msg','写せませんでした。本文の欄を長押しして全部選び、写してください。');});}catch(e){msg('kt-rep-msg','写せませんでした。本文の欄を長押しして全部選び、写してください。');}
+  });
+  document.getElementById('kt-rep-done').addEventListener('click',function(){
+    var a=inqs(),x=a[rep];if(!x)return;var d=new Date(),p=function(n){return ('0'+n).slice(-2);};
+    x.replies=x.replies||[];x.replies.unshift({at:d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes()),s:document.getElementById('kt-rep-subj').value,b:document.getElementById('kt-rep-body').value,via:repVia||'メール'});
+    if(x.status==='未対応')x.status='連絡済';
+    saveInqs(a);var keep=rep;closeRep();renderInq();openInq(keep);
+  });
+
+  /* ---- AI ---- */
+  var sampleP=null;
+  function getSample(){if(!sampleP){sampleP=(window.claude&&window.claude.use)?window.claude.use('sample').catch(function(){return null;}):Promise.resolve(null);}return sampleP;}
+  function aiAsk(prompt){
+    return getSample().then(function(s){
+      if(s)return s(prompt,{modelTier:'default'}).then(function(r){return r.text;});
+      var url=getJ(K_AIURL,'');
+      if(url)return fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({prompt:prompt})}).then(function(r){if(!r.ok)throw {message:'AIの接続先が応答しませんでした（'+r.status+'）。'};return r.json();}).then(function(j){return j.text||'';});
+      throw {code:'none',message:'AIは、Claudeの画面で開いたとき、または「設定」でAIの接続先を登録したときに使えます。今は「文例から選ぶ」をお使いください。'};
+    });
+  }
+  function parseJSON(t){var m=String(t).match(/\{[\s\S]*\}|\[[\s\S]*\]/);if(!m)throw {message:'AIの答えを読み取れませんでした。もう一度お試しください。'};return JSON.parse(m[0]);}
+  var RULES='あなたは京都太陽行政書士事務所（代表：特定行政書士 松宮紀代、女性）のメール作成を手伝う秘書です。守ること：丁寧で温かく、簡潔な日本語。相談者を安心させる。行政書士の業務範囲を守り、争いのある交渉・代理は弁護士、税務は税理士、登記は司法書士、就業規則や社会保険は社会保険労務士を紹介すると書く。結果を約束しない・断定しない。料金は下の料金表の範囲でのみ触れ、分からないことは〇〇の伏せ字にする。日時など事務所が決めることは〇の伏せ字にする。個人情報を必要以上に繰り返さない。';
+  function recText(x){return '受付番号：'+x.no+'\n区分：'+x.type+'のご相談\nお名前：'+x.name+(x.company?'\n会社名：'+x.company:'')+'\n相談の種類：'+(x.topics||[]).join('、')+'\n時期：'+(x.timing||'未記入')+'\n希望の相談方法：'+(x.how||'未記入')+'\n連絡の希望：'+(x.contact||'未記入')+'\n相談内容：'+(x.msg||'未記入')+'\n添付：'+((x.files||[]).join('、')||'なし')+'\n対応状況：'+x.status+'\n事務所のメモ：'+(x.memo||'なし')+'\nこれまでの返信：'+((x.replies||[]).map(function(r){return r.at+' 「'+r.s+'」';}).join(' / ')||'なし');}
+  function aiBusy(btn,on,label){btn.disabled=on;btn.textContent=on?'AIが考えています…':label;}
+  document.getElementById('kt-rep-ai').addEventListener('click',function(){
+    var x=inqs()[rep];if(!x)return;var btn=this,label=btn.textContent;aiBusy(btn,true,label);msg('kt-rep-aimsg','',true);
+    var prompt=RULES+'\n\n【相談の内容】\n'+recText(x)+'\n\n【料金表】\n'+feeText()+'\n\n【事務所からの指示】\n'+(document.getElementById('kt-rep-hint').value.trim()||'特になし。相談の段階に合った返信にする')+'\n\n【作るもの】この相談者へのメール返信案を、方針の違う3案作る。各案に、短い方針名（10字以内）、件名、本文（宛名から始め、最後に署名は付けない）を入れる。\n答えはJSONの配列だけで返す：[{"k":"方針名","s":"件名","b":"本文"}]';
+    aiAsk(prompt).then(function(t){var arr=parseJSON(t);arr=arr.map(function(a){return {k:a.k||'AIの案',s:a.s||'',b:(a.b||'')+'\n\n'+sign()};});repCards('kt-rep-ais',arr);msg('kt-rep-aimsg','3つの案ができました。使う案を押すと、下の欄に入ります。必ず内容を確かめてから送ってください。',true);})
+    .catch(function(e){msg('kt-rep-aimsg',(e&&e.code==='rate_limited')?'AIが混み合っています。少し時間をおいてお試しください。':(e&&e.message)||'AIで作れませんでした。');})
+    .then(function(){aiBusy(btn,false,label);});
+  });
+  document.getElementById('kt-rep-polish').addEventListener('click',function(){
+    var x=inqs()[rep];if(!x)return;var btn=this,label=btn.textContent;aiBusy(btn,true,label);
+    var body=document.getElementById('kt-rep-body').value;
+    aiAsk(RULES+'\n\n次のメール本文を、意味と伏せ字（〇）を変えずに、読みやすく丁寧に整えてください。署名の部分はそのまま残す。答えは整えた本文だけ。\n\n'+body).then(function(t){document.getElementById('kt-rep-body').value=String(t).trim();updateSend();msg('kt-rep-msg','整えました。内容を確かめてください。',true);})
+    .catch(function(e){msg('kt-rep-msg',(e&&e.message)||'AIで整えられませんでした。');}).then(function(){aiBusy(btn,false,label);});
+  });
+  document.getElementById('kt-rep-check').addEventListener('click',function(){
+    var x=inqs()[rep];if(!x)return;var btn=this,label=btn.textContent,out=document.getElementById('kt-rep-checkout');aiBusy(btn,true,label);
+    aiAsk(RULES+'\n\n【相談の内容】\n'+recText(x)+'\n\n【送ろうとしている返信】\n件名：'+document.getElementById('kt-rep-subj').value+'\n'+document.getElementById('kt-rep-body').value+'\n\n送る前の点検をしてください。見る点：宛名や名前の誤り、埋め忘れの〇、相談内容との食い違い、行政書士の業務範囲を超える表現、断定や約束、料金の誤り、失礼な表現、誤字。問題ごとに1行で。問題がなければ「問題は見つかりませんでした」とだけ答える。')
+    .then(function(t){out.textContent=String(t).trim();out.hidden=false;})
+    .catch(function(e){out.textContent=(e&&e.message)||'AIで点検できませんでした。';out.hidden=false;}).then(function(){aiBusy(btn,false,label);});
+  });
+  /* ---- 設定：署名とAIの接続先 ---- */
+  var signTa=document.getElementById('kt-set-sign'),aiUrl=document.getElementById('kt-set-aiurl');
+  signTa.value=sign();aiUrl.value=getJ(K_AIURL,'');
+  document.getElementById('kt-set-signbtn').addEventListener('click',function(){setJ(K_SIGN,signTa.value.trim());msg('kt-set-signmsg','署名を登録しました。',true);});
+  document.getElementById('kt-set-aibtn').addEventListener('click',function(){var v=aiUrl.value.trim();if(v&&!/^https:\/\//.test(v)){msg('kt-set-signmsg','接続先は https:// で始まるアドレスを入れてください。');return;}setJ(K_AIURL,v);msg('kt-set-signmsg',v?'AIの接続先を登録しました。':'AIの接続先を外しました。',true);});
+  getSample().then(function(s){var el=document.getElementById('kt-set-aistate');if(el)el.textContent=s?'今の画面ではAIを使えます（Claudeの画面で開いています）。':(getJ(K_AIURL,'')?'登録した接続先でAIを使います。':'今の画面ではAIは使えません。接続先を登録すると使えるようになります。');});
 
   function refreshAll(){renderInfo();fillInfo();renderNews();renderFees();feeEditor(fees());fillAdmin();render();renderInq();}
   resetNewsForm();refreshAll();applyLock();
