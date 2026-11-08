@@ -411,6 +411,26 @@ html,body{margin:0;background:var(--kt-paper)}
 .kt-table-info th small{font-weight:400;font-size:12px}
 .kt-emblem{position:relative}
 .kt-portrait-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top}
+
+/* 企業・個人の選択ボタン（整え直し） */
+.kt-step-label{margin-bottom:16px}
+.kt-type{align-items:stretch}
+.kt-type label{display:flex}
+.kt-type span{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:22px 10px 20px;border-width:1.5px;border-top-width:5px;transition:background .15s,border-color .15s}
+.kt-type-biz span{border-top-color:var(--kt-green)}
+.kt-type-per span{border-top-color:var(--kt-sakura)}
+.kt-type b{font-size:20px;line-height:1.3;white-space:nowrap}
+.kt-type small{font-size:13px;line-height:1.5;white-space:nowrap}
+.kt-type-ico{display:block}
+.kt-type-biz .kt-type-ico{color:var(--kt-green)}
+.kt-type-per .kt-type-ico{color:var(--kt-sakura)}
+.kt-type-check{position:absolute;top:8px;right:10px;width:22px;height:22px;border-radius:50%;font-style:normal;font-size:13px;font-weight:700;color:#fff;display:none;align-items:center;justify-content:center}
+.kt-type-biz .kt-type-check{background:var(--kt-green)}
+.kt-type-per .kt-type-check{background:var(--kt-sakura)}
+.kt-type input:checked+span .kt-type-check{display:flex}
+.kt-type-biz input:checked+span{border-color:var(--kt-green);border-width:2px;border-top-width:5px}
+.kt-type-per input:checked+span{border-color:var(--kt-sakura);border-width:2px;border-top-width:5px}
+@media (max-width:420px){.kt-type b{font-size:17px}.kt-type small{font-size:12px}.kt-type-ico{width:28px;height:28px}}
 </style>
 </head>
 <body>
@@ -838,8 +858,8 @@ html,body{margin:0;background:var(--kt-paper)}
         <div class="kt-step" id="kt-step1">
           <p class="kt-step-label"><span class="kt-step-n">1</span>どちらのご相談ですか<span class="kt-req">必須</span></p>
           <div class="kt-type">
-            <label class="kt-type-biz"><input type="radio" name="type" value="企業" id="kt-type-biz"><span><b>企業のご相談</b><small>法人・事業者の方</small></span></label>
-            <label class="kt-type-per"><input type="radio" name="type" value="個人" id="kt-type-per"><span><b>個人のご相談</b><small>相続・終活・暮らしの手続き</small></span></label>
+            <label class="kt-type-biz"><input type="radio" name="type" value="企業" id="kt-type-biz"><span><svg class="kt-type-ico" width="34" height="34" viewBox="0 0 40 40" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="10" width="14" height="26"/><rect x="20" y="4" width="14" height="32"/><path d="M2 36h36"/></g><g fill="currentColor"><rect x="9" y="14" width="3" height="3"/><rect x="14" y="14" width="3" height="3"/><rect x="9" y="20" width="3" height="3"/><rect x="14" y="20" width="3" height="3"/><rect x="23" y="9" width="3" height="3"/><rect x="28" y="9" width="3" height="3"/><rect x="23" y="15" width="3" height="3"/><rect x="28" y="15" width="3" height="3"/><rect x="25" y="28" width="4" height="8"/></g></svg><b>企業のご相談</b><small>法人・事業者の方</small><i class="kt-type-check" aria-hidden="true">✓</i></span></label>
+            <label class="kt-type-per"><input type="radio" name="type" value="個人" id="kt-type-per"><span><svg class="kt-type-ico" width="34" height="34" viewBox="0 0 40 40" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="20" cy="11" r="5"/><circle cx="9" cy="15" r="4"/><circle cx="31" cy="15" r="4"/><path d="M11 32c0-6 4-10 9-10s9 4 9 10"/><path d="M2 32c0-5 3-8 7-8 2 0 3 .5 4 1.5M38 32c0-5-3-8-7-8-2 0-3 .5-4 1.5"/></g></svg><b>個人のご相談</b><small>相続・終活・暮らし</small><i class="kt-type-check" aria-hidden="true">✓</i></span></label>
           </div>
         </div>
 
