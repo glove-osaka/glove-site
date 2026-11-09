@@ -301,7 +301,7 @@ function nextCtrNo(){const pre='C'+today().slice(2,7).replace('-','');return pre
 
 /* ================= 画面 ================= */
 const NAV=[
-  {v:'home',ico:'⌂',label:'ホーム'},
+  {v:'home',ico:'⌂',label:'ホーム',badge:()=>typeof nextActions==='function'&&ME?nextActions().filter(a=>a.p===1).length:0},
   {sep:'受付と顧客'},
   {v:'inq',ico:'受',label:'相談受付',badge:()=>DB.inq.filter(x=>x.status==='未対応').length},
   {v:'cust',ico:'客',label:'顧客'},
@@ -338,14 +338,15 @@ VIEWS.home=el=>{
   const inMonth=DB.rcv.filter(r=>String(r.date).slice(0,7)===ym).reduce((s,r)=>s+(Number(r.amount)||0),0);
   const outMonth=DB.exp.filter(x=>String(x.date).slice(0,7)===ym&&x.status==='支払済').reduce((s,x)=>s+(Number(x.amount)||0),0);
   const myDaily=DB.daily.find(d=>d.date===td&&d.user===ME.name);
+  const todos=nextActions();
   el.innerHTML=`
+  <section class="card"><h2>次にやること<small>急ぐ順　${todos.length}件</small></h2>${todoHTML(todos)}</section>
   <div class="stats">
     <button class="stat${newInq.length?' alert':''}" data-go="inq"><b>${newInq.length}</b><span>未対応の相談</span></button>
     <button class="stat" data-go="ev"><b>${DB.ev.filter(e=>e.date===td).length}</b><span>今日の予定</span></button>
     <button class="stat${over.length?' alert':''}" data-go="doc"><b>${unpaid.length}<small style="font-size:.5em">件</small></b><span>入金待ち ${yen(unpaidAmt)}${over.length?`（期限超過${over.length}）`:''}</span></button>
     <button class="stat" data-go="ctr"><b>${waitCtr.length}</b><span>締結待ちの契約</span></button>
   </div>
-  ${myDaily?'':`<div class="warn row"><span>今日の日報がまだです。</span><span class="spacer"></span><button class="btn btn-s btn-main" data-act="daily">日報を書く</button></div>`}
   <div class="grid2">
     <section class="card"><h2>今日と明日の予定<small>${dstr(td)}（${wd(td)}）</small></h2>${evs.length?`<ul class="list">${evs.map(evItem).join('')}</ul>`:'<p class="empty">予定はありません</p>'}<div class="row" style="margin-top:10px"><button class="btn btn-s" data-act="addev">予定を入れる</button></div></section>
     <section class="card"><h2>未対応の相談</h2>${newInq.length?`<ul class="list">${newInq.slice(0,5).map(inqItem).join('')}</ul>`:'<p class="empty">未対応の相談はありません</p>'}</section>
@@ -356,7 +357,7 @@ VIEWS.home=el=>{
   </div>`;
   $$('[data-go]',el).forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
   bindItems(el);
-  const ad=el.querySelector('[data-act="daily"]');if(ad)ad.addEventListener('click',()=>openDaily(null,{date:td}));
+  bindTodo(el,todos);
   el.querySelector('[data-act="addev"]').addEventListener('click',()=>openEv(null,{date:td}));
 };
 function bindItems(el){
@@ -387,6 +388,7 @@ function openInq(id){
     <div class="fgrid">${fieldHTML({k:'status',label:'対応状況',type:'pick',master:'inqStatus'},x.status)}${fieldHTML({k:'next',label:'次に連絡する日',type:'date'},x.next)}${fieldHTML({k:'memo',label:'対応メモ',type:'textarea',full:1,ph:'例）11/10 電話。来所面談を11/15 14時で予約'},x.memo)}</div>`,
     `<button class="btn btn-del" data-del>削除</button><span class="spacer"></span><button class="btn btn-main" data-save>保存する</button>`,{noFocus:1});
   const keep=()=>{Object.assign(x,readFields(m.el.querySelector('.fgrid')));save('inq',x);};
+  mountFlow(m,'inq',x,{st:v=>{keep();x.status=v;save('inq',x);m.close();refresh();openInq(x.id);toast('状況を「'+v+'」にしました');}});
   m.el.querySelector('[data-save]').addEventListener('click',()=>{keep();m.close();refresh();toast('保存しました');});
   confirmBtn(m.el.querySelector('[data-del]'),'削除',()=>{removeRec('inq',x.id);m.close();refresh();toast('削除しました');});
   m.el.querySelector('[data-rep]').addEventListener('click',()=>{keep();m.close();openReply(x.id);});
@@ -527,6 +529,7 @@ function openCase(id){
     ${cts.length?`<section><h3 style="font-size:15px;margin-bottom:6px">契約</h3><ul class="list">${cts.map(ctrItem).join('')}</ul></section>`:''}
     ${k.memo?`<section><h3 style="font-size:15px">メモ</h3><p style="white-space:pre-wrap">${esc(k.memo)}</p></section>`:''}`,'',{noFocus:1,wide:1});
   bindItemsClose(m);
+  mountFlow(m,'case',k,{st:v=>{k.status=v;k.log=k.log||[];k.log.unshift({at:nowStr(),kind:'その他',by:ME.name,text:'状況を「'+v+'」に変更'});save('case',k);m.close();refresh();openCase(id);toast('状況を「'+v+'」にしました');}});
   m.el.querySelector('[data-edit]').addEventListener('click',()=>{m.close();editRec('case',id,CASE_F,'対応',null,()=>openCase(id));});
   m.el.querySelector('[data-cust]').addEventListener('click',()=>{m.close();openCust(k.custId);});
   m.el.querySelector('[data-q]').addEventListener('click',()=>{m.close();openDoc(null,{type:'見積',custId:k.custId,caseId:id,title:k.title});});
@@ -602,6 +605,7 @@ function openDoc(id,preset){
     <div class="fgrid" data-foot>${fieldHTML({k:'note',label:'備考',type:'textarea',full:1},d.note)}</div>
     ${!isQ&&id?`<section><h3 style="font-size:15px;margin-bottom:6px">入金の記録</h3>${DB.rcv.filter(r=>r.docId===id).map(r=>`<div class="kv"><span>${dstr(r.date)}　${esc(r.method||'')}</span><b>${yen(r.amount)}</b></div>`).join('')||'<p class="muted">まだありません</p>'}</section>`:''}`,
     `${id?'<button class="btn btn-del" data-del>削除</button>':''}<span class="spacer"></span><button class="btn btn-main" data-save>保存する</button>`,{noFocus:1,wide:1});
+  if(id)mountFlow(m,isQ?'quote':'inv',d,{st:()=>{}},isQ?null:invStatus(d));
   const lines=m.el.querySelector('[data-lines]');
   const readLines=()=>$$('[data-line]',lines).map(r=>{const o=readFields(r);o.tax=Number(o.tax||0);o.qty=o.qty===''?0:o.qty;o.price=o.price===''?0:o.price;return o;}).filter(l=>l.name||l.price);
   const calc=()=>{const c=docCalc({lines:readLines()});m.el.querySelector('[data-totals]').innerHTML=`<span>小計（税抜） ${yen(c.sub)}</span>${c.rates.map(r=>`<span class="muted">${r.r}%対象 ${yen(r.base)}　消費税 ${yen(r.tax)}</span>`).join('')}<b>合計（税込） ${yen(c.total)}</b>`;};
@@ -675,6 +679,7 @@ function openCtr(id,preset){
     ${(c.log||[]).length?`<section><h3 style="font-size:15px">記録</h3>${c.log.map(l=>`<div class="kv"><span>${esc(l.at)}</span><b style="font-weight:400">${esc(l.text)}</b></div>`).join('')}</section>`:''}`,
     `${id?'<button class="btn btn-del" data-del>削除</button>':''}<span class="spacer"></span><button class="btn btn-main" data-save>保存する</button>`,{noFocus:1,wide:1});
   if(locked)$$('input,select,textarea',m.el.querySelector('.modal-body')).forEach(i=>i.disabled=true);
+  if(id)mountFlow(m,'ctr',c,{st:()=>{}});
   const collect=()=>{if(locked)return c;Object.assign(c,readFields(m.el.querySelector('[data-head]')),readFields(m.el.querySelector('[data-bodyf]')));return c;};
   const on=(sel,fn)=>{const b=m.el.querySelector(sel);if(b)b.addEventListener('click',fn);};
   on('[data-save]',()=>{collect();if(!c.custId||!c.title){toast('相手方と件名を入れてください');return;}const s=save('ctr',c);m.close();refresh();toast('保存しました');if(!id)openCtr(s.id);});
@@ -760,6 +765,124 @@ VIEWS.set=el=>{
 };
 function loadLocalConf(){if(REMOTE)return;MASTER=Object.assign({},MASTER_DEF,getJ('kt-master-v1',{}));OFFICE=Object.assign({},OFFICE_DEF,getJ('kt-office-v1',{}));TPL=getJ('kt-ctrtpl-v1',null)||CTR_TPL_DEF;STAFF=getJ('kt-staff-v1',null)||STAFF_DEF;}
 
+/* ================= 案内（次にやること・流れ図・使い方） ================= */
+const GSTYLE=`
+.todo{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.todo li{display:grid;grid-template-columns:6px 1fr auto;gap:12px;align-items:center;background:var(--white);border:1px solid var(--line);border-radius:12px;padding:10px 12px 10px 0;overflow:hidden}
+.todo .bar{align-self:stretch;border-radius:0 4px 4px 0}
+.todo .p1 .bar{background:var(--red)}.todo .p2 .bar{background:var(--gold)}.todo .p3 .bar{background:var(--green)}
+.todo b{display:block;color:var(--sumi);font-size:15px}
+.todo span{font-size:12.5px;color:var(--text)}
+.todo .why{display:inline-block;font-size:11px;font-weight:700;border-radius:4px;padding:0 6px;margin-right:6px}
+.todo .p1 .why{background:var(--red-p);color:var(--red)}.todo .p2 .why{background:#f3ead8;color:var(--gold-t)}.todo .p3 .why{background:var(--green-p);color:var(--green)}
+.todo-done{display:flex;align-items:center;gap:10px;background:var(--green-p);border-radius:12px;padding:14px;color:var(--green);font-weight:700}
+.flow{display:grid;gap:10px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px}
+.flow-steps{list-style:none;margin:0;padding:0;display:flex;gap:0;overflow-x:auto}
+.flow-steps li{flex:1;min-width:64px;text-align:center;font-size:11.5px;font-weight:700;color:#8a8478;position:relative;padding-top:28px}
+.flow-steps li::before{content:attr(data-n);position:absolute;left:50%;top:0;transform:translateX(-50%);width:24px;height:24px;border-radius:50%;border:2px solid #cfc6b2;background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;z-index:1}
+.flow-steps li::after{content:"";position:absolute;top:11px;left:50%;width:100%;height:2px;background:#cfc6b2}
+.flow-steps li:last-child::after{display:none}
+.flow-steps li.done{color:var(--green)}.flow-steps li.done::before{content:"✓";background:var(--green-p);border-color:var(--green);color:var(--green)}.flow-steps li.done::after{background:var(--green)}
+.flow-steps li.on{color:var(--sumi)}.flow-steps li.on::before{background:var(--gold);border-color:var(--gold);color:#fff;box-shadow:0 0 0 4px rgba(179,138,62,.25)}
+.flow-steps li.stop{color:#8a8478}.flow-steps li.stop::before{content:"×";background:#eee;border-color:#bbb}
+.flow-next{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.flow-next p{flex:1;min-width:200px;font-size:14px;color:var(--sumi);font-weight:700;display:flex;gap:8px;align-items:flex-start}
+.flow-next p::before{content:"次の一手";flex:none;font-size:11px;background:var(--gold);color:#fff;border-radius:4px;padding:1px 6px;margin-top:3px}
+.tour-mask{position:fixed;inset:0;z-index:90}
+.tour-hole{position:fixed;border-radius:10px;box-shadow:0 0 0 9999px rgba(30,28,24,.62);transition:all .25s;pointer-events:none;outline:3px solid var(--gold)}
+.tour-box{position:fixed;z-index:91;width:min(340px,calc(100vw - 24px));background:var(--white);border-radius:14px;padding:16px;box-shadow:0 14px 40px rgba(0,0,0,.35);display:grid;gap:10px}
+.tour-box h3{font-size:17px}
+.tour-box p{font-size:14px;line-height:1.75}
+.tour-box .tour-n{font-size:12px;color:var(--gold-t);font-weight:700}
+.tour-box .row{justify-content:flex-end}
+.help-btn{border:1px solid var(--line);background:var(--white);border-radius:999px;width:34px;height:34px;font-weight:700;color:var(--green);cursor:pointer;flex:none}
+.empty b{display:block;color:var(--sumi);margin-bottom:4px}
+`;
+(()=>{const s=document.createElement('style');s.textContent=GSTYLE;document.head.appendChild(s);})();
+
+/* ---------- 次にやること ---------- */
+function daysBetween(a,b){return Math.round((new Date(b+'T00:00')-new Date(a+'T00:00'))/86400000);}
+function nextActions(){
+  const td=today(),A=[];
+  const add=(p,why,text,sub,label,fn)=>A.push({p,why,text,sub,label,fn});
+  DB.inq.filter(x=>x.status==='未対応').forEach(x=>add(1,'相談',`${x.name} 様の相談に返信する`,`受付 ${x.at}　${(x.topics||[]).join('、')}`,'返信する',()=>openReply(x.id)));
+  DB.inq.filter(x=>x.next&&x.next<=td&&!['完了','見送り','受任'].includes(x.status)).forEach(x=>add(x.next<td?1:2,'連絡',`${x.name} 様に連絡する日です`,`予定日 ${dstr(x.next)}　${x.status}`,'開く',()=>openInq(x.id)));
+  DB.doc.filter(d=>d.type==='請求'&&invStatus(d)==='期限超過').forEach(d=>add(1,'入金',`${custName(d.custId)} 様へ入金のお願いを送る`,`${d.no}　期限 ${dstr(d.due)}　未入金 ${yen(docCalc(d).total-paidOf(d.id))}`,'お願いを送る',()=>{const c=get('cust',d.custId)||{};openMail({to:c.mail||'',subject:`【${OFFICE.name}】お支払いのご確認（${d.no}）`,body:`${c.company?c.company+'\n':''}${c.name||''} 様\n\nいつもお世話になっております。\n${OFFICE.name}の松宮でございます。\n\n${dstr(d.issue)}にお送りしました請求書（${d.no}・${yen(docCalc(d).total)}）につきまして、${dstr(d.due)}のお支払い期限を過ぎておりましたので、念のためご連絡いたしました。\n\n行き違いでお支払いいただいておりましたら、失礼をお許しください。\nご不明な点がございましたら、お気軽にお問い合わせください。\n\n${sign()}`,onDone:(o,via)=>{if(d.caseId){const k=get('case',d.caseId);if(k){k.log=k.log||[];k.log.unshift({at:nowStr(),kind:'請求',by:ME.name,text:d.no+' 入金のお願いを送付（'+via+'）'});save('case',k);}}}});}));
+  DB.case.filter(k=>k.due&&!['完了','見送り'].includes(k.status)&&daysBetween(td,k.due)<=7).forEach(k=>add(daysBetween(td,k.due)<0?1:2,'期限',`「${k.title}」の期限が${daysBetween(td,k.due)<0?'過ぎています':'近づいています'}`,`${custName(k.custId)}　期限 ${dstr(k.due)}`,'開く',()=>openCase(k.id)));
+  DB.ev.filter(e=>e.date===addDays(td,1)).forEach(e=>add(2,'明日',`明日の予定を確認する：${e.title}`,`${e.start||''} ${e.place||''}`,'開く',()=>openEv(e.id)));
+  DB.doc.filter(d=>d.type==='見積'&&d.status==='受注'&&!DB.doc.some(x=>x.fromId===d.id)).forEach(d=>add(2,'請求',`受注した見積から請求書を作る`,`${d.no}　${custName(d.custId)}　${d.title}`,'作る',()=>openDoc(d.id)));
+  DB.doc.filter(d=>d.type==='請求'&&d.status==='作成中').forEach(d=>add(2,'請求',`請求書を仕上げて送る`,`${d.no}　${custName(d.custId)}`,'開く',()=>openDoc(d.id)));
+  DB.doc.filter(d=>d.type==='見積'&&d.status==='提出済'&&daysBetween(d.issue,td)>=7).forEach(d=>add(2,'見積',`見積のお返事を確認する`,`${d.no}　${custName(d.custId)}　提出から${daysBetween(d.issue,td)}日`,'開く',()=>openDoc(d.id)));
+  DB.ctr.filter(c=>c.status==='送付済'&&c.sentAt&&daysBetween(String(c.sentAt).slice(0,10),td)>=3).forEach(c=>add(2,'契約',`署名がまだの契約に、お願いを送り直す`,`${c.no}　${custName(c.custId)}　送付から${daysBetween(String(c.sentAt).slice(0,10),td)}日`,'開く',()=>openCtr(c.id)));
+  DB.ctr.filter(c=>c.status==='下書き').forEach(c=>add(3,'契約',`契約書を仕上げて送る`,`${c.no}　${custName(c.custId)}　${c.title}`,'開く',()=>openCtr(c.id)));
+  DB.exp.filter(x=>x.status==='支払予定'&&x.due&&daysBetween(td,x.due)<=3).forEach(x=>add(daysBetween(td,x.due)<0?1:2,'支払い',`${x.payee||''}への支払い`,`期限 ${dstr(x.due)}　${yen(x.amount)}`,'開く',()=>openExp(x.id)));
+  DB.case.filter(k=>['受任','作業中'].includes(k.status)).forEach(k=>{const l=(k.log||[])[0];const last=l?String(l.at).slice(0,10):(k.start||td);if(daysBetween(last,td)>=14)add(3,'経過',`「${k.title}」の経過が${daysBetween(last,td)}日止まっています`,`${custName(k.custId)}　最後の記録 ${dstr(last)}`,'記録する',()=>openCase(k.id));});
+  if(!DB.daily.some(d=>d.date===td&&d.user===ME.name))add(3,'日報','今日の日報を書く','その日の予定から取り込めます','書く',()=>openDaily(null,{date:td}));
+  return A.sort((a,b)=>a.p-b.p);
+}
+function todoHTML(list){
+  if(!list.length)return '<div class="todo-done">✓ 今やることはありません。お疲れさまです。</div>';
+  return `<ol class="todo">${list.map((a,i)=>`<li class="p${a.p}"><span class="bar" aria-hidden="true"></span><div><b><span class="why">${esc(a.why)}</span>${esc(a.text)}</b><span>${esc(a.sub||'')}</span></div><button class="btn btn-s${a.p===1?' btn-main':''}" data-todo="${i}">${esc(a.label)}</button></li>`).join('')}</ol>`;
+}
+function bindTodo(el,list){$$('[data-todo]',el).forEach(b=>b.addEventListener('click',()=>list[+b.dataset.todo].fn()));}
+
+/* ---------- 流れ図と次の一手 ---------- */
+const FLOWS={
+  inq:{steps:['受付','返信','面談','見積','受任'],map:{'未対応':0,'連絡済':1,'面談予定':2,'見積提示':3,'受任':4,'完了':5},stop:['見送り'],
+    next:(x)=>({'未対応':['まず返信しましょう。文例を選ぶか、AIに案を作ってもらえます。','返信する','rep'],'連絡済':['お返事を待つ間に、面談の予定を入れておきましょう。','予定を入れる','ev'],'面談予定':['面談が済んだら、顧客と対応に登録して見積を作りましょう。',x.custId?'顧客カルテを開く':'顧客と対応に登録する',x.custId?'cust':'mkcust'],'見積提示':['お返事をいただいたら、状況を「受任」にします。','状況を「受任」にする','st:受任'],'受任':['対応（案件）で経過を記録していきましょう。',x.custId?'顧客カルテを開く':'顧客と対応に登録する',x.custId?'cust':'mkcust']})[x.status]},
+  case:{steps:['相談','見積','受任','作業','完了'],map:{'相談中':0,'見積中':1,'受任':2,'作業中':3,'完了':4},stop:['見送り','保留'],
+    next:(k)=>({'相談中':['ご要望が固まったら、見積を作りましょう。','見積を作る','q'],'見積中':['見積の返事をいただいたら、契約書を作ります。','契約書を作る','c'],'受任':['作業を始めたら、状況を「作業中」にします。予定も入れておきましょう。','状況を「作業中」にする','st:作業中'],'作業中':['区切りごとに経過を記録し、終わったら請求書を作りましょう。','請求を作る','i'],'完了':['お疲れさまでした。入金を確認しましょう。','顧客カルテを開く','cust'],'保留':['再開したら状況を戻します。','状況を「相談中」にする','st:相談中']})[k.status]},
+  quote:{steps:['作成','提出','受注','請求'],map:{'作成中':0,'提出済':1,'受注':2},stop:['失注'],
+    next:(d)=>({'作成中':['明細を確かめて保存し、メールで送りましょう。','メールで送る','mail'],'提出済':['お返事をいただいたら「受注」にして、請求書を作ります。','請求書にする','toinv'],'受注':[DB.doc.some(x=>x.fromId===d.id)?'請求書はできています。':'請求書を作りましょう。','請求書にする','toinv']})[d.status]},
+  inv:{steps:['作成','請求','入金'],map:{'作成中':0,'請求済':1,'一部入金':1,'期限超過':1,'入金済':3},
+    next:(d)=>{const st=invStatus(d);return ({'作成中':['明細を確かめて保存し、メールで送りましょう。','メールで送る','mail'],'請求済':['入金を確認したら記録しましょう。','入金を記録','rcv'],'一部入金':['残りの入金を確認したら記録しましょう。','入金を記録','rcv'],'期限超過':['お支払い期限を過ぎています。入金を確認するか、お願いを送りましょう。','入金を記録','rcv']})[st];}},
+  ctr:{steps:['作成','送付','締結'],map:{'下書き':0,'送付済':1,'締結':3},stop:['取消'],
+    next:(c)=>({'下書き':['本文の〇〇を埋めて保存し、電子契約で送りましょう。','電子契約で送る','send'],'送付済':['お客様の署名を待っています。届いていないようなら、リンクを写して送り直せます。','リンクを写す','link']})[c.status]}
+};
+function flowHTML(kind,rec,stOverride){
+  const F=FLOWS[kind],st=stOverride||rec.status;const stop=(F.stop||[]).includes(st);const cur=F.map[st]!=null?F.map[st]:-1;
+  const nx=stop?null:F.next(rec);
+  return `<div class="flow"><ol class="flow-steps">${F.steps.map((s,i)=>`<li data-n="${i+1}" class="${stop?(i===0?'done':''):i<cur?'done':i===cur?'on':''}">${esc(s)}</li>`).join('')}${stop?`<li data-n="×" class="stop">${esc(st)}</li>`:''}</ol>${nx?`<div class="flow-next"><p>${esc(nx[0])}</p><button class="btn btn-s btn-main" data-flow="${esc(nx[2])}">${esc(nx[1])}</button></div>`:stop?'<div class="flow-next"><p>この件は止まっています。再開するときは状況を変えてください。</p></div>':''}</div>`;
+}
+function mountFlow(m,kind,rec,handlers,stOverride){
+  const body=m.el.querySelector('.modal-body');body.insertAdjacentHTML('afterbegin',flowHTML(kind,rec,stOverride));
+  const b=body.querySelector('[data-flow]');if(!b)return;
+  b.addEventListener('click',()=>{const k=b.dataset.flow;if(k.startsWith('st:')){handlers.st(k.slice(3));return;}const sel={rep:'[data-rep]',ev:'[data-ev]',cust:'[data-cust]',mkcust:'[data-mkcust]',q:'[data-q]',c:'[data-c]',i:'[data-i]',mail:'[data-mail]',toinv:'[data-toinv]',rcv:'[data-rcv]',send:'[data-send]',link:'[data-link]'}[k];const t=sel&&m.el.querySelector(sel);if(t)t.click();else if(handlers[k])handlers[k]();else toast('先に「保存する」を押してください');});
+}
+
+/* ---------- 使い方の案内 ---------- */
+const TOUR=[
+  {sel:'#nav [data-v="home"]',t:'ホーム',p:'毎日ここから始めます。「次にやること」に、今日やるべきことが急ぐ順に並びます。ボタンを押せば、その作業の画面が開きます。'},
+  {sel:'#nav [data-v="inq"]',t:'相談受付',p:'サイトのフォームから届いた相談です。未対応の数が赤い丸で出ます。開くと、返信の文例やAIの案から返信できます。'},
+  {sel:'#nav [data-v="cust"]',t:'顧客',p:'相談から「顧客と対応に登録する」を押すと、ここに入ります。顧客カルテで、対応・見積・契約・入金をまとめて見られます。'},
+  {sel:'#nav [data-v="case"]',t:'対応（案件）',p:'1つのご依頼を1件として管理します。上の流れ図で今どこかが分かり、「次の一手」のボタンで次の作業へ進めます。'},
+  {sel:'#nav [data-v="ev"]',t:'予定と日報',p:'予定を入れておくと、日報を書くときに取り込めます。日報がまだの日は、ホームでお知らせします。'},
+  {sel:'#nav [data-v="doc"]',t:'見積・請求',p:'見積を作り、受注したら「請求書にする」。入金を記録すると、状態が自動で「入金済」になります。'},
+  {sel:'#nav [data-v="ctr"]',t:'契約書・電子契約',p:'ひな形を選ぶと、お客様の名前や金額が入った契約書ができます。電子契約で送ると、お客様はリンクから署名・押印できます。'},
+  {sel:'#nav [data-v="set"]',t:'設定',p:'選べる項目（選択肢）や契約書のひな形、事務所の情報をここで直せます。'},
+  {sel:'#help',t:'いつでも見直せます',p:'この案内は、右上の「？」からいつでも見られます。'}
+];
+function startTour(i=0){
+  endTour();const s=TOUR[i];let el=document.querySelector(s.sel);
+  if(el&&el.offsetParent===null)el=null;
+  const mask=document.createElement('div');mask.className='tour-mask';mask.id='tour';
+  const hole=document.createElement('div');hole.className='tour-hole';
+  const box=document.createElement('div');box.className='tour-box';box.setAttribute('role','dialog');box.setAttribute('aria-label','使い方の案内');
+  box.innerHTML=`<span class="tour-n">使い方 ${i+1} / ${TOUR.length}</span><h3>${esc(s.t)}</h3><p>${esc(s.p)}</p><div class="row"><button class="btn btn-s" data-end>終わる</button>${i>0?'<button class="btn btn-s" data-prev>戻る</button>':''}<button class="btn btn-s btn-main" data-next>${i<TOUR.length-1?'次へ':'はじめる'}</button></div>`;
+  mask.appendChild(hole);mask.appendChild(box);document.body.appendChild(mask);
+  if(el){el.scrollIntoView({block:'nearest',inline:'center'});const r=el.getBoundingClientRect();Object.assign(hole.style,{left:(r.left-6)+'px',top:(r.top-6)+'px',width:(r.width+12)+'px',height:(r.height+12)+'px'});
+    const bw=Math.min(340,innerWidth-24),bh=box.offsetHeight||180;let left=r.right+14,top=r.top;
+    if(left+bw>innerWidth-12){left=Math.max(12,Math.min(innerWidth-bw-12,r.left));top=r.top>innerHeight/2?r.top-bh-16:r.bottom+16;}
+    top=Math.max(12,Math.min(innerHeight-bh-12,top));Object.assign(box.style,{left:left+'px',top:top+'px'});}
+  else{Object.assign(hole.style,{left:'50%',top:'50%',width:'0',height:'0'});Object.assign(box.style,{left:'50%',top:'50%',transform:'translate(-50%,-50%)'});}
+  box.querySelector('[data-end]').addEventListener('click',endTour);
+  box.querySelector('[data-next]').addEventListener('click',()=>i<TOUR.length-1?startTour(i+1):endTour());
+  const pv=box.querySelector('[data-prev]');if(pv)pv.addEventListener('click',()=>startTour(i-1));
+  box.querySelector('[data-next]').focus();
+}
+function endTour(){const t=$('#tour');if(t)t.remove();setJ('kt-tour-done',1);}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#tour'))endTour();});
+
 /* ================= 入口 ================= */
 function showGate(){
   const g=$('#gate');g.hidden=false;$('#app').hidden=true;
@@ -778,8 +901,10 @@ async function start(user){
   $('#who').textContent=ME.name;
   const md=$('#mode');md.textContent=REMOTE?'スプレッドシート保存':'この端末に保存（確認用）';md.className='mode '+(REMOTE?'mode-remote':'mode-local');
   const h=(location.hash||'').replace('#v-','');go(VIEWS[h]?h:'home');
+  if(!getJ('kt-tour-done',0))setTimeout(()=>startTour(0),700);
 }
 $('#nav').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(b)go(b.dataset.v);});
+$('#help').addEventListener('click',()=>startTour(0));
 $('#logout').addEventListener('click',()=>{setJ('kt-me',null);if(REMOTE){KT.call('logout',{}).catch(()=>{});setJ('kt-token','');}ME=null;showGate();});
 /* ほかの画面（署名ページ・サイトの相談フォーム）で変わった内容を読み込み直す */
 function reloadData(){if(!ME)return;if(REMOTE){loadRemote().then(()=>{if(!$('#modals').children.length)refresh();renderNav();}).catch(()=>{});}else{loadLocal();if(!$('#modals').children.length)refresh();renderNav();}}
