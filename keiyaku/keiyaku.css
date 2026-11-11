@@ -123,3 +123,4 @@ dialog.rep textarea{min-height:300px;font-size:1rem;line-height:1.8}
 .ap-memo{margin-top:8px}.ap-sum{margin:8px 0 0;font-weight:700}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ap-chip.ap-ex{background:#3d1b19;color:#ffb4ab}}
 .ap-chip small{display:inline-block}
+main a[href^="tel:"]:not(.tel){display:inline-block;padding:10px 4px;margin:-6px 0;font-weight:700}
