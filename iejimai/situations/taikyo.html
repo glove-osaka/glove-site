@@ -650,5 +650,6 @@ setTimeout(function(){var op=document.getElementById('op');if(pref()==='on'&&!(o
 
 (function(){var b=document.getElementById('liteBtn');if(!b)return;var D=document.documentElement;function sy(){var on=D.classList.contains('lite');b.setAttribute('aria-pressed',String(on));b.textContent=on?'動きを元に戻す':'動きを軽くする'}sy();b.addEventListener('click',function(){var on=!D.classList.contains('lite');D.classList.toggle('lite',on);try{localStorage.setItem('iejimai-lite',on?'1':'0')}catch(e){}var v=document.getElementById('heroV'),vc=document.getElementById('vctl');if(v&&on){v.pause();if(vc){vc.classList.add('paused');vc.querySelector('span').textContent='動画を再生する'}}sy()});new MutationObserver(sy).observe(D,{attributes:true,attributeFilter:['class']})})();
 </script>
+<script src="/glove-site/raiten/raiten.js?v=1" defer></script>
 </body>
 </html>
