@@ -700,7 +700,7 @@ function upd(){var t=txt();document.getElementById('shareMail').href='mailto:?su
 document.getElementById('next').addEventListener('click',function(){if(st===6)upd()});
 f.addEventListener('submit',function(e){e.preventDefault();if(st<secs.length-1){document.getElementById('next').click();return}if(!FORM_URL)return;var b=document.getElementById('send');b.disabled=true;b.textContent='送信しています…';
  var d=new URLSearchParams();rows().forEach(function(r){d.append(r[0],r[1]||'')});
- fetch(FORM_URL,{method:'POST',mode:'no-cors',body:d}).then(function(){document.getElementById('copyMsg').textContent='送信しました。担当者からご連絡いたします。';b.textContent='送信しました'}).catch(function(){b.disabled=false;b.textContent='この内容で送信する';document.getElementById('copyMsg').textContent='送信できませんでした。通信の状態をご確認のうえ、もう一度お試しください。'})});
+ fetch(FORM_URL,{method:'POST',body:d}).then(function(r){return r.text()}).then(function(t){if(String(t).trim()!=='ok')throw new Error('ng');document.getElementById('copyMsg').textContent='送信しました。担当者からご連絡いたします。';b.textContent='送信しました'}).catch(function(){b.disabled=false;b.textContent='この内容で送信する';document.getElementById('copyMsg').textContent='送信できませんでした。もう一度お試しいただくか、0120-933-496（受付 10:00〜19:00）までお電話ください。'})});
 document.getElementById('copy').addEventListener('click',function(){var txt='【家じまい相談窓口 ご相談内容】\n'+rows().map(function(r){return r[0]+'：'+(r[1]||'未入力')}).join('\n'),m=document.getElementById('copyMsg');
  function fb(){var r=document.createRange();r.selectNodeContents(document.getElementById('sum'));var s=getSelection();s.removeAllRanges();s.addRange(r);m.textContent='内容を選択しました。コピーしてお使いください。'}
  try{navigator.clipboard.writeText(txt).then(function(){m.textContent='写し取りました（コピーしました）。'},fb)}catch(e){fb()}});
