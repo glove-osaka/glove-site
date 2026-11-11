@@ -11,3 +11,6 @@ Header always set X-Content-Type-Options "nosniff"
 Header set Cache-Control "max-age=604800"
 </FilesMatch>
 </IfModule>
+<Files ".ftp-deploy-sync-state.json">
+Require all denied
+</Files>
