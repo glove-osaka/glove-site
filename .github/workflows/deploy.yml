@@ -1,0 +1,31 @@
+# 家じまい相談窓口（iejimai123.jp）：この枝に入れた内容を、エックスサーバーへ自動で送る
+name: iejimai123.jp へ自動反映
+on:
+  push:
+    branches: [iejimai123-site]
+  workflow_dispatch:
+concurrency: iejimai123-deploy
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 合言葉の確認
+        id: chk
+        env:
+          P: ${{ secrets.FTP_PASSWORD }}
+        run: if [ -n "$P" ]; then echo "ok=1" >> "$GITHUB_OUTPUT"; else echo "合言葉（FTP_PASSWORD）が未登録のため、今回は送りません"; fi
+      - uses: actions/checkout@v4
+        if: steps.chk.outputs.ok == '1'
+      - name: エックスサーバーへ送る
+        if: steps.chk.outputs.ok == '1'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: sv17329.xserver.jp
+          username: deploy@iejimai123.jp
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          server-dir: ./
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**

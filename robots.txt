@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /kanri/
+Disallow: /keiyaku/
+Disallow: /kyoryoku/
+Sitemap: https://iejimai123.jp/sitemap.xml
