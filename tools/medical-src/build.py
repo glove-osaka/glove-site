@@ -9,7 +9,7 @@ if _k and _k.group(1):
 NSUP = len(SUP)
 
 OUT = os.environ.get("MED_OUT", "/home/claude/glove-site/sites/119cm.net")  # 公開先：Xサーバー 119cm.net（GitHub Actions でFTP転送）
-SRC_CSS = "/home/claude/glove-site/iejimai/index.html"
+SRC_CSS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "iejimai_base.html")  # 家じまいの見た目の写し（2026/11 時点）
 E = html.escape
 
 # ---------- 色（常磐色 → 医療向けの深い青緑。構造・書体・山吹色は共通） ----------
@@ -1147,7 +1147,12 @@ if __name__ == "__main__":
         t = open(_p404, encoding="utf-8").read()
         if '<base href="/">' not in t:
             open(_p404, "w", encoding="utf-8").write(t.replace("<head>", '<head><base href="/">', 1))
-    open(os.path.join(OUT, ".htaccess"), "w", encoding="utf-8").write("""ErrorDocument 404 /404.html
+    open(os.path.join(OUT, ".htaccess"), "w", encoding="utf-8").write("""RewriteEngine On
+RewriteCond %{HTTPS} !on
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+RewriteCond %{HTTP_HOST} ^www\\.(.*)$ [NC]
+RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+ErrorDocument 404 /404.html
 DirectoryIndex index.html
 AddType video/mp4 .mp4
 AddType video/webm .webm
