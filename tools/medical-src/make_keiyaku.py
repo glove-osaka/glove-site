@@ -13,7 +13,7 @@ TEXTS = "var FIELD_LIST = " + json.dumps(FIELD_LIST, ensure_ascii=False) + ";\n"
 TEL, TELR, HRS = "0120-933-496", "0120933496", "10:00〜19:00"
 
 # ---------- CSS（家じまいの電子契約と同じ作り。色だけ支援会の深い青緑へ） ----------
-css = open(os.path.join(HERE, "..", "glove-site", "iejimai", "keiyaku", "keiyaku.css"), encoding="utf-8").read()
+css = open(os.path.join(HERE, "keiyaku_base.css"), encoding="utf-8").read()  # 家じまいの電子契約の見た目（2026/10時点の写し）
 for a, b in {"#1D4A3D": "#0E5A63", "#163A30": "#0B4A52", "#E6EEE8": "#E3F0F0", "#F8F8F4": "#F6F8F7", "#16201B": "#14211F", "#3B4740": "#3A4A48", "#C9D2CB": "#C6D4D3",
              "#101714": "#0E1718", "#17201C": "#152022", "#EEF3EF": "#EEF4F4", "#C2CEC6": "#BFD0D0", "#34443B": "#32464A", "#7FB89F": "#86C7C9", "#9CCBB5": "#A6DADB", "#1E2B25": "#16292B", "#0E1A15": "#081F22"}.items():
     css = re.sub(re.escape(a), b, css, flags=re.I)

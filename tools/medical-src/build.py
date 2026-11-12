@@ -2,12 +2,6 @@
 """医療介護総合支援会サイトの生成。家じまい相談窓口と同じ設計（CSS・部品）を使い、色だけ医療向けに替える。"""
 import os, re, json, html, shutil
 from data import SITE, ROLES, STATUS, CATS, SUP, PURPOSES, FAQ, ROLE_FAQ, ROLE_CASES, HOUSING, NEWS
-
-# 来店予約の案内（勝山南店へのご紹介）。申込・管理系のページには入れない
-RAITEN = '<script src="/glove-site/raiten/raiten.js?v=1" defer></script>\n'
-def RAITEN_OK(path):
-    import re as _re
-    return not _re.search(r"(^|/)(keiyaku|kyoryoku|member|contact|soudan|status)/|404\.html$", path)
 # フォームの送り先：支援会専用の受付（keiyaku_config.js の KEIYAKU_API_URL）が設定されたら、そちらへ切り替える
 _k = re.search(r'KEIYAKU_API_URL = "([^"]*)"', open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "keiyaku_config.js"), encoding="utf-8").read())
 if _k and _k.group(1):
@@ -366,7 +360,7 @@ def page(path, title, desc, body, cur="", extra_js="", full_title=None, ld=None)
 {body.replace("{p}", p)}
 {footer(p)}
 {COMMON_JS}{extra_js}
-{RAITEN if RAITEN_OK(path) else ""}</body>
+</body>
 </html>
 '''
     out = os.path.join(OUT, path)
