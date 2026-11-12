@@ -112,7 +112,7 @@ function setup() {
   if (!P("FOLDER_ID")) { var f = DriveApp.createFolder("医療介護総合支援会 電子契約"); pr.setProperty("FOLDER_ID", f.getId()); }
   if (!P("ADMIN_EMAILS")) pr.setProperty("ADMIN_EMAILS", Session.getEffectiveUser().getEmail());
   if (!P("NOTIFY_TO")) pr.setProperty("NOTIFY_TO", Session.getEffectiveUser().getEmail());
-  if (!P("SIGN_URL")) pr.setProperty("SIGN_URL", "https://glove-osaka.github.io/glove-site/medical/keiyaku/index.html");
+  if (!P("SIGN_URL")) pr.setProperty("SIGN_URL", "https://119cm.net/keiyaku/index.html");
   Logger.log("準備ができました。台帳: https://docs.google.com/spreadsheets/d/" + P("SHEET_ID") + "  フォルダ: https://drive.google.com/drive/folders/" + P("FOLDER_ID"));
 }
 
@@ -232,7 +232,7 @@ function alertCheck() {
     var key = "al_" + c.no + "_" + today; if (pr.getProperty(key)) return; pr.setProperty(key, "1");
     list.push("・" + c.no + "　" + (c.company ? c.company + " " : "") + c.name + "（" + c.status + "）\n　" + why.join("／"));
   });
-  if (list.length) MailApp.sendEmail({ to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］対応が遅れている受付が " + list.length + " 件あります", body: list.join("\n\n") + "\n\n管理画面：https://glove-osaka.github.io/glove-site/medical/keiyaku/admin.html" });
+  if (list.length) MailApp.sendEmail({ to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］対応が遅れている受付が " + list.length + " 件あります", body: list.join("\n\n") + "\n\n管理画面：https://119cm.net/keiyaku/admin.html" });
 }
 function setupAlerts() {
   ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === "alertCheck") ScriptApp.deleteTrigger(t); });
@@ -416,7 +416,7 @@ function paid_(o) {
   if (o.paid) throw new Error("すでに入金確認済みです");
   var c = typeof o.cond === "string" ? parse_(o.cond, null) : o.cond;
   o.paid = new Date(); log_(o, "入金確認・登録完了のお知らせを送信"); save_(o);
-  MailApp.sendEmail({ to: o.party_email, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】会員登録が完了しました", body: (o.party_company ? o.party_company + "　" : "") + o.party_name + " 様\n\nお振込みを確認しました。ありがとうございます。\n" + ISSUER.service + "の会員登録が完了しました。\n\n" + (c ? "会員区分：" + MEMBER_LABEL[c.type] + "\n会費の発生日：" + c.startText + "\n契約期間：" + c.startText + "〜" + c.endText + "\n" : "") + "契約番号：" + o.id + "\n\nご相談は、このメールへの返信、またはサイトの相談フォームからお寄せください。\nhttps://glove-osaka.github.io/glove-site/medical/contact/index.html\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）" });
+  MailApp.sendEmail({ to: o.party_email, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】会員登録が完了しました", body: (o.party_company ? o.party_company + "　" : "") + o.party_name + " 様\n\nお振込みを確認しました。ありがとうございます。\n" + ISSUER.service + "の会員登録が完了しました。\n\n" + (c ? "会員区分：" + MEMBER_LABEL[c.type] + "\n会費の発生日：" + c.startText + "\n契約期間：" + c.startText + "〜" + c.endText + "\n" : "") + "契約番号：" + o.id + "\n\nご相談は、このメールへの返信、またはサイトの相談フォームからお寄せください。\nhttps://119cm.net/contact/index.html\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）" });
   return { ok: true };
 }
 

@@ -1,0 +1,30 @@
+# 医療介護総合支援会（https://119cm.net/）を Xサーバーへ自動で載せる
+# sites/119cm.net/ が変わったときに動く。手動でも動かせる（Actions → この仕組み → Run workflow）
+# 必要な設定（リポジトリの Settings → Secrets and variables → Actions）
+#   Secrets  : FTP_PASSWORD（Xサーバーで作ったFTPアカウントのパスワード）
+#   Variables: FTP_USER（FTPアカウント名）、FTP_DIR（転送先のフォルダ。例：/119cm.net/public_html/）
+name: 支援会サイトをXサーバーへ公開
+on:
+  push:
+    branches: [main]
+    paths: ["sites/119cm.net/**"]
+  workflow_dispatch:
+concurrency:
+  group: deploy-119cm
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: FTPで転送（変わったファイルだけ）
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: sv17329.xserver.jp
+          username: ${{ vars.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          local-dir: ./sites/119cm.net/
+          server-dir: ${{ vars.FTP_DIR }}
+          state-name: .ftp-deploy-sync-state.json

@@ -4,7 +4,7 @@
 SITE = dict(
     name="医療介護総合支援会",
     sub="医療・介護に関わるすべての人の総合窓口",
-    base="https://glove-osaka.github.io/glove-site/medical/",
+    base="https://119cm.net/",
     company="株式会社グローブ",
     rep="藤原 重郎",
     founded="2023年8月10日",

@@ -14,7 +14,7 @@ if _k and _k.group(1):
     SITE["endpoint"] = _k.group(1)
 NSUP = len(SUP)
 
-OUT = "/home/claude/glove-site/medical"
+OUT = os.environ.get("MED_OUT", "/home/claude/glove-site/sites/119cm.net")  # 公開先：Xサーバー 119cm.net（GitHub Actions でFTP転送）
 SRC_CSS = "/home/claude/glove-site/iejimai/index.html"
 E = html.escape
 
@@ -1132,7 +1132,7 @@ def build_404():
 
 def build_sitemap():
     urls = [SITE["base"] + (p[:-10] if p.endswith("index.html") else p) for p in PAGES if p != "404.html"]
-    x = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"<url><loc>{u}</loc><lastmod>2026-10-18</lastmod></url>\n" for u in urls) + "</urlset>\n"
+    x = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"<url><loc>{u}</loc><lastmod>2026-11-12</lastmod></url>\n" for u in urls) + "</urlset>\n"
     open(os.path.join(OUT, "sitemap.xml"), "w", encoding="utf-8").write(x)
 
 if __name__ == "__main__":
@@ -1147,5 +1147,27 @@ if __name__ == "__main__":
             shutil.rmtree(pth) if os.path.isdir(pth) else os.remove(pth)
     build_top(); build_about(); build_roles(); build_support(); build_status(); build_member(); build_apply(); build_flow(); build_faq()
     build_kyoryoku(); build_soudan(); build_company(); build_legal(); build_contact(); build_404(); build_sitemap()
+    # Xサーバー用：404ページの住所の基準、.htaccess、robots.txt
+    _p404 = os.path.join(OUT, "404.html")
+    if os.path.exists(_p404):
+        t = open(_p404, encoding="utf-8").read()
+        if '<base href="/">' not in t:
+            open(_p404, "w", encoding="utf-8").write(t.replace("<head>", '<head><base href="/">', 1))
+    open(os.path.join(OUT, ".htaccess"), "w", encoding="utf-8").write("""ErrorDocument 404 /404.html
+DirectoryIndex index.html
+AddType video/mp4 .mp4
+AddType video/webm .webm
+<IfModule mod_expires.c>
+ExpiresActive On
+ExpiresByType image/jpeg "access plus 30 days"
+ExpiresByType image/png "access plus 30 days"
+ExpiresByType image/svg+xml "access plus 30 days"
+ExpiresByType video/mp4 "access plus 30 days"
+ExpiresByType text/css "access plus 1 day"
+ExpiresByType application/javascript "access plus 1 hour"
+ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+""")
+    open(os.path.join(OUT, "robots.txt"), "w", encoding="utf-8").write("User-agent: *\nDisallow: /keiyaku/\nSitemap: " + SITE["base"] + "sitemap.xml\n")
     print(len(PAGES), "pages")
     import make_keiyaku  # 電子契約（/keiyaku/）と Apps Script 一式

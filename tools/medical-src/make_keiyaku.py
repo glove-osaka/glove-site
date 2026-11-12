@@ -3,7 +3,7 @@
 import json, os, re, shutil
 from keiyaku_text import KIYAKU, KOJIN_KIYAKU, NDA, TEIKEI
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, "..", "glove-site", "medical", "keiyaku")
+OUT = os.path.join(os.environ.get("MED_OUT", "/home/claude/glove-site/sites/119cm.net"), "keiyaku")
 GAS = os.path.join(HERE, "gas")
 os.makedirs(OUT, exist_ok=True); os.makedirs(GAS, exist_ok=True)
 CORE = open(os.path.join(HERE, "keiyaku_core.js"), encoding="utf-8").read()
@@ -533,6 +533,6 @@ shim = ("<script>window.IN_GAS=true;\n(function(){" + TEXTS + CORE +
         "window.KEIYAKU_CORE={TEMPLATES:TEMPLATES,FIELDS:FIELDS,normCond:normCond,buildBody:buildBody,yen:yen,MEMBER_LABEL:MEMBER_LABEL};})();\n"
         "window.keiyakuApi=function(a,d){return new Promise(function(res,rej){google.script.run.withSuccessHandler(function(r){r&&r.ok?res(r):rej(new Error(r&&r.error||'うまくいきませんでした'))}).withFailureHandler(function(e){rej(new Error(e&&e.message||String(e)))}).adminCall(a,d)})};</script>\n")
 gas_admin = ('<!doctype html><html lang="ja"><head><base target="_top"><meta charset="utf-8"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDPMincho:wght@700&display=swap"><style>'
-             + css + '</style></head><body>' + ADMIN_BODY.replace('href="../index.html"', 'href="https://glove-osaka.github.io/glove-site/medical/"') + shim + ADMIN_JS + "</body></html>\n")
+             + css + '</style></head><body>' + ADMIN_BODY.replace('href="../index.html"', 'href="https://119cm.net/"') + shim + ADMIN_JS + "</body></html>\n")
 open(os.path.join(GAS, "admin.html"), "w", encoding="utf-8").write(gas_admin)
 print("ok", OUT, GAS)
