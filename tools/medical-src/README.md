@@ -73,3 +73,4 @@
 - info@119cm.net に届いたメールは ikshienkai@gmail.com へ転送（Xサーバーのメールアカウント設定。メールボックスにも残す）。
 - 確認：Apps Script で `checkSender` を実行すると、登録メールあてに試しのメールが届く。
 - Gmail の「独自ドメインを差出人にする機能」は2027年1月で終わるため、その方法は使っていない。
+- DMARC：Xサーバーの「DMARC設定」で 119cm.net を「何もしない（p=none）」・レポートOFF に設定（2026/11/14）。SPF・DKIM は合格。
