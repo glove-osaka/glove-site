@@ -284,13 +284,12 @@ def nav(p, cur):
     return f'''<nav class="nav" id="gnav" aria-label="サイト内">
 <a class="home" href="{p}index.html"{" aria-current=\"page\"" if cur == "top" else ""}>トップ</a>
 {a("about/index.html", "支援会とは", "about")}
-<div class="dd"><a href="{p}roles/index.html"{" aria-current=\"page\"" if cur == "roles" else ""}>立場から選ぶ</a><div class="dd-panel"><div><h4><a href="{p}roles/index.html">{ic("users")}4つの立場</a></h4><ul>{roles_dd}</ul></div><div><h4>{ic("hands")}立場とは別の窓口</h4><ul><li><a href="{p}kyoryoku/teikei.html">提携・協業の申し込み</a></li><li><a href="{p}kyoryoku/youbou.html">要望の窓口</a></li></ul></div><a class="all more" href="{p}roles/index.html">立場の一覧を見る</a></div></div>
+<div class="dd"><a href="{p}roles/index.html"{" aria-current=\"page\"" if cur == "roles" else ""}>立場から選ぶ</a><div class="dd-panel"><div><h4><a href="{p}roles/index.html">{ic("users")}4つの立場</a></h4><ul>{roles_dd}</ul></div><a class="all more" href="{p}roles/index.html">立場の一覧を見る</a></div></div>
 <div class="dd"><a href="{p}support/index.html"{" aria-current=\"page\"" if cur == "support" else ""}>支援メニュー</a><div class="dd-panel">{cats_dd}<a class="all more" href="{p}support/index.html">支援メニューを見る（{NSUP}項目）</a></div></div>
 {a("flow/index.html", "流れ・費用", "flow")}
 {a("faq/index.html", "よくある質問", "faq")}
 {a("company/index.html", "運営会社", "company")}
 <a class="m-only" href="{p}status/index.html">提供状況</a>
-<a class="m-only" href="{p}kyoryoku/index.html">提携・協業・要望</a>
 <a class="m-only" href="{p}soudan/index.html">緊急時・公的な相談窓口</a>
 <a class="cta" href="{p}contact/index.html">{ic("chat")}相談を送る</a>
 </nav>'''
@@ -304,8 +303,8 @@ def footer(p):
 <div><a class="brand" href="{p}index.html">{ic("plus", "ic brand-mark")}<span><b>{SITE["name"]}</b><small>みんなで使い、みんなで育てる</small></span></a>
 <div class="co"><span>運営会社　{SITE["company"]}</span><span>{SITE["addr"]}</span><span>メール　{SITE["mail"]}</span><span>対応地域　{SITE["area"]}</span></div></div>
 <details class="fcol" open><summary><h4>支援会について</h4></summary><ul>
-<li><a href="{p}about/index.html">支援会とは</a></li><li><a href="{p}status/index.html">提供状況</a></li><li><a href="{p}member/index.html">会員制度</a></li><li><a href="{p}flow/index.html">相談の流れ・費用</a></li><li><a href="{p}faq/index.html">よくある質問</a></li><li><a href="{p}kyoryoku/index.html">提携・協業・要望</a></li><li><a href="{p}soudan/index.html">緊急時・公的な相談窓口</a></li><li><a href="{p}company/index.html">運営会社</a></li><li><a href="{p}contact/index.html">相談を送る</a></li><li><a href="{p}privacy/index.html">個人情報の取り扱い</a></li><li><a href="{p}terms/index.html">利用規約・免責事項</a></li><li><a href="{p}member/tokushoho.html">特定商取引法に基づく表記</a></li></ul></details>
-<details class="fcol" open><summary><h4>立場から選ぶ</h4></summary><ul>{"".join(f'<li><a href="{p}roles/{r["id"]}.html">{r["name"]}</a></li>' for r in ROLES)}<li><a href="{p}roles/index.html">4つの立場の一覧</a></li><li><a href="{p}kyoryoku/teikei.html">提携・協業の申し込み</a></li><li><a href="{p}kyoryoku/youbou.html">要望の窓口</a></li></ul></details>
+<li><a href="{p}about/index.html">支援会とは</a></li><li><a href="{p}status/index.html">提供状況</a></li><li><a href="{p}member/index.html">会員制度</a></li><li><a href="{p}flow/index.html">相談の流れ・費用</a></li><li><a href="{p}faq/index.html">よくある質問</a></li><li><a href="{p}kyoryoku/teikei.html">提携・協業の申し込み</a></li><li><a href="{p}kyoryoku/youbou.html">要望の窓口</a></li><li><a href="{p}soudan/index.html">緊急時・公的な相談窓口</a></li><li><a href="{p}company/index.html">運営会社</a></li><li><a href="{p}contact/index.html">相談を送る</a></li><li><a href="{p}privacy/index.html">個人情報の取り扱い</a></li><li><a href="{p}terms/index.html">利用規約・免責事項</a></li><li><a href="{p}member/tokushoho.html">特定商取引法に基づく表記</a></li></ul></details>
+<details class="fcol" open><summary><h4>立場から選ぶ</h4></summary><ul>{"".join(f'<li><a href="{p}roles/{r["id"]}.html">{r["name"]}</a></li>' for r in ROLES)}<li><a href="{p}roles/index.html">4つの立場の一覧</a></li></ul></details>
 <details class="fcol" open><summary><h4>支援メニュー</h4></summary><ul>{"".join(f'<li><a href="{p}support/index.html#{c["id"]}">{c["name"]}</a></li>' for c in CATS)}<li><a href="{p}support/index.html">すべての支援メニュー</a></li></ul>
 <h4 style="margin-top:22px">関連する窓口</h4><ul><li><a href="{SITE["iejimai"]}">家じまい相談窓口</a></li><li><a href="{SITE["kigyo"]}">企業支援 総合相談窓口</a></li><li><a href="{SITE["globe"]}">株式会社グローブ</a></li></ul></details>
 </div><div class="ft-bottom"><div class="wrap"><span>© {SITE["company"]}</span><span class="ft-img">掲載の写真・映像はイメージです</span><a class="replay" href="{p}privacy/index.html">個人情報の取り扱い</a><a class="replay" href="{p}keiyaku/admin.html" rel="nofollow">担当者ログイン</a></div></div></footer>
@@ -511,8 +510,7 @@ def build_top():
 {faq_html(FAQ[:2])}
 <p style="margin-top:20px"><a class="more" href="{{p}}faq/index.html">よくある質問をすべて見る</a></p>
 <div style="margin-top:34px">{SAFETY}</div>
-</div></section>
-<section class="sec"><div class="wrap">{extra_doors("{p}")}</div></section></main>'''
+</div></section></main>'''
     ld = {"@context": "https://schema.org", "@type": "Organization", "name": SITE["name"], "url": SITE["base"],
           "logo": SITE["base"] + "assets/apple-touch-icon.png", "email": SITE["mail"], "areaServed": "大阪府・関西",
           "parentOrganization": {"@type": "Organization", "name": SITE["company"], "url": SITE["globe"],
@@ -562,7 +560,6 @@ def build_roles():
     doors = "".join(f'''<a class="door" href="{r["id"]}.html">{emb(r["icon"], True)}<span class="no">入口 {i+1}</span><h3>{r["name"]}</h3><p>{r["lead"]}</p><span class="more">この立場で選ぶ</span></a>''' for i, r in enumerate(ROLES))
     body = ph("立場から選ぶ", "あなたの立場を選ぶと、関係する相談・支援・優待・協力の方法をご案内します。", [("立場から選ぶ", None)], "head-1.jpg", "users") + f'''
 <section class="sec"><div class="wrap"><div class="doors d4">{doors}</div>
-{extra_doors("../")}
 <p style="margin-top:26px;text-align:center"><a class="more" href="{{p}}contact/index.html">どの立場か分からない・近いものがない</a></p></div></section>'''
     page("roles/index.html", "立場から選ぶ", "企業・事業者、医療・介護で働く方、利用者・ご本人、ご家族の4つの立場から、関係する相談・支援・優待・協力の方法をお選びいただけます。大阪・関西の医療・介護の総合窓口です。", "<main id=\"main\">" + body + "</main>", cur="roles")
     for r in ROLES:
@@ -1321,7 +1318,6 @@ def build_contact():
 <div class="form-nav" id="fnav"><button class="btn btn-o" type="button" id="back">‹ 前に戻る</button><button class="btn btn-p" type="button" id="next">次へ進む ›</button></div>
 </form>
 <div id="done" hidden></div>
-<div style="margin-top:40px">{extra_doors("{p}")}</div>
 </div>'''
     js = CASCADE_JS + "<script>window.FORM_HELP={\"memo\": {\"t\": \"ほかに伝えておきたいことがあれば書きます（空のままでも進めます）。\", \"ex\": \"※病名・症状・番号は書かないでください\", \"req\": false}, \"c1a\": {\"t\": \"大分類を選びます。選ばなくても進めます。\", \"req\": false}, \"c1b\": {\"t\": \"中分類を選びます（大分類を選ぶと出てきます）。\", \"req\": false}, \"c1c\": {\"t\": \"小分類を選びます（中分類を選ぶと出てきます）。\", \"req\": false}, \"c1d\": {\"t\": \"くわしく伝えたいことがあれば書きます（空のままでも進めます）。\"}, \"when\": {\"t\": \"いつごろ相談したいかを選びます（空のままでも進めます）。\", \"req\": false}, \"pref\": {\"t\": \"お住まい・事業所のある都道府県を選びます（空のままでも進めます）。\", \"req\": false}, \"want\": {\"t\": \"支援会にしてほしいことに近いものを選びます（空のままでも進めます）。\", \"req\": false}, \"nm\": {\"t\": \"お名前を入れます。返信の宛名に使います。\", \"ex\": \"例：山田 花子　名前を伏せたいときは、上で「名前・事業所名を伏せて相談」を選んでください\", \"req\": true}, \"co\": {\"t\": \"事業所名・会社名を入れます（企業・事業者の方、協力のお申し出の方のみ）。\", \"ex\": \"例：○○デイサービス\", \"req\": false}, \"mail\": {\"t\": \"返信を受け取るメールアドレスです。\", \"ex\": \"例：yamada@example.jp　携帯のメールは、パソコンからのメールを受け取れる設定にしてください\", \"req\": true}, \"tel\": {\"t\": \"電話での連絡を希望するときだけ入れます。\", \"ex\": \"例：06-1234-5678\", \"req\": false}};window.FORM_GROUPS=[{name:'role',label:'立場'}];window.FORM_CHECKS=['agree'];window.FORM_STEPWISE=true;window.FORM_SCOPE='#f';window.FORM_SUBMIT='#send';window.FORM_NEXT='#next';window.FORM_DONE_LABEL='進むボタンへ ›';</script>" + "<script>(function(){var D=" + json.dumps(D, ensure_ascii=False) + r""";
 var L=['立場','相談の内容','ご連絡先','確認'],st=0,f=document.getElementById('f'),secs=f.querySelectorAll('section[data-step]'),lis=document.querySelectorAll('#steps li'),err=document.getElementById('err'),t0=Date.now(),sending=false;
