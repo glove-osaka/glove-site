@@ -49,6 +49,10 @@ EXTRA_CSS = r"""
 .area-h .small-btn{min-height:40px;padding:0 14px;border-radius:10px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:.92rem;font-weight:700;cursor:pointer}
 .area-row{border:2px solid var(--line);border-radius:14px;padding:14px 16px 4px;margin:0 0 12px;background:var(--surface)}.area-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .area-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:start}@media (max-width:760px){.area-g{grid-template-columns:1fr;gap:0}}
+.voice-cta{display:flex;align-items:center;gap:16px;margin-top:16px;padding:18px 20px;border-radius:16px;border:2px dashed var(--gold-bright,#C99A45);background:var(--gold-soft,#F5ECDA);color:var(--ink);text-decoration:none;transition:border-color .2s,transform .2s}
+.voice-cta:hover{border-style:solid;transform:translateY(-2px)}.voice-cta b{display:block;font-size:1.15rem}.voice-cta small{display:block;color:var(--muted);font-size:.95rem;line-height:1.6;margin-top:2px}
+.voice-cta .go{flex:none;margin-left:auto;padding:10px 18px;border-radius:999px;background:var(--gold,#8A621C);color:#fff;font-weight:700;white-space:nowrap}
+@media (max-width:560px){.voice-cta{flex-wrap:wrap}.voice-cta .go{margin-left:0;width:100%;text-align:center}}
 .door-x{border-style:dashed;border-color:var(--gold-bright,#C99A45);background:var(--gold-soft,#F5ECDA)}.door-x .no{color:var(--gold,#8A621C)}
 
 .news{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
@@ -476,6 +480,7 @@ def build_top():
 <li>{emb("link")}<div><b>紹介料は受け取りません</b><span>弁護士・行政書士などの専門家へのご案内で、専門家から紹介料を受け取ることはありません。</span></div></li>
 </ul>
 <div style="margin-top:22px">{acc("heart", "5つの価値を、4つの立場それぞれへ", "応援・補助・支援・協力・優待", "<div class=" + chr(34) + "vals" + chr(34) + ">" + vals + "</div>")}</div>
+<a class="voice-cta" href="{{p}}kyoryoku/youbou.html">{emb("chat", True)}<span><b>要望の窓口</b><small>「こんな支援がほしい」「ここを改善してほしい」をお聞かせください。名前なしでも送れます。</small></span><span class="go">声を送る ›</span></a>
 <p style="margin-top:22px"><a class="more" href="{{p}}about/index.html">支援会について詳しく見る</a></p></div>
 </div></section>
 
