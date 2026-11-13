@@ -111,6 +111,8 @@ function buildBody(key, cond, note, party) {
     var list = load();
     if (action === "admin.login") return d.id && d.pass ? wait({ ok: true, adminToken: "demo" }) : Promise.reject(new Error("IDとパスワードを入れてください"));
     if (action === "admin.logout") return wait({ ok: true });
+    if (action === "admin.forgot") return wait({ ok: true });
+    if (action === "admin.reset") return d.code && d.pass ? wait({ ok: true, id: "demo" }) : Promise.reject(new Error("確認コードとパスワードを入れてください"));
     if (action === "admin.templates") return wait({ ok: true, templates: TEMPLATES, fields: FIELDS });
     if (action === "admin.issue") {
       var t = tplOf(d.template), p = d.party || {};

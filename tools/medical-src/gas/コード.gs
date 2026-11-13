@@ -468,9 +468,35 @@ function login_(d) {
   var tok = newToken_(); cache.put("adm_" + tok, P("ADMIN_ID"), 21600);
   return { ok: true, adminToken: tok };
 }
+// パスワードを忘れたとき：登録メール（NOTIFY_TO）だけにIDと確認コードを送る
+function forgot_() {
+  if (!P("ADMIN_ID")) throw new Error("IDとパスワードがまだ設定されていません");
+  var cache = CacheService.getScriptCache(), n = +(cache.get("fg_n") || 0);
+  if (n >= 5) throw new Error("確認コードの送信が続いたため、しばらく送れません（1時間ほどお待ちください）");
+  cache.put("fg_n", String(n + 1), 3600);
+  var code = String(Math.floor(100000 + Math.random() * 900000));
+  cache.put("fg_code", code, 1800); cache.remove("fg_bad");
+  MailApp.sendEmail({ to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］管理画面のパスワード変更の確認コード", body: "管理画面で「ID・パスワードを忘れたとき」が使われました。\n\nID：" + P("ADMIN_ID") + "\n確認コード：" + code + "（30分有効）\n\n管理画面：https://119cm.net/keiyaku/admin.html\n\n心当たりがない場合は、このメールを無視してください（パスワードは変わりません）。" });
+  return { ok: true };
+}
+function reset_(d) {
+  var cache = CacheService.getScriptCache(), code = cache.get("fg_code"), bad = +(cache.get("fg_bad") || 0);
+  var c = String(d.code || "").replace(/\D/g, ""), pass = String(d.pass || "");
+  if (!code) throw new Error("確認コードの期限が切れました。もう一度送ってください。");
+  if (bad >= 5) { cache.remove("fg_code"); throw new Error("間違いが続いたため、コードを無効にしました。もう一度送ってください。"); }
+  if (!sameStr_(c, code)) { cache.put("fg_bad", String(bad + 1), 1800); throw new Error("確認コードが違います"); }
+  if (pass.length < 8 || pass.length > 100) throw new Error("パスワードは8文字以上にしてください");
+  var pr = PropertiesService.getScriptProperties(), salt = Utilities.getUuid().replace(/-/g, "");
+  pr.setProperty("ADMIN_PASS_SALT", salt); pr.setProperty("ADMIN_PASS_HASH", hash_(salt, pass)); pr.deleteProperty("ADMIN_PASS");
+  cache.remove("fg_code"); cache.remove("fg_bad"); cache.remove("lf_" + P("ADMIN_ID").toLowerCase()); cache.remove("lf_all");
+  MailApp.sendEmail({ to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］管理画面のパスワードを変えました", body: "管理画面のパスワードが変更されました（" + Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy/MM/dd HH:mm") + "）。\n心当たりがない場合は、すぐに確認してください。" });
+  return { ok: true, id: P("ADMIN_ID") };
+}
 function adminPost_(a, d) {
   try {
     if (a === "admin.login") return login_(d);
+    if (a === "admin.forgot") return forgot_();
+    if (a === "admin.reset") return reset_(d);
     var cache = CacheService.getScriptCache(), t = String(d.adminToken || "");
     if (a === "admin.logout") { if (t) cache.remove("adm_" + t); return { ok: true }; }
     if (!t || !cache.get("adm_" + t)) return { ok: false, error: "ログインの有効期限が切れました。もう一度ログインしてください。", needLogin: true };

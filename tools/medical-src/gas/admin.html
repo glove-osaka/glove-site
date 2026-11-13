@@ -165,7 +165,21 @@ dialog.rep textarea{min-height:300px;font-size:1rem;line-height:1.8}
 <p class="err" id="errL" role="alert"></p>
 <button class="btn" type="submit" id="doLogin" style="width:100%">ログイン</button>
 </form>
-<p class="hint" style="margin-top:16px">5回続けて間違えると、15分間ログインできなくなります。<br><a id="gateLink" href="#">支援会の Google アカウントで開く（別の方法）</a></p>
+<p style="margin:14px 0 0"><button type="button" class="small-btn" id="fgOpen">ID・パスワードを忘れたとき</button></p>
+<div id="fg" hidden style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px">
+<h3 style="margin:0 0 6px">パスワードを決め直す</h3>
+<p class="hint">① 下のボタンを押すと、支援会の登録メール（ikshienkai@gmail.com）に<b>IDと6けたの確認コード</b>が届きます（30分有効）。<br>② 届いたコードと新しいパスワードを入れて「変更する」を押してください。</p>
+<button class="btn o" type="button" id="fgSend" style="width:100%">登録メールに確認コードを送る</button>
+<p class="hint" id="fgMsg" role="status"></p>
+<div id="fg2" hidden>
+<div class="fld"><label for="fgCode">確認コード（6けた）</label><input type="text" id="fgCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6"></div>
+<div class="fld"><label for="fgP1">新しいパスワード（8文字以上）</label><input type="password" id="fgP1" autocomplete="new-password" maxlength="100"></div>
+<div class="fld"><label for="fgP2">新しいパスワード（確認のためもう一度）</label><input type="password" id="fgP2" autocomplete="new-password" maxlength="100"></div>
+<p class="err" id="errF" role="alert"></p>
+<button class="btn" type="button" id="fgDo" style="width:100%">変更する</button>
+</div>
+</div>
+<p class="hint" style="margin-top:16px">5回続けて間違えると、15分間ログインできなくなります（パスワードを決め直すと、すぐ入れます）。<br><a id="gateLink" href="#">支援会の Google アカウントで開く（別の方法）</a></p>
 </section>
 
 <div id="panel" hidden>
@@ -456,6 +470,17 @@ $('lf').addEventListener('submit',function(e){e.preventDefault();var b=$('doLogi
  b.disabled=true;b.textContent='確認しています…';$('errL').textContent='';
  api('admin.login',{id:$('lid').value.trim(),pass:$('lpw').value}).then(function(r){try{sessionStorage.setItem('iryo-adm',r.adminToken)}catch(x){}$('lpw').value='';$('gate').hidden=true;go()})
  .catch(function(x){$('errL').textContent=x.message}).then(function(){b.disabled=false;b.textContent='ログイン'})});
+$('fgOpen').addEventListener('click',function(){$('fg').hidden=!$('fg').hidden});
+$('fgSend').addEventListener('click',function(){var b=this;b.disabled=true;$('fgMsg').textContent='送っています…';
+ api('admin.forgot',{}).then(function(){$('fgMsg').textContent='登録メールに送りました。届かないときは迷惑メールも見てください。';$('fg2').hidden=false;try{$('fgCode').focus()}catch(x){}})
+ .catch(function(x){$('fgMsg').textContent=x.message}).then(function(){setTimeout(function(){b.disabled=false},30000)})});
+$('fgDo').addEventListener('click',function(){var b=this,c=$('fgCode').value.replace(/\D/g,''),p1=$('fgP1').value,p2=$('fgP2').value;$('errF').textContent='';
+ if(c.length!==6){$('errF').textContent='6けたの確認コードを入れてください。';return}
+ if(p1.length<8){$('errF').textContent='パスワードは8文字以上にしてください。';return}
+ if(p1!==p2){$('errF').textContent='2つのパスワードが合っていません。';return}
+ b.disabled=true;b.textContent='変更しています…';
+ api('admin.reset',{code:c,pass:p1}).then(function(r){$('fgP1').value=$('fgP2').value=$('fgCode').value='';$('fg').hidden=true;$('fg2').hidden=true;$('fgMsg').textContent='';if(r.id)$('lid').value=r.id;$('errL').textContent='パスワードを変えました。新しいパスワードでログインしてください。';try{$('lpw').focus()}catch(x){}})
+ .catch(function(x){$('errF').textContent=x.message}).then(function(){b.disabled=false;b.textContent='変更する'})});
 $('logout').addEventListener('click',function(){api('admin.logout',{}).catch(function(){});try{sessionStorage.removeItem('iryo-adm')}catch(x){}location.reload()});
 var tok='';try{tok=sessionStorage.getItem('iryo-adm')||''}catch(x){}
 if(IN_GAS){$('logout').hidden=true;go()}else if(tok){go()}else{showLogin()}
