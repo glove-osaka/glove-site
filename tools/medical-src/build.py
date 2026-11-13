@@ -1032,7 +1032,7 @@ def build_teikei():
 {fld("tel", "電話番号", True, "tel", 'autocomplete="tel" inputmode="tel"', 20)}
 {fld("mail", "メールアドレス", True, "email", 'autocomplete="email" inputmode="email"', 120)}
 <h3 style="font-size:1.15rem;margin:26px 0 8px">面談のご希望</h3><p class="hint">提携の前に、面談でお話をうかがいます。分かる範囲でご記入ください。</p>
-<fieldset class="fld" style="border:0;padding:0;margin:0 0 18px">{lg("面談の方法", False)}{radios("mtg", [("オンライン（ビデオ通話）", ""), ("当社へお越しいただく", "大阪市生野区"), ("貴社へうかがう", ""), ("電話", ""), ("どれでもよい", "")], False)}</fieldset>
+<fieldset class="fld" style="border:0;padding:0;margin:0 0 18px">{lg("面談の方法", False)}{radios("mtg", [("オンライン（ビデオ通話）", ""), ("当社へお越しいただく", "大阪市北区の打ち合わせ専用事務所"), ("貴社へうかがう", ""), ("電話", ""), ("どれでもよい", "")], False)}</fieldset>
 {fld("mtgNote", "面談の方法についての補足", ml=200)}
 <div class="area-g" style="margin-top:6px">{fld("d1", "第1希望日", typ="date")}{fld("d2", "第2希望日", typ="date")}{fld("d3", "第3希望日", typ="date")}</div>
 <div class="fld"><label for="tz">ご希望の時間帯</label><select id="tz"><option value="">選んでください</option><option>午前（10時〜12時）</option><option>午後（13時〜17時）</option><option>夕方（17時〜19時）</option><option>いつでもよい</option></select></div>
