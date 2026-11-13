@@ -44,7 +44,7 @@
 <div id="panel" hidden>
 <p style="text-align:right;margin:0 0 10px"><button type="button" class="small-btn" id="logout">ログアウト</button></p>
 <section class="card todo" id="todo"><div class="todo-h"><h2>今やること</h2><span class="hint" id="todoAt"></span><button type="button" class="small-btn" id="tourBtn">はじめての方へ：操作の案内</button></div><ol class="todo-l" id="todoList"><li class="hint">読み込み中…</li></ol></section>
-<nav class="tabs" role="tablist"><button type="button" role="tab" class="tab on" data-v="inbox">案件管理<span class="cnt" id="newCnt" hidden></span></button><button type="button" role="tab" class="tab" data-v="keiyaku">電子契約</button><button type="button" role="tab" class="tab" data-v="route">振分け設定</button><button type="button" class="small-btn" id="snd" aria-pressed="true" style="margin-left:auto">警告音：オン</button></nav>
+<nav class="tabs" role="tablist"><button type="button" role="tab" class="tab on" data-v="inbox">案件管理<span class="cnt" id="newCnt" hidden></span></button><button type="button" role="tab" class="tab" data-v="keiyaku">電子契約</button><button type="button" role="tab" class="tab" data-v="roster">会員・相談者の名簿</button><button type="button" role="tab" class="tab" data-v="route">振分け設定</button><button type="button" class="small-btn" id="snd" aria-pressed="true" style="margin-left:auto">警告音：オン</button></nav>
 <div data-view="inbox">
 <details class="howto" id="howInbox"><summary>この画面の使い方（案件管理）</summary><div>
 <ol><li><b>赤い印の案件から</b>対応します。新しい受付ほど上に出ます。</li><li>案件の「受付の内容を見る」を押して、内容を読みます。</li><li>読んだら「状態」を進め、「振分け先」「担当」「次の対応予定日」を入れて<b>「保存」</b>を押します。</li><li>お客様に伝えることがあれば「お客様へ報告を作る」を押します。文面は自動で作られます。<b>送るかどうかは自分で決めます</b>（電話で伝えた・今回は送らない、も選べます）。</li><li>上の数字のボタンを押すと、その状態の案件だけを表示します。</li></ol>
@@ -54,9 +54,16 @@
 <div class="alertbar" id="alertBar" hidden></div>
 <div class="sum" id="sum"></div>
 <section class="card">
-<div class="filters"><label>状態 <select id="fSt"><option value="">完了・見送り以外</option><option value="all">すべて</option><option value="alert">警告・注意があるもの</option></select></label><label>振分け先 <select id="fPt"><option value="">すべて</option></select></label><label>さがす <input type="text" id="fQ" placeholder="名前・会社・番号・内容"></label><button type="button" class="small-btn" id="reloadIn">最新にする</button></div>
+<div class="filters"><label>種類 <select id="fKd"><option value="">すべて</option></select></label><label>立場 <select id="fRl"><option value="">すべて</option></select></label><label>分類 <select id="fCt"><option value="">すべて</option></select></label><label>状態 <select id="fSt"><option value="">完了・見送り以外</option><option value="all">すべて</option><option value="alert">警告・注意があるもの</option></select></label><label>振分け先 <select id="fPt"><option value="">すべて</option></select></label><label>さがす <input type="text" id="fQ" placeholder="名前・会社・番号・内容"></label><button type="button" class="small-btn" id="reloadIn">最新にする</button><span class="vt-sw" role="group" aria-label="表示のしかた"><button type="button" class="small-btn on" data-vm="list">一覧表</button><button type="button" class="small-btn" data-vm="card">カード</button></span></div><p class="hint" id="inCount"></p>
 <div id="inbox"><p class="hint">読み込み中…</p></div>
 <p class="err" id="errB" role="alert"></p>
+</section>
+</div>
+<div data-view="roster" hidden>
+<details class="howto"><summary>この画面の使い方（会員・相談者の名簿）</summary><div><ol><li>上で「会員名簿」か「相談者・申込者」を選びます。</li><li>左の分類を押すと、その分類の人だけが表に出ます（数字は人数）。</li><li>「さがす」で名前・会社・メールから探せます。</li><li>「表計算ソフト用に保存」で、いま表に出ている名簿をファイルに保存できます。</li><li>相談者の行の「案件を見る」を押すと、案件管理のその案件へ移ります。</li></ol></div></details>
+<section class="card">
+<div class="seg" role="tablist"><button type="button" class="seg-b on" data-rs="member">会員名簿</button><button type="button" class="seg-b" data-rs="people">相談者・申込者</button></div>
+<div class="roster"><aside class="r-tree" id="rTree"></aside><div class="r-main"><div class="filters"><label>さがす <input type="text" id="rQ" placeholder="名前・会社・メール"></label><button type="button" class="small-btn" id="rCsv">表計算ソフト用に保存</button></div><p class="hint" id="rCount"></p><div class="tbl"><table class="list"><thead id="rHead"></thead><tbody id="rBody"></tbody></table></div></div></div>
 </section>
 </div>
 <div data-view="route" hidden>
@@ -156,7 +163,7 @@ $('doIssue').addEventListener('click',function(){var b=this,p=payload();
  b.disabled=true;$('errI').textContent='';$('issued').hidden=true;
  api('admin.issue',p).then(function(r){$('issued').hidden=false;$('issued').innerHTML='送りました（契約番号 '+esc(r.id)+'）。<br>相手の画面：<a href="'+esc(r.url)+'" target="_blank" rel="noopener">'+esc(r.url)+'</a>';['pName','pCompany','pEmail','note','cRef','cEntry'].forEach(function(id){$(id).value=''});$('preBox').innerHTML='';onTpl();list()})
  .catch(function(e){$('errI').textContent=e.message}).then(function(){b.disabled=false})});
-function list(){api('admin.list').then(function(r){KL=r.rows||[];todo();if(!r.rows.length){$('rows').innerHTML='<tr><td colspan="6">まだありません</td></tr>';return}
+function list(){api('admin.list').then(function(r){KL=r.rows||[];todo();drawRoster();if(!r.rows.length){$('rows').innerHTML='<tr><td colspan="6">まだありません</td></tr>';return}
  $('rows').innerHTML=r.rows.map(function(x){var cls=x.status==='締結済み'?'done':x.status==='取り消し'?'cancel':'';var st=x.paid?'入金済み':x.status==='送付済み'&&x.viewed?'確認中':x.status;
   return'<tr><td>'+esc(x.id)+'</td><td>'+esc(x.title)+(x.draft==='yes'?'<br><span class="tag">下書き</span>':'')+'</td><td>'+esc(x.party_company?x.party_company+' ':'')+esc(x.party_name)+'<br><small>'+esc(x.party_email)+'</small>'+(x.refcode?'<br><span class="tag">紹介コード '+esc(x.refcode)+'</span>':'')+(x.billed?'<br><span class="tag">請求済み：'+esc(x.billed.replace('-','年'))+'月分まで</span>':'')+(x.stopped?'<br><span class="tag cancel">退会（請求停止）</span>':'')+'</td><td><span class="tag '+cls+'">'+esc(st)+'</span></td><td>'+day(x.created)+'</td><td>'+
   (x.status==='締結済み'?'<button class="small-btn" data-pdf="'+esc(x.id)+'">PDFを保存</button>'+(x.template==='kaiin'&&!x.paid?'<button class="small-btn" data-paid="'+esc(x.id)+'">入金を確認した</button>':'')+(x.template==='kaiin'&&!x.stopped?'<button class="small-btn" data-stop="'+esc(x.id)+'">退会（請求を止める）</button>':''):x.status==='取り消し'?'':'<button class="small-btn" data-resend="'+esc(x.id)+'">もう一度送る</button><button class="small-btn" data-cancel="'+esc(x.id)+'">取り消す</button>')+'</td></tr>'}).join('')}).catch(function(e){$('errR').textContent=e.message})}
@@ -166,6 +173,37 @@ $('rows').addEventListener('click',function(e){var b=e.target.closest('button');
  if(b.dataset.resend)api('admin.resend',{id:b.dataset.resend}).then(function(){$('errR').textContent='もう一度送りました。'}).catch(function(x){$('errR').textContent=x.message});
  if(b.dataset.cancel&&confirm('この契約書を取り消しますか？相手はもう開けなくなります。'))api('admin.cancel',{id:b.dataset.cancel}).then(list).catch(function(x){$('errR').textContent=x.message});
  if(b.dataset.pdf)api('admin.pdf',{id:b.dataset.pdf}).then(function(r){var bin=atob(r.pdf),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);var u=URL.createObjectURL(new Blob([a],{type:'application/pdf'}));var l=document.createElement('a');l.href=u;l.download=r.filename;document.body.appendChild(l);l.click();setTimeout(function(){URL.revokeObjectURL(u);l.remove()},2000)}).catch(function(x){$('errR').textContent=x.message})});
+/* ---- 会員・相談者の名簿 ---- */
+var RS='member',RF={};
+function members(){return(KL||[]).filter(function(x){return(x.template==='kaiin'||x.template==='kojin')&&x.status!=='取り消し'&&x.draft!=='yes'}).map(function(x){var t=x.template==='kojin'?'個人会員（営業協力者）':(x.typeLabel||'会員');
+ var st=x.stopped?'退会':x.template==='kaiin'?(x.paid?'登録済み':x.status==='締結済み'?'入金待ち':'手続き中'):(x.status==='締結済み'?'登録済み':'手続き中');
+ return{name:x.party_name,company:x.party_company,email:x.party_email,tel:x.phone||'',type:t,pay:x.template==='kojin'?'―':(x.pay==='year'?'年間払い':'月払い'),status:st,date:x.signed||x.created,ref:x.refcode||'',id:x.id}})}
+function people(){var m={};IN.slice().sort(function(a,b){return new Date(a.ts)-new Date(b.ts)}).forEach(function(x){var c=cls(x),key=(x.email||'').toLowerCase()||(x.name+'|'+x.tel+'|'+x.no);
+ var p=m[key]||(m[key]={name:'',company:'',email:x.email,tel:'',cases:[]});p.name=x.name||p.name;p.company=x.company||p.company;p.tel=x.tel||p.tel;p.cases.push(x);p.last=x;p.c=c});
+ return Object.keys(m).map(function(k){return m[k]}).sort(function(a,b){return new Date(b.last.ts)-new Date(a.last.ts)})}
+function pMatch(p){if(RF.kind&&!p.cases.some(function(x){var c=cls(x);return c.kind===RF.kind&&(!RF.role||c.role===RF.role)&&(!RF.cat||catOf(c)===RF.cat)}))return false;return true}
+function mMatch(m){return(!RF.type||m.type===RF.type)&&(!RF.status||m.status===RF.status)&&(!RF.pay||m.pay===RF.pay)}
+function tb(lv,label,n,f){var on=JSON.stringify(f)===JSON.stringify(RF);return'<button type="button" class="l'+lv+(on?' on':'')+'" data-f=\''+esc(JSON.stringify(f))+'\'><span>'+esc(label)+'</span><b>'+n+'</b></button>'}
+var RROWS=[];
+function drawRoster(){if(!$('rBody'))return;var q=$('rQ').value.trim().toLowerCase(),T='';
+ if(RS==='member'){var M=members(),by=function(k){var o={};M.forEach(function(m){o[m[k]]=(o[m[k]]||0)+1});return o};
+  T=tb(1,'すべての会員',M.length,{});[['type','会員の種類'],['status','状態'],['pay','支払い方法']].forEach(function(g){var o=by(g[0]);T+='<h4>'+g[1]+'</h4>'+Object.keys(o).sort().map(function(k){var f={};f[g[0]]=k;return tb(2,k,o[k],f)}).join('')});
+  RROWS=M.filter(mMatch).filter(function(m){return!q||[m.name,m.company,m.email,m.tel,m.ref].join(' ').toLowerCase().indexOf(q)>=0});
+  $('rHead').innerHTML='<tr><th>お名前・会社</th><th>会員の種類</th><th>支払い</th><th>状態</th><th>登録日</th><th>連絡先</th><th>紹介コード</th></tr>';
+  $('rBody').innerHTML=RROWS.map(function(m){return'<tr><td>'+esc(m.name)+(m.company?'<br><small>'+esc(m.company)+'</small>':'')+'</td><td>'+esc(m.type)+'</td><td>'+esc(m.pay)+'</td><td><span class="st'+(m.status==='退会'?' s6':m.status==='入金待ち'?' s0':'')+'">'+esc(m.status)+'</span></td><td>'+day(m.date)+'</td><td><a href="mailto:'+esc(m.email)+'">'+esc(m.email)+'</a>'+(m.tel?'<br>'+esc(m.tel):'')+'</td><td>'+esc(m.ref||'―')+'</td></tr>'}).join('')||'<tr><td colspan="7">該当する会員はいません</td></tr>'}
+ else{var P=people(),tr={};P.forEach(function(p){var seen={};p.cases.forEach(function(x){var c=cls(x),k=c.kind+'|'+c.role+'|'+catOf(c);if(seen[k])return;seen[k]=1;var a=tr[c.kind]||(tr[c.kind]={n:0,r:{}});a.n++;var rk=c.role||'';var b=a.r[rk]||(a.r[rk]={n:0,c:{}});b.n++;var ck=catOf(c)||'（分類なし）';b.c[ck]=(b.c[ck]||0)+1})});
+  T=tb(1,'すべての相談者・申込者',P.length,{});['相談','会員登録','提携・協業','要望'].forEach(function(k){var a=tr[k];if(!a)return;T+='<h4>'+k+'</h4>'+tb(1,k+'（すべて）',a.n,{kind:k});Object.keys(a.r).sort().forEach(function(rk){var b=a.r[rk];if(rk)T+=tb(2,rk,b.n,{kind:k,role:rk});Object.keys(b.c).sort().forEach(function(ck){var f={kind:k};if(rk)f.role=rk;f.cat=ck==='（分類なし）'?'':ck;T+=tb(rk?3:2,ck,b.c[ck],f)})})});
+  RROWS=P.filter(pMatch).filter(function(p){return!q||[p.name,p.company,p.email,p.tel].join(' ').toLowerCase().indexOf(q)>=0});
+  $('rHead').innerHTML='<tr><th>お名前・会社</th><th>連絡先</th><th>種類</th><th>立場・分類</th><th>件数</th><th>最終受付</th><th>最新の状態</th><th></th></tr>';
+  $('rBody').innerHTML=RROWS.map(function(p){var c=cls(p.last);return'<tr><td>'+esc(p.name||'（お名前なし）')+(p.company?'<br><small>'+esc(p.company)+'</small>':'')+'</td><td>'+(p.email?'<a href="mailto:'+esc(p.email)+'">'+esc(p.email)+'</a>':'')+(p.tel&&p.tel!=='（未入力）'?'<br>'+esc(p.tel):'')+'</td><td><span class="kd '+(KCLS[c.kind]||'')+'">'+esc(c.kind)+'</span></td><td>'+esc(c.role)+(catOf(c)?'<br><small>'+esc(catOf(c))+'</small>':'')+'</td><td>'+p.cases.length+'</td><td>'+day(p.last.ts)+'</td><td><span class="st s'+STEPS.indexOf(p.last.status)+'">'+esc(p.last.status)+'</span></td><td><button type="button" class="small-btn" data-go="'+esc(p.last.no)+'">案件を見る</button></td></tr>'}).join('')||'<tr><td colspan="8">該当する人はいません</td></tr>'}
+ $('rTree').innerHTML=T;$('rCount').textContent='表示中 '+RROWS.length+' 人'}
+document.querySelectorAll('[data-rs]').forEach(function(b){b.addEventListener('click',function(){RS=b.dataset.rs;RF={};document.querySelectorAll('[data-rs]').forEach(function(z){z.classList.toggle('on',z===b)});drawRoster()})});
+$('rTree').addEventListener('click',function(e){var b=e.target.closest('[data-f]');if(!b)return;RF=JSON.parse(b.dataset.f);drawRoster()});
+$('rQ').addEventListener('input',drawRoster);
+$('rBody').addEventListener('click',function(e){var b=e.target.closest('[data-go]');if(!b)return;goTab('inbox');['fKd','fRl','fCt','fPt'].forEach(function(i){$(i).value=''});$('fSt').value='all';$('fQ').value=b.dataset.go;OPEN[b.dataset.go]=true;drawIn();window.scrollTo(0,$('inbox').getBoundingClientRect().top+scrollY-120)});
+$('rCsv').addEventListener('click',function(){var H,R;if(RS==='member'){H=['お名前','会社','会員の種類','支払い','状態','登録日','メール','電話','紹介コード','契約番号'];R=RROWS.map(function(m){return[m.name,m.company,m.type,m.pay,m.status,day(m.date),m.email,m.tel,m.ref,m.id]})}else{H=['お名前','会社','メール','電話','種類','立場','分類','件数','最終受付','最新の状態','最新の受付番号'];R=RROWS.map(function(p){var c=cls(p.last);return[p.name,p.company,p.email,p.tel,c.kind,c.role,catOf(c),p.cases.length,day(p.last.ts),p.last.status,p.last.no]})}
+ var csv='﻿'+[H].concat(R).map(function(r){return r.map(function(v){v=String(v==null?'':v);return/[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(',')}).join('\r\n');
+ var u=URL.createObjectURL(new Blob([csv],{type:'text/csv'})),l=document.createElement('a');l.href=u;l.download=(RS==='member'?'会員名簿':'相談者名簿')+'_'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(l);l.click();setTimeout(function(){URL.revokeObjectURL(u);l.remove()},1500)});
 var started=false;function go(){if(started){list();inbox();return}started=true;start();inbox();var seen='';try{seen=localStorage.getItem('iryo-adm-tour')||''}catch(x){}if(!seen){var nb=document.createElement('p');nb.className='note';nb.id='tourNote';nb.innerHTML='はじめての方は、右上の<b>「はじめての方へ：操作の案内」</b>を押してください。画面の見方を順番にご案内します（約1分）。';$('todo').insertBefore(nb,$('todoList'));$('tourBtn').classList.add('flash')}}
 document.querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x===t)});document.querySelectorAll('[data-view]').forEach(function(v){v.hidden=v.dataset.view!==t.dataset.v})})});
 var IN=[],STEPS=['新規受付','内容確認中','振分け済み','提携先対応中','提案・見積り中','完了','見送り'],ROUTES={},H=36e5,SND=true,lastRed=-1;
@@ -183,7 +221,17 @@ function alerts(x){var a=[],now=Date.now();if(!open_(x))return a;
  if(x.status!=='新規受付'&&x.email){var lc=x.contacted?(now-new Date(x.contacted))/864e5:(now-new Date(x.ts))/864e5;if(lc>=7)a.push({lv:'yel',t:'お客様へ'+Math.floor(lc)+'日報告なし'})}
  if(!x.partner&&['振分け済み','提携先対応中','提案・見積り中'].indexOf(x.status)>=0)a.push({lv:'yel',t:'振分け先が未設定'});
  return a}
-function inbox(){api('admin.cases').then(function(r){IN=r.rows||[];ROUTES=r.routes||{};drawRoute();drawIn();todo()}).catch(function(e){$('errB').textContent=e.message})}
+var MK=['電話した','メールした','面談した','提携先へ紹介した','見積り・資料を送った','お客様の返事待ち','提携先の返事待ち','完了の連絡をした','その他'];
+var KCLS={'相談':'','会員登録':'k2','提携・協業':'k3','要望':'k4'},OPEN={},VM='list';try{VM=localStorage.getItem('iryo-vm')||'list'}catch(e){}
+function cls(x){if(x._c)return x._c;var lb=String(x.label||''),i=lb.indexOf('：'),t=i>=0?lb.slice(i+1):lb,p=t.split('／'),a=p[0]||'',b=p[1]||'',c={kind:'相談',role:'',big:'',path:[],sub:''};
+ if(a==='提携・協業の申し込み'){c.kind='提携・協業';c.sub=b}else if(a==='要望・ご意見'){c.kind='要望';c.sub=b}else if(a==='会員登録'){c.kind='会員登録';c.sub=b}else{c.role=a;c.big=(b&&b!=='相談')?b:''}
+ String(x.body||'').split('\n').forEach(function(l){var m=l.match(/^(相談の内容|分野) \d+：(.+)$/);if(m)c.path.push(m[2].trim())});
+ if(!c.big&&c.path[0])c.big=c.path[0].split(' ＞ ')[0];x._c=c;return c}
+function catOf(c){return c.kind==='相談'?c.big:(c.big||c.sub)}
+function tableHtml(rows){var now=Date.now();return'<div class="tbl"><table class="ctbl"><thead><tr><th>受付</th><th>種類</th><th>立場・分類</th><th>お名前・会社</th><th>状態</th><th>振分け先</th><th>注意</th></tr></thead><tbody>'+rows.map(function(x){var c=cls(x),si=STEPS.indexOf(x.status),op=OPEN[x.no];
+ return'<tr class="cr'+(x.status==='新規受付'?' new':'')+(op?' open':'')+'" data-row="'+esc(x.no)+'" title="押すと詳しい内容と操作が開きます"><td>'+dt(x.ts)+'<span class="sm">'+span(now-new Date(x.ts))+'前</span></td><td><span class="kd '+(KCLS[c.kind]||'')+'">'+esc(c.kind)+'</span>'+(c.sub?'<span class="sm">'+esc(c.sub)+'</span>':'')+'</td><td>'+esc(c.role)+(c.path.length?'<span class="sm">'+esc(c.path[0])+(c.path.length>1?'（ほか'+(c.path.length-1)+'件）':'')+'</span>':(c.big?'<span class="sm">'+esc(c.big)+'</span>':''))+'</td><td>'+esc(x.name||'（お名前なし）')+(x.company?'<span class="sm">'+esc(x.company)+'</span>':'')+'</td><td><span class="st s'+si+'">'+esc(x.status)+'</span></td><td>'+esc(x.partner||'―')+'</td><td>'+x._a.map(function(y){return'<span class="tg '+(y.lv==='red'?'red':'yel')+'">'+esc(y.t)+'</span>'}).join(' ')+'</td></tr>'+(op?'<tr class="cd"><td colspan="7">'+cardHtml(x)+'</td></tr>':'')}).join('')+'</tbody></table></div>'}
+function fillSel(id,o){var cur=$(id).value;$(id).innerHTML='<option value="">すべて</option>'+Object.keys(o).sort().map(function(k){return'<option value="'+esc(k)+'"'+(k===cur?' selected':'')+'>'+esc(k)+'（'+o[k]+'）</option>'}).join('')}
+function inbox(){api('admin.cases').then(function(r){IN=r.rows||[];ROUTES=r.routes||{};drawRoute();drawIn();todo();drawRoster()}).catch(function(e){$('errB').textContent=e.message})}
 function drawIn(){var st=$('fSt').value,pt=$('fPt').value,q=$('fQ').value.trim().toLowerCase();
  var red=0,nw=0;IN.forEach(function(x){x._a=alerts(x);if(x._a.some(function(y){return y.lv==='red'}))red++;if(x.status==='新規受付')nw++});
  $('newCnt').hidden=!nw;$('newCnt').textContent=nw;
@@ -192,9 +240,13 @@ function drawIn(){var st=$('fSt').value,pt=$('fPt').value,q=$('fQ').value.trim()
  var cnt={};STEPS.forEach(function(s){cnt[s]=0});IN.forEach(function(x){cnt[x.status]=(cnt[x.status]||0)+1});
  $('sum').innerHTML=STEPS.map(function(s){return'<button type="button" data-st="'+s+'"'+(s==='新規受付'&&cnt[s]?' class="red"':'')+'>'+s+'<b>'+cnt[s]+'</b></button>'}).join('');
  var pts={};IN.forEach(function(x){if(x.partner)pts[x.partner]=1});var cur=$('fPt').value;$('fPt').innerHTML='<option value="">すべて</option><option value="-"'+(cur==='-'?' selected':'')+'>振分け先なし</option>'+Object.keys(pts).sort().map(function(p){return'<option'+(p===cur?' selected':'')+'>'+esc(p)+'</option>'}).join('');
- var rows=IN.filter(function(x){if(st===''&&!open_(x))return false;if(st==='alert'&&!x._a.length)return false;if(st&&st!=='all'&&st!=='alert'&&x.status!==st)return false;if(pt==='-'&&x.partner)return false;if(pt&&pt!=='-'&&x.partner!==pt)return false;return!q||[x.no,x.name,x.company,x.email,x.body,x.label,x.fields,x.partner].join(' ').toLowerCase().indexOf(q)>=0});
+ var kinds={},roles={},cats={};IN.forEach(function(x){var c=cls(x),k=catOf(c);kinds[c.kind]=(kinds[c.kind]||0)+1;if(c.role)roles[c.role]=(roles[c.role]||0)+1;if(k)cats[k]=(cats[k]||0)+1});fillSel('fKd',kinds);fillSel('fRl',roles);fillSel('fCt',cats);
+ var kd=$('fKd').value,rl=$('fRl').value,ct=$('fCt').value;
+ var rows=IN.filter(function(x){var c=cls(x);if(kd&&c.kind!==kd)return false;if(rl&&c.role!==rl)return false;if(ct&&catOf(c)!==ct)return false;if(st===''&&!open_(x))return false;if(st==='alert'&&!x._a.length)return false;if(st&&st!=='all'&&st!=='alert'&&x.status!==st)return false;if(pt==='-'&&x.partner)return false;if(pt&&pt!=='-'&&x.partner!==pt)return false;return!q||[x.no,x.name,x.company,x.email,x.body,x.label,x.fields,x.partner].join(' ').toLowerCase().indexOf(q)>=0});
  if(!rows.length){$('inbox').innerHTML='<p class="hint">'+(IN.length?'条件に合う案件はありません':'まだ受付はありません')+'</p>';return}
- $('inbox').innerHTML=rows.map(function(x){var si=STEPS.indexOf(x.status),stop=x.status==='見送り',now=Date.now(),idle=now-new Date(x.updated||x.ts),id=Math.floor(idle/864e5);
+ $('inCount').textContent='表示中 '+rows.length+' 件（全 '+IN.length+' 件）';
+ $('inbox').innerHTML=VM==='card'?rows.map(cardHtml).join(''):tableHtml(rows)}
+function cardHtml(x){var si=STEPS.indexOf(x.status),stop=x.status==='見送り',now=Date.now(),idle=now-new Date(x.updated||x.ts),id=Math.floor(idle/864e5);
   var cls=x._a.some(function(y){return y.lv==='red'})||x.status==='新規受付'?'new':open_(x)?'doing':'done';
   var sug=[];(x.fields||'').split('、').forEach(function(f){(ROUTES[f]||'').split(/[、,]/).forEach(function(p){p=p.trim();if(p&&sug.indexOf(p)<0)sug.push(p)})});
   return'<div class="ib '+cls+'" data-no="'+esc(x.no)+'"><div class="ib-h"><b>'+(x.status==='新規受付'?'<span class="tg red">未対応</span> ':'')+esc(x.company?x.company+'　':'')+esc(x.name||'（お名前なし）')+'</b><span class="ib-m">'+esc(x.no)+'　受付 '+dt(x.ts)+'</span></div>'+
@@ -206,11 +258,14 @@ function drawIn(){var st=$('fSt').value,pt=$('fPt').value,q=$('fQ').value.trim()
   '<div class="grid2"><div><label>状態</label><select data-k="status">'+STEPS.map(function(s){return'<option'+(s===x.status?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div>'+
   '<div><label>振分け先'+(sug.length?'（候補：'+esc(sug.join('、'))+'）':'')+'</label><input type="text" data-k="partner" list="pl_'+esc(x.no)+'" value="'+esc(x.partner)+'" placeholder="提携企業・専門家"><datalist id="pl_'+esc(x.no)+'">'+sug.map(function(p){return'<option value="'+esc(p)+'">'}).join('')+'</datalist></div>'+
   '<div><label>担当</label><input type="text" data-k="staff" value="'+esc(x.staff)+'" placeholder="例：中嶋"></div><div><label>次の対応予定日</label><input type="date" data-k="next" value="'+esc(x.next)+'"></div></div>'+
-  '<div class="ib-a"><input type="text" data-k="memo" value="'+esc(x.memo)+'" placeholder="対応メモ（何をしたか・次に何をするか）"><button type="button" class="small-btn" data-save>保存</button><button type="button" class="small-btn" data-rep>お客様へ報告を作る</button><button type="button" class="small-btn" data-his>対応の履歴</button></div><div class="hist-box"></div></div>'}).join('')}
+  (x.memo?'<div class="ib-m" style="margin-top:8px">前回のメモ：'+esc(x.memo)+'</div>':'')+'<div class="ib-a"><span class="memo2"><select data-mk aria-label="対応の種類"><option value="">対応の種類を選ぶ</option>'+MK.map(function(k){return'<option>'+k+'</option>'}).join('')+'</select><input type="text" data-mt placeholder="対応メモ（何をしたか・次に何をするか）"></span><input type="hidden" data-k="memo" value="'+esc(x.memo)+'"><button type="button" class="small-btn" data-save>保存</button><button type="button" class="small-btn" data-rep>お客様へ報告を作る</button><button type="button" class="small-btn" data-his>対応の履歴</button></div><div class="hist-box"></div></div>'}
 $('sum').addEventListener('click',function(e){var b=e.target.closest('[data-st]');if(!b)return;var o=$('fSt');if(![].some.call(o.options,function(op){return op.value===b.dataset.st}))o.insertAdjacentHTML('beforeend','<option>'+b.dataset.st+'</option>');o.value=b.dataset.st;drawIn()});
-['fSt','fPt'].forEach(function(id){$(id).addEventListener('change',drawIn)});$('fQ').addEventListener('input',drawIn);$('reloadIn').addEventListener('click',inbox);
+['fSt','fPt','fKd','fRl','fCt'].forEach(function(id){$(id).addEventListener('change',drawIn)});
+document.querySelectorAll('[data-vm]').forEach(function(b){b.classList.toggle('on',b.dataset.vm===VM);b.addEventListener('click',function(){VM=b.dataset.vm;try{localStorage.setItem('iryo-vm',VM)}catch(e){}document.querySelectorAll('[data-vm]').forEach(function(z){z.classList.toggle('on',z===b)});drawIn()})});
+$('inbox').addEventListener('click',function(e){if(e.target.closest('.ib'))return;var tr=e.target.closest('tr.cr');if(!tr)return;OPEN[tr.dataset.row]=!OPEN[tr.dataset.row];drawIn()});$('fQ').addEventListener('input',drawIn);$('reloadIn').addEventListener('click',inbox);
 setInterval(function(){if(!$('panel').hidden)inbox()},300000);setInterval(function(){if(!$('panel').hidden&&IN.length)drawIn()},60000);
 function caseOf(no){return IN.filter(function(x){return x.no===no})[0]}
+document.body.classList.add('adm');
 /* ---- 今やること（データから自動で並べる） ---- */
 var KL=null;
 function goTab(v){var t=document.querySelector('.tab[data-v="'+v+'"]');if(t)t.click()}
@@ -255,7 +310,7 @@ function tour(i){i=i||0;var old=document.querySelector('.tour-ov');if(old)old.re
  ov.addEventListener('click',function(e){var b=e.target.closest('[data-t]');if(!b)return;var k=b.dataset.t;ov.remove();if(k==='n')tour(i+1);else if(k==='p')tour(i-1);else{try{localStorage.setItem('iryo-adm-tour','1')}catch(x){}}})}
 $('tourBtn').addEventListener('click',function(){var n=$('tourNote');if(n)n.remove();this.classList.remove('flash');tour(0)});
 $('inbox').addEventListener('click',function(e){var card=e.target.closest('.ib');if(!card)return;var no=card.dataset.no,x=caseOf(no),b;
- if((b=e.target.closest('[data-save]'))){var v={no:no};card.querySelectorAll('[data-k]').forEach(function(el){v[el.dataset.k]=String(el.value).trim()});
+ if((b=e.target.closest('[data-save]'))){var mk=card.querySelector('[data-mk]'),mt=card.querySelector('[data-mt]');if(mk&&(mk.value||mt.value.trim()))card.querySelector('[data-k="memo"]').value=(mk.value?'【'+mk.value+'】':'')+mt.value.trim();var v={no:no};card.querySelectorAll('[data-k]').forEach(function(el){v[el.dataset.k]=String(el.value).trim()});
   var changedSt=v.status!==x.status;b.disabled=true;b.textContent='保存中…';
   api('admin.caseSet',v).then(function(){Object.keys(v).forEach(function(k){x[k]=v[k]});x.updated=new Date().toISOString();b.textContent='保存しました';setTimeout(drawIn,600);if(changedSt&&v.status!=='新規受付')openRpt(x,v.status)})
   .catch(function(er){$('errB').textContent=er.message;b.disabled=false;b.textContent='保存'})}
