@@ -35,7 +35,7 @@
 | プロジェクト | 「医療介護総合支援会 電子契約・受付」（ikshienkai@gmail.com のApps Script） |
 | お客様用（全員） | https://script.google.com/macros/s/AKfycbznp_C6UEbTjF6rrYOs6cdVItyAaOtWtMZzl34-Ao5ZAfkMyzjS5GHWAQhsuR0BbV3z/exec |
 | 管理画面用（自分のみ） | https://script.google.com/macros/s/AKfycbwZUSCmvDZyNJfqeAUNcGGj3z6j2HxwIi8MpBLpqcBGjn_cIuZxU7BMs2ygwcx58hkH/exec?admin=1 |
-| 公開の版 | 両方ともバージョン24（2026/11/14・業務提携契約書の提携の条件を入力欄から作成、業務提携契約書 第3条2項の削除、提携先の地域選択、管理者と担当者のログイン分け、提携先登録フォーム、下書き→本契約の流れ、対応ログ、案件と電子契約の結びつけ、会員の契約書を3種類に分割、種別ごとの管理、会員施設の確認、提携先の登録と案件の送付） |
+| 公開の版 | 両方ともバージョン25（2026/11/14・自動メールを info@119cm.net から送信、業務提携契約書の提携の条件を入力欄から作成、業務提携契約書 第3条2項の削除、提携先の地域選択、管理者と担当者のログイン分け、提携先登録フォーム、下書き→本契約の流れ、対応ログ、案件と電子契約の結びつけ、会員の契約書を3種類に分割、種別ごとの管理、会員施設の確認、提携先の登録と案件の送付） |
 | 台帳 | ドライブ「医療介護総合支援会 電子契約（台帳）」：シート 契約／受付／振分け設定／対応履歴 |
 | 自動の確認 | alertCheck が1時間ごと（遅れている案件を NOTIFY_TO へメール） |
 | 自動の請求 | monthlyBilling が毎月1日9時ごろ：翌月分の請求書（適格請求書）を会員へ送信、期限10日（年間払いは更新前月のみ）。入会時は承認日から7日の期限で翌月分、入会月は無料。退会は管理画面「退会（請求を止める）」 |
@@ -64,3 +64,12 @@
 | Google Search Console に 119cm.net を登録 | 次に支援 |
 | LINE・アクセス解析 | 未定 |
 | 実際の会員の声（同意を得て）を「会員様の声」として追加 | 声が集まりしだい |
+
+
+## 自動メールの送信元（2026/11/14〜）
+- 自動メールは **info@119cm.net** から届く。Apps Script → `https://119cm.net/api/mail.php`（sites/119cm.net/api/mail.php）→ Xサーバーから送信。
+- 送信口は Google の本人確認（IDトークン）で ikshienkai@gmail.com からの依頼だけを受け付ける。合言葉はサーバーに置いていない。1日500通まで。
+- 送れなかったときは、従来どおり Gmail（ikshienkai@gmail.com）から送る。止めたいときは Apps Script のスクリプトプロパティ `MAIL_RELAY_OFF` を `1` にする。
+- info@119cm.net に届いたメールは ikshienkai@gmail.com へ転送（Xサーバーのメールアカウント設定。メールボックスにも残す）。
+- 確認：Apps Script で `checkSender` を実行すると、登録メールあてに試しのメールが届く。
+- Gmail の「独自ドメインを差出人にする機能」は2027年1月で終わるため、その方法は使っていない。
