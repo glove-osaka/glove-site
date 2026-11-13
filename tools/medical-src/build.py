@@ -491,7 +491,14 @@ def build_top():
 <a class="voice-cta" href="{{p}}kyoryoku/teikei.html" style="margin-top:22px">{emb("hands", True)}<span><b>提携・協業の申し込み</b><small>これらの支援を一緒に提供していただける事業者・専門家（士業・医師など）・協賛企業を募集しています。分野を選んでお申し込みください。</small></span><span class="go">申し込む ›</span></a>
 </div></section>
 
-<section class="sec"><div class="wrap">
+<section class="sec"><div class="wrap" style="max-width:900px">
+{sec_h("よくある質問", "はじめての方からよくいただくご質問")}
+{faq_html(FAQ[:2])}
+<p style="margin-top:20px"><a class="more" href="{{p}}faq/index.html">よくある質問をすべて見る</a></p>
+<div style="margin-top:34px">{SAFETY}</div>
+</div></section>
+
+<section class="sec band"><div class="wrap">
 {sec_h("相談の例", "それぞれの立場から、こんなご相談をお受けしています", "よくあるご相談をもとに作成した参考事例です。結果は状況により異なります。")}
 {top_voices()}
 </div></section>
@@ -506,13 +513,7 @@ def build_top():
 <ul class="news">{"".join(f'<li><time datetime="{dt}">{dt[:4]}年{int(dt[5:7])}月{int(dt[8:])}日</time>' + (('<a href="' + chr(123) + 'p' + chr(125) + u + '">' + t + '</a>') if u else ('<span>' + t + '</span>')) + '</li>' for dt, t, u in NEWS[:2])}</ul>
 </div></section>
 
-<section class="sec band"><div class="wrap" style="max-width:900px">
-{sec_h("よくある質問", "はじめての方からよくいただくご質問")}
-{faq_html(FAQ[:2])}
-<p style="margin-top:20px"><a class="more" href="{{p}}faq/index.html">よくある質問をすべて見る</a></p>
-<div style="margin-top:34px">{SAFETY}</div>
-</div></section>
-<section class="sec"><div class="wrap">{extra_doors("{p}")}</div></section></main>'''
+<section class="sec band"><div class="wrap">{extra_doors("{p}")}</div></section></main>'''
     ld = {"@context": "https://schema.org", "@type": "Organization", "name": SITE["name"], "url": SITE["base"],
           "logo": SITE["base"] + "assets/apple-touch-icon.png", "email": SITE["mail"], "areaServed": "大阪府・関西",
           "parentOrganization": {"@type": "Organization", "name": SITE["company"], "url": SITE["globe"],
