@@ -974,29 +974,44 @@ f.addEventListener('submit',function(e){e.preventDefault();if(sending||!check())
  .catch(function(){sending=false;b.disabled=false;b.textContent=C.btn;need('送信できませんでした。時間をおいてもう一度お試しいただくか、'+C.mail+' へメールでお送りください。')})});
 })();</script>"""
 
-AREA_JS = r"""<script>(function(){
-var T=__TAX__,box=document.getElementById('areas'),add=document.getElementById('addArea'),n=0;
+CASCADE_JS = r"""<script>(function(){
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function opts(list,ph){return '<option value="">'+ph+'</option>'+list.map(function(x){return '<option>'+esc(x)+'</option>'}).join('')}
-function row(){if(n>=5)return;n++;var i=n,d=document.createElement('div');d.className='area-row';d.dataset.i=i;
- d.innerHTML='<div class="area-h"><b>分野 '+i+'</b>'+(i>1?'<button type="button" class="small-btn" data-del>この分野を消す</button>':'')+'</div>'+
- '<div class="area-g"><div class="fld"><label for="a'+i+'a">大分類 <span class="req">必須</span></label><select id="a'+i+'a">'+opts(Object.keys(T),'選んでください')+'</select></div>'+
- '<div class="fld"><label for="a'+i+'b">中分類 <span class="req">必須</span></label><select id="a'+i+'b" disabled>'+opts([],'先に大分類を選んでください')+'</select></div>'+
- '<div class="fld"><label for="a'+i+'c">小分類 <span class="req">必須</span></label><select id="a'+i+'c" disabled>'+opts([],'先に中分類を選んでください')+'</select></div></div>'+
- '<div class="fld"><label for="a'+i+'d">詳細 <span class="req">必須</span></label><input type="text" id="a'+i+'d" maxlength="300" placeholder="例：介護施設向けの電気料金の見直し"></div>';
- box.appendChild(d);var A=d.querySelector('#a'+i+'a'),M=d.querySelector('#a'+i+'b'),S=d.querySelector('#a'+i+'c');
- A.onchange=function(){var m=T[A.value];M.innerHTML=opts(m?Object.keys(m):[],m?'選んでください':'先に大分類を選んでください');M.disabled=!m;S.innerHTML=opts([],'先に中分類を選んでください');S.disabled=true};
- M.onchange=function(){var s=T[A.value]&&T[A.value][M.value];S.innerHTML=opts(s||[],s?'選んでください':'先に中分類を選んでください');S.disabled=!s};
- var del=d.querySelector('[data-del]');if(del)del.onclick=function(){d.remove();renum()};
- add.hidden=n>=5}
-function renum(){var rs=box.querySelectorAll('.area-row');n=rs.length;rs.forEach(function(r,k){r.querySelector('.area-h b').textContent='分野 '+(k+1)});add.hidden=n>=5}
-add.onclick=function(){row();var l=box.lastElementChild;if(l){l.scrollIntoView({block:'center',behavior:'smooth'});l.querySelector('select').focus({preventScroll:true})}};
-row();
-function list(){return Array.prototype.map.call(box.querySelectorAll('.area-row'),function(r){var g=function(s){var e=r.querySelector('[id$="'+s+'"]');return e?String(e.value||'').trim():''};return{el:r,a:g('a'),b:g('b'),c:g('c'),d:g('d'),ids:['a','b','c','d'].map(function(s){return r.querySelector('[id$="'+s+'"]')})}})}
-window.areaCheck=function(){var L=list();for(var k=0;k<L.length;k++){var x=L[k],lab='分野 '+(k+1)+'の';if(!x.a)return[lab+'大分類を選んでください。',x.ids[0]];if(!x.b)return[lab+'中分類を選んでください。',x.ids[1]];if(!x.c)return[lab+'小分類を選んでください。',x.ids[2]];if(!x.d)return[lab+'詳細を書いてください。',x.ids[3]]}return null};
-window.areaRows=function(){return list().map(function(x,k){return['提携・協業の分野 '+(k+1),x.a+' ＞ '+x.b+' ＞ '+x.c+'\n　詳細：'+x.d]})};
-window.areaFields=function(){var o=[];list().forEach(function(x){if(x.a&&o.indexOf('提携：'+x.a)<0)o.push('提携：'+x.a)});return o};
+window.makeCascade=function(o){var T=o.tree,box=document.getElementById(o.box),add=document.getElementById(o.add),n=0,P=o.prefix,L=o.labels;
+ function row(){if(n>=o.max)return;n++;var i=n,d=document.createElement('div');d.className='area-row';
+  d.innerHTML='<div class="area-h"><b>'+o.title+' '+i+'</b>'+(i>1?'<button type="button" class="small-btn" data-del>この'+o.title+'を消す</button>':'')+'</div>'+
+  '<div class="area-g"><div class="fld"><label for="'+P+i+'a">'+L[0]+(i===1||o.allReq?' <span class="req">必須</span>':'')+'</label><select id="'+P+i+'a">'+opts(Object.keys(T),'選んでください')+'</select></div>'+
+  '<div class="fld"><label for="'+P+i+'b">'+L[1]+'</label><select id="'+P+i+'b" disabled>'+opts([],'先に'+L[0]+'を選んでください')+'</select></div>'+
+  '<div class="fld"><label for="'+P+i+'c">'+L[2]+'</label><select id="'+P+i+'c" disabled>'+opts([],'先に'+L[1]+'を選んでください')+'</select></div></div>'+
+  '<div class="fld"><label for="'+P+i+'d">'+L[3]+'（任意）</label><input type="text" id="'+P+i+'d" maxlength="300" placeholder="'+esc(o.ph)+'"></div>';
+  box.appendChild(d);var A=d.querySelector('#'+P+i+'a'),M=d.querySelector('#'+P+i+'b'),S=d.querySelector('#'+P+i+'c');
+  A.onchange=function(){var m=T[A.value];M.innerHTML=opts(m?Object.keys(m):[],m?'選んでください':'先に'+L[0]+'を選んでください');M.disabled=!m;S.innerHTML=opts([],'先に'+L[1]+'を選んでください');S.disabled=true;if(m&&Object.keys(m).length===1){M.selectedIndex=1;M.onchange()}};
+  M.onchange=function(){var s=T[A.value]&&T[A.value][M.value];S.innerHTML=opts(s||[],s?'選んでください':'先に'+L[1]+'を選んでください');S.disabled=!s;if(s&&s.length===1)S.selectedIndex=1};
+  var del=d.querySelector('[data-del]');if(del)del.onclick=function(){d.remove();renum()};add.hidden=n>=o.max}
+ function renum(){var rs=box.querySelectorAll('.area-row');n=rs.length;rs.forEach(function(r,k){r.querySelector('.area-h b').textContent=o.title+' '+(k+1)});add.hidden=n>=o.max}
+ add.onclick=function(){row();var l=box.lastElementChild;if(l){l.scrollIntoView({block:'center',behavior:'smooth'});l.querySelector('select').focus({preventScroll:true})}};row();
+ function list(){return Array.prototype.map.call(box.querySelectorAll('.area-row'),function(r){var g=function(s){var e=r.querySelector('[id^="'+P+'"][id$="'+s+'"]');return e?String(e.value||'').trim():''};return{a:g('a'),b:g('b'),c:g('c'),d:g('d'),ids:['a','b','c','d'].map(function(s){return r.querySelector('[id^="'+P+'"][id$="'+s+'"]')})}})}
+ return{check:function(){var Ls=list();for(var k=0;k<Ls.length;k++){var x=Ls[k],lab=o.title+' '+(k+1)+'の';if(!x.a&&k>0&&!x.d)continue;if(!x.a)return[lab+L[0]+'を選んでください。',x.ids[0]];if(!x.b)return[lab+L[1]+'を選んでください。',x.ids[1]];if(!x.c)return[lab+L[2]+'を選んでください。',x.ids[2]]}return null},
+  rows:function(){return list().filter(function(x){return x.a}).map(function(x,k){return[o.title+' '+(k+1),x.a+' ＞ '+x.b+' ＞ '+x.c+(x.d?'\n　'+L[3]+'：'+x.d:'')]})},
+  firsts:function(){var r=[];list().forEach(function(x){if(x.a&&r.indexOf(x.a)<0)r.push(x.a)});return r}}};
 })();</script>"""
+
+
+REGION_ORDER = [("近畿", ["大阪府", "兵庫県", "京都府", "奈良県", "滋賀県", "和歌山県", "三重県"]), ("北海道・東北", ["北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県"]), ("関東", ["茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県"]), ("中部", ["新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県", "静岡県", "愛知県"]), ("中国", ["鳥取県", "島根県", "岡山県", "広島県", "山口県"]), ("四国", ["徳島県", "香川県", "愛媛県", "高知県"]), ("九州・沖縄", ["福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"])]
+def zone_tree():
+    import re as _re
+    C = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "jp_cities.json"), encoding="utf-8"))
+    t = {}
+    for reg, prefs in REGION_ORDER:
+        t[reg] = {}
+        for p in prefs:
+            cs = C[p]; big = []
+            for c in cs:
+                m = _re.match(r"^(.+?市)(.+区)$", c)
+                if m and m.group(1) + "（全区）" not in big: big.append(m.group(1) + "（全区）")
+            t[reg][p] = ["全域"] + big + cs
+    t["全国"] = {"全国": ["全国（訪問・来訪とも）", "全国（オンライン・電話のみ）"]}
+    return t
 
 def build_teikei():
     kinds = [("提携企業として、会員へサービスを提供したい", "仕入れ・設備・ITなど、医療・介護の事業者向けのサービス"), ("専門家として協力したい", "弁護士・税理士・社会保険労務士・行政書士・医師など"), ("協賛会員として参加したい", "会員制度の協賛会員（審査があります）"), ("その他の協力", "共同での取り組み・情報提供など")]
@@ -1004,18 +1019,24 @@ def build_teikei():
     form = f'''<form class="form-card" id="sf" novalidate>
 <h2>提携・協業の申し込み</h2><p class="hint">分かる範囲でご記入ください。<span class="req">必須</span>の欄だけ入れれば送れます。</p>
 <fieldset class="fld" style="border:0;padding:0;margin:0 0 22px">{lg("申し込みの種類", True)}{radios("kind", kinds)}</fieldset>
-<fieldset class="fld" style="border:0;padding:0;margin:0 0 22px">{lg("提携・協業の分野", True)}<p class="hint">大分類 → 中分類 → 小分類の順に選び、詳細を書いてください。複数の分野がある場合は「分野を追加」で5つまで登録できます。</p><div id="areas"></div><button type="button" class="btn btn-o" id="addArea" style="margin-top:6px">＋ 分野を追加</button></fieldset>
+<fieldset class="fld" style="border:0;padding:0;margin:0 0 22px">{lg("提携・協業の分野", True)}<p class="hint">大分類 → 中分類 → 小分類の順に選びます。詳細は書かなくても送れます。複数ある場合は「分野を追加」で5つまで登録できます。</p><div id="areas"></div><button type="button" class="btn btn-o" id="addArea" style="margin-top:6px">＋ 分野を追加</button></fieldset>
 {fld("co", "事業者名・法人名", True, extra='autocomplete="organization"', ml=100)}
 {fld("nm", "ご担当者のお名前", True, extra='autocomplete="name"', ml=60)}
 {fld("ttl", "部署・役職", ml=60)}
 {fld("addr", "所在地", True, extra='autocomplete="street-address"', ml=120)}
-{fld("zone", "対応できる地域", ml=120)}
+<fieldset class="fld" style="border:0;padding:0;margin:0 0 22px">{lg("対応できる地域", True)}<p class="hint">地方 → 都道府県 → 市区町村の順に選びます。都道府県全体なら「全域」を選んでください。複数ある場合は「地域を追加」で10か所まで登録できます。</p><div id="zones"></div><button type="button" class="btn btn-o" id="addZone" style="margin-top:6px">＋ 地域を追加</button></fieldset>
 {fld("url", "ホームページ", typ="url", extra='inputmode="url"', ml=200)}
-{fld("svc", "提供できるサービス・協力の内容", True, "textarea", ml=1500)}
+{fld("svc", "提供できるサービス・協力の内容", False, "textarea", ml=1500)}
 {fld("perk", "会員向けの優待・条件（あれば）", False, "textarea", ml=800)}
 {fld("lic", "許認可・資格（あれば）", ml=200)}
 {fld("tel", "電話番号", True, "tel", 'autocomplete="tel" inputmode="tel"', 20)}
 {fld("mail", "メールアドレス", True, "email", 'autocomplete="email" inputmode="email"', 120)}
+<h3 style="font-size:1.15rem;margin:26px 0 8px">面談のご希望</h3><p class="hint">提携の前に、面談でお話をうかがいます。分かる範囲でご記入ください。</p>
+<fieldset class="fld" style="border:0;padding:0;margin:0 0 18px">{lg("面談の方法", False)}{radios("mtg", [("オンライン（ビデオ通話）", ""), ("当社へお越しいただく", "大阪市生野区"), ("貴社へうかがう", ""), ("電話", ""), ("どれでもよい", "")], False)}</fieldset>
+{fld("mtgNote", "面談の方法についての補足", ml=200)}
+<div class="area-g" style="margin-top:6px">{fld("d1", "第1希望日", typ="date")}{fld("d2", "第2希望日", typ="date")}{fld("d3", "第3希望日", typ="date")}</div>
+<div class="fld"><label for="tz">ご希望の時間帯</label><select id="tz"><option value="">選んでください</option><option>午前（10時〜12時）</option><option>午後（13時〜17時）</option><option>夕方（17時〜19時）</option><option>いつでもよい</option></select></div>
+{fld("dnote", "日程についての補足", ml=200)}
 <p class="note-box">お申し込みの内容を確認し、担当者からご連絡します。面談のうえで提携の可否を決めます。すべてのお申し込みにお応えできない場合があります。</p>
 {AGREE}{HP}
 <p class="err" id="serr" role="alert" hidden></p>
@@ -1023,16 +1044,23 @@ def build_teikei():
 </form><div id="sdone" hidden></div>'''
     body = ph("提携・協業の申し込み", "医療・介護に関わる方へのサービスを提供する事業者・専門家の方との提携・協業を募集しています。", [("提携・協業・要望", "kyoryoku/index.html"), ("提携・協業の申し込み", None)], "head-3.jpg", "hands") + f'<section class="sec"><div class="wrap" style="max-width:860px">{form}<p class="fine" style="margin-top:18px">ご要望・ご意見は<a href="youbou.html">要望の窓口</a>、困りごとのご相談は<a href="{{p}}contact/index.html">相談の受付</a>へ。</p></div></section>'
     cfg = {"endpoint": SITE["endpoint"], "site": SITE["name"], "mail": SITE["mail"], "title": "提携・協業の申し込み", "prefix": "IKT", "field": "提携・協業の申し込み", "kindName": "kind", "noName": "", "btn": "この内容で申し込む",
-           "reqRadio": [["kind", "申し込みの種類"]], "customCheck": "areaCheck", "customRows": "areaRows", "customFields": "areaFields", "reqText": [["co", "事業者名・法人名"], ["nm", "ご担当者のお名前"], ["addr", "所在地"], ["svc", "提供できるサービス・協力の内容"], ["tel", "電話番号"], ["mail", "メールアドレス"]],
-           "rows": [["申し込みの種類", "kind", "radio"], ["事業者名・法人名", "co"], ["ご担当者", "nm"], ["部署・役職", "ttl"], ["所在地", "addr"], ["対応できる地域", "zone"], ["ホームページ", "url"], ["提供できるサービス・協力の内容", "svc"], ["会員向けの優待・条件", "perk"], ["許認可・資格", "lic"], ["電話", "tel"], ["メール", "mail"]],
+           "reqRadio": [["kind", "申し込みの種類"]], "customCheck": "teikeiCheck", "customRows": "teikeiRows", "customFields": "teikeiFields", "reqText": [["co", "事業者名・法人名"], ["nm", "ご担当者のお名前"], ["addr", "所在地"], ["tel", "電話番号"], ["mail", "メールアドレス"]],
+           "rows": [["申し込みの種類", "kind", "radio"], ["事業者名・法人名", "co"], ["ご担当者", "nm"], ["部署・役職", "ttl"], ["所在地", "addr"], ["ホームページ", "url"], ["提供できるサービス・協力の内容", "svc"], ["会員向けの優待・条件", "perk"], ["許認可・資格", "lic"], ["電話", "tel"], ["メール", "mail"], ["面談の方法", "mtg", "radio"], ["面談の補足", "mtgNote"], ["第1希望日", "d1"], ["第2希望日", "d2"], ["第3希望日", "d3"], ["希望の時間帯", "tz"], ["日程の補足", "dnote"]],
            "doneMail": "内容を確認し、担当者からご連絡します（原則5営業日以内）。", "doneNoMail": "内容を確認し、担当者からご連絡します。"}
-    help_ = {"co": {"t": "事業者名・法人名を、正式な名前で入れます。", "ex": "例：株式会社○○", "req": True}, "nm": {"t": "ご担当者のお名前です。", "ex": "例：山田 太郎", "req": True}, "addr": {"t": "所在地を都道府県から入れます。", "ex": "例：大阪府大阪市○○区○○1-2-3", "req": True}, "zone": {"t": "サービスを提供できる地域です。", "ex": "例：大阪府全域、関西一円、全国（オンライン）"}, "url": {"t": "ホームページがあれば入れます。", "ex": "例：https://example.jp"}, "svc": {"t": "会員に提供できるサービスや、協力できることを書きます。", "ex": "例：介護施設向けの電気料金の見直し。現状の請求書から削減額を無料で試算します", "req": True}, "perk": {"t": "会員だけの割引や特典があれば書きます。", "ex": "例：初年度の基本料金10%引き"}, "lic": {"t": "業務に必要な許認可・資格があれば書きます。", "ex": "例：社会保険労務士登録 第○○号"}, "tel": {"t": "日中につながる電話番号です。", "ex": "例：06-1234-5678", "req": True}, "mail": {"t": "担当者からの連絡を受け取るメールアドレスです。", "ex": "例：info@example.jp", "req": True}}
-    for n in range(1, 6):
-        help_[f"a{n}a"] = {"t": "大分類を選びます。いちばん近いものを選んでください。", "req": True}
-        help_[f"a{n}b"] = {"t": "中分類を選びます（大分類を選ぶと出てきます）。", "req": True}
-        help_[f"a{n}c"] = {"t": "小分類を選びます（中分類を選ぶと出てきます）。", "req": True}
-        help_[f"a{n}d"] = {"t": "この分野で提供できることを、具体的に書きます。", "ex": "例：介護施設向けの電気料金の見直し。請求書から削減額を無料で試算します", "req": True}
-    js = "<script>window.FORM_HELP=" + json.dumps(help_, ensure_ascii=False) + ";window.FORM_GROUPS=[{name:'kind',label:'申し込みの種類'}];window.FORM_CHECKS=['agree'];window.FORM_SCOPE='#sf';window.FORM_SUBMIT='#ssend';window.FORM_DONE_LABEL='申し込むボタンへ ›';</script>" + AREA_JS.replace("__TAX__", json.dumps(PARTNER_TAX, ensure_ascii=False)) + SIMPLE_JS.replace("__CFG__", json.dumps(cfg, ensure_ascii=False))
+    help_ = {"co": {"t": "事業者名・法人名を、正式な名前で入れます。", "ex": "例：株式会社○○", "req": True}, "nm": {"t": "ご担当者のお名前です。", "ex": "例：山田 太郎", "req": True}, "addr": {"t": "所在地を都道府県から入れます。", "ex": "例：大阪府大阪市○○区○○1-2-3", "req": True}, "url": {"t": "ホームページがあれば入れます。", "ex": "例：https://example.jp"}, "svc": {"t": "会員に提供できるサービスや、協力できることを書きます（空のままでも送れます）。", "ex": "例：介護施設向けの電気料金の見直し。現状の請求書から削減額を無料で試算します", "req": False}, "perk": {"t": "会員だけの割引や特典があれば書きます。", "ex": "例：初年度の基本料金10%引き"}, "lic": {"t": "業務に必要な許認可・資格があれば書きます。", "ex": "例：社会保険労務士登録 第○○号"}, "tel": {"t": "日中につながる電話番号です。", "ex": "例：06-1234-5678", "req": True}, "mail": {"t": "担当者からの連絡を受け取るメールアドレスです。", "ex": "例：info@example.jp", "req": True}}
+    for n in range(1, 11):
+        r1 = n == 1
+        if n <= 5:
+            help_[f"a{n}a"] = {"t": "大分類を選びます。いちばん近いものを選んでください。", "req": r1}
+            help_[f"a{n}b"] = {"t": "中分類を選びます（大分類を選ぶと出てきます）。", "req": r1}
+            help_[f"a{n}c"] = {"t": "小分類を選びます（中分類を選ぶと出てきます）。", "req": r1}
+            help_[f"a{n}d"] = {"t": "この分野で提供できることを書きます（空のままでも送れます）。", "ex": "例：介護施設向けの電気料金の見直し。請求書から削減額を無料で試算します", "req": False}
+        help_[f"z{n}a"] = {"t": "地方を選びます。全国に対応できる場合は「全国」を選んでください。", "req": r1}
+        help_[f"z{n}b"] = {"t": "都道府県を選びます（地方を選ぶと出てきます）。", "req": r1}
+        help_[f"z{n}c"] = {"t": "市区町村を選びます。都道府県全体なら「全域」を選びます。", "req": r1}
+        help_[f"z{n}d"] = {"t": "対応の条件などがあれば書きます（空のままでも送れます）。", "ex": "例：訪問は市内のみ、オンラインは全国"}
+    help_.update({"mtgNote": {"t": "面談の方法について伝えたいことがあれば書きます。", "ex": "例：ビデオ通話はZoomを使えます"}, "d1": {"t": "面談を希望する日を選びます（空のままでも送れます）。"}, "d2": {"t": "ほかに都合のよい日があれば選びます。"}, "d3": {"t": "ほかに都合のよい日があれば選びます。"}, "dnote": {"t": "日程について伝えたいことがあれば書きます。", "ex": "例：平日の午後ならいつでも可"}})
+    js = "<script>window.FORM_HELP=" + json.dumps(help_, ensure_ascii=False) + ";window.FORM_GROUPS=[{name:'kind',label:'申し込みの種類'}];window.FORM_CHECKS=['agree'];window.FORM_SCOPE='#sf';window.FORM_SUBMIT='#ssend';window.FORM_DONE_LABEL='申し込むボタンへ ›';</script>" + CASCADE_JS + "<script>(function(){var A=makeCascade({tree:" + json.dumps(PARTNER_TAX, ensure_ascii=False) + ",box:'areas',add:'addArea',prefix:'a',title:'分野',max:5,labels:['大分類','中分類','小分類','詳細'],ph:'例：介護施設向けの電気料金の見直し'}),Z=makeCascade({tree:" + json.dumps(zone_tree(), ensure_ascii=False) + ",box:'zones',add:'addZone',prefix:'z',title:'地域',max:10,labels:['地方','都道府県','市区町村','詳細'],ph:'例：訪問は市内のみ、オンラインは全国'});window.teikeiCheck=function(){return A.check()||Z.check()};window.teikeiRows=function(){return A.rows().concat(Z.rows())};window.teikeiFields=function(){return A.firsts().map(function(x){return '提携：'+x})};var d=new Date();d.setDate(d.getDate()+1);var mn=d.toISOString().slice(0,10);['d1','d2','d3'].forEach(function(i){var e=document.getElementById(i);if(e)e.min=mn})})();</script>" + SIMPLE_JS.replace("__CFG__", json.dumps(cfg, ensure_ascii=False))
     page("kyoryoku/teikei.html", "提携・協業の申し込み", "医療介護総合支援会への提携・協業の申し込みフォームです。医療・介護に関わる方へのサービスを提供する事業者、弁護士・税理士・社会保険労務士・行政書士などの専門家の方の協力を募集しています。", "<main id=\"main\">" + body + "</main>", cur="", extra_js=js)
 
 def build_youbou():
