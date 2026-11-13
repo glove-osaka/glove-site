@@ -329,9 +329,27 @@ function payMail_(o) {
     "■お振込みの名義：ご依頼人名の前に、番号「" + kana + "」を入れてください（例：" + kana + " " + (o.party_company || o.party_name) + "）\n" +
     "■振込手数料：恐れ入りますが、ご負担をお願いします。\n\n" +
     (c.pay === "month" ? "2か月目からは、毎月末日までに翌月分（" + yen(c.monthly) + "）をお振込みください。\n" : "") +
-    "入金を確認しましたら、会員登録完了のお知らせをお送りします。\n\n契約番号：" + o.id + "\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）\n" + P("NOTIFY_TO");
+    "入金を確認しましたら、会員登録完了のお知らせをお送りします。\n\n契約番号：" + o.id + "\n\n" + invoiceText_(o, c, who) + "\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）\n" + P("NOTIFY_TO");
   MailApp.sendEmail({ to: o.party_email, bcc: P("NOTIFY_TO"), name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】会費のお振込みのご案内（" + yen(c.first) + "・" + c.dueText + "まで）", body: body });
   log_(o, "振込のご案内を送信"); save_(o);
+}
+/* 適格請求書（メール本文に載せる） */
+function invoiceText_(o, c, who) {
+  var amt = Number(c.first) || 0, tax = Math.floor(amt * 10 / 110), d = Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy年M月d日");
+  var kind = (MEMBER_LABEL[c.type] || "会員") + "　会費" + (c.pay === "year" ? "（年間払い：" + c.startText.replace(/\d+日$/, "") + "からの12か月分）" : "（月払い：" + c.startText.replace(/\d+日$/, "") + "分）");
+  return "━━━━━━ ご請求書（適格請求書） ━━━━━━\n" +
+    "宛名：" + who + "\n" +
+    "発行日：" + d + "\n" +
+    "請求番号：" + o.id + "-01\n" +
+    "内容：" + ISSUER.service + "　" + kind + "\n" +
+    "ご請求額（税込）：" + yen(amt) + "\n" +
+    "　10％対象：" + yen(amt) + "（うち消費税 " + yen(tax) + "）\n" +
+    "お支払期限：" + c.dueText + "\n" +
+    "発行者：" + ISSUER.name + "（" + ISSUER.service + "）\n" +
+    "　" + ISSUER.addr + "\n" +
+    "登録番号：" + ISSUER.invoice + "\n" +
+    "━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+    "このメールが請求書を兼ねます。保存しておいてください。";
 }
 /* 入金を確認したら、会員登録完了のお知らせを送る */
 function paid_(o) {

@@ -17,6 +17,7 @@ SITE = dict(
     area="大阪府を中心に、関西全域",
     reply="受付後、原則として3営業日以内にメールでご返信します（土日祝・年末年始を除く）。",
     fee="ご相談の受付と、内容の整理に費用はかかりません。費用がかかる支援は、正式なお申し込みの前に内容と金額をご説明し、同意をいただいてから進めます。",
+    invoice="T1120001257469",
     kobutsu="古物商許可 大阪府公安委員会 第62102R050377号",
     globe="https://glove-osaka.github.io/glove-site/",
     iejimai="https://glove-osaka.github.io/glove-site/iejimai/",

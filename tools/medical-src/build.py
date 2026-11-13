@@ -292,7 +292,7 @@ def footer(p):
 <div><a class="brand" href="{p}index.html">{ic("plus", "ic brand-mark")}<span><b>{SITE["name"]}</b><small>みんなで使い、みんなで育てる</small></span></a>
 <div class="co"><span>運営会社　{SITE["company"]}</span><span>{SITE["addr"]}</span><span>メール　{SITE["mail"]}</span><span>対応地域　{SITE["area"]}</span></div></div>
 <details class="fcol" open><summary><h4>支援会について</h4></summary><ul>
-<li><a href="{p}about/index.html">支援会とは</a></li><li><a href="{p}status/index.html">提供状況</a></li><li><a href="{p}member/index.html">会員制度</a></li><li><a href="{p}flow/index.html">相談の流れ・費用</a></li><li><a href="{p}faq/index.html">よくある質問</a></li><li><a href="{p}kyoryoku/index.html">協力・提携・要望</a></li><li><a href="{p}soudan/index.html">緊急時・公的な相談窓口</a></li><li><a href="{p}company/index.html">運営会社</a></li><li><a href="{p}contact/index.html">相談・要望を送る</a></li><li><a href="{p}privacy/index.html">個人情報の取り扱い</a></li><li><a href="{p}terms/index.html">利用規約・免責事項</a></li></ul></details>
+<li><a href="{p}about/index.html">支援会とは</a></li><li><a href="{p}status/index.html">提供状況</a></li><li><a href="{p}member/index.html">会員制度</a></li><li><a href="{p}flow/index.html">相談の流れ・費用</a></li><li><a href="{p}faq/index.html">よくある質問</a></li><li><a href="{p}kyoryoku/index.html">協力・提携・要望</a></li><li><a href="{p}soudan/index.html">緊急時・公的な相談窓口</a></li><li><a href="{p}company/index.html">運営会社</a></li><li><a href="{p}contact/index.html">相談・要望を送る</a></li><li><a href="{p}privacy/index.html">個人情報の取り扱い</a></li><li><a href="{p}terms/index.html">利用規約・免責事項</a></li><li><a href="{p}member/tokushoho.html">特定商取引法に基づく表記</a></li></ul></details>
 <details class="fcol" open><summary><h4>立場から選ぶ</h4></summary><ul>{"".join(f'<li><a href="{p}roles/{r["id"]}.html">{r["name"]}</a></li>' for r in ROLES)}<li><a href="{p}roles/index.html">4つの立場の一覧</a></li></ul></details>
 <details class="fcol" open><summary><h4>支援メニュー</h4></summary><ul>{"".join(f'<li><a href="{p}support/index.html#{c["id"]}">{c["name"]}</a></li>' for c in CATS)}<li><a href="{p}support/index.html">すべての支援メニュー</a></li></ul>
 <h4 style="margin-top:22px">関連する窓口</h4><ul><li><a href="{SITE["iejimai"]}">家じまい相談窓口</a></li><li><a href="{SITE["kigyo"]}">企業支援 総合相談窓口</a></li><li><a href="{SITE["globe"]}">株式会社グローブ</a></li></ul></details>
@@ -687,7 +687,7 @@ def build_member():
 <tr><th>創設会員</th><td>事業所・法人の会員が100社に達するまでに入会された方です（個人会員は数に含みません）。</td></tr>
 <tr><th>ご紹介の特典</th><td>創設会員の募集期間中に、ご紹介で事業所・法人が3社入会された会員の方は、会費が1年分無料になります。</td></tr>
 </tbody></table></div>
-<p class="fine" style="margin-top:12px">振込先は、電子契約で承認したあとにメールで自動でお知らせします。会員規約の全文は<a href="kiyaku.html">会員規約のページ</a>で、申込みの前にお読みいただけます。</p>
+<p class="fine" style="margin-top:12px">振込先は、電子契約で承認したあとにメールで自動でお知らせします。会員規約の全文は<a href="kiyaku.html">会員規約のページ</a>で、販売条件は<a href="tokushoho.html">特定商取引法に基づく表記</a>で、申込みの前にお読みいただけます。</p>
 </div></section>
 <section class="sec" id="shokai"><div class="wrap" style="max-width:1000px">
 {sec_h("紹介料の仕組み", "個人会員（営業協力者）への紹介料")}
@@ -805,7 +805,7 @@ def build_apply():
 <div class="fld"><label for="ref">紹介者（紹介コード、またはお名前・任意）</label><p class="hint" style="margin:0 0 6px">紹介を受けた方は、個人会員からもらった紹介コード（例：SK-7KQ2M）を書いてください。</p><input id="ref" type="text" maxlength="60"></div>
 <div class="fld"><label for="note">連絡事項（任意）</label><textarea id="note" maxlength="500" style="min-height:96px"></textarea></div>
 <p class="fine" data-for="kojin" hidden>個人会員の方は、紹介料のお支払いのため、電子契約で本人確認書類の撮影と振込口座の登録をお願いします。</p>
-<div class="note-box" style="margin-top:8px"><b>ご契約の要点</b>（事業所・法人・協賛会員）：契約期間は1年（月払いも同じ）で自動更新／解約は更新の1か月前まで／月払いの途中解約は残りの月数分をお支払い／年間払いの途中解約は返金なし（入会から3か月で効果が出なかった場合を除く）／前払い・銀行振込・振込手数料はご負担。詳しくは<a href="index.html">会員制度のページ</a>と<a href="kiyaku.html" target="_blank" rel="noopener">会員規約の全文</a>（別の画面で開きます）をご覧ください。</div>
+<div class="note-box" style="margin-top:8px"><b>ご契約の要点</b>（事業所・法人・協賛会員）：契約期間は1年（月払いも同じ）で自動更新／解約は更新の1か月前まで／月払いの途中解約は残りの月数分をお支払い／年間払いの途中解約は返金なし（入会から3か月で効果が出なかった場合を除く）／前払い・銀行振込・振込手数料はご負担。詳しくは<a href="index.html">会員制度のページ</a>、<a href="kiyaku.html" target="_blank" rel="noopener">会員規約の全文</a>、<a href="tokushoho.html" target="_blank" rel="noopener">特定商取引法に基づく表記</a>（いずれも別の画面で開きます）をご覧ください。</div>
 <label class="agree" for="agree" style="margin-top:16px"><input type="checkbox" id="agree"><span>上の要点と<a href="{{p}}privacy/index.html" target="_blank" rel="noopener">個人情報の取り扱い</a>（別の画面で開きます）を確認し、同意します。</span></label>
 <div class="hp" aria-hidden="true" style="position:absolute;left:-9999px"><label for="hpf">この欄は空のままにしてください</label><input id="hpf" type="text" tabindex="-1" autocomplete="off"></div>
 <p class="warn-inline" id="aerr" role="alert" hidden></p>
@@ -838,6 +838,33 @@ def build_kiyaku():
 <div class="btns" style="margin-top:28px"><a class="btn btn-g" href="apply.html">{ic("users")}会員登録を申し込む</a><a class="btn btn-o" href="index.html">会員制度のページへ戻る</a></div>
 </div></section>'''
     page("member/kiyaku.html", "会員規約", "医療介護総合支援会の会員規約（事業所・法人・協賛会員）と個人会員（営業協力者）規約の全文です。会費、支払い、契約期間と更新、解約、効果が出なかった場合の途中解約などを定めています。", "<main id=\"main\">" + body + "</main>", cur="")
+
+# ---------- 特定商取引法に基づく表記 ----------
+def build_tokushoho():
+    S = SITE
+    rows = [
+        ("販売事業者", S["company"]),
+        ("運営責任者", "代表取締役　" + S["rep"]),
+        ("所在地", S["zip"] + " " + S["addr"]),
+        ("電話番号", S["tel"] + "（受付時間 " + S["tel_hours"] + "）<br><span class=\"fine\">お問い合わせは、メールまたはウェブ受付でも承ります。</span>"),
+        ("メールアドレス", S["mail"]),
+        ("適格請求書発行事業者 登録番号", S["invoice"]),
+        ("サービスの名称", S["name"] + "の会員制度"),
+        ("販売価格（会費・税込）", "事業所会員：月額5,500円（職員5名まで。6人目から1名につき月500円）<br>法人会員：1か所目月額5,500円、2か所目から1か所につき月額5,000円（いずれも職員5名まで。超える職員1名につき月500円）<br>協賛会員：月額33,000円<br>個人会員（営業協力者）：無料<br>年間払いは、いずれも月額の10か月分で12か月ご利用いただけます。"),
+        ("会費以外に必要な料金", "会費の振込手数料（会員のご負担）。入会金は、創設会員（事業所・法人の会員が100社に達するまでに入会された方）は免除します。"),
+        ("お支払い方法", "銀行振込（前払い）。振込先は、電子契約で承認したあとにメールでお知らせします。"),
+        ("お支払いの時期", "会費は入会の翌月1日から発生します。<br>月払い：入会した月の末日までに翌月分、以後は毎月末日までに翌月分<br>年間払い：12か月分を、その12か月が始まる月の前月末日まで"),
+        ("サービスの提供時期", "入金を確認しだい、会員登録の完了をメールでお知らせし、会員向けの支援をご利用いただけます。"),
+        ("お申し込みの方法", "このサイトの会員登録のページから申し込み、電子契約で会員規約を確認して押印・承認していただきます。承認した時点で契約が成立します。"),
+        ("契約期間・更新", "1年（月払いも同じ）。期間が終わる1か月前までに申し出がない場合、同じ条件で1年ごとに自動で更新します。"),
+        ("解約・返金", "解約は、契約期間が終わる1か月前までにお申し出ください。期間の途中で解約する場合、月払いは残りの月数分の会費をお支払いいただき、年間払いはお支払いいただいた会費を返金しません。ただし、入会から3か月の時点で、支援会がご提案する経費の削減などを実施しても会費を上回る効果が出なかった場合は、残りの会費のお支払いなく解約できます（詳しくは会員規約）。"),
+        ("動作環境", "電子契約は、パソコン・スマートフォンの一般的なブラウザ（最新の版）でご利用いただけます。メールで認証コードを受け取れる必要があります。"),
+    ]
+    trs = "".join(f"<tr><th>{a}</th><td>{b}</td></tr>" for a, b in rows)
+    body = ph("特定商取引法に基づく表記", "会員制度の販売条件です。", [("会員制度", "member/index.html"), ("特定商取引法に基づく表記", None)], "head-2.jpg", "doc") + f'''
+<section class="sec"><div class="wrap" style="max-width:960px"><div class="tbl-wrap"><table class="info"><tbody>{trs}</tbody></table></div>
+<p class="fine" style="margin-top:14px">会員規約の全文は<a href="kiyaku.html">会員規約のページ</a>をご覧ください。</p></div></section>'''
+    page("member/tokushoho.html", "特定商取引法に基づく表記", "医療介護総合支援会の会員制度の特定商取引法に基づく表記です。販売事業者、所在地、連絡先、会費、支払い方法と時期、提供時期、契約期間、解約と返金について記載しています。", "<main id=\"main\">" + body + "</main>", cur="")
 
 # ---------- 流れ・費用 ----------
 def build_flow():
@@ -991,6 +1018,7 @@ def build_company():
 <tr><th>設立</th><td>{SITE["founded"]}</td></tr>
 <tr><th>所在地</th><td>{SITE["zip"]} {SITE["addr"]}</td></tr>
 <tr><th>許認可</th><td>{SITE["kobutsu"]}</td></tr>
+<tr><th>適格請求書発行事業者 登録番号</th><td>{SITE["invoice"]}</td></tr>
 <tr><th>支援会へのお問い合わせ</th><td>ウェブ受付（<a href="{{p}}contact/index.html">相談・要望を送る</a>）<br>メール　{SITE["mail"]}</td></tr>
 <tr><th>運営会社のお電話</th><td>{SITE["tel"]}（受付時間 {SITE["tel_hours"]}）<br><span class="fine">支援会の電話相談は準備中です。お電話では受付方法のご案内などを承ります。</span></td></tr>
 <tr><th>対応地域</th><td>{SITE["area"]}</td></tr>
@@ -1162,7 +1190,7 @@ if __name__ == "__main__":
         if d != "assets":
             pth = os.path.join(OUT, d)
             shutil.rmtree(pth) if os.path.isdir(pth) else os.remove(pth)
-    build_top(); build_about(); build_roles(); build_support(); build_status(); build_member(); build_kiyaku(); build_apply(); build_flow(); build_faq()
+    build_top(); build_about(); build_roles(); build_support(); build_status(); build_member(); build_kiyaku(); build_tokushoho(); build_apply(); build_flow(); build_faq()
     build_kyoryoku(); build_soudan(); build_company(); build_legal(); build_contact(); build_404(); build_sitemap()
     # Xサーバー用：404ページの住所の基準、.htaccess、robots.txt
     _p404 = os.path.join(OUT, "404.html")

@@ -1,5 +1,5 @@
 /* ---- 共通：項目・ひな形・会費の計算・文面の組み立て（サイトのお試し表示と Apps Script で同じものを使う） ---- */
-var ISSUER = { name: "株式会社グローブ", service: "医療介護総合支援会", rep: "代表取締役 藤原 重郎", addr: "〒544-0033 大阪府大阪市生野区勝山南2-2-7", tel: "0120-933-496", hours: "10:00〜19:00" };
+var ISSUER = { name: "株式会社グローブ", service: "医療介護総合支援会", rep: "代表取締役 藤原 重郎", addr: "〒544-0033 大阪府大阪市生野区勝山南2-2-7", tel: "0120-933-496", hours: "10:00〜19:00", invoice: "T1120001257469" };
 var FIELDS = {
   company: { label: "事業所名・法人名", type: "text", ac: "organization" },
   address: { label: "所在地・ご住所", type: "text", ac: "street-address" },
