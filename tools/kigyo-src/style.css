@@ -836,3 +836,6 @@ a.replay:hover,a.replay:focus-visible{color:#fff;border-color:rgba(255,255,255,.
 body.adm-on{overflow:hidden}
 .op-lock .adm-ov{display:none}
 @media (min-width:1100px){.nav-op{display:none!important}}
+
+.hj-box{margin-bottom:16px}
+.hj-box .btn{width:100%}

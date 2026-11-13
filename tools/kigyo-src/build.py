@@ -86,6 +86,11 @@ CTA = ('<section class="cta-band"><div class="wrap"><div><h2>会社の困りご�
        f'<div class="btns"><a class="btn btn-g" href="#contact">{ic("pen")}相談内容をまとめる</a>'
        f'<a class="btn btn-w" href="#diagnosis">{ic("quiz")}4つの質問で整理する</a></div></div></section>')
 
+HJ = ('<div class="box hj-box"><b>使える制度を調べる</b><p>会社の情報を入れると、補助金・助成金の対象となる可能性を、理由と根拠付きで判定します（無料）。</p>'
+      f'<a class="btn btn-w" href="hojokin/">{ic("yen")}公的支援マッチで調べる</a></div>')
+
+HJP = f'<div class="prep" style="margin-top:24px">{ic("yen")}<p>どの制度が使えそうか先に知りたいときは、<a href="hojokin/">公的支援マッチ</a>で会社の情報を入れると、対象となる可能性を理由付きで判定します（無料）。</p></div>'
+
 # ---------- トップ ----------
 def hero_art():
     nodes = [("行政書士",160,48),("税理士",276,92),("社労士",300,206),("司法書士",232,300),("弁護士",100,300),("弁理士",30,206),("診断士",50,92)]
@@ -119,6 +124,7 @@ def top():
 <div class="doors">
 <a class="door" href="#diagnosis">{emb("quiz")}<div><h3>4つの質問で整理する</h3><p>分野が分からないときは、4つの質問に答えるだけで、相談先の目安が分かります。</p></div><span class="arr" aria-hidden="true">›</span></a>
 <a class="door" href="#contact">{emb("pen")}<div><h3>相談内容をまとめる</h3><p>分野を選び、状況を入力していくと、窓口に伝える内容がまとまります。</p></div><span class="arr" aria-hidden="true">›</span></a>
+<a class="door" href="hojokin/">{emb("yen")}<div><h3>使える補助金・助成金を調べる</h3><p>会社の情報を入れると、国・大阪府・大阪市などの制度の対象となる可能性を、理由付きで判定します（無料）。</p></div><span class="arr" aria-hidden="true">›</span></a>
 </div></div></div></section>
 <section class="sec band" id="t-scenes"><div class="wrap">
 <div class="scene"><div class="scene-l"><div class="sec-h"><span class="eyebrow">困りごとから探す</span><h2>よくある相談場面</h2><p>近い場面を選ぶと、だれが、どの順番で進めるかが分かります。</p></div>
@@ -239,7 +245,7 @@ def svc(i, c):
 {rel}</div>
 <nav class="pn" aria-label="前後の分野"><a href="#svc-{prv["id"]}"><small>‹ 前の分野</small><b>{E(prv["name"])}</b></a><a class="nx" href="#svc-{nxt["id"]}"><small>次の分野 ›</small><b>{E(nxt["name"])}</b></a></nav>
 </div><aside class="side">{fold("ほかの分野を見る", f'<nav aria-label="分野の一覧"><ul>{side}</ul></nav>', "list", "13分野", "sidef", desk=True)}
-<div class="box"><b>この分野で相談する</b><p>分野を選んだ状態で、相談内容のまとめに進みます。</p><a class="btn btn-g" href="#contact" data-cat="{c["id"]}">{ic("pen")}相談内容をまとめる</a></div></aside></div></section>{CTA}'''
+{HJ if c["id"] in ("subsidy","finance") else ""}<div class="box"><b>この分野で相談する</b><p>分野を選んだ状態で、相談内容のまとめに進みます。</p><a class="btn btn-g" href="#contact" data-cat="{c["id"]}">{ic("pen")}相談内容をまとめる</a></div></aside></div></section>{CTA}'''
     return page("svc-" + c["id"], f'{c["name"]}｜{SITE["name"]}', body)
 
 # ---------- 場面 ----------
@@ -256,7 +262,7 @@ def sit(s):
     body += f'''<section class="sec"><div class="wrap"><div class="card sitc">
 <div><h2>進め方の例</h2><p class="fine">ご状況によって順番や担当は変わります。</p><ol class="tl">{tl}</ol></div>
 <div><h2>関係する分野</h2><div class="rel r1">{rel}</div><a class="btn btn-p" href="#contact" data-cat="{s["cats"][0]}" style="margin-top:22px">{ic("pen")}この内容で相談をまとめる</a></div>
-</div><p style="margin-top:24px"><a class="more" href="#situations">ほかの場面を見る</a></p></div></section>{CTA}'''
+</div>{HJP if "subsidy" in s["cats"] else ""}<p style="margin-top:24px"><a class="more" href="#situations">ほかの場面を見る</a></p></div></section>{CTA}'''
     return page(s["id"], f'{s["name"]}｜{SITE["name"]}', body)
 
 # ---------- 診断 ----------
@@ -422,7 +428,7 @@ def footer():
     return f'''<footer class="ft"><div class="wrap ft-in">
 <div><a class="brand" href="#top">{MARK}<span><b>{E(SITE["name"])}</b><small>{E(SITE["sub"])}</small></span></a>
 <div class="co"><span>受付時間 {E(SITE["hours"])}</span><span>全国対応・初回相談無料</span><span>運営会社　{E(SITE["company"])}</span><span>{E(SITE["addr"])}</span><span>電話 <a href="tel:{SITE["tel"].replace("-","")}">{E(SITE["tel"])}</a>　メール <a href="mailto:{SITE["mail"]}">{E(SITE["mail"])}</a></span></div></div>
-<details class="ftf" data-desk-open><summary><h4>窓口</h4></summary><ul><li><a href="#about">窓口について</a></li><li><a href="#flow">流れ・費用</a></li><li><a href="#faq">よくある質問</a></li><li><a href="#diagnosis">4つの質問で整理する</a></li><li><a href="#contact">相談内容をまとめる</a></li><li><a href="#partner">士業・提携先の募集</a></li><li><a href="#company">運営会社</a></li><li><a href="#privacy">個人情報の取り扱い</a></li></ul></details>
+<details class="ftf" data-desk-open><summary><h4>窓口</h4></summary><ul><li><a href="#about">窓口について</a></li><li><a href="#flow">流れ・費用</a></li><li><a href="#faq">よくある質問</a></li><li><a href="#diagnosis">4つの質問で整理する</a></li><li><a href="#contact">相談内容をまとめる</a></li><li><a href="hojokin/">補助金・助成金を調べる</a></li><li><a href="#partner">士業・提携先の募集</a></li><li><a href="#company">運営会社</a></li><li><a href="#privacy">個人情報の取り扱い</a></li></ul></details>
 <details class="ftf" data-desk-open><summary><h4>サービス一覧</h4></summary><ul>{svc}</ul></details>
 <details class="ftf" data-desk-open><summary><h4>困りごとから探す</h4></summary><ul>{sit}</ul></details>
 </div><div class="ft-bottom"><div class="wrap"><span class="cp"><button type="button" class="replay" data-replay>オープニングをもう一度見る</button> <a class="replay" href="kanri/" rel="nofollow" data-admin>管理者ログイン</a>　© {E(SITE["company"])}</span></div></div></footer>'''
