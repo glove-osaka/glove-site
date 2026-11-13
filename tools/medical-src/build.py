@@ -980,7 +980,7 @@ function opts(list,ph){return '<option value="">'+ph+'</option>'+list.map(functi
 window.makeCascade=function(o){var T=o.tree||{},box=document.getElementById(o.box),add=document.getElementById(o.add),n=0,P=o.prefix,L=o.labels;
  function row(){if(n>=o.max)return;n++;var i=n,d=document.createElement('div');d.className='area-row';
   d.innerHTML='<div class="area-h"><b>'+o.title+' '+i+'</b>'+(i>1?'<button type="button" class="small-btn" data-del>この'+o.title+'を消す</button>':'')+'</div>'+
-  '<div class="area-g"><div class="fld"><label for="'+P+i+'a">'+L[0]+(i===1||o.allReq?' <span class="req">必須</span>':'')+'</label><select id="'+P+i+'a">'+opts(Object.keys(T),'選んでください')+'</select></div>'+
+  '<div class="area-g"><div class="fld"><label for="'+P+i+'a">'+L[0]+((i===1&&!o.optional)||o.allReq?' <span class="req">必須</span>':'')+'</label><select id="'+P+i+'a">'+opts(Object.keys(T),'選んでください')+'</select></div>'+
   '<div class="fld"><label for="'+P+i+'b">'+L[1]+'</label><select id="'+P+i+'b" disabled>'+opts([],'先に'+L[0]+'を選んでください')+'</select></div>'+
   '<div class="fld"><label for="'+P+i+'c">'+L[2]+'</label><select id="'+P+i+'c" disabled>'+opts([],'先に'+L[1]+'を選んでください')+'</select></div></div>'+
   '<div class="fld"><label for="'+P+i+'d">'+L[3]+'（任意）</label><input type="text" id="'+P+i+'d" maxlength="300" placeholder="'+esc(o.ph)+'"></div>';
@@ -991,11 +991,11 @@ window.makeCascade=function(o){var T=o.tree||{},box=document.getElementById(o.bo
  function renum(){var rs=box.querySelectorAll('.area-row');n=rs.length;rs.forEach(function(r,k){r.querySelector('.area-h b').textContent=o.title+' '+(k+1)});add.hidden=n>=o.max}
  add.onclick=function(){row();var l=box.lastElementChild;if(l){l.scrollIntoView({block:'center',behavior:'smooth'});l.querySelector('select').focus({preventScroll:true})}};row();
  function list(){return Array.prototype.map.call(box.querySelectorAll('.area-row'),function(r){var g=function(s){var e=r.querySelector('[id^="'+P+'"][id$="'+s+'"]');return e?String(e.value||'').trim():''};return{a:g('a'),b:g('b'),c:g('c'),d:g('d'),ids:['a','b','c','d'].map(function(s){return r.querySelector('[id^="'+P+'"][id$="'+s+'"]')})}})}
- return{check:function(){var Ls=list();for(var k=0;k<Ls.length;k++){var x=Ls[k],lab=o.title+' '+(k+1)+'の';if(!x.a&&k>0&&!x.d)continue;if(!x.a)return[lab+L[0]+'を選んでください。',x.ids[0]];if(!x.b)return[lab+L[1]+'を選んでください。',x.ids[1]];if(!x.c)return[lab+L[2]+'を選んでください。',x.ids[2]]}return null},
-  rows:function(){return list().filter(function(x){return x.a}).map(function(x,k){return[o.title+' '+(k+1),x.a+' ＞ '+x.b+' ＞ '+x.c+(x.d?'\n　'+L[3]+'：'+x.d:'')]})},
+ return{check:function(){if(o.optional)return null;var Ls=list();for(var k=0;k<Ls.length;k++){var x=Ls[k],lab=o.title+' '+(k+1)+'の';if(!x.a&&(k>0||o.optional)&&!x.d)continue;if(!x.a&&o.optional)continue;if(!x.a)return[lab+L[0]+'を選んでください。',x.ids[0]];if(!x.b)return[lab+L[1]+'を選んでください。',x.ids[1]];if(!x.c)return[lab+L[2]+'を選んでください。',x.ids[2]]}return null},
+  rows:function(){return list().filter(function(x){return x.a||x.d}).map(function(x,k){return[o.title+' '+(k+1),[x.a,x.b,x.c].filter(Boolean).join(' ＞ ')+(x.d?'\n　'+L[3]+'：'+x.d:'')]})},
   firsts:function(){var r=[];list().forEach(function(x){if(x.a&&r.indexOf(x.a)<0)r.push(x.a)});return r},
   mids:function(){var r=[];list().forEach(function(x){if(x.b&&r.indexOf(x.b)<0)r.push(x.b)});return r},
-  items:function(){return list().filter(function(x){return x.a})},
+  items:function(){return list().filter(function(x){return x.a||x.d})},
   reset:function(t){T=t||{};box.innerHTML='';n=0;row()},
   preset:function(a,b){var A=box.querySelector('select');if(!A||!T[a])return;A.value=a;A.onchange();if(b){var M=box.querySelectorAll('select')[1];M.value=b;M.onchange()}}}};
 })();</script>"""
@@ -1291,7 +1291,7 @@ def build_contact():
 <form class="form-card" id="f" novalidate>
 <p class="stepnow" id="stepnow"></p>
 <section data-step="0"><h2>あなたの立場を選んでください</h2><p class="hint">いちばん近いものを1つ選んでください。</p><div class="opts radio-opts" id="o0"></div></section>
-<section data-step="1" hidden><h2>相談の内容を選んでください</h2><p class="hint">上から順に、<b>大分類 → 中分類 → 小分類</b>の近いものを選んでください。くわしく伝えたいことがあれば「詳細」に書けます（書かなくても進めます）。ほかにも相談したいことがあれば「＋ 相談の内容を追加」で3つまで選べます。</p>
+<section data-step="1" hidden><h2>相談の内容を選んでください</h2><p class="hint">上から順に、<b>大分類 → 中分類 → 小分類</b>の近いものを選んでください。<b>選ばなくても、書かなくても進めます。</b>くわしく伝えたいことがあれば「詳細」に書けます。ほかにも相談したいことがあれば「＋ 相談の内容を追加」で3つまで選べます。</p>
 <div id="cats"></div><button type="button" class="btn btn-o" id="addCat" style="margin-top:6px">＋ 相談の内容を追加</button>
 <p class="hint" style="margin-top:26px">病名・症状・服薬・要介護度・障害名・マイナンバー・口座番号・カード番号は書かないでください。</p>
 <div class="fld"><label for="memo">そのほか伝えたいこと（任意・1,000文字まで）</label><textarea id="memo" maxlength="1000" placeholder="例：来月から夜勤が増えるので、早めに相談したいです。"></textarea><p class="fine" id="cnt" aria-live="polite">0 / 1,000文字</p><p class="warn-inline" id="sens" hidden>病気や体の状態、番号などの情報が含まれている可能性があります。送る前に、その部分を消してください。</p></div><p class="hint" style="margin-top:22px"><b>状況（分かる範囲で。選ばなくても進めます）</b></p>
@@ -1317,7 +1317,7 @@ def build_contact():
 <div id="done" hidden></div>
 <div style="margin-top:40px">{extra_doors("{p}")}</div>
 </div>'''
-    js = CASCADE_JS + "<script>window.FORM_HELP={\"memo\": {\"t\": \"ほかに伝えておきたいことがあれば書きます（空のままでも進めます）。\", \"ex\": \"例：来月から夜勤が増えるので、早めに相談したいです。※病名・症状・番号は書かないでください\", \"req\": false}, \"c1a\": {\"t\": \"大分類を選びます。いちばん近いものを選んでください。\", \"req\": true}, \"c1b\": {\"t\": \"中分類を選びます（大分類を選ぶと出てきます）。\", \"req\": true}, \"c1c\": {\"t\": \"小分類を選びます（中分類を選ぶと出てきます）。\", \"req\": true}, \"c1d\": {\"t\": \"くわしく伝えたいことがあれば書きます（空のままでも進めます）。\", \"ex\": \"例：来月から夜勤が増えるのが不安\"}, \"when\": {\"t\": \"いつごろ相談したいかを選びます（空のままでも進めます）。\", \"req\": false}, \"pref\": {\"t\": \"お住まい・事業所のある都道府県を選びます（空のままでも進めます）。\", \"req\": false}, \"want\": {\"t\": \"支援会にしてほしいことに近いものを選びます（空のままでも進めます）。\", \"req\": false}, \"nm\": {\"t\": \"お名前を入れます。返信の宛名に使います。\", \"ex\": \"例：山田 花子　名前を伏せたいときは、上で「名前・事業所名を伏せて相談」を選んでください\", \"req\": true}, \"co\": {\"t\": \"事業所名・会社名を入れます（企業・事業者の方、協力のお申し出の方のみ）。\", \"ex\": \"例：○○デイサービス\", \"req\": false}, \"mail\": {\"t\": \"返信を受け取るメールアドレスです。\", \"ex\": \"例：yamada@example.jp　携帯のメールは、パソコンからのメールを受け取れる設定にしてください\", \"req\": true}, \"tel\": {\"t\": \"電話での連絡を希望するときだけ入れます。\", \"ex\": \"例：06-1234-5678\", \"req\": false}};window.FORM_GROUPS=[{name:'role',label:'立場'}];window.FORM_CHECKS=['agree'];window.FORM_STEPWISE=true;window.FORM_SCOPE='#f';window.FORM_SUBMIT='#send';window.FORM_NEXT='#next';window.FORM_DONE_LABEL='進むボタンへ ›';</script>" + "<script>(function(){var D=" + json.dumps(D, ensure_ascii=False) + r""";
+    js = CASCADE_JS + "<script>window.FORM_HELP={\"memo\": {\"t\": \"ほかに伝えておきたいことがあれば書きます（空のままでも進めます）。\", \"ex\": \"例：来月から夜勤が増えるので、早めに相談したいです。※病名・症状・番号は書かないでください\", \"req\": false}, \"c1a\": {\"t\": \"大分類を選びます。選ばなくても進めます。\", \"req\": false}, \"c1b\": {\"t\": \"中分類を選びます（大分類を選ぶと出てきます）。\", \"req\": false}, \"c1c\": {\"t\": \"小分類を選びます（中分類を選ぶと出てきます）。\", \"req\": false}, \"c1d\": {\"t\": \"くわしく伝えたいことがあれば書きます（空のままでも進めます）。\", \"ex\": \"例：来月から夜勤が増えるのが不安\"}, \"when\": {\"t\": \"いつごろ相談したいかを選びます（空のままでも進めます）。\", \"req\": false}, \"pref\": {\"t\": \"お住まい・事業所のある都道府県を選びます（空のままでも進めます）。\", \"req\": false}, \"want\": {\"t\": \"支援会にしてほしいことに近いものを選びます（空のままでも進めます）。\", \"req\": false}, \"nm\": {\"t\": \"お名前を入れます。返信の宛名に使います。\", \"ex\": \"例：山田 花子　名前を伏せたいときは、上で「名前・事業所名を伏せて相談」を選んでください\", \"req\": true}, \"co\": {\"t\": \"事業所名・会社名を入れます（企業・事業者の方、協力のお申し出の方のみ）。\", \"ex\": \"例：○○デイサービス\", \"req\": false}, \"mail\": {\"t\": \"返信を受け取るメールアドレスです。\", \"ex\": \"例：yamada@example.jp　携帯のメールは、パソコンからのメールを受け取れる設定にしてください\", \"req\": true}, \"tel\": {\"t\": \"電話での連絡を希望するときだけ入れます。\", \"ex\": \"例：06-1234-5678\", \"req\": false}};window.FORM_GROUPS=[{name:'role',label:'立場'}];window.FORM_CHECKS=['agree'];window.FORM_STEPWISE=true;window.FORM_SCOPE='#f';window.FORM_SUBMIT='#send';window.FORM_NEXT='#next';window.FORM_DONE_LABEL='進むボタンへ ›';</script>" + "<script>(function(){var D=" + json.dumps(D, ensure_ascii=False) + r""";
 var L=['立場','相談の内容','ご連絡先','確認'],st=0,f=document.getElementById('f'),secs=f.querySelectorAll('section[data-step]'),lis=document.querySelectorAll('#steps li'),err=document.getElementById('err'),t0=Date.now(),sending=false;
 var SENS=/(病名|診断|症状|要介護|服薬|薬の名前|障害名|既往歴|検査結果|血圧|マイナンバー|個人番号|口座番号|カード番号|\d{4}[-\s]?\d{4}[-\s]?\d{4})/;
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -1327,14 +1327,14 @@ function one(n){return vals(n)[0]||''}
 var q=new URLSearchParams(location.search),preR=q.get('role')||'',preP=q.get('p')||'',preS=q.get('s')||'';
 if(preP==='youbou'||preP==='kyoryoku'){location.replace('../kyoryoku/'+(preP==='youbou'?'youbou.html'+(preS?'?s='+encodeURIComponent(preS):''):'teikei.html'));return}
 document.getElementById('o0').innerHTML=D.roles.map(function(r){return opt('radio','role',r.id,r.name,r.short,r.id===preR)}).join('')+opt('radio','role','none','分からない・近いものがない','立場を決めずに相談できます',false);
-var C=makeCascade({tree:{},box:'cats',add:'addCat',prefix:'c',title:'相談の内容',max:3,labels:['大分類','中分類','小分類','詳細'],ph:'例：来月から夜勤が増えるのが不安'}),curR=null,preDone=false;
+var C=makeCascade({tree:{},box:'cats',add:'addCat',prefix:'c',title:'相談の内容',max:3,optional:true,labels:['大分類','中分類','小分類','詳細'],ph:'例：来月から夜勤が増えるのが不安'}),curR=null,preDone=false;
 function ensureTree(){var r=one('role')||'none';if(r===curR)return;curR=r;C.reset(D.trees[r]||D.trees.none);
  if(!preDone){preDone=true;var T=D.trees[r]||D.trees.none;if(preP==='nyukai'){for(var a in T)if(T[a]['入会の相談'])C.preset(a,'入会の相談')}else if(preS&&D.sup[preS]){var nm=D.sup[preS].name;for(var a2 in T)if(T[a2][nm]){C.preset(a2,nm);break}}}}
 function roleName(){var r=one('role');if(r==='none')return'分からない・近いものがない';var x=D.roles.filter(function(y){return y.id===r})[0];return x?x.name:''}
-function firstBig(){var f=C.firsts();return f[0]||''}
+function firstBig(){var f=C.firsts();return f[0]||'相談'}
 function v(id){return document.getElementById(id).value.trim()}
 function anon(){return one('anon')==='伏せる'}
-function rows(){return [['立場',roleName()]].concat(C.rows()).concat([['時期',v('when')],['都道府県',v('pref')],['希望する対応',v('want')],['そのほか伝えたいこと',v('memo')],['お名前の扱い',anon()?'伏せて相談':'伝えて相談'],['お名前',anon()?'（伏せる）':v('nm')],['事業所名',anon()?'（伏せる）':v('co')],['メール',v('mail')],['電話',v('tel')]])}
+function rows(){var cr=C.rows();return [['立場',roleName()]].concat(cr.length?cr:[['相談の内容','（選択なし）']]).concat([['時期',v('when')],['都道府県',v('pref')],['希望する対応',v('want')],['そのほか伝えたいこと',v('memo')],['お名前の扱い',anon()?'伏せて相談':'伝えて相談'],['お名前',anon()?'（伏せる）':v('nm')],['事業所名',anon()?'（伏せる）':v('co')],['メール',v('mail')],['電話',v('tel')]])}
 function build6(){document.getElementById('sum').innerHTML=rows().map(function(r){return '<div><dt>'+r[0]+'</dt><dd style="white-space:pre-line">'+(r[1]?esc(r[1]):'<span class="fine">未入力</span>')+'</dd></div>'}).join('')}
 function syncAnon(){var a=anon();document.getElementById('nmwrap').hidden=a;document.getElementById('cowrap').hidden=a}
 f.addEventListener('change',function(e){if(e.target.name==='anon')syncAnon()});
@@ -1348,7 +1348,6 @@ function need(m){err.textContent=m;err.hidden=false;return false}
 function ok(){if(st===0&&!one('role'))return need('立場を1つ選んでから、「次へ進む」を押してください。');
  if(st===1){var cc=C.check();if(cc){need(cc[0]);try{cc[1].focus()}catch(x){}return false}
   var its=C.items(),alltxt=v('memo')+its.map(function(x){return x.d}).join(' ');
-  if(its.some(function(x){return x.c==='その他'&&!x.d})&&!v('memo'))return need('小分類で「その他」を選んだときは、「詳細」か「そのほか伝えたいこと」に内容を書いてください。');
   if(SENS.test(alltxt))return need('病気や体の状態、番号などの情報が含まれている可能性があります。その部分を消してから進んでください。')}
  if(st===2){var m=v('mail');if(!anon()&&!v('nm'))return need('お名前を入力してください。名前を伏せる場合は「名前・事業所名を伏せて相談」を選んでください。');if(!m)return need('返信先のメールアドレスを入力してください。');if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m))return need('メールアドレスの形をご確認ください（例：name@example.jp）。');if(!document.getElementById('agree').checked)return need('個人情報の取り扱いを読み、同意の欄に印を付けてください。')}return true}
 document.getElementById('next').addEventListener('click',function(){if(ok()){st++;show()}});
@@ -1358,7 +1357,7 @@ function receipt(){var d=new Date(),p=function(n){return String(n).padStart(2,'0
 f.addEventListener('submit',function(e){e.preventDefault();if(sending||st!==3)return;
  if(document.getElementById('hpf').value){need('送信できませんでした。メールでご連絡ください。');return}
  sending=true;var b=document.getElementById('send');b.disabled=true;b.textContent='送信しています…';
- var rec={no:receipt(),ts:new Date().toISOString(),entry:D.site,name:anon()?'（名前を伏せた相談）':v('nm'),company:anon()?'':v('co'),email:v('mail'),tel:v('tel')||'（未入力）',cat:'medical',method:'メール',body:txt(),agree:true,share:false,status:'新規受付',memo:'',fields:C.mids().map(function(m){return D.supNames.indexOf(m)>=0?m:'その他・まだ分からない'}).filter(function(x,i,a){return a.indexOf(x)===i}),purpose:firstBig(),role:roleName()};
+ var rec={no:receipt(),ts:new Date().toISOString(),entry:D.site,name:anon()?'（名前を伏せた相談）':v('nm'),company:anon()?'':v('co'),email:v('mail'),tel:v('tel')||'（未入力）',cat:'medical',method:'メール',body:txt(),agree:true,share:false,status:'新規受付',memo:'',fields:(C.mids().length?C.mids():['その他・まだ分からない']).map(function(m){return D.supNames.indexOf(m)>=0?m:'その他・まだ分からない'}).filter(function(x,i,a){return a.indexOf(x)===i}),purpose:firstBig(),role:roleName()};
  fetch(D.endpoint,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({kind:'inbox'},rec,{elapsed:Date.now()-t0,catLabel:D.site+'：'+roleName()+'／'+firstBig()}))})
  .then(function(r){return r.json()}).then(function(j){if(!j||j.ok!==true)throw new Error('not_saved');
   f.hidden=true;document.getElementById('steps').hidden=true;var d=document.getElementById('done');d.hidden=false;
