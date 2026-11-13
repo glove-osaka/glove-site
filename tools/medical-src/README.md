@@ -35,7 +35,7 @@
 | プロジェクト | 「医療介護総合支援会 電子契約・受付」（ikshienkai@gmail.com のApps Script） |
 | お客様用（全員） | https://script.google.com/macros/s/AKfycbznp_C6UEbTjF6rrYOs6cdVItyAaOtWtMZzl34-Ao5ZAfkMyzjS5GHWAQhsuR0BbV3z/exec |
 | 管理画面用（自分のみ） | https://script.google.com/macros/s/AKfycbwZUSCmvDZyNJfqeAUNcGGj3z6j2HxwIi8MpBLpqcBGjn_cIuZxU7BMs2ygwcx58hkH/exec?admin=1 |
-| 公開の版 | 両方ともバージョン8（2026/11/13・紹介コード自動発行・管理画面の「今やること」） |
+| 公開の版 | 両方ともバージョン9（2026/11/13・振込案内に適格請求書） |
 | 台帳 | ドライブ「医療介護総合支援会 電子契約（台帳）」：シート 契約／受付／振分け設定／対応履歴 |
 | 自動の確認 | alertCheck が1時間ごと（遅れている案件を NOTIFY_TO へメール） |
 | 設定（スクリプト プロパティ） | ADMIN_ID / ADMIN_PASS_HASH・SALT / ADMIN_EMAILS / NOTIFY_TO / BANK_INFO / SHEET_ID / FOLDER_ID / SIGN_URL |
@@ -49,6 +49,7 @@
 - 相談の例：立場ごとに3件の「参考事例」（作成した事例と明記）
 - 使い方ガイド（全ページ右下）、入力サポート（相談フォーム・会員申込み・電子契約・ログイン）
 - 管理画面：「今やること」（データから自動で並ぶ）、各画面の「この画面の使い方」、はじめての方への操作の案内
+- 特定商取引法に基づく表記（member/tokushoho.html）、登録番号 T1120001257469（会社概要・振込案内の請求書）
 - 会員規約の全文ページ（member/kiyaku.html）、個人会員の紹介コード自動発行（SK-○○○○○）
 
 ## 残っていること
