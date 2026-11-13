@@ -15,6 +15,7 @@
 | ファイル | 役割 |
 |---|---|
 | build.py / data.py | サイト全39ページを作る（文面・メニュー・会員制度・相談フォームなど） |
+| guide.js | 使い方ガイド（全ページ右下）と入力サポート（欄ごとの説明・残りの欄・全角の自動修正）。build.py が assets/ に写す |
 | make_keiyaku.py | 電子契約と管理画面（/medical/keiyaku/）を作る。build.py の最後で自動で動く |
 | keiyaku_text.py | 会員規約・個人会員規約・秘密保持・業務提携の文面 |
 | keiyaku_core.js / keiyaku_gas_main.js | 会費計算・契約書の組み立て／受付の仕組み（Apps Script）本体 |
@@ -34,7 +35,7 @@
 | プロジェクト | 「医療介護総合支援会 電子契約・受付」（ikshienkai@gmail.com のApps Script） |
 | お客様用（全員） | https://script.google.com/macros/s/AKfycbznp_C6UEbTjF6rrYOs6cdVItyAaOtWtMZzl34-Ao5ZAfkMyzjS5GHWAQhsuR0BbV3z/exec |
 | 管理画面用（自分のみ） | https://script.google.com/macros/s/AKfycbwZUSCmvDZyNJfqeAUNcGGj3z6j2HxwIi8MpBLpqcBGjn_cIuZxU7BMs2ygwcx58hkH/exec?admin=1 |
-| 公開の版 | 両方ともバージョン7（2026/11/13・パスワード再設定を追加） |
+| 公開の版 | 両方ともバージョン8（2026/11/13・紹介コード自動発行・管理画面の「今やること」） |
 | 台帳 | ドライブ「医療介護総合支援会 電子契約（台帳）」：シート 契約／受付／振分け設定／対応履歴 |
 | 自動の確認 | alertCheck が1時間ごと（遅れている案件を NOTIFY_TO へメール） |
 | 設定（スクリプト プロパティ） | ADMIN_ID / ADMIN_PASS_HASH・SALT / ADMIN_EMAILS / NOTIFY_TO / BANK_INFO / SHEET_ID / FOLDER_ID / SIGN_URL |
@@ -46,6 +47,9 @@
 - 会員登録 → そのまま電子契約（認証コード → 確認 → 押印・承認 → PDF）→ 振込案内メール自動 → 入金確認で登録完了メール
 - 担当者ログイン（ページ下）→ 案件管理（新しい順・6段階の帯・振分け・警告音・放置日数・進捗報告の作成と送信判断）／電子契約／振分け設定
 - 相談の例：立場ごとに3件の「参考事例」（作成した事例と明記）
+- 使い方ガイド（全ページ右下）、入力サポート（相談フォーム・会員申込み・電子契約・ログイン）
+- 管理画面：「今やること」（データから自動で並ぶ）、各画面の「この画面の使い方」、はじめての方への操作の案内
+- 会員規約の全文ページ（member/kiyaku.html）、個人会員の紹介コード自動発行（SK-○○○○○）
 
 ## 残っていること
 | 項目 | 担当 |
