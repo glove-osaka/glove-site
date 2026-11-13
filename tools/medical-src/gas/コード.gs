@@ -120,7 +120,7 @@ function setup() {
 }
 
 /* ---- サイトのフォーム（相談・会員登録の申込み）の受付 ---- */
-var INBOX = "受付", INBOX_COLS = ["受付番号", "受付日時", "区分", "お名前", "事業所名・会社名", "メール", "電話", "内容", "状態", "対応メモ", "分野", "振分け先", "担当", "最終更新", "最終連絡", "次の対応予定日", "会員施設の確認"];
+var INBOX = "受付", INBOX_COLS = ["受付番号", "受付日時", "区分", "お名前", "事業所名・会社名", "メール", "電話", "内容", "状態", "対応メモ", "分野", "振分け先", "担当", "最終更新", "最終連絡", "次の対応予定日", "会員施設の確認", "提携先へ送った記録"];
 function inboxSheet_() {
   var ss = SpreadsheetApp.openById(P("SHEET_ID")), sh = ss.getSheetByName(INBOX);
   if (!sh) { sh = ss.insertSheet(INBOX); sh.appendRow(INBOX_COLS); sh.setFrozenRows(1); }
@@ -139,7 +139,7 @@ function inbox_(d) {
   var fields = (Array.isArray(d.fields) ? d.fields : []).map(function (x) { return cut(x, 40); }).slice(0, 12);
   var partner = segOf_(label).route === "self" ? "自社" : routeFor_(fields);
   var fac = facAuto_(label, body);
-  inboxSheet_().appendRow([no, new Date(), label, cut(d.name, 60), cut(d.company, 100), em, "'" + cut(d.tel, 30), body, "新規受付", "", fields.join("、"), partner, "", new Date(), "", "", fac ? JSON.stringify(fac) : ""]);
+  inboxSheet_().appendRow([no, new Date(), label, cut(d.name, 60), cut(d.company, 100), em, "'" + cut(d.tel, 30), body, "新規受付", "", fields.join("、"), partner, "", new Date(), "", "", fac ? JSON.stringify(fac) : "", ""]);
   hist_(no, "受付", "サイトから受付" + (partner ? "（振分け候補：" + partner + "）" : ""), "");
   var mail = { to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］新しい受付 " + no + "　" + label, body: body + "\n\nお名前：" + cut(d.name, 60) + "\nメール：" + em + "\n電話：" + cut(d.tel, 30) + "\n\n受付の一覧：https://docs.google.com/spreadsheets/d/" + P("SHEET_ID") };
   if (okMail) mail.replyTo = em;
@@ -185,11 +185,15 @@ function routes_() {
   if (add.length) { sh.getRange(sh.getLastRow() + 1, 1, add.length, 3).setValues(add.map(function (f) { o[f] = ""; return [f, "", ""]; })); }
   return o;
 }
-var PSHEET = "提携先一覧", PHEAD = ["提携先の名前", "大分類", "中分類", "小分類", "メモ"];
-function partners_() { var v = sheetOf_(PSHEET, PHEAD).getDataRange().getValues(), out = []; for (var i = 1; i < v.length; i++) if (v[i][0]) out.push({ name: String(v[i][0]), a: String(v[i][1] || ""), b: String(v[i][2] || ""), c: String(v[i][3] || ""), note: String(v[i][4] || "") }); return out; }
+var PSHEET = "提携先一覧", PHEAD = ["提携先の名前", "大分類", "中分類", "小分類", "メモ", "ご担当者", "メール（案件の送り先）", "電話", "対応できる地域", "登録日"], PKEY = ["name", "a", "b", "c", "note", "person", "email", "tel", "area", "since"];
+function partnerSheet_() { var sh = sheetOf_(PSHEET, PHEAD); if (sh.getLastColumn() < PHEAD.length) sh.getRange(1, 1, 1, PHEAD.length).setValues([PHEAD]); return sh; }
+function partners_() { var v = partnerSheet_().getDataRange().getValues(), out = []; for (var i = 1; i < v.length; i++) if (v[i][0]) { var o = {}; PKEY.forEach(function (k, j) { var x = v[i][j]; o[k] = x instanceof Date ? Utilities.formatDate(x, "Asia/Tokyo", "yyyy-MM-dd") : String(x == null ? "" : x); }); out.push(o); } return out; }
 function partnerSet_(d) {
-  var rows = (d.rows || []).filter(function (r) { return r && r.name; }).slice(0, 500).map(function (r) { return [String(r.name).slice(0, 100), String(r.a || "").slice(0, 60), String(r.b || "").slice(0, 60), String(r.c || "").slice(0, 80), String(r.note || "").slice(0, 300)]; });
-  var sh = sheetOf_(PSHEET, PHEAD), last = sh.getLastRow(); if (last > 1) sh.getRange(2, 1, last - 1, 5).clearContent(); if (rows.length) sh.getRange(2, 1, rows.length, 5).setValues(rows);
+  var today = Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy-MM-dd");
+  var rows = (d.rows || []).filter(function (r) { return r && r.name; }).slice(0, 500).map(function (r) {
+    if (r.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(r.email).trim())) throw new Error("「" + r.name + "」のメールアドレスの形が正しくありません");
+    return PKEY.map(function (k) { return String(k === "since" ? (r.since || today) : (r[k] || "")).trim().slice(0, k === "note" ? 300 : 120); }); });
+  var sh = partnerSheet_(), last = sh.getLastRow(); if (last > 1) sh.getRange(2, 1, last - 1, PHEAD.length).clearContent(); if (rows.length) sh.getRange(2, 1, rows.length, PHEAD.length).setValues(rows);
   return { ok: true, partners: partners_() };
 }
 function staff_() { return parse_(P("STAFF"), []); }
@@ -222,7 +226,7 @@ function caseRows_() {
   for (var i = 1; i < v.length; i++) {
     var r = v[i]; if (!r[0]) continue;
     var st = String(r[8] || "新規受付"); if (st === "対応中") st = "内容確認中";
-    out.push({ row: i + 1, no: String(r[0]), ts: iso_(r[1]), label: String(r[2]), name: String(r[3]), company: String(r[4]), email: String(r[5]), tel: String(r[6]), body: String(r[7]), status: st, memo: String(r[9] || ""), fields: String(r[10] || ""), partner: String(r[11] || ""), staff: String(r[12] || ""), updated: iso_(r[13] || r[1]), contacted: iso_(r[14]), next: r[15] ? Utilities.formatDate(new Date(r[15]), "Asia/Tokyo", "yyyy-MM-dd") : "", fac: String(r[16] || "") });
+    out.push({ row: i + 1, no: String(r[0]), ts: iso_(r[1]), label: String(r[2]), name: String(r[3]), company: String(r[4]), email: String(r[5]), tel: String(r[6]), body: String(r[7]), status: st, memo: String(r[9] || ""), fields: String(r[10] || ""), partner: String(r[11] || ""), staff: String(r[12] || ""), updated: iso_(r[13] || r[1]), contacted: iso_(r[14]), next: r[15] ? Utilities.formatDate(new Date(r[15]), "Asia/Tokyo", "yyyy-MM-dd") : "", fac: String(r[16] || ""), fwd: String(r[17] || "") });
   }
   return out;
 }
@@ -259,6 +263,25 @@ function report_(d) {
     hist_(c.no, "進捗報告（送らなかった）", subj, d.staff || c.staff);
   }
   return { ok: true };
+}
+/* 案件の内容とお客様の情報を、提携先へメールで送る（担当者が内容を確かめ、お客様の同意を確認したときだけ） */
+function forward_(d) {
+  var c = findCase_(d.no), sh = inboxSheet_();
+  if (d.consent !== true) throw new Error("お客様の同意を確認してください");
+  if (segOf_(c.label).route === "self") throw new Error("この種別は提携先へ送りません");
+  var p = partners_().filter(function (x) { return x.name === String(d.partner || ""); })[0];
+  if (!p) throw new Error("提携先一覧に登録されている提携先を選んでください");
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email)) throw new Error("「" + p.name + "」のメールアドレスが登録されていません（設定の提携先一覧で登録できます）");
+  var subj = String(d.subject || "").slice(0, 200), body = String(d.body || "").slice(0, 8000);
+  if (!subj || !body) throw new Error("件名と本文を入れてください");
+  MailApp.sendEmail({ to: p.email, bcc: P("NOTIFY_TO"), name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: subj, body: body });
+  var now = new Date(), ch = ["提携先へ送付：" + p.name];
+  if (c.partner !== p.name) { sh.getRange(c.row, 12).setValue(p.name); ch.push("振分け先：" + p.name); }
+  if (d.status && d.status !== c.status && ALL_STEPS.indexOf(d.status) >= 0) { sh.getRange(c.row, 9).setValue(d.status); ch.push("状態：" + c.status + " → " + d.status); }
+  var log = parse_(c.fwd, []); if (!Array.isArray(log)) log = []; log.push({ ts: now.toISOString(), name: p.name, staff: d.staff || c.staff || "" });
+  sh.getRange(c.row, 18).setValue(JSON.stringify(log.slice(-20))); sh.getRange(c.row, 14).setValue(now);
+  hist_(c.no, "提携先へ送付（" + p.name + "）", ch.join("／") + "\n\n" + subj + "\n\n" + body, d.staff || c.staff);
+  return { ok: true, fwd: JSON.stringify(log.slice(-20)) };
 }
 /* 1時間ごとに、遅れている案件を担当者へメールで知らせる（同じ案件は1日1回まで）。setupAlerts() を1回実行すると動き出す */
 function alertCheck() {
@@ -631,6 +654,7 @@ function adminDo_(a, d) {
     if (a === "admin.cases") return cases_();
     if (a === "admin.caseSet") return caseSet_(d);
     if (a === "admin.report") return report_(d);
+    if (a === "admin.forward") return forward_(d);
     if (a === "admin.history") return { ok: true, rows: histOf_(d.no) };
     if (a === "admin.routeSet") return routeSet_(d);
     if (a === "admin.partnerSet") return partnerSet_(d);
