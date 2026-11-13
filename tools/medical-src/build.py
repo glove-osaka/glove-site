@@ -1433,3 +1433,13 @@ ExpiresByType text/html "access plus 0 seconds"
     open(os.path.join(OUT, "robots.txt"), "w", encoding="utf-8").write("User-agent: *\nDisallow: /keiyaku/\nSitemap: " + SITE["base"] + "sitemap.xml\n")
     print(len(PAGES), "pages")
     import make_keiyaku  # 電子契約（/keiyaku/）と Apps Script 一式
+
+# 古い見た目や動きが残らないよう、使い方ガイドに版番号を付ける
+import hashlib as _hl
+_gv = _hl.md5(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "guide.js"), "rb").read()).hexdigest()[:8]
+for _root, _d, _fs in os.walk(OUT):
+    for _f in _fs:
+        if _f.endswith(".html"):
+            _p = os.path.join(_root, _f); _s = open(_p, encoding="utf-8").read()
+            if 'assets/guide.js"' in _s:
+                open(_p, "w", encoding="utf-8").write(_s.replace('assets/guide.js"', 'assets/guide.js?v=' + _gv + '"'))

@@ -35,7 +35,7 @@ css += """
 .flash{outline:4px solid #C99A45;outline-offset:3px;border-radius:12px}
 body.adm main{max-width:1280px}.ctbl td:nth-child(1),.ctbl td:nth-child(2){white-space:nowrap}.vt-sw{display:inline-flex;gap:0;margin-left:auto}.vt-sw .small-btn{border-radius:0}.vt-sw .small-btn:first-child{border-radius:10px 0 0 10px}.vt-sw .small-btn:last-child{border-radius:0 10px 10px 0}.vt-sw .small-btn.on,.seg-b.on{background:var(--pine);color:#fff;border-color:var(--pine)}
 .ctbl{width:100%;border-collapse:collapse;font-size:.95rem}.ctbl th{background:var(--pine-soft);text-align:left;padding:8px 10px;font-size:.85rem;white-space:nowrap}.ctbl td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
-.ctbl tr.cr{cursor:pointer}.ctbl tr.cr:hover td{background:#F4F8F8}.ctbl tr.cr.open td{background:var(--pine-soft)}.ctbl tr.cr.new td:first-child{box-shadow:inset 5px 0 0 #B3261E}.ctbl tr.cd td{background:#FAFCFC;padding:10px}
+.ctbl tr.cr{cursor:pointer}.ctbl tr.cr td{border-top:2px solid var(--line)}.ctbl tr.cr.z td{background:#F6F9F9}.ctbl tr.cr:hover td{background:#F4F8F8}.ctbl tr.cr.open td{background:var(--pine-soft)}.ctbl tr.cr.new td:first-child{box-shadow:inset 5px 0 0 #B3261E}.ctbl tr.cd td{background:#FAFCFC;padding:10px}
 .ctbl .sm{display:block;color:var(--muted);font-size:.82rem;margin-top:2px}.st{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.82rem;font-weight:700;background:var(--pine-soft);color:var(--pine);white-space:nowrap}.st.s0{background:#B3261E;color:#fff}.st.s5,.st.s6{background:#E8E8E8;color:#555}
 .kd{display:inline-block;padding:1px 7px;border-radius:6px;font-size:.78rem;font-weight:700;background:#E7F1FB;color:#163d6b;margin-bottom:3px}.kd.k2{background:#F5ECD9;color:#6b4a0c}.kd.k3{background:#EDE7F6;color:#4527a0}.kd.k4{background:#E3F2E9;color:#1e5b34}
 .seg{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}.seg-b{min-height:48px;padding:0 18px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
@@ -67,6 +67,8 @@ body.adm main{max-width:1280px}.ctbl td:nth-child(1),.ctbl td:nth-child(2){white
 .pre{display:grid;gap:10px}.pre .fld{margin:0}
 @media (max-width:640px){.items-row{grid-template-columns:1fr 1fr}.tbl table.list thead{display:none}.tbl table.list td{display:block;border:0;padding:4px 8px}.tbl table.list tr{display:block;border-bottom:1px solid var(--line);padding:8px 0}}
 """
+import hashlib as _hl
+CSSV = _hl.md5(css.encode("utf-8")).hexdigest()[:8]
 open(os.path.join(OUT, "keiyaku.css"), "w", encoding="utf-8").write(css)
 
 MARK = '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 4h7v8.5H28v7h-8.5V28h-7v-8.5H4v-7h8.5z"/><path class="ac" d="M16 23.5s-4-2.4-4-5.2a2.2 2.2 0 0 1 4-1.3 2.2 2.2 0 0 1 4 1.3c0 2.8-4 5.2-4 5.2z"/></svg>'
@@ -81,7 +83,7 @@ HEAD = lambda title: f'''<!doctype html>
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDPMincho:wght@700&display=swap">
-<link rel="stylesheet" href="keiyaku.css">
+<link rel="stylesheet" href="keiyaku.css?v={CSSV}">
 </head>
 <body>'''
 FOOT = '<p class="foot">運営　株式会社グローブ</p>'
@@ -543,8 +545,8 @@ function cls(x){if(x._c)return x._c;var lb=String(x.label||''),i=lb.indexOf('：
  String(x.body||'').split('\n').forEach(function(l){var m=l.match(/^(相談の内容|分野) \d+：(.+)$/);if(m)c.path.push(m[2].trim())});
  if(!c.big&&c.path[0])c.big=c.path[0].split(' ＞ ')[0];x._c=c;return c}
 function catOf(c){return c.kind==='相談'?c.big:(c.big||c.sub)}
-function tableHtml(rows){var now=Date.now();return'<div class="tbl"><table class="ctbl"><thead><tr><th>受付</th><th>種類</th><th>立場・分類</th><th>お名前・会社</th><th>状態</th><th>振分け先</th><th>注意</th></tr></thead><tbody>'+rows.map(function(x){var c=cls(x),si=STEPS.indexOf(x.status),op=OPEN[x.no];
- return'<tr class="cr'+(x.status==='新規受付'?' new':'')+(op?' open':'')+'" data-row="'+esc(x.no)+'" title="押すと詳しい内容と操作が開きます"><td>'+dt(x.ts)+'<span class="sm">'+span(now-new Date(x.ts))+'前</span></td><td><span class="kd '+(KCLS[c.kind]||'')+'">'+esc(c.kind)+'</span>'+(c.sub?'<span class="sm">'+esc(c.sub)+'</span>':'')+'</td><td>'+esc(c.role)+(c.path.length?'<span class="sm">'+esc(c.path[0])+(c.path.length>1?'（ほか'+(c.path.length-1)+'件）':'')+'</span>':(c.big?'<span class="sm">'+esc(c.big)+'</span>':''))+'</td><td>'+esc(x.name||'（お名前なし）')+(x.company?'<span class="sm">'+esc(x.company)+'</span>':'')+'</td><td><span class="st s'+si+'">'+esc(x.status)+'</span></td><td>'+esc(x.partner||'―')+'</td><td>'+x._a.map(function(y){return'<span class="tg '+(y.lv==='red'?'red':'yel')+'">'+esc(y.t)+'</span>'}).join(' ')+'</td></tr>'+(op?'<tr class="cd"><td colspan="7">'+cardHtml(x)+'</td></tr>':'')}).join('')+'</tbody></table></div>'}
+function tableHtml(rows){var now=Date.now();return'<div class="tbl"><table class="ctbl"><thead><tr><th>受付</th><th>種類</th><th>立場・分類</th><th>お名前・会社</th><th>状態</th><th>振分け先</th><th>注意</th></tr></thead><tbody>'+rows.map(function(x,ri){var c=cls(x),si=STEPS.indexOf(x.status),op=OPEN[x.no];
+ return'<tr class="cr'+(ri%2?' z':'')+(x.status==='新規受付'?' new':'')+(op?' open':'')+'" data-row="'+esc(x.no)+'" title="押すと詳しい内容と操作が開きます"><td>'+dt(x.ts)+'<span class="sm">'+span(now-new Date(x.ts))+'前</span></td><td><span class="kd '+(KCLS[c.kind]||'')+'">'+esc(c.kind)+'</span>'+(c.sub?'<span class="sm">'+esc(c.sub)+'</span>':'')+'</td><td>'+esc(c.role)+(c.path.length?'<span class="sm">'+esc(c.path[0])+(c.path.length>1?'（ほか'+(c.path.length-1)+'件）':'')+'</span>':(c.big?'<span class="sm">'+esc(c.big)+'</span>':''))+'</td><td>'+esc(x.name||'（お名前なし）')+(x.company?'<span class="sm">'+esc(x.company)+'</span>':'')+'</td><td><span class="st s'+si+'">'+esc(x.status)+'</span></td><td>'+esc(x.partner||'―')+'</td><td>'+x._a.map(function(y){return'<span class="tg '+(y.lv==='red'?'red':'yel')+'">'+esc(y.t)+'</span>'}).join(' ')+'</td></tr>'+(op?'<tr class="cd"><td colspan="7">'+cardHtml(x)+'</td></tr>':'')}).join('')+'</tbody></table></div>'}
 function fillSel(id,o){var cur=$(id).value;$(id).innerHTML='<option value="">すべて</option>'+Object.keys(o).sort().map(function(k){return'<option value="'+esc(k)+'"'+(k===cur?' selected':'')+'>'+esc(k)+'（'+o[k]+'）</option>'}).join('')}
 function inbox(){api('admin.cases').then(function(r){IN=r.rows||[];ROUTES=r.routes||{};drawRoute();drawIn();todo();drawRoster()}).catch(function(e){$('errB').textContent=e.message})}
 function drawIn(){var st=$('fSt').value,pt=$('fPt').value,q=$('fQ').value.trim().toLowerCase();

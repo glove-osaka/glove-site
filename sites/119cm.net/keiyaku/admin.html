@@ -9,7 +9,7 @@
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDPMincho:wght@700&display=swap">
-<link rel="stylesheet" href="keiyaku.css">
+<link rel="stylesheet" href="keiyaku.css?v=4dfbff39">
 </head>
 <body>
 <div class="demo" id="demoBar" hidden>お試し表示です（メールは送られず、この端末の中だけで動きます）</div>
@@ -228,8 +228,8 @@ function cls(x){if(x._c)return x._c;var lb=String(x.label||''),i=lb.indexOf('：
  String(x.body||'').split('\n').forEach(function(l){var m=l.match(/^(相談の内容|分野) \d+：(.+)$/);if(m)c.path.push(m[2].trim())});
  if(!c.big&&c.path[0])c.big=c.path[0].split(' ＞ ')[0];x._c=c;return c}
 function catOf(c){return c.kind==='相談'?c.big:(c.big||c.sub)}
-function tableHtml(rows){var now=Date.now();return'<div class="tbl"><table class="ctbl"><thead><tr><th>受付</th><th>種類</th><th>立場・分類</th><th>お名前・会社</th><th>状態</th><th>振分け先</th><th>注意</th></tr></thead><tbody>'+rows.map(function(x){var c=cls(x),si=STEPS.indexOf(x.status),op=OPEN[x.no];
- return'<tr class="cr'+(x.status==='新規受付'?' new':'')+(op?' open':'')+'" data-row="'+esc(x.no)+'" title="押すと詳しい内容と操作が開きます"><td>'+dt(x.ts)+'<span class="sm">'+span(now-new Date(x.ts))+'前</span></td><td><span class="kd '+(KCLS[c.kind]||'')+'">'+esc(c.kind)+'</span>'+(c.sub?'<span class="sm">'+esc(c.sub)+'</span>':'')+'</td><td>'+esc(c.role)+(c.path.length?'<span class="sm">'+esc(c.path[0])+(c.path.length>1?'（ほか'+(c.path.length-1)+'件）':'')+'</span>':(c.big?'<span class="sm">'+esc(c.big)+'</span>':''))+'</td><td>'+esc(x.name||'（お名前なし）')+(x.company?'<span class="sm">'+esc(x.company)+'</span>':'')+'</td><td><span class="st s'+si+'">'+esc(x.status)+'</span></td><td>'+esc(x.partner||'―')+'</td><td>'+x._a.map(function(y){return'<span class="tg '+(y.lv==='red'?'red':'yel')+'">'+esc(y.t)+'</span>'}).join(' ')+'</td></tr>'+(op?'<tr class="cd"><td colspan="7">'+cardHtml(x)+'</td></tr>':'')}).join('')+'</tbody></table></div>'}
+function tableHtml(rows){var now=Date.now();return'<div class="tbl"><table class="ctbl"><thead><tr><th>受付</th><th>種類</th><th>立場・分類</th><th>お名前・会社</th><th>状態</th><th>振分け先</th><th>注意</th></tr></thead><tbody>'+rows.map(function(x,ri){var c=cls(x),si=STEPS.indexOf(x.status),op=OPEN[x.no];
+ return'<tr class="cr'+(ri%2?' z':'')+(x.status==='新規受付'?' new':'')+(op?' open':'')+'" data-row="'+esc(x.no)+'" title="押すと詳しい内容と操作が開きます"><td>'+dt(x.ts)+'<span class="sm">'+span(now-new Date(x.ts))+'前</span></td><td><span class="kd '+(KCLS[c.kind]||'')+'">'+esc(c.kind)+'</span>'+(c.sub?'<span class="sm">'+esc(c.sub)+'</span>':'')+'</td><td>'+esc(c.role)+(c.path.length?'<span class="sm">'+esc(c.path[0])+(c.path.length>1?'（ほか'+(c.path.length-1)+'件）':'')+'</span>':(c.big?'<span class="sm">'+esc(c.big)+'</span>':''))+'</td><td>'+esc(x.name||'（お名前なし）')+(x.company?'<span class="sm">'+esc(x.company)+'</span>':'')+'</td><td><span class="st s'+si+'">'+esc(x.status)+'</span></td><td>'+esc(x.partner||'―')+'</td><td>'+x._a.map(function(y){return'<span class="tg '+(y.lv==='red'?'red':'yel')+'">'+esc(y.t)+'</span>'}).join(' ')+'</td></tr>'+(op?'<tr class="cd"><td colspan="7">'+cardHtml(x)+'</td></tr>':'')}).join('')+'</tbody></table></div>'}
 function fillSel(id,o){var cur=$(id).value;$(id).innerHTML='<option value="">すべて</option>'+Object.keys(o).sort().map(function(k){return'<option value="'+esc(k)+'"'+(k===cur?' selected':'')+'>'+esc(k)+'（'+o[k]+'）</option>'}).join('')}
 function inbox(){api('admin.cases').then(function(r){IN=r.rows||[];ROUTES=r.routes||{};drawRoute();drawIn();todo();drawRoster()}).catch(function(e){$('errB').textContent=e.message})}
 function drawIn(){var st=$('fSt').value,pt=$('fPt').value,q=$('fQ').value.trim().toLowerCase();
@@ -365,6 +365,6 @@ if(IN_GAS){$('logout').hidden=true;go()}else if(tok){go()}else{showLogin()}
 })();
 </script>
 <script>window.FORM_NOBAR=true;window.FORM_HELP={"lid":{"t":"担当者のIDを入れます。","ex":"英字の小文字で入れます。分からないときは「ID・パスワードを忘れたとき」を押すと、登録メールに届きます","req":true},"lpw":{"t":"パスワードを入れます。","ex":"大文字・小文字、全角・半角の違いにご注意ください。5回続けて間違えると15分止まります","req":true},"fgCode":{"t":"登録メールに届いた6けたの数字を入れます。","req":true},"fgP1":{"t":"新しいパスワードを8文字以上で決めます。","ex":"英字と数字をまぜると安全です","req":true},"fgP2":{"t":"確認のため、同じパスワードをもう一度入れます。","req":true},"pName":{"t":"契約の相手のお名前（ご担当者）です。","req":true},"pEmail":{"t":"契約書の案内を送る相手のメールアドレスです。","req":true}};</script>
-<script src="../assets/guide.js" data-mode="admin"></script>
+<script src="../assets/guide.js?v=f604c6e0" data-mode="admin"></script>
 </body>
 </html>
