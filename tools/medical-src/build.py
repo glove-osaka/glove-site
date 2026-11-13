@@ -461,7 +461,6 @@ def build_top():
 <section class="sec"><div class="wrap">
 {sec_h("まず、あなたの立場から", "4つの入口から、お選びください", "選んだ立場に関係する相談・支援・優待・協力の方法だけをご案内します。どれを選べばよいか分からないときは、そのまま受付フォームへお進みください。", True)}
 <div class="doors d4">{doors}</div>
-{extra_doors("{p}")}
 <p style="margin-top:26px;text-align:center"><a class="more" href="{{p}}contact/index.html">どの立場か分からない・近いものがない</a></p>
 </div></section>
 
@@ -506,7 +505,8 @@ def build_top():
 {faq_html(FAQ[:2])}
 <p style="margin-top:20px"><a class="more" href="{{p}}faq/index.html">よくある質問をすべて見る</a></p>
 <div style="margin-top:34px">{SAFETY}</div>
-</div></section></main>'''
+</div></section>
+<section class="sec"><div class="wrap">{extra_doors("{p}")}</div></section></main>'''
     ld = {"@context": "https://schema.org", "@type": "Organization", "name": SITE["name"], "url": SITE["base"],
           "logo": SITE["base"] + "assets/apple-touch-icon.png", "email": SITE["mail"], "areaServed": "大阪府・関西",
           "parentOrganization": {"@type": "Organization", "name": SITE["company"], "url": SITE["globe"],
@@ -1238,7 +1238,6 @@ def build_contact():
 <dt>LINE・電話</dt><dd>相談窓口は準備中です。受付方法のご案内は、運営会社（{SITE["tel"]}　{SITE["tel_hours"]}）でも承ります。</dd>
 <dt>対応地域</dt><dd>{SITE["area"]}</dd></dl></div>""", aid="toiawase")}
 {SAFETY}
-<div class="grid g2" style="margin-top:22px"><a class="card lk" href="{{p}}kyoryoku/teikei.html"><b>{ic("hands")} 提携・協業の申し込み</b><p class="fine">事業者・専門家の方は、専用のフォームへ</p></a><a class="card lk" href="{{p}}kyoryoku/youbou.html"><b>{ic("chat")} 要望の窓口</b><p class="fine">ご意見・ご要望は、専用のフォームへ（名前なしでも送れます）</p></a></div>
 <ol class="steps" id="steps" aria-hidden="true" style="margin-top:30px"><li data-i="0">立場</li><li data-i="1">目的</li><li data-i="2">分野</li><li data-i="3">内容</li><li data-i="4">ご連絡先</li><li data-i="5">確認</li></ol>
 <form class="form-card" id="f" novalidate>
 <p class="stepnow" id="stepnow"></p>
@@ -1267,6 +1266,7 @@ def build_contact():
 <div class="form-nav" id="fnav"><button class="btn btn-o" type="button" id="back">‹ 前に戻る</button><button class="btn btn-p" type="button" id="next">次へ進む ›</button></div>
 </form>
 <div id="done" hidden></div>
+<div style="margin-top:40px">{extra_doors("{p}")}</div>
 </div>'''
     js = "<script>window.FORM_HELP={\"memo\": {\"t\": \"困っていること・知りたいことを、自由に書いてください。\", \"ex\": \"例：夜勤の負担が大きく、続けられるか迷っています。相談できる先を知りたいです。※病名・症状・番号は書かないでください\", \"req\": true}, \"when\": {\"t\": \"いつごろ相談したいかを選びます（空のままでも進めます）。\", \"req\": false}, \"pref\": {\"t\": \"お住まい・事業所のある都道府県を選びます（空のままでも進めます）。\", \"req\": false}, \"want\": {\"t\": \"支援会にしてほしいことに近いものを選びます（空のままでも進めます）。\", \"req\": false}, \"nm\": {\"t\": \"お名前を入れます。返信の宛名に使います。\", \"ex\": \"例：山田 花子　名前を伏せたいときは、上で「名前・事業所名を伏せて相談」を選んでください\", \"req\": true}, \"co\": {\"t\": \"事業所名・会社名を入れます（企業・事業者の方、協力のお申し出の方のみ）。\", \"ex\": \"例：○○デイサービス\", \"req\": false}, \"mail\": {\"t\": \"返信を受け取るメールアドレスです。\", \"ex\": \"例：yamada@example.jp　携帯のメールは、パソコンからのメールを受け取れる設定にしてください\", \"req\": true}, \"tel\": {\"t\": \"電話での連絡を希望するときだけ入れます。\", \"ex\": \"例：06-1234-5678\", \"req\": false}};window.FORM_GROUPS=[{name:'role',label:'立場'},{name:'purpose',label:'目的'}];window.FORM_CHECKS=['agree'];window.FORM_STEPWISE=true;window.FORM_SCOPE='#f';window.FORM_SUBMIT='#send';window.FORM_NEXT='#next';window.FORM_DONE_LABEL='進むボタンへ ›';</script>" + "<script>(function(){var D=" + json.dumps(D, ensure_ascii=False) + r""";
 var L=['立場','目的','分野','内容','ご連絡先','確認'],st=0,f=document.getElementById('f'),secs=f.querySelectorAll('section[data-step]'),lis=document.querySelectorAll('#steps li'),err=document.getElementById('err'),t0=Date.now(),sending=false;
