@@ -183,26 +183,28 @@ function report_(d) {
   }
   return { ok: true };
 }
-/* ---- メールの送信：Gmail に「info@119cm.net」を送信元として登録してあれば、その名前で送る（なければ従来どおり） ---- */
+/* ---- メールの送信：119cm.net のサーバー（Xサーバー）から info@119cm.net で送る。送れないときは従来どおり Gmail から送る ---- */
 function fromAddr_() { return P("FROM_ADDR") || "info@119cm.net"; }
-function aliasOk_() { try { return GmailApp.getAliases().indexOf(fromAddr_()) >= 0; } catch (e) { return false; } }
+function relayUrl_() { return P("MAIL_RELAY") || "https://119cm.net/api/mail.php"; }
 function sendMail_(o) {
   o = Object.assign({}, o); if (!o.name) o.name = ISSUER.service;
-  var fr = fromAddr_(), ok = aliasOk_();
-  if (ok) {
-    if (!o.replyTo || o.replyTo === P("NOTIFY_TO")) o.replyTo = fr;
-    var opt = { from: fr, name: o.name }; ["htmlBody", "replyTo", "bcc", "cc", "attachments"].forEach(function (k) { if (o[k]) opt[k] = o[k]; });
-    try { GmailApp.sendEmail(o.to, o.subject, o.body || "", opt); return; } catch (e) { Logger.log("info@ から送れなかったため、Gmail から送ります：" + e.message); }
+  if (P("MAIL_RELAY_OFF") !== "1") {
+    try {
+      var rt = o.replyTo && o.replyTo !== P("NOTIFY_TO") ? o.replyTo : fromAddr_();
+      var pl = { to: o.to, cc: o.cc || "", bcc: o.bcc || "", replyTo: rt, subject: o.subject, body: o.body || "", htmlBody: o.htmlBody || "", name: o.name,
+        attachments: (o.attachments || []).map(function (b) { return { name: b.getName(), type: b.getContentType(), data: Utilities.base64Encode(b.getBytes()) }; }) };
+      var res = UrlFetchApp.fetch(relayUrl_(), { method: "post", contentType: "application/json", payload: JSON.stringify(pl), headers: { Authorization: "Bearer " + ScriptApp.getIdentityToken() }, muteHttpExceptions: true });
+      var j = parse_(res.getContentText(), {});
+      if (res.getResponseCode() === 200 && j.ok) return "info";
+      Logger.log("info@ から送れませんでした（" + res.getResponseCode() + "）：" + res.getContentText().slice(0, 200));
+    } catch (e) { Logger.log("info@ から送れませんでした：" + e.message); }
   }
-  MailApp.sendEmail(o);
+  MailApp.sendEmail(o); return "gmail";
 }
-/* 設定の確認用：Apps Script の画面でこの関数を1回実行すると、許可の画面が出ます。許可すると、info@ から登録メールあてに試しのメールを送ります */
+/* 設定の確認用：Apps Script の画面でこの関数を1回実行すると、許可の画面が出ます。許可すると、登録メールあてに試しのメールを送ります */
 function checkSender() {
-  var al = GmailApp.getAliases(), fr = fromAddr_();
-  Logger.log("Gmail に登録されている送信元：" + (al.join("、") || "なし"));
-  if (al.indexOf(fr) < 0) { Logger.log("まだ " + fr + " が送信元として登録されていません。Gmail の設定で登録してください。"); return; }
-  sendMail_({ to: P("NOTIFY_TO"), subject: "［" + ISSUER.service + "］送信元のテスト", body: fr + " から送れることを確かめるためのメールです。" });
-  Logger.log(fr + " から試しのメールを送りました。");
+  var r = sendMail_({ to: P("NOTIFY_TO"), subject: "［" + ISSUER.service + "］送信元のテスト", body: "このメールの差出人が " + fromAddr_() + " になっていれば、設定は完了です。\n（差出人が Gmail の場合は、Xサーバーからの送信がまだできていません）" });
+  Logger.log(r === "info" ? fromAddr_() + " から試しのメールを送りました。" : "Xサーバーから送れなかったため、Gmail から送りました。ログを確認してください。");
 }
 /* ---- 管理者と担当者のアカウント ---- */
 function adminName_() { return P("ADMIN_NAME") || "中嶋"; }
