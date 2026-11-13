@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """医療介護総合支援会サイトの生成。家じまい相談窓口と同じ設計（CSS・部品）を使い、色だけ医療向けに替える。"""
 import os, re, json, html, shutil
-from data import SITE, ROLES, STATUS, CATS, SUP, PURPOSES, FAQ, ROLE_FAQ, ROLE_CASES, HOUSING, NEWS
+from data import SITE, ROLES, STATUS, CATS, SUP, PURPOSES, FAQ, ROLE_FAQ, ROLE_CASES, HOUSING, NEWS, PARTNER_TAX
 # フォームの送り先：支援会専用の受付（keiyaku_config.js の KEIYAKU_API_URL）が設定されたら、そちらへ切り替える
 _k = re.search(r'KEIYAKU_API_URL = "([^"]*)"', open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "keiyaku_config.js"), encoding="utf-8").read())
 if _k and _k.group(1):
@@ -43,6 +43,14 @@ def strip_op(c):
     return c
 
 EXTRA_CSS = r"""
+.sec-sub{display:flex;align-items:center;gap:14px;margin:34px 0 16px;color:var(--muted);font-weight:700}.sec-sub:before,.sec-sub:after{content:"";flex:1;height:1px;background:var(--line)}
+.doors.d2{grid-template-columns:repeat(2,minmax(0,1fr))}@media (max-width:760px){.doors.d2{grid-template-columns:1fr}}
+.req{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:6px;background:#B3261E;color:#fff;font-size:.78rem;font-weight:700;vertical-align:2px;line-height:1.6}
+.area-h .small-btn{min-height:40px;padding:0 14px;border-radius:10px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:.92rem;font-weight:700;cursor:pointer}
+.area-row{border:2px solid var(--line);border-radius:14px;padding:14px 16px 4px;margin:0 0 12px;background:var(--surface)}.area-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.area-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:start}@media (max-width:760px){.area-g{grid-template-columns:1fr;gap:0}}
+.door-x{border-style:dashed;border-color:var(--gold-bright,#C99A45);background:var(--gold-soft,#F5ECDA)}.door-x .no{color:var(--gold,#8A621C)}
+
 .news{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
 .news li{display:grid;grid-template-columns:9.5em 1fr;gap:4px 18px;padding:14px 4px;border-bottom:1px solid var(--line)}
 .news time{color:var(--muted);font-variant-numeric:tabular-nums}
@@ -272,32 +280,32 @@ def nav(p, cur):
     return f'''<nav class="nav" id="gnav" aria-label="サイト内">
 <a class="home" href="{p}index.html"{" aria-current=\"page\"" if cur == "top" else ""}>トップ</a>
 {a("about/index.html", "支援会とは", "about")}
-<div class="dd"><a href="{p}roles/index.html"{" aria-current=\"page\"" if cur == "roles" else ""}>立場から選ぶ</a><div class="dd-panel"><div><h4><a href="{p}roles/index.html">{ic("users")}4つの立場</a></h4><ul>{roles_dd}</ul></div><a class="all more" href="{p}roles/index.html">立場の一覧を見る</a></div></div>
+<div class="dd"><a href="{p}roles/index.html"{" aria-current=\"page\"" if cur == "roles" else ""}>立場から選ぶ</a><div class="dd-panel"><div><h4><a href="{p}roles/index.html">{ic("users")}4つの立場</a></h4><ul>{roles_dd}</ul></div><div><h4>{ic("hands")}立場とは別の窓口</h4><ul><li><a href="{p}kyoryoku/teikei.html">提携・協業の申し込み</a></li><li><a href="{p}kyoryoku/youbou.html">要望の窓口</a></li></ul></div><a class="all more" href="{p}roles/index.html">立場の一覧を見る</a></div></div>
 <div class="dd"><a href="{p}support/index.html"{" aria-current=\"page\"" if cur == "support" else ""}>支援メニュー</a><div class="dd-panel">{cats_dd}<a class="all more" href="{p}support/index.html">支援メニューを見る（{NSUP}項目）</a></div></div>
 {a("flow/index.html", "流れ・費用", "flow")}
 {a("faq/index.html", "よくある質問", "faq")}
 {a("company/index.html", "運営会社", "company")}
 <a class="m-only" href="{p}status/index.html">提供状況</a>
-<a class="m-only" href="{p}kyoryoku/index.html">協力・提携</a>
+<a class="m-only" href="{p}kyoryoku/index.html">提携・協業・要望</a>
 <a class="m-only" href="{p}soudan/index.html">緊急時・公的な相談窓口</a>
-<a class="cta" href="{p}contact/index.html">{ic("chat")}相談・要望を送る</a>
+<a class="cta" href="{p}contact/index.html">{ic("chat")}相談を送る</a>
 </nav>'''
 
 def footer(p):
     return f'''<section class="cta-band"><img class="bg" src="{p}assets/head-5.jpg" alt="" loading="lazy"><div class="wrap">
 <div><h2>相談内容が決まっていなくても、<br>だいじょうぶです。</h2><p>立場と目的を選ぶだけで、受付の内容がまとまります。<br>名前を伏せた相談もできます。</p></div>
-<a class="btn btn-g" href="{p}contact/index.html">{ic("chat")}相談・要望を送る</a>
+<a class="btn btn-g" href="{p}contact/index.html">{ic("chat")}相談を送る</a>
 </div></section>
 <footer class="ft"><div class="wrap ft-in">
 <div><a class="brand" href="{p}index.html">{ic("plus", "ic brand-mark")}<span><b>{SITE["name"]}</b><small>みんなで使い、みんなで育てる</small></span></a>
 <div class="co"><span>運営会社　{SITE["company"]}</span><span>{SITE["addr"]}</span><span>メール　{SITE["mail"]}</span><span>対応地域　{SITE["area"]}</span></div></div>
 <details class="fcol" open><summary><h4>支援会について</h4></summary><ul>
-<li><a href="{p}about/index.html">支援会とは</a></li><li><a href="{p}status/index.html">提供状況</a></li><li><a href="{p}member/index.html">会員制度</a></li><li><a href="{p}flow/index.html">相談の流れ・費用</a></li><li><a href="{p}faq/index.html">よくある質問</a></li><li><a href="{p}kyoryoku/index.html">協力・提携・要望</a></li><li><a href="{p}soudan/index.html">緊急時・公的な相談窓口</a></li><li><a href="{p}company/index.html">運営会社</a></li><li><a href="{p}contact/index.html">相談・要望を送る</a></li><li><a href="{p}privacy/index.html">個人情報の取り扱い</a></li><li><a href="{p}terms/index.html">利用規約・免責事項</a></li><li><a href="{p}member/tokushoho.html">特定商取引法に基づく表記</a></li></ul></details>
-<details class="fcol" open><summary><h4>立場から選ぶ</h4></summary><ul>{"".join(f'<li><a href="{p}roles/{r["id"]}.html">{r["name"]}</a></li>' for r in ROLES)}<li><a href="{p}roles/index.html">4つの立場の一覧</a></li></ul></details>
+<li><a href="{p}about/index.html">支援会とは</a></li><li><a href="{p}status/index.html">提供状況</a></li><li><a href="{p}member/index.html">会員制度</a></li><li><a href="{p}flow/index.html">相談の流れ・費用</a></li><li><a href="{p}faq/index.html">よくある質問</a></li><li><a href="{p}kyoryoku/index.html">提携・協業・要望</a></li><li><a href="{p}soudan/index.html">緊急時・公的な相談窓口</a></li><li><a href="{p}company/index.html">運営会社</a></li><li><a href="{p}contact/index.html">相談を送る</a></li><li><a href="{p}privacy/index.html">個人情報の取り扱い</a></li><li><a href="{p}terms/index.html">利用規約・免責事項</a></li><li><a href="{p}member/tokushoho.html">特定商取引法に基づく表記</a></li></ul></details>
+<details class="fcol" open><summary><h4>立場から選ぶ</h4></summary><ul>{"".join(f'<li><a href="{p}roles/{r["id"]}.html">{r["name"]}</a></li>' for r in ROLES)}<li><a href="{p}roles/index.html">4つの立場の一覧</a></li><li><a href="{p}kyoryoku/teikei.html">提携・協業の申し込み</a></li><li><a href="{p}kyoryoku/youbou.html">要望の窓口</a></li></ul></details>
 <details class="fcol" open><summary><h4>支援メニュー</h4></summary><ul>{"".join(f'<li><a href="{p}support/index.html#{c["id"]}">{c["name"]}</a></li>' for c in CATS)}<li><a href="{p}support/index.html">すべての支援メニュー</a></li></ul>
 <h4 style="margin-top:22px">関連する窓口</h4><ul><li><a href="{SITE["iejimai"]}">家じまい相談窓口</a></li><li><a href="{SITE["kigyo"]}">企業支援 総合相談窓口</a></li><li><a href="{SITE["globe"]}">株式会社グローブ</a></li></ul></details>
 </div><div class="ft-bottom"><div class="wrap"><span>© {SITE["company"]}</span><span class="ft-img">掲載の写真・映像はイメージです</span><a class="replay" href="{p}privacy/index.html">個人情報の取り扱い</a><a class="replay" href="{p}keiyaku/admin.html" rel="nofollow">担当者ログイン</a></div></div></footer>
-<a class="telbar" href="{p}contact/index.html">{ic("chat")}相談・要望を送る（ウェブ受付）</a><script>document.body.classList.add("has-telbar")</script>'''
+<a class="telbar" href="{p}contact/index.html">{ic("chat")}相談を送る（ウェブ受付）</a><script>document.body.classList.add("has-telbar")</script>'''
 
 COMMON_JS = r"""<script>
 (function(){var b=document.getElementById('menuBtn'),n=document.getElementById('gnav');
@@ -400,6 +408,12 @@ PAGES = []
 CSS = ""
 
 # ---------- トップ ----------
+def extra_doors(pre):
+    return f'''<div class="sec-sub"><span>立場とは別の窓口</span></div><div class="doors d2 x2">
+<a class="door door-x" href="{pre}kyoryoku/teikei.html">{emb("hands", True)}<span class="no">事業者・専門家の方</span><h3>提携・協業の申し込み</h3><p>会員へサービスを提供したい事業者、協力いただける専門家（士業・医師など）、協賛会員として参加したい企業の方の窓口です。</p><span class="more">申し込みフォームへ</span></a>
+<a class="door door-x" href="{pre}kyoryoku/youbou.html">{emb("chat", True)}<span class="no">どなたでも</span><h3>要望の窓口</h3><p>「こんな支援がほしい」「ここを改善してほしい」という声を受け付けます。名前なしでも送れます。</p><span class="more">要望を送る</span></a>
+</div>'''
+
 def build_top():
     doors = "".join(f'''<a class="door" href="{{p}}roles/{r["id"]}.html">{emb(r["icon"], True)}<span class="no">入口 {i+1}</span><h3>{r["name"]}</h3><p>{r["short"]}。{"、".join(r["topics"][:3])}など。</p><span class="more">この立場で選ぶ</span></a>''' for i, r in enumerate(ROLES))
     vals = "".join(f'<div class="val">{emb(VAL_ICON[k])}<h3>{k}</h3><p>{t}</p></div>' for k, t in [
@@ -432,7 +446,7 @@ def build_top():
 <span class="lbl">みんなで使い、みんなで育てる総合支援会</span>
 <h1>医療・介護に関わる<br>すべての人を、<br><span class="h-nb">応援し、</span><span class="h-nb">支え、</span><span class="h-nb">つなぐ。</span></h1>
 <p class="lead">困ったときだけではありません。経営をよくしたい、働きやすくしたい、暮らしを便利にしたい、家族を支えたい。皆さまの声から、求められる支援を増やしていきます。</p>
-<div class="btns"><a class="btn btn-g" href="{{p}}contact/index.html">{ic("chat")}相談・要望を送る</a><a class="btn btn-w" href="{{p}}roles/index.html">{ic("users")}自分の立場から選ぶ</a></div>
+<div class="btns"><a class="btn btn-g" href="{{p}}contact/index.html">{ic("chat")}相談を送る</a><a class="btn btn-w" href="{{p}}roles/index.html">{ic("users")}自分の立場から選ぶ</a></div>
 <p class="note"><b>ご相談の受付・整理は無料</b>　名前を伏せた相談もできます<br>対応地域：{SITE["area"]}</p>
 <p class="op-replay"><a href="#op" data-op>{ic("arrow")}オープニング映像を見る（約11秒）</a></p>
 </div></div></section>
@@ -447,6 +461,7 @@ def build_top():
 <section class="sec"><div class="wrap">
 {sec_h("まず、あなたの立場から", "4つの入口から、お選びください", "選んだ立場に関係する相談・支援・優待・協力の方法だけをご案内します。どれを選べばよいか分からないときは、そのまま受付フォームへお進みください。", True)}
 <div class="doors d4">{doors}</div>
+{extra_doors("{p}")}
 <p style="margin-top:26px;text-align:center"><a class="more" href="{{p}}contact/index.html">どの立場か分からない・近いものがない</a></p>
 </div></section>
 
@@ -541,6 +556,7 @@ def build_roles():
     doors = "".join(f'''<a class="door" href="{r["id"]}.html">{emb(r["icon"], True)}<span class="no">入口 {i+1}</span><h3>{r["name"]}</h3><p>{r["lead"]}</p><span class="more">この立場で選ぶ</span></a>''' for i, r in enumerate(ROLES))
     body = ph("立場から選ぶ", "あなたの立場を選ぶと、関係する相談・支援・優待・協力の方法をご案内します。", [("立場から選ぶ", None)], "head-1.jpg", "users") + f'''
 <section class="sec"><div class="wrap"><div class="doors d4">{doors}</div>
+{extra_doors("../")}
 <p style="margin-top:26px;text-align:center"><a class="more" href="{{p}}contact/index.html">どの立場か分からない・近いものがない</a></p></div></section>'''
     page("roles/index.html", "立場から選ぶ", "企業・事業者、医療・介護で働く方、利用者・ご本人、ご家族の4つの立場から、関係する相談・支援・優待・協力の方法をお選びいただけます。大阪・関西の医療・介護の総合窓口です。", "<main id=\"main\">" + body + "</main>", cur="roles")
     for r in ROLES:
@@ -573,7 +589,7 @@ def build_roles():
 <div class="block"><h2>{ic("users")}ほかの立場</h2><div class="chips">{others}</div></div>
 </div>
 <aside class="side"><nav aria-label="立場"><h3>{ic("users")}立場から選ぶ</h3><ul>{"".join(f'<li><a href="{o["id"]}.html"{" aria-current=\"page\"" if o["id"] == r["id"] else ""}>{o["name"]}</a></li>' for o in ROLES)}</ul><p style="margin-top:8px"><a class="more" href="index.html">立場の一覧へ</a></p></nav>
-<div class="box"><p>{r["name"]}として、相談・要望を送れます。</p><a class="btn btn-g" href="{contact_link(r["id"])}">{ic("chat")}相談・要望を送る</a></div></aside>
+<div class="box"><p>{r["name"]}として、相談・要望を送れます。</p><a class="btn btn-g" href="{contact_link(r["id"])}">{ic("chat")}相談を送る</a></div></aside>
 </div></div>'''
         page(f"roles/{r['id']}.html", {"kigyo":"企業・事業者の方へ","hataraku":"医療・介護で働く方へ","honnin":"利用者・ご本人へ","kazoku":"ご家族へ"}[r["id"]], r["lead"] + "大阪・関西の医療介護総合支援会がお手伝いします。", "<main id=\"main\">" + body + "</main>", cur="roles")
 
@@ -620,7 +636,7 @@ def build_support():
 <div class="block">{acc("search", "あわせてご相談の多い支援", "同じ分類のほかの支援", "<div class=" + chr(34) + "rel" + chr(34) + ">" + rels + "</div>")}</div>
 </div>
 <aside class="side"><nav aria-label="{c["name"]}"><h3>{ic(c["icon"])}{c["name"]}</h3><ul>{"".join(f'<li><a href="{x}.html"{" aria-current=\"page\"" if x == k else ""}>{SUP[x]["name"]}</a></li>' for x in c["items"])}</ul><p style="margin-top:8px"><a class="more" href="index.html">支援メニューへ</a></p></nav>
-<div class="box"><p>「{s["name"]}」について、{"ご要望" if st == "prep" else "ご相談"}を送れます。</p><a class="btn btn-g" href="{contact_link(s["roles"][0], "youbou" if st == "prep" else "soudan", k)}">{ic("chat")}{"要望を送る" if st == "prep" else "相談を送る"}</a></div></aside>
+<div class="box"><p>「{s["name"]}」について、{"ご要望" if st == "prep" else "ご相談"}を送れます。</p><a class="btn btn-g" href="{"{p}kyoryoku/youbou.html?s=" + k if st == "prep" else contact_link(s["roles"][0], "soudan", k)}">{ic("chat")}{"要望を送る" if st == "prep" else "相談を送る"}</a></div></aside>
 </div></div>'''
         page(f"support/{k}.html", s["name"], f"{s['name']}のご相談を受け付けます。{s['short']}。大阪・関西の医療・介護に関わる方の総合窓口、医療介護総合支援会の支援メニューです（{STATUS[st][0]}）。", "<main id=\"main\">" + body + "</main>", cur="support")
 
@@ -636,7 +652,7 @@ def build_status():
         cols += f'<div class="card"><h3>{badge(st)}</h3><p class="fine" style="margin-bottom:12px">{STATUS[st][1]}</p><ul>{items}</ul></div>'
     body = ph("提供状況", "いまできることと、これから育てることを正しくお示しします。", [("提供状況", None)], "head-3.jpg", "check") + f'''
 <section class="sec"><div class="wrap"><div class="stat3">{cols}</div>
-<p style="margin-top:26px"><a class="btn btn-o" href="{contact_link(None, "youbou")}">導入してほしい支援を伝える</a></p></div></section>'''
+<p style="margin-top:26px"><a class="btn btn-o" href="{{p}}kyoryoku/youbou.html">導入してほしい支援を伝える</a></p></div></section>'''
     page("status/index.html", "提供状況", "医療介護総合支援会の支援ごとの提供状況です。いま受け付けている支援、相談後に対応できるかを確認する支援、準備中の支援を正しくお示しします。ほしい支援の要望も受け付けています。", "<main id=\"main\">" + body + "</main>", cur="")
 
 # ---------- 会員制度 ----------
@@ -890,17 +906,161 @@ def build_flow():
 def build_faq():
     body = ph("よくある質問", "はじめての方からよくいただくご質問です。", [("よくある質問", None)], "head-5.jpg", "chat") + f'''
 <section class="sec"><div class="wrap" style="max-width:900px">{faq_html(FAQ)}
-<p style="margin-top:26px"><a class="btn btn-g" href="{{p}}contact/index.html">{ic("chat")}相談・要望を送る</a></p></div></section>'''
+<p style="margin-top:26px"><a class="btn btn-g" href="{{p}}contact/index.html">{ic("chat")}相談を送る</a></p></div></section>'''
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in FAQ]}
     page("faq/index.html", "よくある質問", "医療介護総合支援会へのよくある質問です。費用、名前を伏せた相談、勤務先への秘密、緊急時の連絡先、仕事の紹介、補助金の申請、対応地域、返信の目安などにお答えします。", "<main id=\"main\">" + body + "</main>", cur="faq", ld=ld)
 
+REQ_SPAN = ' <span class="req">必須</span>'
 def build_kyoryoku():
-    body = ph("協力・提携・要望", "事業者・専門家の協力と、「こんな支援がほしい」という声を受け付けています。", [("協力・提携・要望", None)], "head-3.jpg", "hands") + f'''
+    body = ph("提携・協業・要望", "提携・協業のお申し込みと、ご要望は、それぞれ専用の窓口で受け付けています。", [("提携・協業・要望", None)], "head-3.jpg", "hands") + f'''
 <section class="sec"><div class="wrap"><div class="grid g2">
-<div class="card"><h2 style="font-size:1.5rem;margin-bottom:12px">{ic("hands")} 事業者・専門家の方へ</h2><p>医療・介護に関わる方へのサービスを提供する事業者、弁護士・税理士・社会保険労務士・行政書士などの専門家の方の協力を募集しています。</p><ul class="dots" style="margin-top:12px"><li>提供できるサービスと対応地域</li><li>医療・介護に関わる方への特典・優待の可否</li><li>連携の進め方のご希望</li></ul><p class="fine" style="margin-top:12px">専門家の方から紹介料を受け取ることはありません。内容を確認し、担当者からご連絡します。</p><p style="margin-top:18px"><a class="btn btn-g" href="{contact_link("kigyo", "kyoryoku")}">協力・提携を申し出る</a></p></div>
-<div class="card"><h2 style="font-size:1.5rem;margin-bottom:12px">{ic("chat")} ほしい支援を伝える</h2><p>「こんな支援があれば助かる」「ここを改善してほしい」という声を、どの立場の方からも受け付けています。多く寄せられた声は、協力者と一緒に新しい支援にします。</p><p style="margin-top:18px"><a class="btn btn-o" href="{contact_link(None, "youbou")}">要望を送る</a></p></div>
-</div></div></section>'''
-    page("kyoryoku/index.html", "協力・提携・要望", "医療介護総合支援会では、医療・介護に関わる方へのサービスを提供する事業者や専門家の協力・提携の申し出と、「こんな支援がほしい」という要望を受け付けています。", "<main id=\"main\">" + body + "</main>", cur="")
+<div class="card"><h2 style="font-size:1.5rem;margin-bottom:12px">{ic("hands")} 提携・協業の申し込み</h2><p>医療・介護に関わる方へのサービスを提供する事業者、弁護士・税理士・社会保険労務士・行政書士などの専門家の方の協力を募集しています。</p><ul class="dots" style="margin-top:12px"><li>提供できるサービスと、対応できる地域</li><li>会員向けの優待や条件</li><li>許認可・資格</li></ul><p class="fine" style="margin-top:10px">いただいた内容をもとに担当者から連絡し、面談のうえで提携の可否を決めます。</p><p style="margin-top:18px"><a class="btn btn-g" href="teikei.html">{ic("hands")}提携・協業の申し込みフォーム</a></p></div>
+<div class="card"><h2 style="font-size:1.5rem;margin-bottom:12px">{ic("chat")} 要望の窓口</h2><p>「こんな支援があれば助かる」「ここを改善してほしい」という声を、どの立場の方からも受け付けています。多く寄せられた声は、協力者と一緒に新しい支援にします。</p><p class="fine" style="margin-top:10px">名前を書かずに送れます。返信がほしいときだけ、メールアドレスを入れてください。</p><p style="margin-top:18px"><a class="btn btn-o" href="youbou.html">{ic("chat")}要望を送るフォーム</a></p></div>
+</div>
+<p class="fine" style="margin-top:22px">困りごとのご相談は、<a href="{{p}}contact/index.html">相談の受付</a>からお送りください。</p></div></section>'''
+    page("kyoryoku/index.html", "提携・協業・要望", "医療介護総合支援会では、医療・介護に関わる方へのサービスを提供する事業者や専門家の提携・協業の申し込みと、「こんな支援がほしい」という要望を、それぞれ専用のフォームで受け付けています。", "<main id=\"main\">" + body + "</main>", cur="")
+    build_teikei(); build_youbou()
+
+def radios(name, items, req=True):
+    return '<div class="opts radio-opts">' + "".join(f'<label><input type="radio" name="{name}" value="{E(v)}"><span>{E(v)}{f"<small>{E(s)}</small>" if s else ""}</span></label>' for v, s in items) + '</div>'
+def checks(name, items):
+    return '<div class="opts">' + "".join(f'<label><input type="checkbox" name="{name}" value="{E(v)}"><span>{E(v)}</span></label>' for v in items) + '</div>'
+def lg(t, req):
+    return f'<legend style="font-weight:700;font-size:1.08rem;margin-bottom:8px">{t}{REQ_SPAN if req else ""}</legend>'
+def fld(i, label, req=False, typ="text", extra="", ml=120):
+    r = ' <span class="req">必須</span>' if req else ""
+    if typ == "textarea": return f'<div class="fld"><label for="{i}">{label}{r}</label><textarea id="{i}" maxlength="{ml}" {extra}></textarea></div>'
+    return f'<div class="fld"><label for="{i}">{label}{r}</label><input id="{i}" type="{typ}" maxlength="{ml}" {extra}></div>'
+HP = '<div class="hp" aria-hidden="true" style="position:absolute;left:-9999px"><label for="hpf">この欄は空のままにしてください</label><input id="hpf" type="text" tabindex="-1" autocomplete="off"></div>'
+AGREE = '<label class="agree" for="agree"><input type="checkbox" id="agree"><span><a href="{p}privacy/index.html" target="_blank" rel="noopener">個人情報の取り扱い</a>（別の画面で開きます）を読み、同意します。 <span class="req">必須</span></span></label>'
+
+SIMPLE_JS = r"""<script>(function(){
+var C=__CFG__,f=document.getElementById('sf'),err=document.getElementById('serr'),t0=Date.now(),sending=false;
+function v(i){var e=document.getElementById(i);return e?String(e.value||'').trim():''}
+function one(n){var e=f.querySelector('input[name="'+n+'"]:checked');return e?e.value:''}
+function all(n){return Array.prototype.map.call(f.querySelectorAll('input[name="'+n+'"]:checked'),function(e){return e.value})}
+function vis(e){return !!(e&&e.offsetParent)}
+function need(m,el){err.textContent=m;err.hidden=false;if(el){el.scrollIntoView({block:'center',behavior:'smooth'});try{el.focus({preventScroll:true})}catch(x){}}return false}
+var q=new URLSearchParams(location.search);
+if(C.pre){var s=q.get('s');if(s&&C.pre[s]){var o=f.querySelector('[name="'+C.preName+'"][value="'+C.pre[s]+'"]');if(o)o.checked=true;var t=document.getElementById('preNote');if(t){t.hidden=false;t.textContent='「'+C.pre[s]+'」についての要望として送ります。'}}}
+function sync(){(C.toggles||[]).forEach(function(t){var on=one(t.name)===t.value;t.show.forEach(function(id){var e=document.getElementById(id);if(e)e.hidden=!on})})}
+f.addEventListener('change',function(){sync();err.hidden=true});f.addEventListener('input',function(){err.hidden=true});sync();
+function check(){err.hidden=true;
+ for(var i=0;i<C.reqRadio.length;i++){var r=C.reqRadio[i];if(!one(r[0]))return need(r[1]+'を選んでください。',f.querySelector('input[name="'+r[0]+'"]'))}
+ for(i=0;i<(C.reqCheck||[]).length;i++){r=C.reqCheck[i];if(!all(r[0]).length)return need(r[1]+'を1つ以上選んでください。',f.querySelector('input[name="'+r[0]+'"]'))}
+ if(C.customCheck&&window[C.customCheck]){var cc=window[C.customCheck]();if(cc)return need(cc[0],cc[1])}
+ for(i=0;i<C.reqText.length;i++){r=C.reqText[i];var el=document.getElementById(r[0]);if(vis(el)&&!v(r[0]))return need(r[1]+'を入れてください。',el)}
+ var m=document.getElementById('mail');if(m&&v('mail')&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v('mail')))return need('メールアドレスの形をご確認ください（例：name@example.jp）。',m);
+ if(C.sens&&/(病名|診断|うつ|がん|認知症|要介護[1-5１-５]|服薬|マイナンバー|口座番号|カード番号)/.test(v(C.sens)))return need('病気や体の状態、番号などの情報が含まれている可能性があります。その部分を消してください。',document.getElementById(C.sens));
+ if(!document.getElementById('agree').checked)return need('個人情報の取り扱いを読み、同意の欄に印を付けてください。',document.getElementById('agree'));
+ return true}
+function rows(){var R=C.rows.map(function(r){var val=r[2]==='radio'?one(r[1]):r[2]==='check'?all(r[1]).join('、'):v(r[1]);return [r[0],val]}).filter(function(r){return r[1]});if(C.customRows&&window[C.customRows])R.splice(1,0,...window[C.customRows]());return R}
+function receipt(){var d=new Date(),p=function(n){return String(n).padStart(2,'0')},a=new Uint8Array(3);crypto.getRandomValues(a);return C.prefix+'-'+String(d.getFullYear()).slice(2)+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())+Array.prototype.map.call(a,function(x){return(x%36).toString(36)}).join('').toUpperCase()}
+f.addEventListener('submit',function(e){e.preventDefault();if(sending||!check())return;
+ if(v('hpf')){need('送信できませんでした。メールでご連絡ください。');return}
+ sending=true;var b=document.getElementById('ssend');b.disabled=true;b.textContent='送信しています…';
+ var body='【'+C.site+' '+C.title+'】\n'+rows().map(function(r){return r[0]+'：'+r[1]}).join('\n');
+ var kind=one(C.kindName)||'';
+ var rec={no:receipt(),ts:new Date().toISOString(),entry:C.site,name:v('nm')||C.noName,company:v('co'),email:v('mail'),tel:v('tel')||'（未入力）',body:body,status:'新規受付',fields:[C.field].concat(C.customFields&&window[C.customFields]?window[C.customFields]():[])};
+ fetch(C.endpoint,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({kind:'inbox'},rec,{elapsed:Date.now()-t0,catLabel:C.site+'：'+C.title+(kind?'／'+kind:'')}))})
+ .then(function(r){return r.json()}).then(function(j){if(!j||j.ok!==true)throw new Error('x');
+  f.hidden=true;var d=document.getElementById('sdone');d.hidden=false;d.innerHTML='<div class="done-box" role="status"><b>受け付けました</b><p>受付番号：'+(j.no||rec.no)+'</p><p>'+(v('mail')?C.doneMail:C.doneNoMail)+'</p></div>';window.scrollTo(0,d.getBoundingClientRect().top+scrollY-140)})
+ .catch(function(){sending=false;b.disabled=false;b.textContent=C.btn;need('送信できませんでした。時間をおいてもう一度お試しいただくか、'+C.mail+' へメールでお送りください。')})});
+})();</script>"""
+
+AREA_JS = r"""<script>(function(){
+var T=__TAX__,box=document.getElementById('areas'),add=document.getElementById('addArea'),n=0;
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function opts(list,ph){return '<option value="">'+ph+'</option>'+list.map(function(x){return '<option>'+esc(x)+'</option>'}).join('')}
+function row(){if(n>=5)return;n++;var i=n,d=document.createElement('div');d.className='area-row';d.dataset.i=i;
+ d.innerHTML='<div class="area-h"><b>分野 '+i+'</b>'+(i>1?'<button type="button" class="small-btn" data-del>この分野を消す</button>':'')+'</div>'+
+ '<div class="area-g"><div class="fld"><label for="a'+i+'a">大分類 <span class="req">必須</span></label><select id="a'+i+'a">'+opts(Object.keys(T),'選んでください')+'</select></div>'+
+ '<div class="fld"><label for="a'+i+'b">中分類 <span class="req">必須</span></label><select id="a'+i+'b" disabled>'+opts([],'先に大分類を選んでください')+'</select></div>'+
+ '<div class="fld"><label for="a'+i+'c">小分類 <span class="req">必須</span></label><select id="a'+i+'c" disabled>'+opts([],'先に中分類を選んでください')+'</select></div></div>'+
+ '<div class="fld"><label for="a'+i+'d">詳細 <span class="req">必須</span></label><input type="text" id="a'+i+'d" maxlength="300" placeholder="例：介護施設向けの電気料金の見直し"></div>';
+ box.appendChild(d);var A=d.querySelector('#a'+i+'a'),M=d.querySelector('#a'+i+'b'),S=d.querySelector('#a'+i+'c');
+ A.onchange=function(){var m=T[A.value];M.innerHTML=opts(m?Object.keys(m):[],m?'選んでください':'先に大分類を選んでください');M.disabled=!m;S.innerHTML=opts([],'先に中分類を選んでください');S.disabled=true};
+ M.onchange=function(){var s=T[A.value]&&T[A.value][M.value];S.innerHTML=opts(s||[],s?'選んでください':'先に中分類を選んでください');S.disabled=!s};
+ var del=d.querySelector('[data-del]');if(del)del.onclick=function(){d.remove();renum()};
+ add.hidden=n>=5}
+function renum(){var rs=box.querySelectorAll('.area-row');n=rs.length;rs.forEach(function(r,k){r.querySelector('.area-h b').textContent='分野 '+(k+1)});add.hidden=n>=5}
+add.onclick=function(){row();var l=box.lastElementChild;if(l){l.scrollIntoView({block:'center',behavior:'smooth'});l.querySelector('select').focus({preventScroll:true})}};
+row();
+function list(){return Array.prototype.map.call(box.querySelectorAll('.area-row'),function(r){var g=function(s){var e=r.querySelector('[id$="'+s+'"]');return e?String(e.value||'').trim():''};return{el:r,a:g('a'),b:g('b'),c:g('c'),d:g('d'),ids:['a','b','c','d'].map(function(s){return r.querySelector('[id$="'+s+'"]')})}})}
+window.areaCheck=function(){var L=list();for(var k=0;k<L.length;k++){var x=L[k],lab='分野 '+(k+1)+'の';if(!x.a)return[lab+'大分類を選んでください。',x.ids[0]];if(!x.b)return[lab+'中分類を選んでください。',x.ids[1]];if(!x.c)return[lab+'小分類を選んでください。',x.ids[2]];if(!x.d)return[lab+'詳細を書いてください。',x.ids[3]]}return null};
+window.areaRows=function(){return list().map(function(x,k){return['提携・協業の分野 '+(k+1),x.a+' ＞ '+x.b+' ＞ '+x.c+'\n　詳細：'+x.d]})};
+window.areaFields=function(){var o=[];list().forEach(function(x){if(x.a&&o.indexOf('提携：'+x.a)<0)o.push('提携：'+x.a)});return o};
+})();</script>"""
+
+def build_teikei():
+    kinds = [("提携企業として、会員へサービスを提供したい", "仕入れ・設備・ITなど、医療・介護の事業者向けのサービス"), ("専門家として協力したい", "弁護士・税理士・社会保険労務士・行政書士・医師など"), ("協賛会員として参加したい", "会員制度の協賛会員（審査があります）"), ("その他の協力", "共同での取り組み・情報提供など")]
+    areas = [SUP[k]["name"] for c in CATS for k in c["items"]]
+    form = f'''<form class="form-card" id="sf" novalidate>
+<h2>提携・協業の申し込み</h2><p class="hint">分かる範囲でご記入ください。<span class="req">必須</span>の欄だけ入れれば送れます。</p>
+<fieldset class="fld" style="border:0;padding:0;margin:0 0 22px">{lg("申し込みの種類", True)}{radios("kind", kinds)}</fieldset>
+<fieldset class="fld" style="border:0;padding:0;margin:0 0 22px">{lg("提携・協業の分野", True)}<p class="hint">大分類 → 中分類 → 小分類の順に選び、詳細を書いてください。複数の分野がある場合は「分野を追加」で5つまで登録できます。</p><div id="areas"></div><button type="button" class="btn btn-o" id="addArea" style="margin-top:6px">＋ 分野を追加</button></fieldset>
+{fld("co", "事業者名・法人名", True, extra='autocomplete="organization"', ml=100)}
+{fld("nm", "ご担当者のお名前", True, extra='autocomplete="name"', ml=60)}
+{fld("ttl", "部署・役職", ml=60)}
+{fld("addr", "所在地", True, extra='autocomplete="street-address"', ml=120)}
+{fld("zone", "対応できる地域", ml=120)}
+{fld("url", "ホームページ", typ="url", extra='inputmode="url"', ml=200)}
+{fld("svc", "提供できるサービス・協力の内容", True, "textarea", ml=1500)}
+{fld("perk", "会員向けの優待・条件（あれば）", False, "textarea", ml=800)}
+{fld("lic", "許認可・資格（あれば）", ml=200)}
+{fld("tel", "電話番号", True, "tel", 'autocomplete="tel" inputmode="tel"', 20)}
+{fld("mail", "メールアドレス", True, "email", 'autocomplete="email" inputmode="email"', 120)}
+<p class="note-box">お申し込みの内容を確認し、担当者からご連絡します。面談のうえで提携の可否を決めます。すべてのお申し込みにお応えできない場合があります。</p>
+{AGREE}{HP}
+<p class="err" id="serr" role="alert" hidden></p>
+<button class="btn btn-g" type="submit" id="ssend" style="width:100%;margin-top:16px">この内容で申し込む</button>
+</form><div id="sdone" hidden></div>'''
+    body = ph("提携・協業の申し込み", "医療・介護に関わる方へのサービスを提供する事業者・専門家の方との提携・協業を募集しています。", [("提携・協業・要望", "kyoryoku/index.html"), ("提携・協業の申し込み", None)], "head-3.jpg", "hands") + f'<section class="sec"><div class="wrap" style="max-width:860px">{form}<p class="fine" style="margin-top:18px">ご要望・ご意見は<a href="youbou.html">要望の窓口</a>、困りごとのご相談は<a href="{{p}}contact/index.html">相談の受付</a>へ。</p></div></section>'
+    cfg = {"endpoint": SITE["endpoint"], "site": SITE["name"], "mail": SITE["mail"], "title": "提携・協業の申し込み", "prefix": "IKT", "field": "提携・協業の申し込み", "kindName": "kind", "noName": "", "btn": "この内容で申し込む",
+           "reqRadio": [["kind", "申し込みの種類"]], "customCheck": "areaCheck", "customRows": "areaRows", "customFields": "areaFields", "reqText": [["co", "事業者名・法人名"], ["nm", "ご担当者のお名前"], ["addr", "所在地"], ["svc", "提供できるサービス・協力の内容"], ["tel", "電話番号"], ["mail", "メールアドレス"]],
+           "rows": [["申し込みの種類", "kind", "radio"], ["事業者名・法人名", "co"], ["ご担当者", "nm"], ["部署・役職", "ttl"], ["所在地", "addr"], ["対応できる地域", "zone"], ["ホームページ", "url"], ["提供できるサービス・協力の内容", "svc"], ["会員向けの優待・条件", "perk"], ["許認可・資格", "lic"], ["電話", "tel"], ["メール", "mail"]],
+           "doneMail": "内容を確認し、担当者からご連絡します（原則5営業日以内）。", "doneNoMail": "内容を確認し、担当者からご連絡します。"}
+    help_ = {"co": {"t": "事業者名・法人名を、正式な名前で入れます。", "ex": "例：株式会社○○", "req": True}, "nm": {"t": "ご担当者のお名前です。", "ex": "例：山田 太郎", "req": True}, "addr": {"t": "所在地を都道府県から入れます。", "ex": "例：大阪府大阪市○○区○○1-2-3", "req": True}, "zone": {"t": "サービスを提供できる地域です。", "ex": "例：大阪府全域、関西一円、全国（オンライン）"}, "url": {"t": "ホームページがあれば入れます。", "ex": "例：https://example.jp"}, "svc": {"t": "会員に提供できるサービスや、協力できることを書きます。", "ex": "例：介護施設向けの電気料金の見直し。現状の請求書から削減額を無料で試算します", "req": True}, "perk": {"t": "会員だけの割引や特典があれば書きます。", "ex": "例：初年度の基本料金10%引き"}, "lic": {"t": "業務に必要な許認可・資格があれば書きます。", "ex": "例：社会保険労務士登録 第○○号"}, "tel": {"t": "日中につながる電話番号です。", "ex": "例：06-1234-5678", "req": True}, "mail": {"t": "担当者からの連絡を受け取るメールアドレスです。", "ex": "例：info@example.jp", "req": True}}
+    for n in range(1, 6):
+        help_[f"a{n}a"] = {"t": "大分類を選びます。いちばん近いものを選んでください。", "req": True}
+        help_[f"a{n}b"] = {"t": "中分類を選びます（大分類を選ぶと出てきます）。", "req": True}
+        help_[f"a{n}c"] = {"t": "小分類を選びます（中分類を選ぶと出てきます）。", "req": True}
+        help_[f"a{n}d"] = {"t": "この分野で提供できることを、具体的に書きます。", "ex": "例：介護施設向けの電気料金の見直し。請求書から削減額を無料で試算します", "req": True}
+    js = "<script>window.FORM_HELP=" + json.dumps(help_, ensure_ascii=False) + ";window.FORM_GROUPS=[{name:'kind',label:'申し込みの種類'}];window.FORM_CHECKS=['agree'];window.FORM_SCOPE='#sf';window.FORM_SUBMIT='#ssend';window.FORM_DONE_LABEL='申し込むボタンへ ›';</script>" + AREA_JS.replace("__TAX__", json.dumps(PARTNER_TAX, ensure_ascii=False)) + SIMPLE_JS.replace("__CFG__", json.dumps(cfg, ensure_ascii=False))
+    page("kyoryoku/teikei.html", "提携・協業の申し込み", "医療介護総合支援会への提携・協業の申し込みフォームです。医療・介護に関わる方へのサービスを提供する事業者、弁護士・税理士・社会保険労務士・行政書士などの専門家の方の協力を募集しています。", "<main id=\"main\">" + body + "</main>", cur="", extra_js=js)
+
+def build_youbou():
+    kinds = [("ほしい支援・サービスがある", "こんな支援があれば助かる"), ("今の支援を改善してほしい", "使ってみて気になったこと"), ("サイトの使いやすさ", "分かりにくい・見づらいところ"), ("その他のご意見", "")]
+    who = [(r["name"], "") for r in ROLES] + [("答えない", "")]
+    opts = "".join(f'<option>{E(SUP[k]["name"])}</option>' for c in CATS for k in c["items"])
+    form = f'''<form class="form-card" id="sf" novalidate>
+<h2>要望を送る</h2><p class="hint">名前を書かずに送れます。<span class="req">必須</span>の欄だけ入れれば送れます。</p>
+<p class="note-box" id="preNote" hidden></p>
+<fieldset class="fld" style="border:0;padding:0;margin:0 0 22px">{lg("要望の種類", True)}{radios("kind", kinds)}</fieldset>
+<div class="fld"><label for="sup">関係する支援（分かれば）</label><select id="sup"><option value="">選んでください</option>{opts}<option>特にない・分からない</option></select></div>
+{fld("memo", "要望・ご意見の内容（1,000文字まで）", True, "textarea", 'placeholder="例：夜勤明けでも相談できるよう、夜の時間帯にも受付をしてほしいです。"', 1000)}
+<p class="hint" style="margin-top:-6px">病名・症状・服薬・要介護度・番号などは書かないでください。</p>
+<fieldset class="fld" style="border:0;padding:0;margin:18px 0 22px">{lg("あなたの立場（任意）", False)}{radios("who", who, False)}</fieldset>
+<fieldset class="fld" style="border:0;padding:0;margin:0 0 18px">{lg("返信", True)}{radios("reply", [("返信は不要", "名前もメールアドレスも入れずに送れます"), ("返信がほしい", "メールアドレスを入れてください")])}</fieldset>
+<div id="replyBox" hidden>
+{fld("nm", "お名前（任意）", extra='autocomplete="name"', ml=60)}
+{fld("mail", "返信先のメールアドレス", True, "email", 'autocomplete="email" inputmode="email"', 120)}
+</div>
+{AGREE}{HP}
+<p class="err" id="serr" role="alert" hidden></p>
+<button class="btn btn-g" type="submit" id="ssend" style="width:100%;margin-top:16px">この内容で送る</button>
+</form><div id="sdone" hidden></div>'''
+    body = ph("要望の窓口", "「こんな支援がほしい」「ここを改善してほしい」という声を、どの立場の方からも受け付けています。", [("提携・協業・要望", "kyoryoku/index.html"), ("要望の窓口", None)], "head-3.jpg", "chat") + f'<section class="sec"><div class="wrap" style="max-width:860px">{form}<p class="fine" style="margin-top:18px">いただいた声は、新しい支援づくりや改善に使います。個別の返信は「返信がほしい」を選んだ方にのみお送りします。困りごとのご相談は<a href="{{p}}contact/index.html">相談の受付</a>、提携・協業のお申し込みは<a href="teikei.html">専用のフォーム</a>へ。</p></div></section>'
+    pre = {k: SUP[k]["name"] for c in CATS for k in c["items"]}
+    cfg = {"endpoint": SITE["endpoint"], "site": SITE["name"], "mail": SITE["mail"], "title": "要望・ご意見", "prefix": "IKY", "field": "要望・ご意見", "kindName": "kind", "noName": "（名前なしの要望）", "btn": "この内容で送る", "sens": "memo",
+           "reqRadio": [["kind", "要望の種類"], ["reply", "返信のいる・いらない"]], "reqText": [["memo", "要望・ご意見の内容"], ["mail", "返信先のメールアドレス"]],
+           "toggles": [{"name": "reply", "value": "返信がほしい", "show": ["replyBox"]}],
+           "rows": [["要望の種類", "kind", "radio"], ["関係する支援", "sup"], ["内容", "memo"], ["立場", "who", "radio"], ["返信", "reply", "radio"], ["お名前", "nm"], ["メール", "mail"]],
+           "doneMail": "内容を確認し、ご入力のメールアドレスへご返信します（原則5営業日以内）。", "doneNoMail": "貴重なご意見をありがとうございました。今後の支援づくりに生かします。"}
+    js_pre = "<script>(function(){var P=" + json.dumps(pre, ensure_ascii=False) + ",s=new URLSearchParams(location.search).get('s');if(s&&P[s]){var o=document.getElementById('sup');if(o){o.value=P[s]}var t=document.getElementById('preNote');if(t){t.hidden=false;t.textContent='「'+P[s]+'」についての要望として送ります。'}}})();</script>"
+    help_ = {"memo": {"t": "ほしい支援や、改善してほしいことを自由に書きます。", "ex": "例：夜勤明けでも相談できるよう、夜の時間帯にも受付をしてほしい", "req": True}, "sup": {"t": "関係する支援があれば選びます（なくても送れます）。"}, "nm": {"t": "返信の宛名に使います（空でも送れます）。", "ex": "例：山田 花子"}, "mail": {"t": "返信を受け取るメールアドレスです。", "ex": "例：yamada@example.jp", "req": True}}
+    js = "<script>window.FORM_HELP=" + json.dumps(help_, ensure_ascii=False) + ";window.FORM_GROUPS=[{name:'kind',label:'要望の種類'},{name:'reply',label:'返信'}];window.FORM_CHECKS=['agree'];window.FORM_SCOPE='#sf';window.FORM_SUBMIT='#ssend';window.FORM_DONE_LABEL='送るボタンへ ›';</script>" + SIMPLE_JS.replace("__CFG__", json.dumps(cfg, ensure_ascii=False)) + js_pre
+    page("kyoryoku/youbou.html", "要望の窓口", "医療介護総合支援会への要望・ご意見のフォームです。ほしい支援、今の支援の改善、サイトの使いやすさなど、どの立場の方からも名前なしで送れます。", "<main id=\"main\">" + body + "</main>", cur="", extra_js=js)
 
 def build_soudan():
     cards = [
@@ -1019,7 +1179,7 @@ def build_company():
 <tr><th>所在地</th><td>{SITE["zip"]} {SITE["addr"]}</td></tr>
 <tr><th>許認可</th><td>{SITE["kobutsu"]}</td></tr>
 <tr><th>適格請求書発行事業者 登録番号</th><td>{SITE["invoice"]}</td></tr>
-<tr><th>支援会へのお問い合わせ</th><td>ウェブ受付（<a href="{{p}}contact/index.html">相談・要望を送る</a>）<br>メール　{SITE["mail"]}</td></tr>
+<tr><th>支援会へのお問い合わせ</th><td>ウェブ受付（<a href="{{p}}contact/index.html">相談を送る</a>）<br>メール　{SITE["mail"]}</td></tr>
 <tr><th>運営会社のお電話</th><td>{SITE["tel"]}（受付時間 {SITE["tel_hours"]}）<br><span class="fine">支援会の電話相談は準備中です。お電話では受付方法のご案内などを承ります。</span></td></tr>
 <tr><th>対応地域</th><td>{SITE["area"]}</td></tr>
 </tbody></table></div>
@@ -1069,7 +1229,7 @@ def build_contact():
          "purposes": [{"id": a, "name": b, "short": c} for a, b, c in PURPOSES],
          "sup": {k: {"name": s["name"], "short": s["short"]} for k, s in SUP.items()},
          "endpoint": SITE["endpoint"], "site": SITE["name"], "mail": SITE["mail"]}
-    body = ph("相談・要望を送る（ウェブ総合受付）", "立場と目的を選び、必要な範囲で内容を送ってください。全部で6つの段階です。", [("相談・要望を送る", None)], "head-5.jpg", "chat") + f'''
+    body = ph("相談を送る（ウェブ総合受付）", "立場と目的を選び、必要な範囲で内容を送ってください。全部で6つの段階です。", [("相談を送る", None)], "head-5.jpg", "chat") + f'''
 <div class="wrap" style="padding-block:56px 88px;max-width:960px">
 {acc("chat", "受付の方法・返信・対応地域", "ウェブ受付は24時間。LINE・電話は準備中", f"""<div class="contact-box"><dl>
 <dt>ウェブ受付</dt><dd>このページから24時間受け付けています。</dd>
@@ -1078,17 +1238,18 @@ def build_contact():
 <dt>LINE・電話</dt><dd>相談窓口は準備中です。受付方法のご案内は、運営会社（{SITE["tel"]}　{SITE["tel_hours"]}）でも承ります。</dd>
 <dt>対応地域</dt><dd>{SITE["area"]}</dd></dl></div>""", aid="toiawase")}
 {SAFETY}
+<div class="grid g2" style="margin-top:22px"><a class="card lk" href="{{p}}kyoryoku/teikei.html"><b>{ic("hands")} 提携・協業の申し込み</b><p class="fine">事業者・専門家の方は、専用のフォームへ</p></a><a class="card lk" href="{{p}}kyoryoku/youbou.html"><b>{ic("chat")} 要望の窓口</b><p class="fine">ご意見・ご要望は、専用のフォームへ（名前なしでも送れます）</p></a></div>
 <ol class="steps" id="steps" aria-hidden="true" style="margin-top:30px"><li data-i="0">立場</li><li data-i="1">目的</li><li data-i="2">分野</li><li data-i="3">内容</li><li data-i="4">ご連絡先</li><li data-i="5">確認</li></ol>
 <form class="form-card" id="f" novalidate>
 <p class="stepnow" id="stepnow"></p>
 <section data-step="0"><h2>あなたの立場を選んでください</h2><p class="hint">いちばん近いものを1つ選んでください。</p><div class="opts radio-opts" id="o0"></div></section>
 <section data-step="1" hidden><h2>目的を選んでください</h2><p class="hint">いちばん近いものを1つ選んでください。</p><div class="opts radio-opts" id="o1"></div></section>
 <section data-step="2" hidden><h2>関係する内容を選んでください</h2><p class="hint">当てはまるものを、いくつでも選べます。分からなければ、そのまま「次へ進む」を押してください。</p><div class="opts" id="o2"></div></section>
-<section data-step="3" hidden><h2>相談・要望・協力の内容</h2><p class="hint">必要な範囲でお書きください。病名・症状・服薬・要介護度・障害名・マイナンバー・口座番号・カード番号は書かないでください。</p>
+<section data-step="3" hidden><h2>相談の内容</h2><p class="hint">必要な範囲でお書きください。病名・症状・服薬・要介護度・障害名・マイナンバー・口座番号・カード番号は書かないでください。</p>
 <div class="fld"><label for="memo">内容（1,000文字まで）</label><textarea id="memo" maxlength="1000" placeholder="例：夜勤の負担が大きく、続けられるか迷っています。相談できる先を知りたいです。"></textarea><p class="fine" id="cnt" aria-live="polite">0 / 1,000文字</p><p class="warn-inline" id="sens" hidden>病気や体の状態、番号などの情報が含まれている可能性があります。送る前に、その部分を消してください。</p></div><p class="hint" style="margin-top:22px"><b>状況（分かる範囲で。選ばなくても進めます）</b></p>
 <div class="fld"><label for="when">ご希望の時期</label><select id="when"><option value="">選んでください</option><option>まず情報を知りたい</option><option>1か月以内に相談したい</option><option>3か月以内</option><option>利用・協力を検討している</option><option>時期は決まっていない</option></select></div>
 <div class="fld"><label for="pref">都道府県</label><select id="pref"><option value="">選んでください</option><option>大阪府</option><option>兵庫県</option><option>京都府</option><option>奈良県</option><option>滋賀県</option><option>和歌山県</option><option>その他の地域</option></select></div>
-<div class="fld"><label for="want">希望する対応</label><select id="want"><option value="">選んでください</option><option>相談内容を整理してほしい</option><option>使える支援・制度を知りたい</option><option>サービスの利用条件を知りたい</option><option>専門家・提携先につないでほしい</option><option>新しいサービスを提案したい</option><option>協力・提携について相談したい</option><option>まだ分からない</option></select></div>
+<div class="fld"><label for="want">希望する対応</label><select id="want"><option value="">選んでください</option><option>相談内容を整理してほしい</option><option>使える支援・制度を知りたい</option><option>サービスの利用条件を知りたい</option><option>専門家・提携先につないでほしい</option><option>まだ分からない</option></select></div>
 <p class="note-box">命や体に関わる緊急のときは、この受付ではなく119番・110番へご連絡ください。</p></section>
 <section data-step="4" hidden><h2>ご連絡先</h2><p class="hint">返信に使います。</p>
 <fieldset class="fld" style="border:0;padding:0;margin:0 0 20px"><legend style="font-weight:700;font-size:1.08rem;margin-bottom:8px">お名前の扱い</legend><div class="opts radio-opts"><label><input type="radio" name="anon" value="伏せる"><span>名前・事業所名を伏せて相談<small>返信用のメールアドレスは必要です</small></span></label><label><input type="radio" name="anon" value="伝える" checked><span>名前を伝えて相談<small>返信の宛名に使います</small></span></label></div></fieldset>
@@ -1115,6 +1276,7 @@ function opt(type,name,val,label,sub,checked){return '<label><input type="'+type
 function vals(n){return Array.prototype.map.call(f.querySelectorAll('input[name="'+n+'"]:checked'),function(i){return i.value})}
 function one(n){return vals(n)[0]||''}
 var q=new URLSearchParams(location.search),preR=q.get('role')||'',preP=q.get('p')||'',preS=q.get('s')||'';
+if(preP==='youbou'||preP==='kyoryoku'){location.replace('../kyoryoku/'+(preP==='youbou'?'youbou.html'+(preS?'?s='+encodeURIComponent(preS):''):'teikei.html'));return}
 document.getElementById('o0').innerHTML=D.roles.map(function(r){return opt('radio','role',r.id,r.name,r.short,r.id===preR)}).join('')+opt('radio','role','none','分からない・近いものがない','立場を決めずに相談できます',false);
 document.getElementById('o1').innerHTML=D.purposes.map(function(p){return opt('radio','purpose',p.id,p.name,p.short,p.id===preP)}).join('');
 function roleName(){var r=one('role');if(r==='none')return'分からない・近いものがない';var x=D.roles.filter(function(y){return y.id===r})[0];return x?x.name:''}
@@ -1158,12 +1320,12 @@ document.getElementById('copy').addEventListener('click',function(){var m=docume
  try{navigator.clipboard.writeText(txt()).then(function(){m.textContent='写し取りました（コピーしました）。'},fb)}catch(e){fb()}});
 if(preR){st=preP?2:1}show();
 })();</script>"""
-    page("contact/index.html", "相談・要望を送る", "医療介護総合支援会のウェブ総合受付。立場と目的を選び、相談・支援情報の問い合わせ・要望・協力の申し出を送れます。名前を伏せた相談もできます。",
+    page("contact/index.html", "相談を送る", "医療介護総合支援会のウェブ総合受付。立場と目的を選び、相談・支援情報の問い合わせ・要望・協力の申し出を送れます。名前を伏せた相談もできます。",
          "<main id=\"main\">" + body + "</main>", cur="", extra_js=js)
 
 def build_404():
     body = ph("ページが見つかりません", "お探しのページは、移動または削除された可能性があります。", [("ページが見つかりません", None)], "head-5.jpg", "search") + '''
-<section class="sec"><div class="wrap" style="max-width:900px"><div class="btns"><a class="btn btn-g" href="{p}index.html">トップへ戻る</a><a class="btn btn-o" href="{p}support/index.html">支援メニュー</a><a class="btn btn-o" href="{p}contact/index.html">相談・要望を送る</a></div></div></section>'''
+<section class="sec"><div class="wrap" style="max-width:900px"><div class="btns"><a class="btn btn-g" href="{p}index.html">トップへ戻る</a><a class="btn btn-o" href="{p}support/index.html">支援メニュー</a><a class="btn btn-o" href="{p}contact/index.html">相談を送る</a></div></div></section>'''
     # 404は配置場所が深さ0（medical/404.html）。GitHub Pagesはリポジトリ直下の404を使うため、ここは案内用。
     page("404.html", "ページが見つかりません", "お探しのページは見つかりませんでした。移動または削除された可能性があります。医療介護総合支援会のトップ、支援メニュー、ウェブ受付からお探しください。", "<main id=\"main\">" + body + "</main>")
     # 絶対パスに置き換え（どの深さで表示されても動くように）

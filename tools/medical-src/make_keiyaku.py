@@ -8,7 +8,7 @@ GAS = os.path.join(HERE, "gas")
 os.makedirs(OUT, exist_ok=True); os.makedirs(GAS, exist_ok=True)
 CORE = open(os.path.join(HERE, "keiyaku_core.js"), encoding="utf-8").read()
 from data import SUP as _SUP
-FIELD_LIST = [v["name"] for v in _SUP.values()] + ["その他・まだ分からない", "会員登録（事業所会員）", "会員登録（法人会員）", "会員登録（協賛会員）", "会員登録（個人会員（営業協力者））"]
+FIELD_LIST = [v["name"] for v in _SUP.values()] + ["その他・まだ分からない", "提携・協業の申し込み", "要望・ご意見", "会員登録（事業所会員）", "会員登録（法人会員）", "会員登録（協賛会員）", "会員登録（個人会員（営業協力者））"]
 TEXTS = "var FIELD_LIST = " + json.dumps(FIELD_LIST, ensure_ascii=False) + ";\n" + "var KIYAKU_TEXT = %s;\nvar KOJIN_TEXT = %s;\nvar NDA_TEXT = %s;\nvar TEIKEI_TEXT = %s;\n" % tuple(json.dumps(x, ensure_ascii=False) for x in (KIYAKU, KOJIN_KIYAKU, NDA, TEIKEI))
 TEL, TELR, HRS = "0120-933-496", "0120933496", "10:00〜19:00"
 
