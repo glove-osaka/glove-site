@@ -48,7 +48,7 @@ function inbox_(d) {
   var partner = segOf_(label).route === "self" ? "自社" : routeFor_(fields);
   var fac = facAuto_(label, body);
   inboxSheet_().appendRow([no, new Date(), label, cut(d.name, 60), cut(d.company, 100), em, "'" + cut(d.tel, 30), body, "新規受付", "", fields.join("、"), partner, "", new Date(), "", "", fac ? JSON.stringify(fac) : "", ""]);
-  hist_(no, "受付", "サイトから受付" + (partner ? "（振分け候補：" + partner + "）" : ""), "");
+  hist_(no, "受付", label + "\n" + cut(d.company, 100) + " " + cut(d.name, 60) + (partner ? "\n振分け候補：" + partner : ""), "", "サイト", "受付");
   var mail = { to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］新しい受付 " + no + "　" + label, body: body + "\n\nお名前：" + cut(d.name, 60) + "\nメール：" + em + "\n電話：" + cut(d.tel, 30) + "\n\n受付の一覧：https://docs.google.com/spreadsheets/d/" + P("SHEET_ID") };
   if (okMail) mail.replyTo = em;
   MailApp.sendEmail(mail);
@@ -122,10 +122,20 @@ function routeSet_(d) {
   });
   return { ok: true, routes: routes_() };
 }
-function hist_(no, kind, text, staff) { sheetOf_(HIST, ["日時", "受付番号", "種類", "内容", "担当"]).appendRow([new Date(), no, kind, String(text || "").slice(0, 3000), staff || ""]); }
+/* 対応ログ：だれが・いつ・何をしたかを「対応履歴」シートに残す（案件・電子契約・設定・ログイン・自動の送信） */
+var HIST_HEAD = ["日時", "受付番号・契約番号", "種類", "内容", "担当", "操作した人", "区分"], ACTOR_ = "";
+function histSheet_() { var sh = sheetOf_(HIST, HIST_HEAD); if (sh.getLastColumn() < HIST_HEAD.length) sh.getRange(1, 1, 1, HIST_HEAD.length).setValues([HIST_HEAD]); return sh; }
+function areaOf_(no, kind) { no = String(no || ""); if (/^IKK-/.test(no)) return "電子契約"; if (/^(IK|IKT|IKY|IKM)[A-Z]*-/.test(no)) return /^受付/.test(kind) ? "受付" : "案件"; return /ログイン|パスワード/.test(kind) ? "ログイン" : "設定"; }
+function hist_(no, kind, text, staff, actor, area) { try { histSheet_().appendRow([new Date(), no || "", kind, String(text || "").slice(0, 3000), staff || "", actor != null ? actor : ACTOR_, area || areaOf_(no, kind)]); } catch (e) { } }
+function logRows_(d) {
+  var sh = histSheet_(), last = sh.getLastRow(); if (last < 2) return [];
+  var n = Math.min(last - 1, 2000), v = sh.getRange(last - n + 1, 1, n, HIST_HEAD.length).getValues(), out = [];
+  for (var i = v.length - 1; i >= 0; i--) { var r = v[i]; if (!r[0]) continue; out.push({ ts: new Date(r[0]).toISOString(), no: String(r[1] || ""), kind: String(r[2] || ""), text: String(r[3] || "").slice(0, 1500), staff: String(r[4] || ""), actor: String(r[5] || ""), area: String(r[6] || "") || areaOf_(r[1], String(r[2])) }); }
+  return out;
+}
 function histOf_(no) {
-  var v = sheetOf_(HIST, ["日時", "受付番号", "種類", "内容", "担当"]).getDataRange().getValues(), out = [];
-  for (var i = v.length - 1; i >= 1; i--) if (String(v[i][1]) === String(no)) out.push({ ts: v[i][0] ? new Date(v[i][0]).toISOString() : "", kind: String(v[i][2]), text: String(v[i][3]), staff: String(v[i][4]) });
+  var v = histSheet_().getDataRange().getValues(), out = [];
+  for (var i = v.length - 1; i >= 1; i--) if (String(v[i][1]) === String(no)) out.push({ ts: v[i][0] ? new Date(v[i][0]).toISOString() : "", kind: String(v[i][2]), text: String(v[i][3]), staff: String(v[i][4]), actor: String(v[i][5] || "") });
   return out;
 }
 function iso_(x) { return x ? new Date(x).toISOString() : ""; }
@@ -352,7 +362,7 @@ function sign_(o, d) {
   o.values = v; o.signed = new Date(); o.status = "締結済み"; o.ua = String(d.ua || "").slice(0, 300);
   var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, o.id + "\n" + o.body + "\n" + JSON.stringify(v) + "\n" + d.sealPng + "\n" + o.signed.toISOString(), Utilities.Charset.UTF_8);
   o.hash = digest.map(function (b) { return ("0" + ((b + 256) % 256).toString(16)).slice(-2); }).join("");
-  log_(o, "承認（締結）"); 
+  log_(o, "承認（締結）"); hist_(o.id, "相手が承認した（締結）", o.title + "\n" + (o.party_company ? o.party_company + " " : "") + o.party_name, "", "相手", "電子契約");
   var pdf = makePdf_(o, d.sealPng);
   var pf = folder.createFile(pdf); o.pdf_id = pf.getId();
   save_(o);
@@ -443,6 +453,7 @@ function monthlyBilling() {
     try {
       MailApp.sendEmail({ to: o.party_email, bcc: P("NOTIFY_TO"), name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】" + term + " 会費のご請求（" + yen(amt) + "・" + due + "まで）", body: body });
       billed.push(T); o.billed = JSON.stringify(billed); log_(o, "請求書（" + T + "分・期限 " + due + "）を送信"); save_(o);
+      hist_(o.id, "請求書を自動で送った", term + "　" + yen(amt) + "（期限 " + due + "）\n" + who, "", "自動", "電子契約");
       sent.push(o.id + "　" + who + "　" + yen(amt) + "（" + term + "）");
     } catch (e) { sent.push("【送れませんでした】" + o.id + "　" + who + "　" + e.message); }
   });
@@ -507,9 +518,9 @@ function login_(d) {
   if (!ok) {
     cache.put(kf, String(nf + 1), 900); cache.put("lf_all", String(ng + 1), 3600);
     if (nf + 1 >= 5) MailApp.sendEmail({ to: P("NOTIFY_TO"), subject: "［" + ISSUER.service + "］管理画面のログインの失敗が続いています", body: "ID「" + id.slice(0, 40) + "」でのログインに5回失敗したため、15分間止めました。心当たりがなければ、パスワードを変えてください。" });
-    throw new Error("IDまたはパスワードが違います");
+    hist_("", "ログインの失敗", "ID「" + id.slice(0, 40) + "」", "", "", "ログイン"); throw new Error("IDまたはパスワードが違います");
   }
-  cache.remove(kf);
+  cache.remove(kf); hist_("", "ログイン", "管理画面にログインしました", "", "", "ログイン");
   var tok = newToken_(); cache.put("adm_" + tok, P("ADMIN_ID"), 21600);
   return { ok: true, adminToken: tok };
 }
@@ -535,6 +546,7 @@ function reset_(d) {
   pr.setProperty("ADMIN_PASS_SALT", salt); pr.setProperty("ADMIN_PASS_HASH", hash_(salt, pass)); pr.deleteProperty("ADMIN_PASS");
   cache.remove("fg_code"); cache.remove("fg_bad"); cache.remove("lf_" + P("ADMIN_ID").toLowerCase()); cache.remove("lf_all");
   MailApp.sendEmail({ to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］管理画面のパスワードを変えました", body: "管理画面のパスワードが変更されました（" + Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy/MM/dd HH:mm") + "）。\n心当たりがない場合は、すぐに確認してください。" });
+  hist_("", "パスワードを変更", "確認コードで変更しました", "", "", "ログイン");
   return { ok: true, id: P("ADMIN_ID") };
 }
 function adminPost_(a, d) {
@@ -557,27 +569,37 @@ function adminCall(a, d) {
 }
 function adminDo_(a, d) {
   try {
-    d = d || {};
+    d = d || {}; ACTOR_ = String(d.actor || "").trim().slice(0, 30);
+    if (a === "admin.log") return { ok: true, rows: logRows_(d) };
     if (a === "admin.templates") return { ok: true, templates: TEMPLATES, fields: FIELDS };
     if (a === "admin.cases") return cases_();
     if (a === "admin.caseSet") return caseSet_(d);
     if (a === "admin.report") return report_(d);
     if (a === "admin.forward") return forward_(d);
     if (a === "admin.history") return { ok: true, rows: histOf_(d.no) };
-    if (a === "admin.routeSet") return routeSet_(d);
-    if (a === "admin.partnerSet") return partnerSet_(d);
-    if (a === "admin.staffSet") return staffSet_(d);
+    if (a === "admin.routeSet") { hist_("", "予備の振分けを保存", (d.rows || []).filter(function (r) { return r.partners; }).map(function (r) { return r.field + "：" + r.partners; }).join("\n")); return routeSet_(d); }
+    if (a === "admin.partnerSet") { var before = partners_(), r1 = partnerSet_(d), bn = before.map(function (x) { return x.name; }), an = r1.partners.map(function (x) { return x.name; }), ch = [];
+      an.forEach(function (n) { if (bn.indexOf(n) < 0) ch.push("登録：" + n); });
+      bn.forEach(function (n) { if (an.indexOf(n) < 0) ch.push("削除：" + n); });
+      r1.partners.forEach(function (x) { var o = before.filter(function (y) { return y.name === x.name; })[0]; if (o && PKEY.some(function (k) { return k !== "since" && String(o[k] || "") !== String(x[k] || ""); })) ch.push("変更：" + x.name); });
+      if (ch.length) hist_("", "提携先の登録・変更", ch.join("\n")); return r1; }
+    if (a === "admin.staffSet") { var sb = staff_(), r2 = staffSet_(d), ch2 = []; r2.staff.forEach(function (n) { if (sb.indexOf(n) < 0) ch2.push("追加：" + n); }); sb.forEach(function (n) { if (r2.staff.indexOf(n) < 0) ch2.push("削除：" + n); }); if (ch2.length) hist_("", "担当者の登録・変更", ch2.join("\n")); return r2; }
     if (a === "admin.preview") return { ok: true, cond: normCond(d.cond), body: buildBody(d.template, d.cond, d.note, d.party) };
-    if (a === "admin.issue") return issue_(d);
+    if (a === "admin.issue") { var ri = issue_(d), ti = tplOf(d.template), pp = d.party || {}; hist_(ri.id, d.draft ? "契約書の下書きを送った" : "契約書を送った", (ti && ti.base ? memberTitle(ti.mtype) : ti ? ti.title : "") + "\n" + (pp.company ? pp.company + " " : "") + (pp.name || "") + "（" + (pp.email || "") + "）", "", null, "電子契約"); return ri; }
     if (a === "admin.list") return { ok: true, rows: rows_().reverse().slice(0, 300).map(function (r) { return { id: r.id, title: r.title, party_name: r.party_name, party_company: r.party_company, party_email: r.party_email, status: r.status, template: r.template, paid: r.paid ? new Date(r.paid).toISOString() : "", created: r.created ? new Date(r.created).toISOString() : "", viewed: r.viewed ? new Date(r.viewed).toISOString() : "", signed: r.signed ? new Date(r.signed).toISOString() : "", draft: r.draft, refcode: r.refcode || "", typeLabel: (function () { var c = parse_(r.cond, null); return c && MEMBER_LABEL[c.type] || ""; })(), pay: (function () { var c = parse_(r.cond, null); return c ? c.pay : ""; })(), phone: (parse_(r.values, {}) || {}).phone || "", billed: parse_(r.billed, []).slice(-1)[0] || "", stopped: r.stopped ? new Date(r.stopped).toISOString() : "" }; }) };
     var o = find_("id", d.id); if (!o) throw new Error("見つかりません");
+    var who_ = o.title + "\n" + (o.party_company ? o.party_company + " " : "") + o.party_name, LG = { "admin.resend": "契約書を送り直した", "admin.paid": "入金を確認した（登録完了のメールを送信）", "admin.stop": "退会にした（請求を停止）", "admin.cancel": "契約書を取り消した", "admin.pdf": "契約書のPDFを保存した" };
+    if (LG[a]) { var res_ = adminOne_(a, d, o); hist_(o.id, LG[a], who_, "", null, "電子契約"); return res_; }
+    throw new Error("不明な操作です");
+  } catch (err) { return { ok: false, error: String(err && err.message || err) }; }
+}
+function adminOne_(a, d, o) {
     if (a === "admin.resend") { if (o.status === "締結済み" || o.status === "取り消し") throw new Error("送り直せない状態です"); o.expires = new Date(Date.now() + VALID_DAYS * 864e5); sendInvite_(o); log_(o, "送り直し"); save_(o); return { ok: true }; }
     if (a === "admin.paid") return paid_(o);
     if (a === "admin.stop") { if (o.stopped) throw new Error("すでに請求を止めています"); o.stopped = new Date(); log_(o, "退会・請求を停止"); save_(o); return { ok: true }; }
     if (a === "admin.cancel") { if (o.status === "締結済み") throw new Error("締結済みの契約は取り消せません"); o.status = "取り消し"; log_(o, "取り消し"); save_(o); return { ok: true }; }
     if (a === "admin.pdf") { if (!o.pdf_id) throw new Error("まだ締結されていません"); var f = DriveApp.getFileById(o.pdf_id); return { ok: true, pdf: Utilities.base64Encode(f.getBlob().getBytes()), filename: f.getName() }; }
     throw new Error("不明な操作です");
-  } catch (err) { return { ok: false, error: String(err && err.message || err) }; }
 }
 function issue_(d) {
   var t = tplOf(d.template); if (!t) throw new Error("契約書の種類を選んでください");

@@ -140,6 +140,13 @@ function buildBody(key, cond, note, party) {
         { no: "IKM-261029-1530XYZ", ts: dd(50), label: "医療介護総合支援会：会員登録／事業所会員", name: "見本 花子", company: "見本デイサービス", email: "hanako@example.jp", tel: "06-1111-2222", body: "【会員登録の申込み】\n会員の種類：事業所会員", status: "提携先対応中", memo: "電子契約 締結済み", fields: "会員登録（事業所会員）", partner: "", staff: "中嶋", updated: dd(200), contacted: dd(200), next: "" },
         { no: "IK-261020-1010QWE", ts: dd(240), label: "医療介護総合支援会：医療・介護で働く方／採用・定着・研修", name: "見本 次郎", company: "見本訪問看護", email: "jiro@example.jp", tel: "", body: "【受付内容】\n内容：採用・定着・研修", status: "完了", memo: "紹介済み", fields: "採用・定着・研修", partner: "見本人材サービス", staff: "中嶋", updated: dd(100), contacted: dd(100), next: "" }] }); }
     if (action === "admin.partnerSet") return wait({ ok: true, partners: d.rows });
+    if (action === "admin.log") { var nw = Date.now(), ag = function (h) { return new Date(nw - h * 36e5).toISOString(); }; return wait({ ok: true, rows: [
+      { ts: ag(0.2), no: "IK-261113-2210HNN", kind: "更新", text: "状態：内容確認中 → 会員施設の確認\n会員施設の確認：会員の病院・施設（見本内科クリニック）", staff: "中嶋", actor: "中嶋", area: "案件" },
+      { ts: ag(1), no: "IKK-DEMO-0001", kind: "入金を確認した（登録完了のメールを送信）", text: "事業所会員 申込書\n見本デイサービス 見本 花子", staff: "", actor: "見本 担当", area: "電子契約" },
+      { ts: ag(3), no: "", kind: "提携先の登録・変更", text: "登録：見本コンサルティング株式会社", staff: "", actor: "中嶋", area: "設定" },
+      { ts: ag(5), no: "IKT-261101-1000TKY", kind: "受付", text: "医療介護総合支援会：提携・協業の申し込み\n見本エネルギー株式会社 見本 三郎", staff: "", actor: "サイト", area: "受付" },
+      { ts: ag(6), no: "", kind: "ログイン", text: "管理画面にログインしました", staff: "", actor: "", area: "ログイン" },
+      { ts: ag(30), no: "IKK-DEMO-0001", kind: "相手が承認した（締結）", text: "事業所会員 申込書\n見本デイサービス 見本 花子", staff: "", actor: "相手", area: "電子契約" }] }); }
     if (action === "admin.forward") return wait({ ok: true, fwd: JSON.stringify([{ ts: new Date().toISOString(), name: d.partner }]) });
     if (action === "admin.staffSet") return wait({ ok: true, staff: d.list });
     if (action === "admin.caseSet" || action === "admin.report" || action === "admin.routeSet") return wait({ ok: true, routes: d.rows ? (function () { var o = {}; d.rows.forEach(function (r) { o[r.field] = r.partners; }); return o; })() : null });
