@@ -586,9 +586,9 @@ def build_roles():
         body = ph(r["name"], r["lead"], [("立場から選ぶ", "roles/index.html"), (r["name"], None)], r["head"], r["icon"]) + f'''
 <div class="wrap" style="padding-block:64px 88px"><div class="detail"><div>
 {photo}<div class="block"><h2>{ic("search")}関係する支援メニュー</h2><ul class="svcs">{sups}</ul></div>
-<div class="block"><h2>{ic("chat")}よくいただくご相談</h2><ul class="checks">{"".join(f"<li>{ic('check')}<span>{t}</span></li>" for t in r["topics"])}</ul>{extra}</div>
 <div class="block">{acc("heart", "5つの価値を、" + r["name"] + "へ", "応援・補助・支援・協力・優待", vrows)}</div>
 {housing if r["id"] == "kazoku" else ""}
+<div class="block"><h2>{ic("chat")}よくいただくご相談</h2><ul class="checks">{"".join(f"<li>{ic('check')}<span>{t}</span></li>" for t in r["topics"])}</ul>{extra}</div>
 <div class="block"><h2>{ic("chat")}よくある質問</h2>{faq_html(ROLE_FAQ[r["id"]])}</div>
 <div class="block"><h3 class="voices-h">こんなご相談をお受けしています</h3><p class="fine">よくあるご相談をもとに作成した<b>参考事例</b>です。結果は状況により異なります。</p>{cases}</div>
 <div class="block"><h2>{ic("arrow")}目的を選んで、受付へ進む</h2><div class="btns" style="flex-wrap:wrap">{purpose_btns}</div></div>
