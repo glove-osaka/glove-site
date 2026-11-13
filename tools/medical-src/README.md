@@ -35,7 +35,7 @@
 | プロジェクト | 「医療介護総合支援会 電子契約・受付」（ikshienkai@gmail.com のApps Script） |
 | お客様用（全員） | https://script.google.com/macros/s/AKfycbznp_C6UEbTjF6rrYOs6cdVItyAaOtWtMZzl34-Ao5ZAfkMyzjS5GHWAQhsuR0BbV3z/exec |
 | 管理画面用（自分のみ） | https://script.google.com/macros/s/AKfycbwZUSCmvDZyNJfqeAUNcGGj3z6j2HxwIi8MpBLpqcBGjn_cIuZxU7BMs2ygwcx58hkH/exec?admin=1 |
-| 公開の版 | 両方ともバージョン19（2026/11/14・対応ログ、案件と電子契約の結びつけ、会員の契約書を3種類に分割、種別ごとの管理、会員施設の確認、提携先の登録と案件の送付） |
+| 公開の版 | 両方ともバージョン20（2026/11/14・下書き→本契約の流れ、対応ログ、案件と電子契約の結びつけ、会員の契約書を3種類に分割、種別ごとの管理、会員施設の確認、提携先の登録と案件の送付） |
 | 台帳 | ドライブ「医療介護総合支援会 電子契約（台帳）」：シート 契約／受付／振分け設定／対応履歴 |
 | 自動の確認 | alertCheck が1時間ごと（遅れている案件を NOTIFY_TO へメール） |
 | 自動の請求 | monthlyBilling が毎月1日9時ごろ：翌月分の請求書（適格請求書）を会員へ送信、期限10日（年間払いは更新前月のみ）。入会時は承認日から7日の期限で翌月分、入会月は無料。退会は管理画面「退会（請求を止める）」 |
