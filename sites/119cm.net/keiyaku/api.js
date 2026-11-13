@@ -116,7 +116,21 @@ function buildBody(key, cond, note, party) {
   function demo(action, d) {
     d = d || {};
     var list = load();
-    if (action === "admin.login") return d.id && d.pass ? wait({ ok: true, adminToken: "demo" }) : Promise.reject(new Error("IDとパスワードを入れてください"));
+    if (action === "admin.login") { if (!d.id || !d.pass) return Promise.reject(new Error("IDとパスワードを入れてください")); var me = /^staff|^tanto/i.test(d.id) ? { role: "staff", name: "見本 担当", id: d.id } : { role: "admin", name: "中嶋", id: d.id }; try { sessionStorage.setItem("iryo-demo-me", JSON.stringify(me)); } catch (e) { } return wait({ ok: true, adminToken: "demo", role: me.role, name: me.name }); }
+    var ME = (function () { try { return JSON.parse(sessionStorage.getItem("iryo-demo-me") || "null"); } catch (e) { return null; } })() || { role: "admin", name: "中嶋", id: "demo" };
+    var DPT = (function () { try { return JSON.parse(localStorage.getItem("iryo-demo-pt") || "null"); } catch (e) { return null; } })();
+    function savePt(l) { try { localStorage.setItem("iryo-demo-pt", JSON.stringify(l)); } catch (e) { } return l; }
+    var DEMO_PT = [{ name: "見本コンサルティング株式会社", a: "経営・管理の支援", b: "経営コンサルティング", c: "収支改善・コスト削減", note: "初回相談は無料", person: "見本 太郎", email: "consult@example.jp", tel: "06-3333-4444", area: "大阪府・兵庫県", by: "中嶋", state: "登録済み", since: "2026-11-10" }, { name: "見本社労士事務所", a: "経営・管理の支援", b: "士業・専門家", c: "社会保険労務士", note: "", by: "見本 担当", state: "登録済み", since: "2026-11-12" }, { name: "見本人材サービス", a: "人材・採用・教育", b: "採用・人材サービス", c: "有料職業紹介（人材紹介）", note: "相手が記入", by: "見本 担当", state: "確認待ち", since: "2026-11-14" }];
+    var PTL = DPT || DEMO_PT;
+    if (action === "admin.me") return wait({ ok: true, role: ME.role, name: ME.name, id: ME.id });
+    if (ME.role === "staff" && ["admin.me", "admin.passwd", "admin.templates", "admin.preview", "admin.issue", "admin.list", "admin.get", "admin.resend", "admin.cancel", "admin.finalize", "admin.pdf", "admin.partnerAdd", "admin.partnersMine", "admin.partnerInvite"].indexOf(action) < 0) return Promise.reject(new Error("この操作は管理者だけができます"));
+    if (action === "admin.passwd") return d.cur ? wait({ ok: true }) : Promise.reject(new Error("いまのパスワードが違います"));
+    if (action === "admin.accList" || action === "admin.accSet") { var AC = (function () { try { return JSON.parse(localStorage.getItem("iryo-demo-acc") || "null"); } catch (e) { return null; } })() || [{ name: "見本 担当", id: "staff1", active: true, last: new Date().toISOString() }];
+      if (action === "admin.accSet") { if (d.op === "add") AC.push({ name: d.name, id: d.id, active: true, last: "" }); if (d.op === "active") AC.forEach(function (x) { if (x.id === d.id) x.active = !!d.active; }); try { localStorage.setItem("iryo-demo-acc", JSON.stringify(AC)); } catch (e) { } }
+      return wait({ ok: true, accounts: AC }); }
+    if (action === "admin.partnersMine") return wait({ ok: true, partners: ME.role === "admin" ? PTL : PTL.filter(function (p) { return p.by === ME.name; }) });
+    if (action === "admin.partnerAdd") { var r0 = d.row || {}; if (PTL.some(function (p) { return p.name === r0.name; })) return Promise.reject(new Error("「" + r0.name + "」はもう登録されています")); r0.by = ME.name; r0.state = "登録済み"; r0.since = new Date().toISOString().slice(0, 10); PTL.push(r0); savePt(PTL); return wait({ ok: true, partners: PTL.filter(function (p) { return p.by === ME.name; }) }); }
+    if (action === "admin.partnerInvite") return wait({ ok: true });
     if (action === "admin.logout") return wait({ ok: true });
     if (action === "admin.forgot") return wait({ ok: true });
     if (action === "admin.reset") return d.code && d.pass ? wait({ ok: true, id: "demo" }) : Promise.reject(new Error("確認コードとパスワードを入れてください"));
@@ -125,14 +139,14 @@ function buildBody(key, cond, note, party) {
       var t = tplOf(d.template), p = d.party || {}; if (t.base) d.cond = Object.assign({}, d.cond || {}, { type: t.mtype });
       if (!p.name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email || "")) return Promise.reject(new Error("相手のお名前と、正しいメールアドレスを入れてください"));
       var f = orderFields(t, d.fields);
-      var o = { id: "IKK-DEMO-" + (1001 + list.length), token: "demo" + Date.now(), case_no: d.caseNo || "", template: t.base || t.key, title: t.base ? memberTitle(t.mtype) : t.title, party_name: p.name, party_company: p.company || "", party_email: p.email, status: "送付済み", created: new Date().toISOString(), draft: d.draft ? "yes" : "", fields: f, required: t.required, requireId: !!(d.requireId || t.requireId), prefill: d.prefill || {}, body: buildBody(t.key, d.cond, d.note, p.company || p.name), cond: t.cond ? normCond(d.cond) : null, note: d.note || "" };
+      var o = { id: "IKK-DEMO-" + (1001 + list.length), token: "demo" + Date.now(), case_no: d.caseNo || "", issuer: ME.name, template: t.base || t.key, title: t.base ? memberTitle(t.mtype) : t.title, party_name: p.name, party_company: p.company || "", party_email: p.email, status: "送付済み", created: new Date().toISOString(), draft: d.draft ? "yes" : "", fields: f, required: t.required, requireId: !!(d.requireId || t.requireId), prefill: d.prefill || {}, body: buildBody(t.key, d.cond, d.note, p.company || p.name), cond: t.cond ? normCond(d.cond) : null, note: d.note || "" };
       if (d.replaces) list.forEach(function (x) { if (x.id === d.replaces) { x.status = "取り消し"; o.prev = x.id; if (!o.case_no) o.case_no = x.case_no || ""; } });
       list.unshift(o); store(list);
       return wait({ ok: true, id: o.id, url: location.href.replace(/admin\.html.*$/, "index.html") + "?t=" + o.token + "&demo=1" });
     }
-    if (action === "admin.list") return wait({ ok: true, rows: list });
+    if (action === "admin.list") return wait({ ok: true, rows: ME.role === "admin" ? list : list.filter(function (x) { return x.issuer === ME.name; }) });
     if (action === "admin.cases") { var now = Date.now(), dd = function (h) { return new Date(now - h * 36e5).toISOString(); }; var rt = {}; FIELD_LIST.forEach(function (f) { rt[f] = ""; }); rt["経営・業務の改善"] = "見本コンサルティング株式会社"; rt["採用・定着・研修"] = "見本人材サービス、見本社労士事務所";
-      return wait({ ok: true, routes: rt, staff: ["中嶋", "見本 担当"], partners: [{ name: "見本コンサルティング株式会社", a: "経営・管理の支援", b: "経営コンサルティング", c: "収支改善・コスト削減", note: "初回相談は無料", person: "見本 太郎", email: "consult@example.jp", tel: "06-3333-4444", area: "大阪府・兵庫県" }, { name: "見本社労士事務所", a: "経営・管理の支援", b: "士業・専門家", c: "社会保険労務士", note: "" }, { name: "見本人材サービス", a: "人材・採用・教育", b: "採用・人材サービス", c: "有料職業紹介（人材紹介）", note: "" }], rows: [
+      return wait({ ok: true, routes: rt, staff: ["中嶋", "見本 担当"], partners: PTL, rows: [
         { no: "IKT-261101-1000TKY", ts: dd(5), label: "医療介護総合支援会：提携・協業の申し込み／提携企業として、会員へサービスを提供したい", name: "見本 三郎", company: "見本エネルギー株式会社", email: "saburo@example.jp", tel: "06-2222-3333", body: "【医療介護総合支援会 提携・協業の申し込み】\n分野 1：固定費の見直し ＞ エネルギー ＞ 電気\n地域 1：近畿 ＞ 大阪府 ＞ 全域", status: "新規受付", memo: "", fields: "提携・協業の申し込み、提携：固定費の見直し", partner: "", staff: "", updated: dd(5), contacted: "", next: "" },
         { no: "IKY-261101-1100YBO", ts: dd(8), label: "医療介護総合支援会：要望・ご意見／ほしい支援・サービスがある", name: "（名前なしの要望）", company: "", email: "", tel: "", body: "【医療介護総合支援会 要望・ご意見】\n内容：夜も受付してほしい", status: "新規受付", memo: "", fields: "要望・ご意見", partner: "", staff: "", updated: dd(8), contacted: "", next: "" },
         { no: "IK-261113-2210HNN", ts: dd(3), label: "医療介護総合支援会：利用者・ご本人／医療・介護サービスのこと", name: "見本 四郎", company: "", email: "shiro@example.jp", tel: "090-0000-1111", body: "【医療介護総合支援会 受付内容】\n立場：利用者・ご本人\n通っている病院・施設：クリニック・診療所／見本内科クリニック（大阪市北区）\n相談の内容 1：医療・介護サービスのこと ＞ 医療・介護サービスを探す ＞ 訪問診療", status: "内容確認中", memo: "", fields: "医療・介護サービスを探す", partner: "", staff: "中嶋", updated: dd(2), contacted: "", next: "", fac: "" },
@@ -140,7 +154,7 @@ function buildBody(key, cond, note, party) {
         { no: "IK-261030-0912ABC", ts: dd(30), label: "医療介護総合支援会：企業・事業者／経営・運営のこと", name: "見本 一郎", company: "見本クリニック", email: "sample@example.jp", tel: "06-0000-0000", body: "【医療介護総合支援会 受付内容】\n立場：企業・事業者\n相談の内容 1：経営・運営のこと ＞ 経営・業務の改善 ＞ 収支を改善したい", status: "新規受付", memo: "", fields: "経営・業務の改善", partner: "見本コンサルティング株式会社", staff: "", updated: dd(30), contacted: "", next: "" },
         { no: "IKM-261029-1530XYZ", ts: dd(50), label: "医療介護総合支援会：会員登録／事業所会員", name: "見本 花子", company: "見本デイサービス", email: "hanako@example.jp", tel: "06-1111-2222", body: "【会員登録の申込み】\n会員の種類：事業所会員", status: "提携先対応中", memo: "電子契約 締結済み", fields: "会員登録（事業所会員）", partner: "", staff: "中嶋", updated: dd(200), contacted: dd(200), next: "" },
         { no: "IK-261020-1010QWE", ts: dd(240), label: "医療介護総合支援会：医療・介護で働く方／採用・定着・研修", name: "見本 次郎", company: "見本訪問看護", email: "jiro@example.jp", tel: "", body: "【受付内容】\n内容：採用・定着・研修", status: "完了", memo: "紹介済み", fields: "採用・定着・研修", partner: "見本人材サービス", staff: "中嶋", updated: dd(100), contacted: dd(100), next: "" }] }); }
-    if (action === "admin.partnerSet") return wait({ ok: true, partners: d.rows });
+    if (action === "admin.partnerSet") return wait({ ok: true, partners: savePt(d.rows) });
     if (action === "admin.log") { var nw = Date.now(), ag = function (h) { return new Date(nw - h * 36e5).toISOString(); }; return wait({ ok: true, rows: [
       { ts: ag(0.2), no: "IK-261113-2210HNN", kind: "更新", text: "状態：内容確認中 → 会員施設の確認\n会員施設の確認：会員の病院・施設（見本内科クリニック）", staff: "中嶋", actor: "中嶋", area: "案件" },
       { ts: ag(1), no: "IKK-DEMO-0001", kind: "入金を確認した（登録完了のメールを送信）", text: "事業所会員 申込書\n見本デイサービス 見本 花子", staff: "", actor: "見本 担当", area: "電子契約" },
@@ -152,6 +166,8 @@ function buildBody(key, cond, note, party) {
     if (action === "admin.staffSet") return wait({ ok: true, staff: d.list });
     if (action === "admin.caseSet" || action === "admin.report" || action === "admin.routeSet") return wait({ ok: true, routes: d.rows ? (function () { var o = {}; d.rows.forEach(function (r) { o[r.field] = r.partners; }); return o; })() : null });
     if (action === "admin.history") return wait({ ok: true, rows: [{ ts: new Date().toISOString(), kind: "受付", text: "サイトから受付", staff: "" }] });
+    if (action === "client.pinv") return d.t ? wait({ ok: true, name: "見本ケア株式会社 ご担当者様", email: "care@example.jp" }) : Promise.reject(new Error("このリンクは使えません"));
+    if (action === "client.pinvSubmit") { var rr = d.row || {}; if (!rr.name || !rr.a || !rr.b) return Promise.reject(new Error("名前と分類を入れてください")); rr.state = "確認待ち"; rr.by = "見本 担当"; PTL.push(rr); savePt(PTL); return wait({ ok: true }); }
     if (action === "client.apply") {
       var kj = d.type === "kojin", tp = tplOf(kj ? "kojin" : "kaiin");
       var oo = { id: "IKK-DEMO-" + (1001 + list.length), token: "demo" + Date.now(), template: tp.key, title: kj ? tp.title : memberTitle(d.type), party_name: d.name, party_company: kj ? "" : d.org, party_email: d.email, status: "送付済み", created: new Date().toISOString(), draft: "", fields: tp.fields.slice(), required: tp.required, requireId: tp.requireId, prefill: kj ? { name: d.name, address: d.address, phone: d.phone } : { company: d.org, address: d.address, rep: d.rep, name: d.name, phone: d.phone }, body: buildBody(tp.key, kj ? null : { type: d.type, pay: d.pay, sites: d.sites, staff: d.staff, referrer: d.referrer, founder: true }, "", kj ? d.name : d.org) };

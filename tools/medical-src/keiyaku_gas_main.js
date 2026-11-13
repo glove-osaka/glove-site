@@ -5,7 +5,7 @@
    使い方は「設定のしかた.txt」を見てください。
    ===================================================================== */
 var SHEET = "契約";
-var COLS = ["id", "token", "template", "title", "party_name", "party_company", "party_email", "fields", "required", "require_id", "cond", "note", "prefill", "body", "status", "created", "expires", "viewed", "signed", "values", "seal_file", "id_file", "pdf_id", "hash", "ua", "log", "draft", "paid", "refcode", "billed", "stopped", "case_no", "feedback", "prev"];
+var COLS = ["id", "token", "template", "title", "party_name", "party_company", "party_email", "fields", "required", "require_id", "cond", "note", "prefill", "body", "status", "created", "expires", "viewed", "signed", "values", "seal_file", "id_file", "pdf_id", "hash", "ua", "log", "draft", "paid", "refcode", "billed", "stopped", "case_no", "feedback", "prev", "issuer"];
 var VALID_DAYS = 30;
 
 function P(k) { return PropertiesService.getScriptProperties().getProperty(k) || ""; }
@@ -93,22 +93,23 @@ function routes_() {
   if (add.length) { sh.getRange(sh.getLastRow() + 1, 1, add.length, 3).setValues(add.map(function (f) { o[f] = ""; return [f, "", ""]; })); }
   return o;
 }
-var PSHEET = "提携先一覧", PHEAD = ["提携先の名前", "大分類", "中分類", "小分類", "メモ", "ご担当者", "メール（案件の送り先）", "電話", "対応できる地域", "登録日"], PKEY = ["name", "a", "b", "c", "note", "person", "email", "tel", "area", "since"];
+var PSHEET = "提携先一覧", PHEAD = ["提携先の名前", "大分類", "中分類", "小分類", "メモ", "ご担当者", "メール（案件の送り先）", "電話", "対応できる地域", "登録日", "登録した人", "状態"], PKEY = ["name", "a", "b", "c", "note", "person", "email", "tel", "area", "since", "by", "state"];
+function livePartners_() { return partners_().filter(function (p) { return p.state !== "確認待ち"; }); }
 function partnerSheet_() { var sh = sheetOf_(PSHEET, PHEAD); if (sh.getLastColumn() < PHEAD.length) sh.getRange(1, 1, 1, PHEAD.length).setValues([PHEAD]); return sh; }
 function partners_() { var v = partnerSheet_().getDataRange().getValues(), out = []; for (var i = 1; i < v.length; i++) if (v[i][0]) { var o = {}; PKEY.forEach(function (k, j) { var x = v[i][j]; o[k] = x instanceof Date ? Utilities.formatDate(x, "Asia/Tokyo", "yyyy-MM-dd") : String(x == null ? "" : x); }); out.push(o); } return out; }
 function partnerSet_(d) {
   var today = Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy-MM-dd");
   var rows = (d.rows || []).filter(function (r) { return r && r.name; }).slice(0, 500).map(function (r) {
     if (r.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(r.email).trim())) throw new Error("「" + r.name + "」のメールアドレスの形が正しくありません");
-    return PKEY.map(function (k) { return String(k === "since" ? (r.since || today) : (r[k] || "")).trim().slice(0, k === "note" ? 300 : 120); }); });
+    return PKEY.map(function (k) { return String(k === "since" ? (r.since || today) : k === "by" ? (r.by || ACTOR_ || adminName_()) : k === "state" ? (r.state || "登録済み") : (r[k] || "")).trim().slice(0, k === "note" ? 300 : 120); }); });
   var sh = partnerSheet_(), last = sh.getLastRow(); if (last > 1) sh.getRange(2, 1, last - 1, PHEAD.length).clearContent(); if (rows.length) sh.getRange(2, 1, rows.length, PHEAD.length).setValues(rows);
   return { ok: true, partners: partners_() };
 }
-function staff_() { return parse_(P("STAFF"), []); }
+function staff_() { var l = parse_(P("STAFF"), []); accs_().forEach(function (x) { if (x.active !== false && l.indexOf(x.name) < 0) l.push(x.name); }); return l; }
 function staffSet_(d) { var l = (d.list || []).map(function (x) { return String(x).trim().slice(0, 30); }).filter(function (x, i, a) { return x && a.indexOf(x) === i; }).slice(0, 50); PropertiesService.getScriptProperties().setProperty("STAFF", JSON.stringify(l)); return { ok: true, staff: l }; }
 // 新しい受付の振分け先：相談の分野から分類を決め、提携先一覧で当てはまる先を選ぶ（なければ予備の分野ごとの振分け）
 function routeFor_(fields) {
-  var ps = partners_();
+  var ps = livePartners_();
   for (var i = 0; i < fields.length; i++) { var m = ROUTE_AUTO[fields[i]]; if (!m) continue;
     var hit = ps.filter(function (p) { return p.a === m[0] && p.b === m[1]; })[0] || ps.filter(function (p) { return p.a === m[0]; })[0]; if (hit) return hit.name; }
   var r = routes_(); for (var j = 0; j < fields.length; j++) if (r[fields[j]]) return r[fields[j]].split(/[、,]/)[0].trim(); return "";
@@ -182,12 +183,101 @@ function report_(d) {
   }
   return { ok: true };
 }
+/* ---- 管理者と担当者のアカウント ---- */
+function adminName_() { return P("ADMIN_NAME") || "中嶋"; }
+function accs_() { var l = parse_(P("STAFF_ACC"), []); return Array.isArray(l) ? l : []; }
+function accSave_(l) { PropertiesService.getScriptProperties().setProperty("STAFF_ACC", JSON.stringify(l)); }
+function accView_() { return accs_().map(function (x) { return { name: x.name, id: x.id, active: x.active !== false, last: x.last || "", created: x.created || "" }; }); }
+function accSet_(d) {
+  var L = accs_(), op = String(d.op || ""), id = String(d.id || "").trim(), pass = String(d.pass || "");
+  var find = function () { return L.filter(function (x) { return String(x.id).toLowerCase() === id.toLowerCase(); })[0]; };
+  if (op === "add") {
+    var name = String(d.name || "").trim().slice(0, 30);
+    if (!name) throw new Error("担当者の名前を入れてください");
+    if (!/^[A-Za-z0-9._-]{3,30}$/.test(id)) throw new Error("ログインIDは、半角の英字・数字（3〜30文字）で決めてください");
+    if (id.toLowerCase() === String(P("ADMIN_ID")).toLowerCase() || find()) throw new Error("このログインIDはもう使われています");
+    if (L.some(function (x) { return x.name === name; }) || name === adminName_()) throw new Error("同じ名前の担当者がいます");
+    if (pass.length < 8 || pass.length > 100) throw new Error("パスワードは8文字以上にしてください");
+    var salt = Utilities.getUuid().replace(/-/g, ""); L.push({ name: name, id: id, salt: salt, hash: hash_(salt, pass), active: true, created: new Date().toISOString() });
+    accSave_(L); var st = parse_(P("STAFF"), []); if (st.indexOf(name) < 0) { st.push(name); PropertiesService.getScriptProperties().setProperty("STAFF", JSON.stringify(st)); }
+    hist_("", "担当者のIDを作成", name + "（ID：" + id + "）", "", null, "設定");
+  } else {
+    var x = find(); if (!x) throw new Error("その担当者が見つかりません");
+    if (op === "reset") { if (pass.length < 8 || pass.length > 100) throw new Error("パスワードは8文字以上にしてください"); x.salt = Utilities.getUuid().replace(/-/g, ""); x.hash = hash_(x.salt, pass); hist_("", "担当者のパスワードを再設定", x.name + "（ID：" + x.id + "）", "", null, "設定"); }
+    else if (op === "active") { x.active = !!d.active; hist_("", d.active ? "担当者のIDを使えるようにした" : "担当者のIDを止めた", x.name + "（ID：" + x.id + "）", "", null, "設定"); }
+    else throw new Error("不明な操作です");
+    accSave_(L);
+  }
+  return { ok: true, accounts: accView_() };
+}
+/* 自分のパスワードを変える（いまのパスワードが必要） */
+function passwd_(d, S) {
+  var cur = String(d.cur || ""), nw = String(d.pass || "");
+  if (nw.length < 8 || nw.length > 100) throw new Error("新しいパスワードは8文字以上にしてください");
+  var pr = PropertiesService.getScriptProperties();
+  if (S.role === "admin") {
+    if (!sameStr_(hash_(P("ADMIN_PASS_SALT"), cur), P("ADMIN_PASS_HASH"))) throw new Error("いまのパスワードが違います");
+    var salt = Utilities.getUuid().replace(/-/g, ""); pr.setProperty("ADMIN_PASS_SALT", salt); pr.setProperty("ADMIN_PASS_HASH", hash_(salt, nw));
+  } else {
+    var L = accs_(), x = L.filter(function (y) { return y.id === S.id; })[0]; if (!x) throw new Error("アカウントが見つかりません");
+    if (!sameStr_(hash_(x.salt, cur), x.hash)) throw new Error("いまのパスワードが違います");
+    x.salt = Utilities.getUuid().replace(/-/g, ""); x.hash = hash_(x.salt, nw); accSave_(L);
+  }
+  hist_("", "パスワードを変更", S.name + "が自分のパスワードを変えました", "", S.name, "ログイン");
+  return { ok: true };
+}
+/* 担当者による提携先の登録（追加だけ。直す・消すは管理者） */
+function partnerCheck_(r) {
+  var o = {}; PKEY.forEach(function (k) { o[k] = String(r[k] || "").trim().slice(0, k === "note" ? 300 : 120); });
+  if (!o.name) throw new Error("提携先の名前を入れてください");
+  if (!o.a || !o.b) throw new Error("大分類と中分類を選んでください");
+  if (o.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(o.email)) throw new Error("メールアドレスの形が正しくありません");
+  if (partners_().some(function (p) { return p.name.replace(/\s/g, "") === o.name.replace(/\s/g, ""); })) throw new Error("「" + o.name + "」はもう登録されています");
+  return o;
+}
+function partnerAdd_(r, by) {
+  var o = partnerCheck_(r); o.by = by; o.state = "登録済み"; o.since = Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy-MM-dd");
+  partnerSheet_().appendRow(PKEY.map(function (k) { return o[k] || ""; }));
+  hist_("", "提携先の登録・変更", "登録：" + o.name + "（" + o.a + " ＞ " + o.b + "）", "", by, "設定");
+  return { ok: true, partners: partners_().filter(function (p) { return p.by === by; }) };
+}
+/* 提携先登録フォームを相手に送る（相手が自分で記入。届いた登録は「確認待ち」になり、管理者が確かめてから使う） */
+function pinvUrl_() { return String(P("SIGN_URL") || "https://119cm.net/keiyaku/index.html").replace(/index\.html.*$/, "") + "partner.html"; }
+function pinvite_(d, S) {
+  var em = String(d.email || "").trim().slice(0, 120), nm = String(d.name || "").trim().slice(0, 100), msg = String(d.message || "").trim().slice(0, 500);
+  if (!nm) throw new Error("相手の会社名・お名前を入れてください");
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) throw new Error("相手のメールアドレスを正しく入れてください");
+  var pr = PropertiesService.getScriptProperties(), all = pr.getProperties(), now = Date.now();
+  Object.keys(all).forEach(function (k) { if (k.indexOf("PINV_") === 0) { var v = parse_(all[k], {}); if (!v.exp || v.exp < now) pr.deleteProperty(k); } });
+  var tok = newToken_(); pr.setProperty("PINV_" + tok, JSON.stringify({ by: S.name, email: em, name: nm, exp: now + 14 * 864e5, sent: new Date().toISOString() }));
+  var url = pinvUrl_() + "?t=" + tok;
+  var html = "<div style='font-family:sans-serif;font-size:16px;line-height:1.8;color:#14211F'><p>" + esc_(nm) + " 様</p><p>" + esc_(ISSUER.service) + "の" + esc_(S.name) + "です。<br>提携先としてのご登録をお願いしたく、ご連絡いたしました。下のボタンから、貴社の情報（分野・連絡先・対応できる地域など）をご記入ください。</p>" + (msg ? "<p>" + esc_(msg).replace(/\n/g, "<br>") + "</p>" : "") + "<p><a href='" + url + "' style='display:inline-block;background:#0E5A63;color:#fff;padding:14px 26px;border-radius:10px;text-decoration:none;font-weight:bold'>提携先の登録フォームを開く</a></p><p style='font-size:14px;color:#555'>このリンクは14日間有効です。お心当たりがない場合は、このメールを破棄してください。</p><p>" + esc_(ISSUER.service) + "（運営 " + esc_(ISSUER.name) + "）<br>" + esc_(ISSUER.tel) + "（受付 " + esc_(ISSUER.hours) + "）</p></div>";
+  MailApp.sendEmail({ to: em, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】提携先のご登録のお願い", htmlBody: html, body: nm + " 様\n\n提携先の登録フォーム：" + url + "\n（14日間有効）" });
+  hist_("", "提携先登録フォームを送った", nm + "（" + em + "）", "", S.name, "設定");
+  return { ok: true };
+}
+function pinvGet_(d) {
+  var v = parse_(P("PINV_" + String(d.t || "").replace(/[^0-9a-f]/gi, "")), null);
+  if (!v || v.exp < Date.now()) throw new Error("このリンクは使えません（期限切れ、または登録が済んでいます）。お手数ですが、担当者にご連絡ください。");
+  return { ok: true, name: v.name, email: v.email };
+}
+function pinvSubmit_(d) {
+  var key = "PINV_" + String(d.t || "").replace(/[^0-9a-f]/gi, ""), v = parse_(P(key), null);
+  if (!v || v.exp < Date.now()) throw new Error("このリンクは使えません（期限切れ、または登録が済んでいます）。");
+  var o = partnerCheck_(d.row || {}); o.by = v.by; o.state = "確認待ち"; o.since = Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy-MM-dd");
+  o.note = ("相手が記入（" + v.email + " に送ったフォーム）" + (o.note ? "／" + o.note : "")).slice(0, 300);
+  partnerSheet_().appendRow(PKEY.map(function (k) { return o[k] || ""; }));
+  PropertiesService.getScriptProperties().deleteProperty(key);
+  hist_("", "提携先登録フォームが届いた", o.name + "（" + o.a + " ＞ " + o.b + "）\n送った担当：" + v.by, "", "相手", "設定");
+  MailApp.sendEmail({ to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］提携先の登録が届きました：" + o.name, body: o.name + "\n分類：" + o.a + " ＞ " + o.b + (o.c ? " ＞ " + o.c : "") + "\nご担当：" + o.person + "\nメール：" + o.email + "\n電話：" + o.tel + "\n地域：" + o.area + "\n\n送った担当：" + v.by + "\n\n管理画面の「設定」で内容を確かめ、「確認して使えるようにする」を押してください。\n管理画面：https://119cm.net/keiyaku/admin.html" });
+  return { ok: true };
+}
 /* 案件の内容とお客様の情報を、提携先へメールで送る（担当者が内容を確かめ、お客様の同意を確認したときだけ） */
 function forward_(d) {
   var c = findCase_(d.no), sh = inboxSheet_();
   if (d.consent !== true) throw new Error("お客様の同意を確認してください");
   if (segOf_(c.label).route === "self") throw new Error("この種別は提携先へ送りません");
-  var p = partners_().filter(function (x) { return x.name === String(d.partner || ""); })[0];
+  var p = livePartners_().filter(function (x) { return x.name === String(d.partner || ""); })[0];
   if (!p) throw new Error("提携先一覧に登録されている提携先を選んでください");
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email)) throw new Error("「" + p.name + "」のメールアドレスが登録されていません（設定の提携先一覧で登録できます）");
   var subj = String(d.subject || "").slice(0, 200), body = String(d.body || "").slice(0, 8000);
@@ -259,6 +349,8 @@ function doPost(e) {
     if (a.indexOf("client.") !== 0) return json({ ok: false, error: "この操作はできません" });
     lock.waitLock(20000);
     if (a === "client.apply") return json(apply_(d));
+    if (a === "client.pinv") return json(pinvGet_(d));
+    if (a === "client.pinvSubmit") return json(pinvSubmit_(d));
     return json(client_(a, d));
   } catch (err) {
     return json({ ok: false, error: String(err && err.message || err) });
@@ -515,15 +607,19 @@ function login_(d) {
     var salt = Utilities.getUuid().replace(/-/g, "");
     pr.setProperty("ADMIN_PASS_SALT", salt); pr.setProperty("ADMIN_PASS_HASH", hash_(salt, P("ADMIN_PASS"))); pr.deleteProperty("ADMIN_PASS");
   }
-  var ok = sameStr_(id.toLowerCase(), P("ADMIN_ID").toLowerCase()) && sameStr_(hash_(P("ADMIN_PASS_SALT"), pass), P("ADMIN_PASS_HASH"));
+  var isA = sameStr_(id.toLowerCase(), P("ADMIN_ID").toLowerCase()) && sameStr_(hash_(P("ADMIN_PASS_SALT"), pass), P("ADMIN_PASS_HASH")), acc = null, L = accs_();
+  if (!isA) L.forEach(function (x) { if (!acc && x.active !== false && sameStr_(id.toLowerCase(), String(x.id).toLowerCase()) && sameStr_(hash_(x.salt, pass), x.hash)) acc = x; });
+  var ok = isA || !!acc;
   if (!ok) {
     cache.put(kf, String(nf + 1), 900); cache.put("lf_all", String(ng + 1), 3600);
     if (nf + 1 >= 5) MailApp.sendEmail({ to: P("NOTIFY_TO"), subject: "［" + ISSUER.service + "］管理画面のログインの失敗が続いています", body: "ID「" + id.slice(0, 40) + "」でのログインに5回失敗したため、15分間止めました。心当たりがなければ、パスワードを変えてください。" });
     hist_("", "ログインの失敗", "ID「" + id.slice(0, 40) + "」", "", "", "ログイン"); throw new Error("IDまたはパスワードが違います");
   }
-  cache.remove(kf); hist_("", "ログイン", "管理画面にログインしました", "", "", "ログイン");
-  var tok = newToken_(); cache.put("adm_" + tok, P("ADMIN_ID"), 21600);
-  return { ok: true, adminToken: tok };
+  var S = isA ? { role: "admin", name: adminName_(), id: P("ADMIN_ID") } : { role: "staff", name: acc.name, id: acc.id };
+  if (acc) { acc.last = new Date().toISOString(); accSave_(L); }
+  cache.remove(kf); hist_("", "ログイン", (isA ? "管理者" : "担当者") + "として管理画面にログインしました", "", S.name, "ログイン");
+  var tok = newToken_(); cache.put("adm_" + tok, JSON.stringify(S), 21600);
+  return { ok: true, adminToken: tok, role: S.role, name: S.name };
 }
 // パスワードを忘れたとき：登録メール（NOTIFY_TO）だけにIDと確認コードを送る
 function forgot_() {
@@ -557,20 +653,34 @@ function adminPost_(a, d) {
     if (a === "admin.reset") return reset_(d);
     var cache = CacheService.getScriptCache(), t = String(d.adminToken || "");
     if (a === "admin.logout") { if (t) cache.remove("adm_" + t); return { ok: true }; }
-    if (!t || !cache.get("adm_" + t)) return { ok: false, error: "ログインの有効期限が切れました。もう一度ログインしてください。", needLogin: true };
-    cache.put("adm_" + t, cache.get("adm_" + t), 21600);
-    return adminDo_(a, d);
+    var sv = t && cache.get("adm_" + t);
+    if (!sv) return { ok: false, error: "ログインの有効期限が切れました。もう一度ログインしてください。", needLogin: true };
+    cache.put("adm_" + t, sv, 21600);
+    var S = parse_(sv, null); if (!S || !S.role) S = { role: "admin", name: adminName_(), id: P("ADMIN_ID") };
+    if (S.role === "staff") { var ac = accs_().filter(function (x) { return x.id === S.id; })[0]; if (!ac || ac.active === false) { cache.remove("adm_" + t); return { ok: false, error: "このIDは使えなくなりました。管理者に確認してください。", needLogin: true }; } }
+    return adminDo_(a, d, S);
   } catch (err) { return { ok: false, error: String(err && err.message || err) }; }
 }
 function adminCall(a, d) {
   try {
     if (!isAdmin_()) throw new Error("担当者として登録されたアカウントではありません");
-    return adminDo_(a, d);
+    return adminDo_(a, d, { role: "admin", name: adminName_(), id: "google" });
   } catch (err) { return { ok: false, error: String(err && err.message || err) }; }
 }
-function adminDo_(a, d) {
+/* 担当者（管理者以外）ができる操作。案件・名簿・ログ・設定の変更は管理者だけ */
+var STAFF_OK = ["admin.me", "admin.passwd", "admin.templates", "admin.preview", "admin.issue", "admin.list", "admin.get", "admin.resend", "admin.cancel", "admin.finalize", "admin.pdf", "admin.partnerAdd", "admin.partnersMine", "admin.partnerInvite"];
+function adminDo_(a, d, S) {
   try {
-    d = d || {}; ACTOR_ = String(d.actor || "").trim().slice(0, 30);
+    d = d || {}; S = S || { role: "admin", name: adminName_(), id: "" };
+    ACTOR_ = S.role === "staff" ? S.name : (String(d.actor || "").trim().slice(0, 30) || S.name);
+    if (S.role !== "admin" && STAFF_OK.indexOf(a) < 0) throw new Error("この操作は管理者だけができます");
+    if (a === "admin.me") return { ok: true, role: S.role, name: S.name, id: S.id };
+    if (a === "admin.passwd") return passwd_(d, S);
+    if (a === "admin.accList") return { ok: true, accounts: accView_() };
+    if (a === "admin.accSet") return accSet_(d);
+    if (a === "admin.partnerAdd") return partnerAdd_(d.row || {}, S.name);
+    if (a === "admin.partnersMine") return { ok: true, partners: S.role === "admin" ? partners_() : partners_().filter(function (p) { return p.by === S.name; }) };
+    if (a === "admin.partnerInvite") return pinvite_(d, S);
     if (a === "admin.log") return { ok: true, rows: logRows_(d) };
     if (a === "admin.templates") return { ok: true, templates: TEMPLATES, fields: FIELDS };
     if (a === "admin.cases") return cases_();
@@ -586,9 +696,10 @@ function adminDo_(a, d) {
       if (ch.length) hist_("", "提携先の登録・変更", ch.join("\n")); return r1; }
     if (a === "admin.staffSet") { var sb = staff_(), r2 = staffSet_(d), ch2 = []; r2.staff.forEach(function (n) { if (sb.indexOf(n) < 0) ch2.push("追加：" + n); }); sb.forEach(function (n) { if (r2.staff.indexOf(n) < 0) ch2.push("削除：" + n); }); if (ch2.length) hist_("", "担当者の登録・変更", ch2.join("\n")); return r2; }
     if (a === "admin.preview") return { ok: true, cond: normCond(d.cond), body: buildBody(d.template, d.cond, d.note, d.party) };
-    if (a === "admin.issue") { var ri = issue_(d), ti = tplOf(d.template), pp = d.party || {}; hist_(ri.id, d.draft ? "契約書の下書きを送った" : "契約書を送った", (ti && ti.base ? memberTitle(ti.mtype) : ti ? ti.title : "") + "\n" + (pp.company ? pp.company + " " : "") + (pp.name || "") + "（" + (pp.email || "") + "）", "", null, "電子契約"); return ri; }
-    if (a === "admin.list") return { ok: true, rows: rows_().reverse().slice(0, 300).map(function (r) { return { id: r.id, title: r.title, party_name: r.party_name, party_company: r.party_company, party_email: r.party_email, status: r.status, template: r.template, paid: r.paid ? new Date(r.paid).toISOString() : "", created: r.created ? new Date(r.created).toISOString() : "", viewed: r.viewed ? new Date(r.viewed).toISOString() : "", signed: r.signed ? new Date(r.signed).toISOString() : "", draft: r.draft, refcode: r.refcode || "", typeLabel: (function () { var c = parse_(r.cond, null); return c && MEMBER_LABEL[c.type] || ""; })(), pay: (function () { var c = parse_(r.cond, null); return c ? c.pay : ""; })(), phone: (parse_(r.values, {}) || {}).phone || "", billed: parse_(r.billed, []).slice(-1)[0] || "", stopped: r.stopped ? new Date(r.stopped).toISOString() : "", case_no: String(r.case_no || ""), feedback: parse_(r.feedback, null), prev: String(r.prev || "") }; }) };
+    if (a === "admin.issue") { d._issuer = S.name; var ri = issue_(d), ti = tplOf(d.template), pp = d.party || {}; hist_(ri.id, d.draft ? "契約書の下書きを送った" : "契約書を送った", (ti && ti.base ? memberTitle(ti.mtype) : ti ? ti.title : "") + "\n" + (pp.company ? pp.company + " " : "") + (pp.name || "") + "（" + (pp.email || "") + "）", "", null, "電子契約"); return ri; }
+    if (a === "admin.list") return { ok: true, rows: rows_().reverse().filter(function (r) { return S.role === "admin" || String(r.issuer || "") === S.name; }).slice(0, 300).map(function (r) { return { id: r.id, title: r.title, party_name: r.party_name, party_company: r.party_company, party_email: r.party_email, status: r.status, template: r.template, paid: r.paid ? new Date(r.paid).toISOString() : "", created: r.created ? new Date(r.created).toISOString() : "", viewed: r.viewed ? new Date(r.viewed).toISOString() : "", signed: r.signed ? new Date(r.signed).toISOString() : "", draft: r.draft, refcode: r.refcode || "", typeLabel: (function () { var c = parse_(r.cond, null); return c && MEMBER_LABEL[c.type] || ""; })(), pay: (function () { var c = parse_(r.cond, null); return c ? c.pay : ""; })(), phone: (parse_(r.values, {}) || {}).phone || "", billed: parse_(r.billed, []).slice(-1)[0] || "", stopped: r.stopped ? new Date(r.stopped).toISOString() : "", case_no: String(r.case_no || ""), feedback: parse_(r.feedback, null), prev: String(r.prev || ""), issuer: String(r.issuer || "") }; }) };
     var o = find_("id", d.id); if (!o) throw new Error("見つかりません");
+    if (S.role !== "admin" && String(o.issuer || "") !== S.name) throw new Error("自分が送った契約書だけを見たり操作したりできます");
     if (a === "admin.get") return getForEdit_(o);
     var who_ = o.title + "\n" + (o.party_company ? o.party_company + " " : "") + o.party_name, LG = { "admin.resend": "契約書を送り直した", "admin.paid": "入金を確認した（登録完了のメールを送信）", "admin.stop": "退会にした（請求を停止）", "admin.cancel": "契約書を取り消した", "admin.pdf": "契約書のPDFを保存した", "admin.finalize": "下書きを本契約として送った（同じ内容）" };
     if (LG[a]) { var res_ = adminOne_(a, d, o); hist_(o.id, LG[a], who_, "", null, "電子契約"); return res_; }
@@ -611,10 +722,11 @@ function issue_(d) {
   if (!p.name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email || "")) throw new Error("相手のお名前と、正しいメールアドレスを入れてください");
   var fields = orderFields(t, d.fields);
   var cond = t.cond ? normCond(d.cond) : "";
-  var o = { id: newId_(), token: newToken_(), template: bt.key, title: t.base ? memberTitle(t.mtype) : t.title, party_name: p.name, party_company: p.company || "", party_email: p.email, fields: fields, required: t.required, require_id: (d.requireId || t.requireId) ? "yes" : "", cond: cond, note: d.note || "", prefill: d.prefill || {}, status: "送付済み", created: new Date(), expires: new Date(Date.now() + VALID_DAYS * 864e5), draft: d.draft ? "yes" : "", case_no: String(d.caseNo || "").slice(0, 40) };
+  var o = { id: newId_(), token: newToken_(), template: bt.key, title: t.base ? memberTitle(t.mtype) : t.title, party_name: p.name, party_company: p.company || "", party_email: p.email, fields: fields, required: t.required, require_id: (d.requireId || t.requireId) ? "yes" : "", cond: cond, note: d.note || "", prefill: d.prefill || {}, status: "送付済み", created: new Date(), expires: new Date(Date.now() + VALID_DAYS * 864e5), draft: d.draft ? "yes" : "", case_no: String(d.caseNo || "").slice(0, 40), issuer: String(d._issuer || "").slice(0, 40) };
   o.body = buildBody(t.key, cond, o.note, p.company || p.name);
   if (d.replaces) {
     var old = find_("id", d.replaces); if (!old) throw new Error("差し替える元の契約書が見つかりません");
+    if (d._issuer && d._issuer !== adminName_() && String(old.issuer || "") !== d._issuer) throw new Error("自分が送った契約書だけを差し替えられます");
     if (old.status === "締結済み") throw new Error("元の契約書はすでに締結されているため、差し替えられません");
     if (old.status !== "取り消し") { old.status = "取り消し"; log_(old, "差し替えのため取り消し（新しい契約書 " + o.id + "）"); save_(old); }
     o.prev = old.id; if (!o.case_no) o.case_no = String(old.case_no || "");
