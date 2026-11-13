@@ -20,7 +20,7 @@ const SHEET_ID = '1RgoJAPcvjCw4neqc1fbTLo5jjxX9CmyEUbUo2mm5y8A';  // 受付用�
 const SITE_NAME = '企業支援 総合相談窓口';
 const OPERATOR = '株式会社グローブ';
 const APP_URL = 'https://script.google.com/macros/s/AKfycbyrAW_oUbA5ZXBFZ1KLcR6nfnMEnbsjAfMY9F0rYYq-RSp7P_m3SuNFh9RRy1q4ar3m/exec';
-const ADMIN_URL = 'https://glove-osaka.github.io/glove-site/kigyo/kanri/';
+const ADMIN_URL = 'https://bsd.osaka/kanri/';
 const MAX_PER_HOUR = 30;               // いたずらの連続送信を止める上限（1時間あたり）
 
 // ▼ 警告の基準
@@ -55,7 +55,7 @@ const PARTNER_COLS = [['id', '取次先ID'], ['name', '名称'], ['type', '種�
   ['cats', '対応分野'], ['keywords', '得意なこと・キーワード'], ['area', '対応地域'], ['fee', '手数料・費用の扱い'], ['note', '備考'], ['active', '状態'], ['updated', '更新日時']];
 const INVITE_SHEET = '協力企業の招待';
 const INVITE_DAYS = 30;   // 登録用URLの有効期限（日）
-const JOIN_URL = 'https://glove-osaka.github.io/glove-site/kigyo/kyoryoku/';
+const JOIN_URL = 'https://bsd.osaka/kyoryoku/';
 const PARTNER_TYPES = ['自社', '行政書士', '社会保険労務士', '税理士', '司法書士', '弁護士', '中小企業診断士', '弁理士', '提携事業者', 'その他'];
 const STAGE_DEFAULTS = [
   ['未対応', '受付直後', '新規受付、再度のお問い合わせ'], ['未対応', '連絡待ち', '電話がつながらない、メールの返信待ち'],
