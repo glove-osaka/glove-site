@@ -721,7 +721,8 @@ function issue_(d) {
   var p = d.party || {};
   if (!p.name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email || "")) throw new Error("相手のお名前と、正しいメールアドレスを入れてください");
   var fields = orderFields(t, d.fields);
-  var cond = t.cond ? normCond(d.cond) : "";
+  if (t.tcond) { var tce = teikeiCheck(d.cond); if (tce) throw new Error(tce); }
+  var cond = t.cond ? normCond(d.cond) : t.tcond ? normTeikei(d.cond) : "";
   var o = { id: newId_(), token: newToken_(), template: bt.key, title: t.base ? memberTitle(t.mtype) : t.title, party_name: p.name, party_company: p.company || "", party_email: p.email, fields: fields, required: t.required, require_id: (d.requireId || t.requireId) ? "yes" : "", cond: cond, note: d.note || "", prefill: d.prefill || {}, status: "送付済み", created: new Date(), expires: new Date(Date.now() + VALID_DAYS * 864e5), draft: d.draft ? "yes" : "", case_no: String(d.caseNo || "").slice(0, 40), issuer: String(d._issuer || "").slice(0, 40) };
   o.body = buildBody(t.key, cond, o.note, p.company || p.name);
   if (d.replaces) {

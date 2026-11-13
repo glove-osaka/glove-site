@@ -47,6 +47,7 @@ body.adm main{max-width:1280px}.ctbl td:nth-child(1),.ctbl td:nth-child(2){white
 .fb-box{margin-top:18px;padding:18px 20px;border:2px solid var(--pine);border-radius:12px;background:var(--pine-soft)}.fb-box .btns{display:flex;flex-wrap:wrap;gap:10px}
 body.role-staff .adm-only{display:none!important}.me-badge{display:inline-flex;align-items:center;gap:6px;font-weight:700;padding:6px 12px;border-radius:999px;background:var(--pine-soft)}.st-wait{display:inline-block;padding:1px 8px;border-radius:999px;font-size:.8rem;font-weight:700;background:#FFF3D6;color:#6b4a0c}.st-mine{display:inline-block;padding:1px 8px;border-radius:999px;font-size:.8rem;font-weight:700;background:#E3F2E9;color:#1e5b34}
 .zr{display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr)) minmax(0,1.3fr) auto;gap:8px;align-items:center;margin-bottom:8px}.zr .zn{font-size:.85rem;font-weight:700;color:var(--muted);white-space:nowrap}.zr select,.zr input{width:100%;min-width:0}@media (max-width:760px){.zr{grid-template-columns:1fr 1fr}.zr .zn{grid-column:1/-1}}
+#tcBox .cond{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:0 16px}#tcBox .cond>.fld:nth-child(-n+2),#tcBox .cond>p,#tcBox .tc-prev,#tcFeeBox{grid-column:1/-1}#tcFeeBox{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:0 16px}#tcFeeBox[hidden]{display:none}#tcFeeBox>.fld{min-width:0}.tc-prev{white-space:pre-wrap;font:inherit;font-size:.92rem;line-height:1.8;background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:0}
 .roster{display:grid;grid-template-columns:260px 1fr;gap:16px}@media (max-width:860px){.roster{grid-template-columns:1fr}}
 .r-tree{border:1px solid var(--line);border-radius:12px;padding:10px;max-height:70vh;overflow:auto;background:var(--surface)}.r-tree h4{margin:10px 6px 4px;font-size:.85rem;color:var(--muted)}.r-tree button{display:flex;justify-content:space-between;gap:8px;width:100%;text-align:left;min-height:38px;padding:6px 10px;border:0;border-radius:8px;background:none;color:var(--ink);font:inherit;cursor:pointer}.r-tree button:hover{background:var(--pine-soft)}.r-tree button.on{background:var(--pine);color:#fff}.r-tree button b{font-weight:700}.r-tree .l2{padding-left:22px;font-size:.92rem}.r-tree .l3{padding-left:36px;font-size:.88rem}
 .pt-box{margin-top:10px}.pt-box>label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:4px}.pt-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.pt-g select{min-height:44px;font-size:.95rem}.pt-box input{margin-top:8px;min-height:44px}
@@ -105,7 +106,7 @@ API = "/* 電子契約：通信と、設定前のお試し表示（この端末�
   var URL_ = window.KEIYAKU_API_URL || "";
   var DEMO = !URL_ || /[?&]demo=1/.test(location.search);
   window.KEIYAKU_DEMO = DEMO;
-  window.KEIYAKU_CORE = { TEMPLATES: TEMPLATES, FIELDS: FIELDS, normCond: normCond, buildBody: buildBody, yen: yen, MEMBER_LABEL: MEMBER_LABEL };
+  window.KEIYAKU_CORE = { TEMPLATES: TEMPLATES, FIELDS: FIELDS, normCond: normCond, buildBody: buildBody, yen: yen, MEMBER_LABEL: MEMBER_LABEL, teikeiText: teikeiText, teikeiCheck: teikeiCheck, normTeikei: normTeikei };
   function real(action, data) {
     var payload = Object.assign({ action: action }, data || {});
     if (action.indexOf("admin.") === 0) { try { payload.adminToken = sessionStorage.getItem("iryo-adm") || ""; } catch (e) { } }
@@ -146,7 +147,7 @@ API = "/* 電子契約：通信と、設定前のお試し表示（この端末�
       var t = tplOf(d.template), p = d.party || {}; if (t.base) d.cond = Object.assign({}, d.cond || {}, { type: t.mtype });
       if (!p.name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email || "")) return Promise.reject(new Error("相手のお名前と、正しいメールアドレスを入れてください"));
       var f = orderFields(t, d.fields);
-      var o = { id: "IKK-DEMO-" + (1001 + list.length), token: "demo" + Date.now(), case_no: d.caseNo || "", issuer: ME.name, template: t.base || t.key, title: t.base ? memberTitle(t.mtype) : t.title, party_name: p.name, party_company: p.company || "", party_email: p.email, status: "送付済み", created: new Date().toISOString(), draft: d.draft ? "yes" : "", fields: f, required: t.required, requireId: !!(d.requireId || t.requireId), prefill: d.prefill || {}, body: buildBody(t.key, d.cond, d.note, p.company || p.name), cond: t.cond ? normCond(d.cond) : null, note: d.note || "" };
+      var o = { id: "IKK-DEMO-" + (1001 + list.length), token: "demo" + Date.now(), case_no: d.caseNo || "", issuer: ME.name, template: t.base || t.key, title: t.base ? memberTitle(t.mtype) : t.title, party_name: p.name, party_company: p.company || "", party_email: p.email, status: "送付済み", created: new Date().toISOString(), draft: d.draft ? "yes" : "", fields: f, required: t.required, requireId: !!(d.requireId || t.requireId), prefill: d.prefill || {}, body: buildBody(t.key, d.cond, d.note, p.company || p.name), cond: t.cond ? normCond(d.cond) : t.tcond ? normTeikei(d.cond) : null, note: d.note || "" };
       if (d.replaces) list.forEach(function (x) { if (x.id === d.replaces) { x.status = "取り消し"; o.prev = x.id; if (!o.case_no) o.case_no = x.case_no || ""; } });
       list.unshift(o); store(list);
       return wait({ ok: true, id: o.id, url: location.href.replace(/admin\.html.*$/, "index.html") + "?t=" + o.token + "&demo=1" });
@@ -554,6 +555,22 @@ ADMIN_BODY = f'''
 <p class="fee" id="cFee"></p>
 </div></div>
 
+<div class="fld" id="tcBox" hidden><label>提携の条件（選んだ内容から、契約書の文章を自動で作ります）</label>
+<div class="cond">
+<div class="fld"><label for="tcBiz">紹介する業務（乙が会員に提供するサービス） <span class="req">※必須</span></label><input type="text" id="tcBiz" maxlength="120" placeholder="例：買取（遺品整理・生前整理の品物を含む）"><p class="hint" style="margin:4px 0 0">サービスの名前だけを書きます（例：買取、訪問介護、不動産の売却）。文章は自動で「〜の依頼」になります。</p></div>
+<div class="fld"><label class="agree" for="tcNoFee" style="padding:10px"><input type="checkbox" id="tcNoFee"><span>手数料を定めない（手数料なしの提携）　※印を付けると、手数料・締め日・支払いの項目が契約書から外れ、第3条も「手数料を支払わない」内容に変わります</span></label></div>
+<div id="tcFeeBox">
+<div class="fld"><label for="tcMode">手数料の決め方 <span class="req">※必須</span></label><select id="tcMode"><option value="sales">売上（会員への請求額）の ○％</option><option value="profit">純利益（売上 − 仕入れ・直接の費用）の ○％</option><option value="fixed">成約1件ごとに定額 ○円</option><option value="other">その他（文章で決める）</option></select></div>
+<div class="fld" id="tcRateBox"><label for="tcRate">割合（％）</label><input type="number" id="tcRate" min="0" max="100" step="0.1" inputmode="decimal" placeholder="例：20"></div>
+<div class="fld" id="tcAmtBox" hidden><label for="tcAmt">1件あたりの手数料（円・消費税別）</label><input type="number" id="tcAmt" min="0" step="100" inputmode="numeric" placeholder="例：10000"></div>
+<div class="fld" id="tcOtherBox" hidden><label for="tcOther">手数料の決め方（文章）</label><textarea id="tcOther" maxlength="300" placeholder="例：乙は甲に、紹介案件ごとに甲乙で協議して定めた額を支払う。"></textarea></div>
+<div class="fld"><label for="tcTerm">対象となる期間</label><select id="tcTerm"><option value="year">紹介から1年以内に成約したもの</option><option value="contract">契約期間中ずっと（継続・追加の依頼も含む）</option><option value="once">会員ごとに最初の1件だけ</option></select></div>
+<div class="fld"><label for="tcClose">締め日</label><select id="tcClose"><option>月末</option><option>10日</option><option>15日</option><option>20日</option><option>25日</option></select></div>
+<div class="fld"><label for="tcPay">支払日</label><select id="tcPay"><option>翌月末日</option><option>翌月10日</option><option>翌月15日</option><option>翌月20日</option><option>翌月25日</option><option>翌々月末日</option></select></div>
+<div class="fld"><label for="tcFee">振込手数料の負担</label><select id="tcFee"><option value="乙">提携先（乙）の負担</option><option value="甲">当社（甲）の負担</option></select></div>
+</div>
+<p class="hint" style="margin:6px 0 4px"><b>契約書に入る文章（見本）</b></p><pre class="tc-prev" id="tcPrev"></pre>
+</div></div>
 <div class="fld"><label>相手に記入してもらう項目</label><div class="chk" id="fieldChk"></div></div>
 <div class="fld"><label>前もって入れておく内容（申込みの内容を写すと、相手の手間が減ります。相手は直せます）</label><div class="pre" id="preBox"></div></div>
 <div class="fld"><label class="agree" for="reqId" style="padding:12px"><input type="checkbox" id="reqId"><span>本人確認書類の写真の添付を求める</span></label></div>
@@ -588,6 +605,9 @@ function api(a,d){d=d||{};if(a.indexOf('admin.')===0&&a!=='admin.login'&&ACTOR&&
 var n=new Date(),nx=new Date(n.getFullYear(),n.getMonth()+1,1);$('cStart').value=nx.getFullYear()+'-'+('0'+(nx.getMonth()+1)).slice(-2);
 function start(){$('panel').hidden=false;
  api('admin.templates').then(function(r){TPL=r.templates;FIELDS=r.fields;$('tpl').innerHTML=TPL.filter(function(t){return!t.hidden}).map(function(t){return'<option value="'+t.key+'">'+esc(t.title)+'</option>'}).join('');onTpl()}).catch(function(e){$('errI').textContent=e.message});list()}
+function tcond(){return{biz:$('tcBiz').value.trim(),mode:$('tcMode').value,rate:$('tcRate').value,amount:$('tcAmt').value,other:$('tcOther').value.trim(),term:$('tcTerm').value,close:$('tcClose').value,pay:$('tcPay').value,fee:$('tcFee').value,nofee:$('tcNoFee').checked}}
+function onTc(){var m=$('tcMode').value;$('tcFeeBox').hidden=$('tcNoFee').checked;$('tcRateBox').hidden=!(m==='sales'||m==='profit');$('tcAmtBox').hidden=m!=='fixed';$('tcOtherBox').hidden=m!=='other';$('tcPrev').textContent='提携の条件\n'+K.teikeiText(tcond(),$('note').value.trim());$('prev').hidden=true}
+['tcBiz','tcNoFee','tcMode','tcRate','tcAmt','tcOther','tcTerm','tcClose','tcPay','tcFee','note'].forEach(function(id){$(id).addEventListener('input',function(){if(!$('tcBox').hidden)onTc()});$(id).addEventListener('change',function(){if(!$('tcBox').hidden)onTc()})});
 function cur(){var k=$('tpl').value;return TPL.filter(function(x){return x.key===k})[0]}
 function cond(){return{type:$('cType').value,pay:$('cPay').value,sites:$('cSites').value,staff:$('cStaff').value,start:$('cStart').value,referrer:$('cRef').value.trim(),founder:$('cFounder').checked,entryFee:$('cEntry').value.trim()}}
 function onCond(){var t=$('cType').value;$('cSitesBox').hidden=t!=='hojin';$('cStaffBox').hidden=t==='kyosan';$('cEntryBox').hidden=$('cFounder').checked;
@@ -600,12 +620,14 @@ function onTpl(){var t=cur();if(!t)return;
  $('fieldChk').innerHTML=Object.keys(FIELDS).map(function(k){var req=t.required.indexOf(k)>=0;return'<label><input type="checkbox" value="'+k+'"'+(t.fields.indexOf(k)>=0||req?' checked':'')+(req?' disabled':'')+'>'+esc(FIELDS[k].label)+(req?'（※必須）':'')+'</label>'}).join('');
  $('fieldChk').onchange=drawPre;drawPre();
  if(t.mtype){$('cType').value=t.mtype}$('cTypeBox').hidden=!!t.mtype;
+ $('tcBox').hidden=!t.tcond;if(t.tcond)onTc();
  $('reqId').checked=!!t.requireId;$('condBox').hidden=!t.cond;$('noteBox').hidden=!t.note;$('noteLabel').textContent=t.note||'特記事項';$('prev').hidden=true;if(t.cond)onCond()}
 $('tpl').addEventListener('change',onTpl);
 function payload(){var t=cur(),pre={};[].forEach.call($('preBox').querySelectorAll('input'),function(i){if(i.value.trim())pre[i.dataset.k]=i.value.trim()});
- return{template:t.key,party:{name:$('pName').value.trim(),company:$('pCompany').value.trim(),email:$('pEmail').value.trim()},fields:[].map.call($('fieldChk').querySelectorAll('input:checked'),function(i){return i.value}),requireId:$('reqId').checked,cond:t.cond?cond():null,note:t.note?$('note').value.trim():'',prefill:pre,draft:$('draft').checked,caseNo:CASE_LINK||(REPLACES&&ctOf(REPLACES)?ctOf(REPLACES).case_no:'')||'',replaces:REPLACES||''}}
+ return{template:t.key,party:{name:$('pName').value.trim(),company:$('pCompany').value.trim(),email:$('pEmail').value.trim()},fields:[].map.call($('fieldChk').querySelectorAll('input:checked'),function(i){return i.value}),requireId:$('reqId').checked,cond:t.cond?cond():t.tcond?tcond():null,note:t.note?$('note').value.trim():'',prefill:pre,draft:$('draft').checked,caseNo:CASE_LINK||(REPLACES&&ctOf(REPLACES)?ctOf(REPLACES).case_no:'')||'',replaces:REPLACES||''}}
 $('doPrev').addEventListener('click',function(){var p=payload();$('prev').textContent=K.buildBody(p.template,p.cond,p.note,p.party.company||p.party.name||'（相手のお名前）').replace(/\[\[(\w+)\]\]/g,function(_,k){return p.prefill[k]?p.prefill[k]+'（相手が直せます）':'＿＿＿（相手が記入）'});$('prev').hidden=false});
 $('doIssue').addEventListener('click',function(){var b=this,p=payload();
+ if(cur()&&cur().tcond){var tce=K.teikeiCheck(p.cond);if(tce){$('errI').textContent=tce+'。';return}}
  if(/^kaiin/.test(p.template)&&p.cond.type==='hojin'&&(+p.cond.sites||1)<2&&!confirm('法人会員で事業所数が1か所です。このまま送りますか？'))return;
  if(/^kaiin/.test(p.template)&&p.cond.type==='kyosan'&&!confirm('協賛会員は審査が必要です。審査は済んでいますか？'))return;
  b.disabled=true;$('errI').textContent='';$('issued').hidden=true;
@@ -640,6 +662,7 @@ function setCaseLink(x){CASE_LINK=x?x.no:null;var el=$('caseLink');el.hidden=!x&
 function newCt(x){var g=segOf(x),c=cls(x);goTab('keiyaku');setCaseLink(x);
  var tk=g.key==='teikei'?'teikei':g.key==='kaiin'?({'事業所会員':'kaiin_jigyosho','法人会員':'kaiin_hojin','協賛会員':'kaiin_kyosan','個人会員（営業協力者）':'kojin'}[c.sub]||'kaiin_jigyosho'):'';
  if(tk&&[].some.call($('tpl').options,function(o){return o.value===tk})){$('tpl').value=tk;onTpl()}
+ if(tk==='teikei'){var pp=(c.path[0]||'').split(' ＞ ').filter(Boolean);$('tcBiz').value=pp.length?pp[pp.length-1]:'';onTc()}
  $('pName').value=x.name&&x.name.indexOf('伏せ')<0&&x.name.indexOf('名前なし')<0?x.name:'';$('pCompany').value=x.company||'';$('pEmail').value=x.email||'';$('draft').checked=true;
  window.scrollTo(0,$('caseLink').getBoundingClientRect().top+scrollY-130);flash($('caseLink'))}
 function ctOf(id){return(KL||[]).filter(function(c){return c.id===id})[0]}
@@ -652,8 +675,9 @@ function ctRedo(id){api('admin.get',{id:id}).then(function(r){var c=r.contract;g
  $('pName').value=c.party.name||'';$('pCompany').value=c.party.company||'';$('pEmail').value=c.party.email||'';
  [].forEach.call($('fieldChk').querySelectorAll('input'),function(i){if(!i.disabled)i.checked=c.fields.indexOf(i.value)>=0});drawPre();
  [].forEach.call($('preBox').querySelectorAll('input'),function(i){i.value=(c.prefill||{})[i.dataset.k]||''});
- if(c.cond){$('cPay').value=c.cond.pay||'month';$('cSites').value=c.cond.sites||1;$('cStaff').value=c.cond.staff==null?5:c.cond.staff;$('cStart').value=String(c.cond.start||'').slice(0,7);$('cRef').value=c.cond.referrer||'';$('cFounder').checked=c.cond.founder!==false;$('cEntry').value=c.cond.entryFee||'';onCond()}
- $('note').value=c.note||'';$('reqId').checked=!!c.requireId;$('draft').checked=!!c.draft;
+ if(c.template==='teikei'&&c.cond){$('tcBiz').value=c.cond.biz||'';$('tcMode').value=c.cond.mode||'sales';$('tcRate').value=c.cond.rate||'';$('tcAmt').value=c.cond.amount||'';$('tcOther').value=c.cond.other||'';$('tcTerm').value=c.cond.term||'year';$('tcClose').value=c.cond.close||'月末';$('tcPay').value=c.cond.pay||'翌月末日';$('tcFee').value=c.cond.fee||'乙';$('tcNoFee').checked=!!c.cond.nofee}
+ else if(c.cond){$('cPay').value=c.cond.pay||'month';$('cSites').value=c.cond.sites||1;$('cStaff').value=c.cond.staff==null?5:c.cond.staff;$('cStart').value=String(c.cond.start||'').slice(0,7);$('cRef').value=c.cond.referrer||'';$('cFounder').checked=c.cond.founder!==false;$('cEntry').value=c.cond.entryFee||'';onCond()}
+ $('note').value=c.note||'';$('reqId').checked=!!c.requireId;if(c.template==='teikei')onTc();$('draft').checked=!!c.draft;
  var x=c.case_no?caseOf(c.case_no):null;setCaseLink(x||null);REPLACES=c.id;
  var el=$('caseLink');el.hidden=false;el.insertAdjacentHTML('afterbegin','<span style="flex-basis:100%"><b>'+esc(c.id)+' を直して送り直します。</b>元の書面は取り消され、直した書面だけが相手に届きます（'+(c.draft?'下書きのまま送るか、下の「下書き（確認用）として送る」を外して本契約として送るかを選べます':'')+'）。'+(c.feedback&&c.feedback.comment?'<br>相手の修正の希望：'+esc(c.feedback.comment):'')+'</span>');
  if(!x&&c.case_no)el.insertAdjacentHTML('beforeend','<span>案件 '+esc(c.case_no)+' に結びつけます。</span>');
@@ -1109,7 +1133,7 @@ open(os.path.join(OUT, "admin.html"), "w", encoding="utf-8").write(HEAD("管理�
 gs = "/* このファイルは make_keiyaku.py が作りました。直すときは元のファイルを直してください */\n" + TEXTS + CORE + "\n" + open(os.path.join(HERE, "keiyaku_gas_main.js"), encoding="utf-8").read()
 open(os.path.join(GAS, "コード.gs"), "w", encoding="utf-8").write(gs)
 shim = ("<script>window.IN_GAS=true;\n(function(){" + TEXTS + CORE +
-        "window.KEIYAKU_CORE={TEMPLATES:TEMPLATES,FIELDS:FIELDS,normCond:normCond,buildBody:buildBody,yen:yen,MEMBER_LABEL:MEMBER_LABEL};})();\n"
+        "window.KEIYAKU_CORE={TEMPLATES:TEMPLATES,FIELDS:FIELDS,normCond:normCond,buildBody:buildBody,yen:yen,MEMBER_LABEL:MEMBER_LABEL,teikeiText:teikeiText,teikeiCheck:teikeiCheck,normTeikei:normTeikei};})();\n"
         "window.keiyakuApi=function(a,d){return new Promise(function(res,rej){google.script.run.withSuccessHandler(function(r){r&&r.ok?res(r):rej(new Error(r&&r.error||'うまくいきませんでした'))}).withFailureHandler(function(e){rej(new Error(e&&e.message||String(e)))}).adminCall(a,d)})};</script>\n")
 gas_admin = ('<!doctype html><html lang="ja"><head><base target="_top"><meta charset="utf-8"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDPMincho:wght@700&display=swap"><style>'
              + css + '</style></head><body>' + ADMIN_BODY.replace('href="../index.html"', 'href="https://119cm.net/"') + shim + ADM_DATA + ZONE_DATA + ZONE_JS + ADMIN_JS + "</body></html>\n")

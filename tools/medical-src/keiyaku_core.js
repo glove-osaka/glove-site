@@ -15,12 +15,50 @@ var TEMPLATES = [
   { key: "kaiin", title: "会員申込書（事業所・法人・協賛会員）", cond: true, fields: ["company", "address", "rep", "name", "phone"], required: ["company", "address", "rep", "name", "phone"], requireId: false, seal: "square", note: "", labels: { name: "ご担当者名", address: "所在地", company: "事業所名・法人名" } },
   { key: "kojin", title: "個人会員（営業協力者）登録書", cond: false, fields: ["name", "kana", "address", "phone", "birth", "bank"], required: ["name", "kana", "address", "phone", "birth", "bank"], requireId: true, adult: true, seal: "round", note: "特記事項", labels: { name: "お名前", address: "ご住所" } },
   { key: "nda", title: "秘密保持契約書（ご相談）", cond: false, fields: ["company", "name", "address", "phone"], required: ["name", "address", "phone"], requireId: false, seal: "round", note: "特記事項" },
-  { key: "teikei", title: "業務提携契約書（提携先）", cond: false, fields: ["company", "rep", "name", "title", "address", "phone"], required: ["company", "rep", "address", "phone"], requireId: false, seal: "square", note: "提携の条件（業務分野・手数料の率・支払時期など）" }
+  { key: "teikei", title: "業務提携契約書（提携先）", cond: false, fields: ["company", "rep", "name", "title", "address", "phone"], required: ["company", "rep", "address", "phone"], requireId: false, seal: "square", note: "その他の取り決め（任意）", tcond: true }
 ];
 var MEMBER_LABEL = { jigyosho: "事業所会員", hojin: "法人会員", kyosan: "協賛会員" };
 function memberTitle(type) { return (MEMBER_LABEL[type] || "会員") + " 申込書"; }
 /* 会員申込書は「事業所会員」「法人会員」「協賛会員」の3種類に分ける（保存するときは kaiin として扱い、会員区分は固定） */
 (function () { var b = TEMPLATES[0], add = ["jigyosho", "hojin", "kyosan"].map(function (m) { var o = {}; for (var k in b) o[k] = b[k]; o.key = "kaiin_" + m; o.base = "kaiin"; o.mtype = m; o.title = memberTitle(m); return o; }); b.hidden = true; TEMPLATES.splice.apply(TEMPLATES, [1, 0].concat(add)); })();
+/* 業務提携契約書の「提携の条件」：選んだ・入れた内容から、契約書らしい文章を作る */
+var TK_MODE = { sales: "売上（会員への請求額）の割合", profit: "純利益の割合", fixed: "成約1件ごとの定額", other: "その他（文章で決める）" };
+var TK_TERM = { year: "紹介を受けた日から1年以内に成約した紹介案件を対象とする。", contract: "本契約の有効期間中に成約した紹介案件を対象とし、同じ会員からの継続・追加の依頼も含む。", once: "紹介を受けた会員ごとに、最初に成約した1件を対象とする。" };
+var TK_CLOSE = ["月末", "10日", "15日", "20日", "25日"], TK_PAY = ["翌月末日", "翌月10日", "翌月15日", "翌月20日", "翌月25日", "翌々月末日"];
+function normTeikei(c) {
+  c = c || {};
+  var num = function (x) { var n = parseFloat(String(x == null ? "" : x).replace(/[^0-9.]/g, "")); return isFinite(n) ? n : 0; };
+  return { biz: String(c.biz || "").trim().slice(0, 120), mode: TK_MODE[c.mode] ? c.mode : "sales", rate: Math.max(0, Math.min(100, Math.round(num(c.rate) * 10) / 10)), amount: Math.max(0, Math.round(num(c.amount))),
+    other: String(c.other || "").trim().slice(0, 300), term: TK_TERM[c.term] ? c.term : "year", close: TK_CLOSE.indexOf(c.close) >= 0 ? c.close : "月末", pay: TK_PAY.indexOf(c.pay) >= 0 ? c.pay : "翌月末日", fee: c.fee === "甲" ? "甲" : "乙", nofee: c.nofee === true || c.nofee === "true" };
+}
+function teikeiCheck(c) {
+  var o = normTeikei(c);
+  if (!o.biz) return "提携の条件の「紹介する業務」を入れてください";
+  if (o.nofee) return "";
+  if ((o.mode === "sales" || o.mode === "profit") && !(o.rate > 0)) return "手数料の割合（％）を入れてください";
+  if (o.mode === "fixed" && !(o.amount > 0)) return "1件あたりの手数料（円）を入れてください";
+  if (o.mode === "other" && !o.other) return "手数料の決め方を文章で入れてください";
+  return "";
+}
+function teikeiText(c, note) {
+  var o = normTeikei(c), L = [], n = 0, no = function () { n++; return n + "　"; };
+  L.push(no() + "対象となる業務　甲が乙に紹介した会員（会員から紹介を受けた方を含む。）から、乙が受けた" + (o.biz || "［紹介する業務］") + "の依頼（以下「紹介案件」という。）を対象とする。");
+  if (o.nofee) {
+    L.push(no() + "紹介手数料　本契約による紹介について、乙は甲に手数料を支払わない。");
+    if (note) L.push(no() + "その他　" + String(note).trim());
+    return L.join("\n");
+  }
+  var fee = o.mode === "sales" ? "紹介案件の売上（会員への請求額。消費税を除く。）の" + o.rate + "％に当たる額（消費税別）" :
+    o.mode === "profit" ? "紹介案件の純利益（売上から、仕入れ・外注費など、その案件に直接かかった費用を差し引いた額。消費税を除く。）の" + o.rate + "％に当たる額（消費税別）" :
+    o.mode === "fixed" ? "紹介案件の成約1件につき" + yen(o.amount) + "（消費税別）" : "";
+  L.push(no() + "紹介手数料　" + (o.mode === "other" ? o.other : "乙は甲に、" + fee + "を、紹介手数料として支払う。"));
+  if (o.mode === "profit") L.push(no() + "純利益の明細　乙は、純利益の計算の根拠（売上と費用の明細）を、支払いのつど甲に示す。甲が求めたときは、その裏づけとなる資料を見せる。");
+  L.push(no() + "対象となる期間　" + TK_TERM[o.term]);
+  L.push(no() + "締めと支払い　紹介手数料は毎月" + o.close + "に締め、乙は" + o.pay + "までに、対象となる紹介案件と手数料の明細を添えて支払う。");
+  L.push(no() + "支払方法　甲の指定する銀行口座への振込とし、振込手数料は" + o.fee + "の負担とする。");
+  if (note) L.push(no() + "その他　" + String(note).trim());
+  return L.join("\n");
+}
 function tplOf(key) { for (var i = 0; i < TEMPLATES.length; i++) if (TEMPLATES[i].key === key) return TEMPLATES[i]; return null; }
 function fieldLabel(t, k) { return (t && t.labels && t.labels[k]) || FIELDS[k].label; }
 /* 項目の並びをひな形の順にそろえ、必須の項目を必ず入れる */
@@ -81,6 +119,10 @@ function buildBody(key, cond, note, party) {
     b = "秘密保持契約書\n\n" + NDA_TEXT.replace("[[party]]", who);
   } else if (key === "teikei") {
     b = "業務提携契約書\n\n" + TEIKEI_TEXT.replace("[[party]]", who);
+    if (cond && typeof cond === "object") {
+      if (normTeikei(cond).nofee) b = b.replace(/第3条（手数料）[\s\S]*?(?=\n\n第4条)/, "第3条（手数料）\n本契約による紹介について、乙は甲に手数料を支払わない。乙は、会員への請求額を、本会の会員であることを理由に引き上げてはならない。");
+      b += "\n\n提携の条件\n" + teikeiText(cond, note); note = "";
+    }
   }
   if (note) b += "\n\n" + (t && t.note ? t.note : "特記事項") + "\n" + note;
   return b;
