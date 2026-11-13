@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """医療介護総合支援会サイトの生成。家じまい相談窓口と同じ設計（CSS・部品）を使い、色だけ医療向けに替える。"""
 import os, re, json, html, shutil
-from data import SITE, ROLES, STATUS, CATS, SUP, PURPOSES, FAQ, ROLE_FAQ, ROLE_CASES, HOUSING, NEWS, PARTNER_TAX, CONTACT_SUB, CONTACT_SPECIAL, CONTACT_GROUPS
+from data import SITE, ROLES, STATUS, CATS, SUP, PURPOSES, FAQ, ROLE_FAQ, ROLE_CASES, HOUSING, NEWS, PARTNER_TAX, CONTACT_SUB, CONTACT_SPECIAL, CONTACT_GROUPS, SOFT_SUP, SOFT_BADGE
 # フォームの送り先：支援会専用の受付（keiyaku_config.js の KEIYAKU_API_URL）が設定されたら、そちらへ切り替える
 _k = re.search(r'KEIYAKU_API_URL = "([^"]*)"', open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "keiyaku_config.js"), encoding="utf-8").read())
 if _k and _k.group(1):
@@ -140,6 +140,7 @@ EXTRA_CSS = r"""
 .ph .badge.prep{background:#F5ECDA;color:#6E4C12;box-shadow:none}
 .svcs .badge{margin-left:auto;font-size:.9rem;padding:2px 10px}
 .svcs a .arr{margin-left:8px}
+.svcs a.soft{align-items:center}.svcs a.soft .st2{display:flex;flex-direction:column;gap:2px;min-width:0}.svcs a.soft .st2 b{font-weight:700;line-height:1.5}.svcs a.soft .st2 small{color:var(--muted);font-size:.92rem;line-height:1.6}.svcs a.soft .badge{flex:none}
 .doors.d4{grid-template-columns:repeat(4,minmax(0,1fr))}
 .vals{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}
 .val{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px 20px;display:grid;gap:10px;align-content:start}
@@ -402,6 +403,10 @@ def sup_li(k, rel=""):
     s = SUP[k]
     return f'<li><a href="{rel}{k}.html">{ic(SUP_ICON[k])}<span class="n">{s["num"]}</span><span>{s["name"]}</span>{badge(s["status"])}<span class="arr">›</span></a></li>'
 
+def soft_li(k, rel=""):
+    s = SUP[k]; t, d = SOFT_SUP[k]
+    return f'<li><a href="{rel}{k}.html" class="soft">{ic(SUP_ICON[k])}<span class="st2"><b>{t}</b><small>{d}</small></span><span class="badge {s["status"]}">{SOFT_BADGE[s["status"]]}</span><span class="arr">›</span></a></li>'
+
 def faq_html(items):
     return '<div class="faq">' + "".join(f'<details><summary>{E(q)}</summary><div class="a"><p>{E(a)}</p></div></details>' for q, a in items) + "</div>"
 
@@ -562,7 +567,8 @@ def build_roles():
 <p style="margin-top:26px;text-align:center"><a class="more" href="{{p}}contact/index.html">どの立場か分からない・近いものがない</a></p></div></section>'''
     page("roles/index.html", "立場から選ぶ", "企業・事業者、医療・介護で働く方、利用者・ご本人、ご家族の4つの立場から、関係する相談・支援・優待・協力の方法をお選びいただけます。大阪・関西の医療・介護の総合窓口です。", "<main id=\"main\">" + body + "</main>", cur="roles")
     for r in ROLES:
-        sups = "".join(sup_li(k, "../support/") for k in r["sup"])
+        soft = r["id"] in ("honnin", "kazoku")
+        sups = "".join((soft_li if soft else sup_li)(k, "../support/") for k in r["sup"])
         vrows = "".join(f'<div class="vrow"><b>{k}</b><p>{t}</p></div>' for k, t in r["values"].items())
         others = "".join(f'<a href="{o["id"]}.html">{ic(o["icon"])}{o["name"]}</a>' for o in ROLES if o["id"] != r["id"])
         purpose_btns = "".join(f'<a class="btn btn-o" href="{contact_link(r["id"], pid)}">{pn}</a>' for pid, pn, _ in PURPOSES)
@@ -581,8 +587,8 @@ def build_roles():
             extra = f'<p class="note-box" style="margin-top:18px">許認可・補助金の申請のご相談は、同じ運営会社の<a href="{SITE["kigyo"]}">企業支援 総合相談窓口</a>でも承ります（書類の作成は、補助金は提携の行政書士、雇用関係の助成金は提携の社会保険労務士が担当）。</p>'
         body = ph(r["name"], r["lead"], [("立場から選ぶ", "roles/index.html"), (r["name"], None)], r["head"], r["icon"]) + f'''
 <div class="wrap" style="padding-block:64px 88px"><div class="detail"><div>
-{photo}<div class="block"><h2>{ic("search")}関係する支援メニュー</h2><ul class="svcs">{sups}</ul></div>
-<div class="block">{acc("heart", "5つの価値を、" + r["name"] + "へ", "応援・補助・支援・協力・優待", vrows)}</div>
+{photo}<div class="block"><h2>{ic("search")}{"お手伝いできること" if r["id"] == "honnin" else "ご家族にお手伝いできること" if r["id"] == "kazoku" else "関係する支援メニュー"}</h2>{'<p style="margin:-6px 0 16px">気になることがあれば、どれからでもお気軽にご相談ください。小さなことでも大丈夫です。</p>' if soft else ''}<ul class="svcs{' soft' if soft else ''}">{sups}</ul></div>
+<div class="block">{acc("heart", ("わたしたちが大切にしていること" if soft else "5つの価値を、" + r["name"] + "へ"), "応援・補助・支援・協力・優待", vrows)}</div>
 {housing if r["id"] == "kazoku" else ""}
 <div class="block"><h2>{ic("chat")}よくいただくご相談</h2><ul class="checks">{"".join(f"<li>{ic('check')}<span>{t}</span></li>" for t in r["topics"])}</ul>{extra}</div>
 <div class="block"><h2>{ic("chat")}よくある質問</h2>{faq_html(ROLE_FAQ[r["id"]])}</div>
@@ -1293,6 +1299,10 @@ def build_contact():
 <section data-step="0"><h2>あなたの立場を選んでください</h2><p class="hint">いちばん近いものを1つ選んでください。</p><div class="opts radio-opts" id="o0"></div></section>
 <section data-step="1" hidden><h2>相談の内容を選んでください</h2><p class="hint">上から順に、<b>大分類 → 中分類 → 小分類</b>の近いものを選んでください。<b>選ばなくても、書かなくても進めます。</b>くわしく伝えたいことがあれば「詳細」に書けます。ほかにも相談したいことがあれば「＋ 相談の内容を追加」で3つまで選べます。</p>
 <div id="cats"></div><button type="button" class="btn btn-o" id="addCat" style="margin-top:6px">＋ 相談の内容を追加</button>
+<div id="facBox" hidden style="margin:26px 0 8px;padding:16px 18px;border:2px solid var(--line);border-radius:12px;background:var(--surface)"><p style="margin:0 0 6px;font-weight:700" id="facTtl">いま通っている・利用している病院や施設</p><p class="hint" style="margin:0 0 12px">当会のお手伝いは、会員の病院・クリニック・介護施設などと一緒に行っています。通っている先を教えてください（会員かどうかは、こちらで確かめます）。</p>
+<div class="fld"><label for="facK">通っている先の種類 <span class="req">※必須</span></label><select id="facK"><option value="">選んでください</option><option>病院</option><option>クリニック・診療所</option><option>介護施設（入所・入居）</option><option>デイサービス・訪問介護などの事業所</option><option>訪問看護・在宅医療</option><option>薬局</option><option>居宅介護支援事業所（ケアマネジャー）</option><option>まだどこにも通っていない・決まっていない</option></select></div>
+<div class="fld" id="facNw"><label for="facN">病院・施設の名前 <span class="req">※必須</span></label><input id="facN" type="text" maxlength="80" placeholder="例：〇〇クリニック、〇〇デイサービス"></div>
+<div class="fld" id="facAw" style="margin-bottom:0"><label for="facA">所在地（市区町村・任意）</label><input id="facA" type="text" maxlength="60" placeholder="例：大阪市北区"></div></div>
 <p class="hint" style="margin-top:26px">病名・症状・服薬・要介護度・障害名・マイナンバー・口座番号・カード番号は書かないでください。</p>
 <div class="fld"><label for="memo">そのほか伝えたいこと（任意・1,000文字まで）</label><textarea id="memo" maxlength="1000"></textarea><p class="fine" id="cnt" aria-live="polite">0 / 1,000文字</p><p class="warn-inline" id="sens" hidden>病気や体の状態、番号などの情報が含まれている可能性があります。送る前に、その部分を消してください。</p></div><p class="hint" style="margin-top:22px"><b>状況（分かる範囲で。選ばなくても進めます）</b></p>
 <div class="fld"><label for="when">ご希望の時期</label><select id="when"><option value="">選んでください</option><option>まず情報を知りたい</option><option>1か月以内に相談したい</option><option>3か月以内</option><option>利用・協力を検討している</option><option>時期は決まっていない</option></select></div>
@@ -1317,6 +1327,7 @@ def build_contact():
 <div id="done" hidden></div>
 </div>'''
     js = CASCADE_JS + "<script>window.FORM_HELP={\"memo\": {\"t\": \"ほかに伝えておきたいことがあれば書きます（空のままでも進めます）。\", \"ex\": \"※病名・症状・番号は書かないでください\", \"req\": false}, \"c1a\": {\"t\": \"大分類を選びます。選ばなくても進めます。\", \"req\": false}, \"c1b\": {\"t\": \"中分類を選びます（大分類を選ぶと出てきます）。\", \"req\": false}, \"c1c\": {\"t\": \"小分類を選びます（中分類を選ぶと出てきます）。\", \"req\": false}, \"c1d\": {\"t\": \"くわしく伝えたいことがあれば書きます（空のままでも進めます）。\"}, \"when\": {\"t\": \"いつごろ相談したいかを選びます（空のままでも進めます）。\", \"req\": false}, \"pref\": {\"t\": \"お住まい・事業所のある都道府県を選びます（空のままでも進めます）。\", \"req\": false}, \"want\": {\"t\": \"支援会にしてほしいことに近いものを選びます（空のままでも進めます）。\", \"req\": false}, \"nm\": {\"t\": \"お名前を入れます。返信の宛名に使います。\", \"ex\": \"例：山田 花子　名前を伏せたいときは、上で「名前・事業所名を伏せて相談」を選んでください\", \"req\": true}, \"co\": {\"t\": \"事業所名・会社名を入れます（企業・事業者の方、協力のお申し出の方のみ）。\", \"ex\": \"例：○○デイサービス\", \"req\": false}, \"mail\": {\"t\": \"返信を受け取るメールアドレスです。\", \"ex\": \"例：yamada@example.jp　携帯のメールは、パソコンからのメールを受け取れる設定にしてください\", \"req\": true}, \"tel\": {\"t\": \"電話での連絡を希望するときだけ入れます。\", \"ex\": \"例：06-1234-5678\", \"req\": false}};window.FORM_GROUPS=[{name:'role',label:'立場'}];window.FORM_CHECKS=['agree'];window.FORM_STEPWISE=true;window.FORM_SCOPE='#f';window.FORM_SUBMIT='#send';window.FORM_NEXT='#next';window.FORM_DONE_LABEL='進むボタンへ ›';</script>" + "<script>(function(){var D=" + json.dumps(D, ensure_ascii=False) + r""";
+(function(H){H.facK={t:'いま通っている（利用している）病院・クリニック・施設の種類を選びます。',ex:'まだどこにも通っていない場合は、いちばん下を選びます',req:true};H.facN={t:'通っている病院・施設の名前を入れます。',ex:'例：〇〇クリニック、〇〇デイサービス',req:true};H.facA={t:'分かれば、市区町村を入れます（空のままでも進めます）。',req:false}})(window.FORM_HELP=window.FORM_HELP||{});
 var L=['立場','相談の内容','ご連絡先','確認'],st=0,f=document.getElementById('f'),secs=f.querySelectorAll('section[data-step]'),lis=document.querySelectorAll('#steps li'),err=document.getElementById('err'),t0=Date.now(),sending=false;
 var SENS=/(病名|診断|症状|要介護|服薬|薬の名前|障害名|既往歴|検査結果|血圧|マイナンバー|個人番号|口座番号|カード番号|\d{4}[-\s]?\d{4}[-\s]?\d{4})/;
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -1335,18 +1346,23 @@ function roleName(){var r=one('role');if(r==='none')return'分からない・近
 function firstBig(){var f=C.firsts();return f[0]||'相談'}
 function v(id){return document.getElementById(id).value.trim()}
 function anon(){return one('anon')==='伏せる'}
-function rows(){var cr=C.rows();return [['立場',roleName()]].concat(cr.length?cr:[['相談の内容','（選択なし）']]).concat([['時期',v('when')],['都道府県',v('pref')],['希望する対応',v('want')],['そのほか伝えたいこと',v('memo')],['お名前の扱い',anon()?'伏せて相談':'伝えて相談'],['お名前',anon()?'（伏せる）':v('nm')],['事業所名',anon()?'（伏せる）':v('co')],['メール',v('mail')],['電話',v('tel')]])}
+function facOn(){var r=one('role');return r==='honnin'||r==='kazoku'}
+function facNone(){return/まだどこにも/.test(v('facK'))}
+function syncFac(){var on=facOn();document.getElementById('facBox').hidden=!on;document.getElementById('facTtl').textContent=one('role')==='kazoku'?'ご本人がいま通っている・利用している病院や施設':'いま通っている・利用している病院や施設';document.getElementById('facNw').hidden=facNone();document.getElementById('facAw').hidden=facNone()}
+function facTxt(){return v('facK')+(facNone()?'':'／'+v('facN')+(v('facA')?'（'+v('facA')+'）':''))}
+function rows(){var cr=C.rows();return [['立場',roleName()]].concat(facOn()?[['通っている病院・施設',facTxt()]]:[]).concat(cr.length?cr:[['相談の内容','（選択なし）']]).concat([['時期',v('when')],['都道府県',v('pref')],['希望する対応',v('want')],['そのほか伝えたいこと',v('memo')],['お名前の扱い',anon()?'伏せて相談':'伝えて相談'],['お名前',anon()?'（伏せる）':v('nm')],['事業所名',anon()?'（伏せる）':v('co')],['メール',v('mail')],['電話',v('tel')]])}
 function build6(){document.getElementById('sum').innerHTML=rows().map(function(r){return '<div><dt>'+r[0]+'</dt><dd style="white-space:pre-line">'+(r[1]?esc(r[1]):'<span class="fine">未入力</span>')+'</dd></div>'}).join('')}
 function syncAnon(){var a=anon();document.getElementById('nmwrap').hidden=a;document.getElementById('cowrap').hidden=a}
-f.addEventListener('change',function(e){if(e.target.name==='anon')syncAnon()});
+f.addEventListener('change',function(e){if(e.target.name==='anon')syncAnon();if(e.target.id==='facK')syncFac()});
 var memo=document.getElementById('memo');memo.addEventListener('input',function(){document.getElementById('cnt').textContent=memo.value.length+' / 1,000文字';document.getElementById('sens').hidden=!SENS.test(memo.value)});
 function show(){secs.forEach(function(s,i){s.hidden=i!==st});lis.forEach(function(l,i){l.className=i<st?'done':i===st?'on':''});
  document.getElementById('stepnow').textContent='全4段階のうち '+(st+1)+' 段階め（'+L[st]+'）';
  document.getElementById('back').style.visibility=st?'visible':'hidden';document.getElementById('next').hidden=st===3;err.hidden=true;
- if(st===1)ensureTree();if(st===2)syncAnon();if(st===3)build6();
+ if(st===1){ensureTree();syncFac()}if(st===2)syncAnon();if(st===3)build6();
  var t=document.getElementById('steps').getBoundingClientRect().top;if(t<0)window.scrollBy(0,t-140)}
 function need(m){err.textContent=m;err.hidden=false;return false}
 function ok(){if(st===0&&!one('role'))return need('立場を1つ選んでから、「次へ進む」を押してください。');
+ if(st===1&&facOn()){if(!v('facK')){need('通っている病院・施設の種類を選んでください（まだ決まっていない場合は、いちばん下を選びます）。');document.getElementById('facK').focus();return false}if(!facNone()&&!v('facN')){need('通っている病院・施設の名前を入れてください。');document.getElementById('facN').focus();return false}}
  if(st===1){var cc=C.check();if(cc){need(cc[0]);try{cc[1].focus()}catch(x){}return false}
   var its=C.items(),alltxt=v('memo')+its.map(function(x){return x.d}).join(' ');
   if(SENS.test(alltxt))return need('病気や体の状態、番号などの情報が含まれている可能性があります。その部分を消してから進んでください。')}

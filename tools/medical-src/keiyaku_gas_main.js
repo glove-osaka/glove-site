@@ -28,7 +28,7 @@ function setup() {
 }
 
 /* ---- サイトのフォーム（相談・会員登録の申込み）の受付 ---- */
-var INBOX = "受付", INBOX_COLS = ["受付番号", "受付日時", "区分", "お名前", "事業所名・会社名", "メール", "電話", "内容", "状態", "対応メモ", "分野", "振分け先", "担当", "最終更新", "最終連絡", "次の対応予定日"];
+var INBOX = "受付", INBOX_COLS = ["受付番号", "受付日時", "区分", "お名前", "事業所名・会社名", "メール", "電話", "内容", "状態", "対応メモ", "分野", "振分け先", "担当", "最終更新", "最終連絡", "次の対応予定日", "会員施設の確認"];
 function inboxSheet_() {
   var ss = SpreadsheetApp.openById(P("SHEET_ID")), sh = ss.getSheetByName(INBOX);
   if (!sh) { sh = ss.insertSheet(INBOX); sh.appendRow(INBOX_COLS); sh.setFrozenRows(1); }
@@ -45,8 +45,9 @@ function inbox_(d) {
   var no = /^[A-Z]{2,3}-[0-9]{6}-[0-9A-Z]{4,8}$/.test(String(d.no || "")) ? d.no : "IK-" + Utilities.formatDate(new Date(), "Asia/Tokyo", "yyMMdd-HHmm") + Math.floor(Math.random() * 1000);
   var body = cut(d.body, 6000), label = cut(d.catLabel || d.entry, 120);
   var fields = (Array.isArray(d.fields) ? d.fields : []).map(function (x) { return cut(x, 40); }).slice(0, 12);
-  var partner = routeFor_(fields);
-  inboxSheet_().appendRow([no, new Date(), label, cut(d.name, 60), cut(d.company, 100), em, "'" + cut(d.tel, 30), body, "新規受付", "", fields.join("、"), partner, "", new Date(), "", ""]);
+  var partner = segOf_(label).route === "self" ? "自社" : routeFor_(fields);
+  var fac = facAuto_(label, body);
+  inboxSheet_().appendRow([no, new Date(), label, cut(d.name, 60), cut(d.company, 100), em, "'" + cut(d.tel, 30), body, "新規受付", "", fields.join("、"), partner, "", new Date(), "", "", fac ? JSON.stringify(fac) : ""]);
   hist_(no, "受付", "サイトから受付" + (partner ? "（振分け候補：" + partner + "）" : ""), "");
   var mail = { to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］新しい受付 " + no + "　" + label, body: body + "\n\nお名前：" + cut(d.name, 60) + "\nメール：" + em + "\n電話：" + cut(d.tel, 30) + "\n\n受付の一覧：https://docs.google.com/spreadsheets/d/" + P("SHEET_ID") };
   if (okMail) mail.replyTo = em;
@@ -55,8 +56,30 @@ function inbox_(d) {
   return { ok: true, no: no };
 }
 
+/* 利用者・ご本人／ご家族の相談：通っている病院・施設が会員かを、会員名簿（電子契約）と照らし合わせる */
+function facAuto_(label, body) {
+  var g = segOf_(label); if (g.key !== "honnin" && g.key !== "kazoku") return null;
+  var m = String(body || "").match(/通っている病院・施設：([^\n]*)/), f = { m: "未確認", kind: "", name: "", addr: "", member: "" };
+  if (!m) return f;
+  var t = m[1], a = t.match(/（([^）]*)）$/); if (a) { f.addr = a[1]; t = t.slice(0, a.index); }
+  var p = t.split("／"); f.kind = (p[0] || "").trim(); f.name = (p.slice(1).join("／") || "").trim();
+  if (/まだどこにも/.test(f.kind)) { f.m = "通っている先がない"; return f; }
+  var norm = function (x) { return String(x || "").replace(/[\s　]/g, "").replace(/(医療法人|社会福祉法人|株式会社|有限会社|合同会社|一般社団法人|社団|財団)/g, ""); }, n = norm(f.name);
+  if (n.length >= 2) rows_().forEach(function (o) {
+    if (f.member || o.template !== "kaiin" || o.status !== "締結済み" || o.stopped || o.draft === "yes") return;
+    var c = norm(o.party_company); if (c && (c.indexOf(n) >= 0 || n.indexOf(c) >= 0)) { f.member = o.party_company; f.m = "会員の病院・施設"; f.auto = 1; }
+  });
+  return f;
+}
+
 /* ---- 案件管理 ---- */
 var STEPS = ["新規受付", "内容確認中", "振分け済み", "提携先対応中", "提案・見積り中", "完了", "見送り"];
+/* 種別（企業・働く方・利用者・家族・提携申込み・要望・会員登録）ごとに、状態の並びと振分けのしかたが変わる */
+function segOf_(label) { var t = String(label || ""), i = t.indexOf("："); t = (i >= 0 ? t.slice(i + 1) : t).split("／")[0];
+  for (var k = 0; k < CASE_SEGS.length; k++) if (CASE_SEGS[k].match.indexOf(t) >= 0) return CASE_SEGS[k];
+  for (k = 0; k < CASE_SEGS.length; k++) if (CASE_SEGS[k].key === "none") return CASE_SEGS[k]; }
+function isDone_(c) { var s = segOf_(c.label); return s.done.indexOf(c.status) >= 0 || c.status === "完了" || c.status === "見送り"; }
+var ALL_STEPS = (function () { var a = STEPS.slice(); CASE_SEGS.forEach(function (s) { s.steps.forEach(function (x) { if (a.indexOf(x) < 0) a.push(x); }); }); return a; })();
 var ROUTE = "振分け設定", HIST = "対応履歴";
 function sheetOf_(name, head) {
   var ss = SpreadsheetApp.openById(P("SHEET_ID")), sh = ss.getSheetByName(name);
@@ -107,23 +130,24 @@ function caseRows_() {
   for (var i = 1; i < v.length; i++) {
     var r = v[i]; if (!r[0]) continue;
     var st = String(r[8] || "新規受付"); if (st === "対応中") st = "内容確認中";
-    out.push({ row: i + 1, no: String(r[0]), ts: iso_(r[1]), label: String(r[2]), name: String(r[3]), company: String(r[4]), email: String(r[5]), tel: String(r[6]), body: String(r[7]), status: st, memo: String(r[9] || ""), fields: String(r[10] || ""), partner: String(r[11] || ""), staff: String(r[12] || ""), updated: iso_(r[13] || r[1]), contacted: iso_(r[14]), next: r[15] ? Utilities.formatDate(new Date(r[15]), "Asia/Tokyo", "yyyy-MM-dd") : "" });
+    out.push({ row: i + 1, no: String(r[0]), ts: iso_(r[1]), label: String(r[2]), name: String(r[3]), company: String(r[4]), email: String(r[5]), tel: String(r[6]), body: String(r[7]), status: st, memo: String(r[9] || ""), fields: String(r[10] || ""), partner: String(r[11] || ""), staff: String(r[12] || ""), updated: iso_(r[13] || r[1]), contacted: iso_(r[14]), next: r[15] ? Utilities.formatDate(new Date(r[15]), "Asia/Tokyo", "yyyy-MM-dd") : "", fac: String(r[16] || "") });
   }
   return out;
 }
 function cases_() {
   var rows = caseRows_().sort(function (a, b) { return a.ts < b.ts ? 1 : -1; }).slice(0, 800);
   rows.forEach(function (x) { delete x.row; });
-  return { ok: true, rows: rows, steps: STEPS, routes: routes_(), partners: partners_(), staff: staff_() };
+  return { ok: true, rows: rows, steps: ALL_STEPS, routes: routes_(), partners: partners_(), staff: staff_() };
 }
 function findCase_(no) { var r = caseRows_(); for (var i = 0; i < r.length; i++) if (r[i].no === String(no)) return r[i]; throw new Error("受付が見つかりません"); }
 function caseSet_(d) {
   var c = findCase_(d.no), sh = inboxSheet_(), ch = [];
-  if (d.status != null && d.status !== c.status) { if (STEPS.indexOf(d.status) < 0) throw new Error("状態が正しくありません"); sh.getRange(c.row, 9).setValue(d.status); ch.push("状態：" + c.status + " → " + d.status); }
+  if (d.status != null && d.status !== c.status) { if (ALL_STEPS.indexOf(d.status) < 0) throw new Error("状態が正しくありません"); sh.getRange(c.row, 9).setValue(d.status); ch.push("状態：" + c.status + " → " + d.status); }
   if (d.memo != null && d.memo !== c.memo) { sh.getRange(c.row, 10).setValue(String(d.memo).slice(0, 1000)); ch.push("メモ：" + String(d.memo).slice(0, 200)); }
   if (d.partner != null && d.partner !== c.partner) { sh.getRange(c.row, 12).setValue(String(d.partner).slice(0, 100)); ch.push("振分け先：" + (d.partner || "なし")); }
   if (d.staff != null && d.staff !== c.staff) { sh.getRange(c.row, 13).setValue(String(d.staff).slice(0, 40)); ch.push("担当：" + d.staff); }
   if (d.next != null && d.next !== c.next) { sh.getRange(c.row, 16).setValue(d.next ? new Date(d.next + "T09:00:00+09:00") : ""); ch.push("次の対応予定日：" + (d.next || "なし")); }
+  if (d.fac != null && d.fac !== c.fac) { var fo = parse_(d.fac, null); if (!fo) throw new Error("会員施設の確認の内容が正しくありません"); sh.getRange(c.row, 17).setValue(JSON.stringify(fo).slice(0, 3000)); ch.push("会員施設の確認：" + (fo.m || "") + (fo.member || fo.name ? "（" + (fo.member || fo.name) + "）" : "") + (fo.plan ? "／" + fo.plan : "")); }
   if (ch.length) { sh.getRange(c.row, 14).setValue(new Date()); hist_(c.no, "更新", ch.join("／"), d.staff || c.staff); }
   return { ok: true };
 }
@@ -148,7 +172,7 @@ function report_(d) {
 function alertCheck() {
   var now = Date.now(), H = 36e5, list = [], pr = PropertiesService.getScriptProperties(), today = Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyyMMdd");
   caseRows_().forEach(function (c) {
-    if (c.status === "完了" || c.status === "見送り") return;
+    if (isDone_(c)) return;
     var why = [];
     if (c.status === "新規受付" && now - new Date(c.ts) > 24 * H) why.push("未対応のまま" + Math.floor((now - new Date(c.ts)) / H) + "時間");
     var idle = (now - new Date(c.updated)) / (24 * H);
