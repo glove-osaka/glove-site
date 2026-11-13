@@ -192,7 +192,7 @@ CLIENT = HEAD("電子契約") + f'''
 <p class="hint">「必須」の印がある欄は、必ずご記入ください。入っている内容も、違っていれば直してください。</p>
 <div id="fields"></div>
 <div class="fld" id="idBox" hidden>
-<label for="idFile">本人確認書類の写真<span class="req">必須</span></label>
+<label for="idFile">本人確認書類の写真<span class="req">※必須</span></label>
 <p class="hint">運転免許証・マイナンバーカード（<b>表面のみ</b>。裏面は撮らないでください）・パスポートのどれか1つを、スマホで撮影するか、写真を選んでください。</p>
 <input type="file" id="idFile" accept="image/*" capture="environment">
 <img id="idPrev" class="idprev" alt="添付した本人確認書類" hidden>
@@ -254,7 +254,7 @@ function get(){{keiyakuApi('client.get',{{token:token,sess:sess}}).then(function
  $('otpBox').hidden=true;$('app').hidden=false;
  $('title').textContent=C.title;$('cid').textContent=C.id;$('toLine').textContent=who(C);
  var f='';C.fields.forEach(function(x){{var tag=x.type==='textarea'?'<textarea id="f_'+x.key+'"></textarea>':'<input type="'+x.type+'" id="f_'+x.key+'"'+(x.ac?' autocomplete="'+x.ac+'"':'')+'>';
-  f+='<div class="fld"><label for="f_'+x.key+'">'+esc(x.label)+(x.required?'<span class="req">必須</span>':'')+'</label>'+tag+'</div>'}});
+  f+='<div class="fld"><label for="f_'+x.key+'">'+esc(x.label)+(x.required?'<span class="req">※必須</span>':'')+'</label>'+tag+'</div>'}});
  $('fields').innerHTML=f;
  C.fields.forEach(function(x){{$('f_'+x.key).value=x.value||(x.key==='name'?C.party_name:x.key==='company'?(C.party_company||''):'')}});
  skipFill=!missing().length&&!C.requireId;
@@ -394,9 +394,9 @@ ADMIN_BODY = f'''
 <h2>契約書を送る</h2>
 <p class="hint">サイトの「会員登録の申込み」の通知メールを見ながら入れてください。</p>
 <div class="fld"><label for="tpl">契約書の種類</label><select id="tpl"></select></div>
-<div class="fld"><label for="pName">相手のお名前（ご担当者）<span class="req">必須</span></label><input type="text" id="pName"></div>
+<div class="fld"><label for="pName">相手のお名前（ご担当者）<span class="req">※必須</span></label><input type="text" id="pName"></div>
 <div class="fld" id="pCompanyBox"><label for="pCompany">事業所名・法人名</label><input type="text" id="pCompany"></div>
-<div class="fld"><label for="pEmail">相手のメールアドレス<span class="req">必須</span></label><input type="email" id="pEmail" autocomplete="off"></div>
+<div class="fld"><label for="pEmail">相手のメールアドレス<span class="req">※必須</span></label><input type="email" id="pEmail" autocomplete="off"></div>
 
 <div class="fld" id="condBox" hidden><label>契約の内容（会費は自動で計算します）</label>
 <div class="cond">
@@ -447,7 +447,7 @@ function preKeys(){return[].map.call($('fieldChk').querySelectorAll('input:check
 function drawPre(){var old={};[].forEach.call($('preBox').querySelectorAll('input'),function(i){old[i.dataset.k]=i.value});
  $('preBox').innerHTML=preKeys().map(function(k){return'<div class="fld"><label for="pre_'+k+'" style="font-weight:400">'+esc(FIELDS[k].label)+'</label><input type="text" id="pre_'+k+'" data-k="'+k+'" value="'+esc(old[k]||'')+'"></div>'}).join('')}
 function onTpl(){var t=cur();if(!t)return;
- $('fieldChk').innerHTML=Object.keys(FIELDS).map(function(k){var req=t.required.indexOf(k)>=0;return'<label><input type="checkbox" value="'+k+'"'+(t.fields.indexOf(k)>=0||req?' checked':'')+(req?' disabled':'')+'>'+esc(FIELDS[k].label)+(req?'（必須）':'')+'</label>'}).join('');
+ $('fieldChk').innerHTML=Object.keys(FIELDS).map(function(k){var req=t.required.indexOf(k)>=0;return'<label><input type="checkbox" value="'+k+'"'+(t.fields.indexOf(k)>=0||req?' checked':'')+(req?' disabled':'')+'>'+esc(FIELDS[k].label)+(req?'（※必須）':'')+'</label>'}).join('');
  $('fieldChk').onchange=drawPre;drawPre();
  $('reqId').checked=!!t.requireId;$('condBox').hidden=!t.cond;$('noteBox').hidden=!t.note;$('noteLabel').textContent=t.note||'特記事項';$('prev').hidden=true;if(t.cond)onCond()}
 $('tpl').addEventListener('change',onTpl);

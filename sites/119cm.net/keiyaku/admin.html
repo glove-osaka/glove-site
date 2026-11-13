@@ -89,9 +89,9 @@
 <h2>契約書を送る</h2>
 <p class="hint">サイトの「会員登録の申込み」の通知メールを見ながら入れてください。</p>
 <div class="fld"><label for="tpl">契約書の種類</label><select id="tpl"></select></div>
-<div class="fld"><label for="pName">相手のお名前（ご担当者）<span class="req">必須</span></label><input type="text" id="pName"></div>
+<div class="fld"><label for="pName">相手のお名前（ご担当者）<span class="req">※必須</span></label><input type="text" id="pName"></div>
 <div class="fld" id="pCompanyBox"><label for="pCompany">事業所名・法人名</label><input type="text" id="pCompany"></div>
-<div class="fld"><label for="pEmail">相手のメールアドレス<span class="req">必須</span></label><input type="email" id="pEmail" autocomplete="off"></div>
+<div class="fld"><label for="pEmail">相手のメールアドレス<span class="req">※必須</span></label><input type="email" id="pEmail" autocomplete="off"></div>
 
 <div class="fld" id="condBox" hidden><label>契約の内容（会費は自動で計算します）</label>
 <div class="cond">
@@ -143,7 +143,7 @@ function preKeys(){return[].map.call($('fieldChk').querySelectorAll('input:check
 function drawPre(){var old={};[].forEach.call($('preBox').querySelectorAll('input'),function(i){old[i.dataset.k]=i.value});
  $('preBox').innerHTML=preKeys().map(function(k){return'<div class="fld"><label for="pre_'+k+'" style="font-weight:400">'+esc(FIELDS[k].label)+'</label><input type="text" id="pre_'+k+'" data-k="'+k+'" value="'+esc(old[k]||'')+'"></div>'}).join('')}
 function onTpl(){var t=cur();if(!t)return;
- $('fieldChk').innerHTML=Object.keys(FIELDS).map(function(k){var req=t.required.indexOf(k)>=0;return'<label><input type="checkbox" value="'+k+'"'+(t.fields.indexOf(k)>=0||req?' checked':'')+(req?' disabled':'')+'>'+esc(FIELDS[k].label)+(req?'（必須）':'')+'</label>'}).join('');
+ $('fieldChk').innerHTML=Object.keys(FIELDS).map(function(k){var req=t.required.indexOf(k)>=0;return'<label><input type="checkbox" value="'+k+'"'+(t.fields.indexOf(k)>=0||req?' checked':'')+(req?' disabled':'')+'>'+esc(FIELDS[k].label)+(req?'（※必須）':'')+'</label>'}).join('');
  $('fieldChk').onchange=drawPre;drawPre();
  $('reqId').checked=!!t.requireId;$('condBox').hidden=!t.cond;$('noteBox').hidden=!t.note;$('noteLabel').textContent=t.note||'特記事項';$('prev').hidden=true;if(t.cond)onCond()}
 $('tpl').addEventListener('change',onTpl);

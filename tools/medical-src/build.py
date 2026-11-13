@@ -45,7 +45,7 @@ def strip_op(c):
 EXTRA_CSS = r"""
 .sec-sub{display:flex;align-items:center;gap:14px;margin:34px 0 16px;color:var(--muted);font-weight:700}.sec-sub:before,.sec-sub:after{content:"";flex:1;height:1px;background:var(--line)}
 .doors.d2{grid-template-columns:repeat(2,minmax(0,1fr))}@media (max-width:760px){.doors.d2{grid-template-columns:1fr}}
-.req{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:6px;background:#B3261E;color:#fff;font-size:.78rem;font-weight:700;vertical-align:2px;line-height:1.6}
+.req{display:inline;margin-left:6px;padding:0;background:none;color:#B3261E;font-size:.9em;font-weight:700}
 .area-h .small-btn{min-height:40px;padding:0 14px;border-radius:10px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:.92rem;font-weight:700;cursor:pointer}
 .area-row{border:2px solid var(--line);border-radius:14px;padding:14px 16px 4px;margin:0 0 12px;background:var(--surface)}.area-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .area-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:start}@media (max-width:760px){.area-g{grid-template-columns:1fr;gap:0}}
@@ -916,7 +916,7 @@ def build_faq():
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in FAQ]}
     page("faq/index.html", "よくある質問", "医療介護総合支援会へのよくある質問です。費用、名前を伏せた相談、勤務先への秘密、緊急時の連絡先、仕事の紹介、補助金の申請、対応地域、返信の目安などにお答えします。", "<main id=\"main\">" + body + "</main>", cur="faq", ld=ld)
 
-REQ_SPAN = ' <span class="req">必須</span>'
+REQ_SPAN = ' <span class="req">※必須</span>'
 def build_kyoryoku():
     body = ph("提携・協業・要望", "提携・協業のお申し込みと、ご要望は、それぞれ専用の窓口で受け付けています。", [("提携・協業・要望", None)], "head-3.jpg", "hands") + f'''
 <section class="sec"><div class="wrap"><div class="grid g2">
@@ -934,11 +934,11 @@ def checks(name, items):
 def lg(t, req):
     return f'<legend style="font-weight:700;font-size:1.08rem;margin-bottom:8px">{t}{REQ_SPAN if req else ""}</legend>'
 def fld(i, label, req=False, typ="text", extra="", ml=120):
-    r = ' <span class="req">必須</span>' if req else ""
+    r = ' <span class="req">※必須</span>' if req else ""
     if typ == "textarea": return f'<div class="fld"><label for="{i}">{label}{r}</label><textarea id="{i}" maxlength="{ml}" {extra}></textarea></div>'
     return f'<div class="fld"><label for="{i}">{label}{r}</label><input id="{i}" type="{typ}" maxlength="{ml}" {extra}></div>'
 HP = '<div class="hp" aria-hidden="true" style="position:absolute;left:-9999px"><label for="hpf">この欄は空のままにしてください</label><input id="hpf" type="text" tabindex="-1" autocomplete="off"></div>'
-AGREE = '<label class="agree" for="agree"><input type="checkbox" id="agree"><span><a href="{p}privacy/index.html" target="_blank" rel="noopener">個人情報の取り扱い</a>（別の画面で開きます）を読み、同意します。 <span class="req">必須</span></span></label>'
+AGREE = '<label class="agree" for="agree"><input type="checkbox" id="agree"><span><a href="{p}privacy/index.html" target="_blank" rel="noopener">個人情報の取り扱い</a>（別の画面で開きます）を読み、同意します。 <span class="req">※必須</span></span></label>'
 
 SIMPLE_JS = r"""<script>(function(){
 var C=__CFG__,f=document.getElementById('sf'),err=document.getElementById('serr'),t0=Date.now(),sending=false;
@@ -980,7 +980,7 @@ function opts(list,ph){return '<option value="">'+ph+'</option>'+list.map(functi
 window.makeCascade=function(o){var T=o.tree||{},box=document.getElementById(o.box),add=document.getElementById(o.add),n=0,P=o.prefix,L=o.labels;
  function row(){if(n>=o.max)return;n++;var i=n,d=document.createElement('div');d.className='area-row';
   d.innerHTML='<div class="area-h"><b>'+o.title+' '+i+'</b>'+(i>1?'<button type="button" class="small-btn" data-del>この'+o.title+'を消す</button>':'')+'</div>'+
-  '<div class="area-g"><div class="fld"><label for="'+P+i+'a">'+L[0]+((i===1&&!o.optional)||o.allReq?' <span class="req">必須</span>':'')+'</label><select id="'+P+i+'a">'+opts(Object.keys(T),'選んでください')+'</select></div>'+
+  '<div class="area-g"><div class="fld"><label for="'+P+i+'a">'+L[0]+((i===1&&!o.optional)||o.allReq?' <span class="req">※必須</span>':'')+'</label><select id="'+P+i+'a">'+opts(Object.keys(T),'選んでください')+'</select></div>'+
   '<div class="fld"><label for="'+P+i+'b">'+L[1]+'</label><select id="'+P+i+'b" disabled>'+opts([],'先に'+L[0]+'を選んでください')+'</select></div>'+
   '<div class="fld"><label for="'+P+i+'c">'+L[2]+'</label><select id="'+P+i+'c" disabled>'+opts([],'先に'+L[1]+'を選んでください')+'</select></div></div>'+
   '<div class="fld"><label for="'+P+i+'d">'+L[3]+'（任意）</label><input type="text" id="'+P+i+'d" maxlength="300" placeholder="'+esc(o.ph)+'"></div>';
@@ -1021,7 +1021,7 @@ def build_teikei():
     kinds = [("提携企業として、会員へサービスを提供したい", "仕入れ・設備・ITなど、医療・介護の事業者向けのサービス"), ("専門家として協力したい", "弁護士・税理士・社会保険労務士・行政書士・医師など"), ("協賛会員として参加したい", "会員制度の協賛会員（審査があります）"), ("その他の協力", "共同での取り組み・情報提供など")]
     areas = [SUP[k]["name"] for c in CATS for k in c["items"]]
     form = f'''<form class="form-card" id="sf" novalidate>
-<h2>提携・協業の申し込み</h2><p class="hint">分かる範囲でご記入ください。<span class="req">必須</span>の欄だけ入れれば送れます。</p>
+<h2>提携・協業の申し込み</h2><p class="hint">分かる範囲でご記入ください。<span class="req">※必須</span>の欄だけ入れれば送れます。</p>
 <fieldset class="fld" style="border:0;padding:0;margin:0 0 22px">{lg("申し込みの種類", True)}{radios("kind", kinds)}</fieldset>
 <fieldset class="fld" style="border:0;padding:0;margin:0 0 22px">{lg("提携・協業の分野", True)}<p class="hint">大分類 → 中分類 → 小分類の順に選びます。詳細は書かなくても送れます。複数ある場合は「分野を追加」で5つまで登録できます。</p><div id="areas"></div><button type="button" class="btn btn-o" id="addArea" style="margin-top:6px">＋ 分野を追加</button></fieldset>
 {fld("co", "事業者名・法人名", True, extra='autocomplete="organization"', ml=100)}
@@ -1072,7 +1072,7 @@ def build_youbou():
     who = [(r["name"], "") for r in ROLES] + [("答えない", "")]
     opts = "".join(f'<option>{E(SUP[k]["name"])}</option>' for c in CATS for k in c["items"])
     form = f'''<form class="form-card" id="sf" novalidate>
-<h2>要望を送る</h2><p class="hint">名前を書かずに送れます。<span class="req">必須</span>の欄だけ入れれば送れます。</p>
+<h2>要望を送る</h2><p class="hint">名前を書かずに送れます。<span class="req">※必須</span>の欄だけ入れれば送れます。</p>
 <p class="note-box" id="preNote" hidden></p>
 <fieldset class="fld" style="border:0;padding:0;margin:0 0 22px">{lg("要望の種類", True)}{radios("kind", kinds)}</fieldset>
 <div class="fld"><label for="sup">関係する支援（分かれば）</label><select id="sup"><option value="">選んでください</option>{opts}<option>特にない・分からない</option></select></div>
@@ -1308,8 +1308,8 @@ def build_contact():
 <section data-step="2" hidden><h2>ご連絡先</h2><p class="hint">返信に使います。</p>
 <fieldset class="fld" style="border:0;padding:0;margin:0 0 20px"><legend style="font-weight:700;font-size:1.08rem;margin-bottom:8px">お名前の扱い</legend><div class="opts radio-opts"><label><input type="radio" name="anon" value="伏せる"><span>名前・事業所名を伏せて相談<small>返信用のメールアドレスは必要です</small></span></label><label><input type="radio" name="anon" value="伝える" checked><span>名前を伝えて相談<small>返信の宛名に使います</small></span></label></div></fieldset>
 <div class="fld" id="nmwrap"><label for="nm">お名前</label><input id="nm" type="text" autocomplete="name" maxlength="60"></div>
-<div class="fld" id="cowrap"><label for="co">事業所名・会社名（企業・事業者の方、協力のお申し出の方）</label><input id="co" type="text" autocomplete="organization" maxlength="80"></div>
-<div class="fld"><label for="mail">返信先のメールアドレス（必須）</label><input id="mail" type="email" autocomplete="email" maxlength="120" inputmode="email"></div>
+<div class="fld" id="cowrap"><label for="co">事業所名・会社名（任意）</label><input id="co" type="text" autocomplete="organization" maxlength="80"></div>
+<div class="fld"><label for="mail">返信先のメールアドレス <span class="req">※必須</span></label><input id="mail" type="email" autocomplete="email" maxlength="120" inputmode="email"></div>
 <div class="fld"><label for="tel">電話番号（任意）</label><input id="tel" type="tel" autocomplete="tel" inputmode="tel" maxlength="20"></div>
 <label class="agree" for="agree"><input type="checkbox" id="agree"><span><a href="{{p}}privacy/index.html" target="_blank" rel="noopener">個人情報の取り扱い</a>（別の画面で開きます）を読み、同意します。</span></label>
 <div class="hp" aria-hidden="true" style="position:absolute;left:-9999px"><label for="hpf">この欄は空のままにしてください</label><input id="hpf" type="text" tabindex="-1" autocomplete="off"></div></section>

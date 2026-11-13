@@ -196,6 +196,17 @@
     (window.FORM_CHECKS || []).forEach(function (id) { var c = document.getElementById(id); if (c && visible(c) && !c.checked) out.push({ el: c, label: "同意のチェック" }); });
     return out;
   }
+  /* 必須の欄には「※必須」（赤字）を必ず付ける */
+  function reqMark(host) {
+    if (!host || host.querySelector(".req")) return;
+    var s = el("span", "req", "※必須"); host.appendChild(document.createTextNode(" ")); host.appendChild(s);
+  }
+  function markAll() {
+    Object.keys(HELP).forEach(function (id) { if (HELP[id] && HELP[id].req) { var l = document.querySelector('label[for="' + id + '"]'); if (l) reqMark(l); } });
+    GROUPS.forEach(function (g) { var i = document.querySelector('input[name="' + g.name + '"]'); if (!i) return; var fs = i.closest("fieldset"), h = fs && fs.querySelector("legend"); if (!h) { var sec = i.closest("section"); h = sec && sec.querySelector("h2"); } reqMark(h); });
+    (window.FORM_CHECKS || []).forEach(function (id) { var c = document.getElementById(id), l = c && (c.closest("label") || document.querySelector('label[for="' + id + '"]')); if (l) reqMark(l.querySelector("span") || l); });
+  }
+  if (window.FORM_HELP || window.FORM_GROUPS) { markAll(); setInterval(markAll, 1500); }
   function updBar() {
     if (!bar) return;
     var form = firstVis(window.FORM_SCOPE || "form");

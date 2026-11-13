@@ -53,7 +53,7 @@
 <p class="hint">「必須」の印がある欄は、必ずご記入ください。入っている内容も、違っていれば直してください。</p>
 <div id="fields"></div>
 <div class="fld" id="idBox" hidden>
-<label for="idFile">本人確認書類の写真<span class="req">必須</span></label>
+<label for="idFile">本人確認書類の写真<span class="req">※必須</span></label>
 <p class="hint">運転免許証・マイナンバーカード（<b>表面のみ</b>。裏面は撮らないでください）・パスポートのどれか1つを、スマホで撮影するか、写真を選んでください。</p>
 <input type="file" id="idFile" accept="image/*" capture="environment">
 <img id="idPrev" class="idprev" alt="添付した本人確認書類" hidden>
@@ -115,7 +115,7 @@ function get(){keiyakuApi('client.get',{token:token,sess:sess}).then(function(r)
  $('otpBox').hidden=true;$('app').hidden=false;
  $('title').textContent=C.title;$('cid').textContent=C.id;$('toLine').textContent=who(C);
  var f='';C.fields.forEach(function(x){var tag=x.type==='textarea'?'<textarea id="f_'+x.key+'"></textarea>':'<input type="'+x.type+'" id="f_'+x.key+'"'+(x.ac?' autocomplete="'+x.ac+'"':'')+'>';
-  f+='<div class="fld"><label for="f_'+x.key+'">'+esc(x.label)+(x.required?'<span class="req">必須</span>':'')+'</label>'+tag+'</div>'});
+  f+='<div class="fld"><label for="f_'+x.key+'">'+esc(x.label)+(x.required?'<span class="req">※必須</span>':'')+'</label>'+tag+'</div>'});
  $('fields').innerHTML=f;
  C.fields.forEach(function(x){$('f_'+x.key).value=x.value||(x.key==='name'?C.party_name:x.key==='company'?(C.party_company||''):'')});
  skipFill=!missing().length&&!C.requireId;
