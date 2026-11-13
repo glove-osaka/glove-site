@@ -9,7 +9,7 @@
   window.keiyakuHasSession = function () { return !!sess(); };
   // 通信は1つずつ順番に送る（同時に送ると、向こう側で順番待ちが長くなり失敗しやすいため）
   var QUEUE = Promise.resolve();
-  var READ = /^(client\.pdf|admin\.(templates|list|pdf|login|logout)|kanri\.(dash|list|get|report\.draft))$/;
+  var READ = /^(client\.pdf|admin\.(templates|list|pdf|login|logout)|kanri\.(dash|list|get|report\.draft|ref\.draft))$/;
   function once(body) {
     return fetch(URL_, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: body, redirect: "follow" })
       .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.text(); })

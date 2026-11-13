@@ -32,7 +32,11 @@
 <h2>1　契約書の内容をご確認ください</h2>
 <p class="hint">下の枠の中を、最後までゆっくりお読みください。枠の中は上下に動かせます。</p>
 <div class="doc" id="doc" tabindex="0"></div>
-<p class="note" id="draftNote" hidden>この書面は「下書き（確認用）」です。内容をご確認いただくためのもので、締結はできません。気になる点はお電話でお知らせください。</p>
+<div class="note" id="draftNote" hidden><b>この書面は「下書き（確認用）」です。</b>内容をご確認いただくためのもので、この段階では契約は結ばれません。<br>読み終えたら、下のどちらかを押してお知らせください。
+<div id="drAsk"><div class="btns"><button class="btn" type="button" id="drOk">この内容で問題ありません</button><button class="btn o" type="button" id="drFix">直してほしいところがあります</button></div>
+<div id="drFixBox" hidden><div class="fld"><label for="drText">直してほしいところ</label><textarea id="drText" rows="4" placeholder="例：第3条の引き渡しの日を、12月10日にしてほしい"></textarea></div><button class="btn" type="button" id="drSend">この内容で知らせる</button></div>
+<p class="err" id="drErr" role="alert"></p></div>
+<p id="drDone" hidden></p></div>
 <div class="btns"><button class="btn" type="button" id="toFill">内容を確認しました。次へ</button></div>
 </section>
 
@@ -96,7 +100,7 @@ keiyakuApi('client.get',{token:token}).then(function(r){
  $('title').textContent=C.title;$('cid').textContent=C.id;
  $('toLine').textContent=(C.party_company?C.party_company+'　':'')+C.party_name+' 様';
  $('doc').textContent=C.body;
- if(C.draft){$('draftNote').hidden=false;$('toFill').hidden=true}
+ if(C.draft){$('draftNote').hidden=false;$('toFill').hidden=true;if(C.draftReply){$('drAsk').hidden=true;$('drDone').hidden=false;$('drDone').textContent='お返事（'+C.draftReply+'）を受け付けています。窓口から、あらためてご連絡します。'}}
  var f='';C.fields.forEach(function(x){var tag=x.type==='textarea'?'<textarea id="f_'+x.key+'"></textarea>':'<input type="'+x.type+'" id="f_'+x.key+'"'+(x.key==='name'?' autocomplete="name"':x.key==='address'?' autocomplete="street-address"':x.key==='phone'?' autocomplete="tel"':'')+'>';
   f+='<div class="fld"><label for="f_'+x.key+'">'+x.label+(x.required?'<span class="req">必須</span>':'')+'</label>'+tag+'</div>'});
  $('fields').innerHTML=f;
@@ -106,6 +110,13 @@ keiyakuApi('client.get',{token:token}).then(function(r){
 }).catch(function(e){fail(e.message)});
 
 $('toFill').addEventListener('click',function(){show(1)});
+function drReply(ok){$('drErr').textContent='';var t=$('drText').value.trim();if(!ok&&!t){$('drErr').textContent='直してほしいところを書いてください。';return}
+ document.querySelectorAll('#drAsk button').forEach(function(b){b.disabled=true});
+ (window.KEIYAKU_DEMO?Promise.resolve({ok:true}):keiyakuApi('client.draftReply',{token:token,agree:ok,comment:t})).then(function(){$('drAsk').hidden=true;$('drDone').hidden=false;$('drDone').textContent=ok?'ありがとうございます。「問題ありません」と承りました。このあと、同じ内容の正式な契約書をメールでお送りします。':'ありがとうございます。いただいたご意見をもとに直して、あらためてお送りします。'})
+ .catch(function(e){$('drErr').textContent=e.message;document.querySelectorAll('#drAsk button').forEach(function(b){b.disabled=false})})}
+$('drOk').addEventListener('click',function(){drReply(true)});
+$('drFix').addEventListener('click',function(){$('drFixBox').hidden=false;$('drText').focus()});
+$('drSend').addEventListener('click',function(){drReply(false)});
 $('idFile').addEventListener('change',function(){var file=this.files[0];if(!file)return;var rd=new FileReader();rd.onload=function(){var img=new Image();img.onload=function(){var m=1600,w=img.width,h=img.height,k=Math.min(1,m/Math.max(w,h));var cv=document.createElement('canvas');cv.width=Math.round(w*k);cv.height=Math.round(h*k);cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);idImage=cv.toDataURL('image/jpeg',.85);$('idPrev').src=idImage;$('idPrev').hidden=false};img.src=rd.result};rd.readAsDataURL(file)});
 function values(){var v={};C.fields.forEach(function(x){v[x.key]=($('f_'+x.key).value||'').trim()});return v}
 $('toSeal').addEventListener('click',function(){var v=values(),miss=C.fields.filter(function(x){return x.required&&!v[x.key]});
