@@ -189,8 +189,8 @@ function inbox_(d) {
   hist_(no, "受付", label + "\n" + cut(d.company, 100) + " " + cut(d.name, 60) + (partner ? "\n振分け候補：" + partner : ""), "", "サイト", "受付");
   var mail = { to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］新しい受付 " + no + "　" + label, body: body + "\n\nお名前：" + cut(d.name, 60) + "\nメール：" + em + "\n電話：" + cut(d.tel, 30) + "\n\n受付の一覧：https://docs.google.com/spreadsheets/d/" + P("SHEET_ID") };
   if (okMail) mail.replyTo = em;
-  MailApp.sendEmail(mail);
-  if (okMail) MailApp.sendEmail({ to: em, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】受付しました（受付番号 " + no + "）", body: cut(d.name, 60) + " 様\n\nお問い合わせありがとうございます。次の内容で受け付けました。\n受付後、原則として3営業日以内にメールでご返信します（土日祝・年末年始を除く）。\n\n受付番号：" + no + "\n\n" + body + "\n\nお心当たりがない場合は、このメールを破棄してください。\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）\n" + P("NOTIFY_TO") });
+  sendMail_(mail);
+  if (okMail) sendMail_({ to: em, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】受付しました（受付番号 " + no + "）", body: cut(d.name, 60) + " 様\n\nお問い合わせありがとうございます。次の内容で受け付けました。\n受付後、原則として3営業日以内にメールでご返信します（土日祝・年末年始を除く）。\n\n受付番号：" + no + "\n\n" + body + "\n\nお心当たりがない場合は、このメールを破棄してください。\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）\n" + P("NOTIFY_TO") });
   return { ok: true, no: no };
 }
 
@@ -310,7 +310,7 @@ function report_(d) {
   if (d.send) {
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(c.email)) throw new Error("お客様のメールアドレスがありません");
     if (!subj || !body) throw new Error("件名と本文を入れてください");
-    MailApp.sendEmail({ to: c.email, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: subj, body: body });
+    sendMail_({ to: c.email, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: subj, body: body });
     sh.getRange(c.row, 15).setValue(new Date()); sh.getRange(c.row, 14).setValue(new Date());
     hist_(c.no, "進捗報告（メール送信）", subj + "\n\n" + body, d.staff || c.staff);
   } else if (d.phone) {
@@ -320,6 +320,27 @@ function report_(d) {
     hist_(c.no, "進捗報告（送らなかった）", subj, d.staff || c.staff);
   }
   return { ok: true };
+}
+/* ---- メールの送信：Gmail に「info@119cm.net」を送信元として登録してあれば、その名前で送る（なければ従来どおり） ---- */
+function fromAddr_() { return P("FROM_ADDR") || "info@119cm.net"; }
+function aliasOk_() { try { return GmailApp.getAliases().indexOf(fromAddr_()) >= 0; } catch (e) { return false; } }
+function sendMail_(o) {
+  o = Object.assign({}, o); if (!o.name) o.name = ISSUER.service;
+  var fr = fromAddr_(), ok = aliasOk_();
+  if (ok) {
+    if (!o.replyTo || o.replyTo === P("NOTIFY_TO")) o.replyTo = fr;
+    var opt = { from: fr, name: o.name }; ["htmlBody", "replyTo", "bcc", "cc", "attachments"].forEach(function (k) { if (o[k]) opt[k] = o[k]; });
+    try { GmailApp.sendEmail(o.to, o.subject, o.body || "", opt); return; } catch (e) { Logger.log("info@ から送れなかったため、Gmail から送ります：" + e.message); }
+  }
+  MailApp.sendEmail(o);
+}
+/* 設定の確認用：Apps Script の画面でこの関数を1回実行すると、許可の画面が出ます。許可すると、info@ から登録メールあてに試しのメールを送ります */
+function checkSender() {
+  var al = GmailApp.getAliases(), fr = fromAddr_();
+  Logger.log("Gmail に登録されている送信元：" + (al.join("、") || "なし"));
+  if (al.indexOf(fr) < 0) { Logger.log("まだ " + fr + " が送信元として登録されていません。Gmail の設定で登録してください。"); return; }
+  sendMail_({ to: P("NOTIFY_TO"), subject: "［" + ISSUER.service + "］送信元のテスト", body: fr + " から送れることを確かめるためのメールです。" });
+  Logger.log(fr + " から試しのメールを送りました。");
 }
 /* ---- 管理者と担当者のアカウント ---- */
 function adminName_() { return P("ADMIN_NAME") || "中嶋"; }
@@ -390,7 +411,7 @@ function pinvite_(d, S) {
   var tok = newToken_(); pr.setProperty("PINV_" + tok, JSON.stringify({ by: S.name, email: em, name: nm, exp: now + 14 * 864e5, sent: new Date().toISOString() }));
   var url = pinvUrl_() + "?t=" + tok;
   var html = "<div style='font-family:sans-serif;font-size:16px;line-height:1.8;color:#14211F'><p>" + esc_(nm) + " 様</p><p>" + esc_(ISSUER.service) + "の" + esc_(S.name) + "です。<br>提携先としてのご登録をお願いしたく、ご連絡いたしました。下のボタンから、貴社の情報（分野・連絡先・対応できる地域など）をご記入ください。</p>" + (msg ? "<p>" + esc_(msg).replace(/\n/g, "<br>") + "</p>" : "") + "<p><a href='" + url + "' style='display:inline-block;background:#0E5A63;color:#fff;padding:14px 26px;border-radius:10px;text-decoration:none;font-weight:bold'>提携先の登録フォームを開く</a></p><p style='font-size:14px;color:#555'>このリンクは14日間有効です。お心当たりがない場合は、このメールを破棄してください。</p><p>" + esc_(ISSUER.service) + "（運営 " + esc_(ISSUER.name) + "）<br>" + esc_(ISSUER.tel) + "（受付 " + esc_(ISSUER.hours) + "）</p></div>";
-  MailApp.sendEmail({ to: em, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】提携先のご登録のお願い", htmlBody: html, body: nm + " 様\n\n提携先の登録フォーム：" + url + "\n（14日間有効）" });
+  sendMail_({ to: em, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】提携先のご登録のお願い", htmlBody: html, body: nm + " 様\n\n提携先の登録フォーム：" + url + "\n（14日間有効）" });
   hist_("", "提携先登録フォームを送った", nm + "（" + em + "）", "", S.name, "設定");
   return { ok: true };
 }
@@ -407,7 +428,7 @@ function pinvSubmit_(d) {
   partnerSheet_().appendRow(PKEY.map(function (k) { return o[k] || ""; }));
   PropertiesService.getScriptProperties().deleteProperty(key);
   hist_("", "提携先登録フォームが届いた", o.name + "（" + o.a + " ＞ " + o.b + "）\n送った担当：" + v.by, "", "相手", "設定");
-  MailApp.sendEmail({ to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］提携先の登録が届きました：" + o.name, body: o.name + "\n分類：" + o.a + " ＞ " + o.b + (o.c ? " ＞ " + o.c : "") + "\nご担当：" + o.person + "\nメール：" + o.email + "\n電話：" + o.tel + "\n地域：" + o.area + "\n\n送った担当：" + v.by + "\n\n管理画面の「設定」で内容を確かめ、「確認して使えるようにする」を押してください。\n管理画面：https://119cm.net/keiyaku/admin.html" });
+  sendMail_({ to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］提携先の登録が届きました：" + o.name, body: o.name + "\n分類：" + o.a + " ＞ " + o.b + (o.c ? " ＞ " + o.c : "") + "\nご担当：" + o.person + "\nメール：" + o.email + "\n電話：" + o.tel + "\n地域：" + o.area + "\n\n送った担当：" + v.by + "\n\n管理画面の「設定」で内容を確かめ、「確認して使えるようにする」を押してください。\n管理画面：https://119cm.net/keiyaku/admin.html" });
   return { ok: true };
 }
 /* 案件の内容とお客様の情報を、提携先へメールで送る（担当者が内容を確かめ、お客様の同意を確認したときだけ） */
@@ -420,7 +441,7 @@ function forward_(d) {
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email)) throw new Error("「" + p.name + "」のメールアドレスが登録されていません（設定の提携先一覧で登録できます）");
   var subj = String(d.subject || "").slice(0, 200), body = String(d.body || "").slice(0, 8000);
   if (!subj || !body) throw new Error("件名と本文を入れてください");
-  MailApp.sendEmail({ to: p.email, bcc: P("NOTIFY_TO"), name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: subj, body: body });
+  sendMail_({ to: p.email, bcc: P("NOTIFY_TO"), name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: subj, body: body });
   var now = new Date(), ch = ["提携先へ送付：" + p.name];
   if (c.partner !== p.name) { sh.getRange(c.row, 12).setValue(p.name); ch.push("振分け先：" + p.name); }
   if (d.status && d.status !== c.status && ALL_STEPS.indexOf(d.status) >= 0) { sh.getRange(c.row, 9).setValue(d.status); ch.push("状態：" + c.status + " → " + d.status); }
@@ -443,7 +464,7 @@ function alertCheck() {
     var key = "al_" + c.no + "_" + today; if (pr.getProperty(key)) return; pr.setProperty(key, "1");
     list.push("・" + c.no + "　" + (c.company ? c.company + " " : "") + c.name + "（" + c.status + "）\n　" + why.join("／"));
   });
-  if (list.length) MailApp.sendEmail({ to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］対応が遅れている受付が " + list.length + " 件あります", body: list.join("\n\n") + "\n\n管理画面：https://119cm.net/keiyaku/admin.html" });
+  if (list.length) sendMail_({ to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］対応が遅れている受付が " + list.length + " 件あります", body: list.join("\n\n") + "\n\n管理画面：https://119cm.net/keiyaku/admin.html" });
 }
 function setupAlerts() {
   ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === "alertCheck") ScriptApp.deleteTrigger(t); });
@@ -548,7 +569,7 @@ function otp_(o) {
   if (cnt >= 5) throw new Error("認証コードを送る回数が多すぎます。1時間ほどおいてお試しください。");
   var code = ("00000" + Math.floor(Math.random() * 1000000)).slice(-6);
   cache.put("otp_" + o.token, code, 900); cache.put("otpn_" + o.token, String(cnt + 1), 3600);
-  MailApp.sendEmail({ to: o.party_email, name: ISSUER.service, subject: "【" + ISSUER.service + "】認証コード " + code, body: o.party_name + " 様\n\n電子契約の認証コードは " + code + " です（15分間有効）。\n開いている画面に入力してください。\n\nお心当たりがない場合は、このメールを破棄してください。\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）" });
+  sendMail_({ to: o.party_email, name: ISSUER.service, subject: "【" + ISSUER.service + "】認証コード " + code, body: o.party_name + " 様\n\n電子契約の認証コードは " + code + " です（15分間有効）。\n開いている画面に入力してください。\n\nお心当たりがない場合は、このメールを破棄してください。\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）" });
   log_(o, "認証コードを送信");
 }
 /* サイトの「会員登録の申込み」から、その場で契約書を作る（協賛会員は審査があるため対象外） */
@@ -568,7 +589,7 @@ function apply_(d) {
   o.body = buildBody(t.key, cond, "", kj ? o.party_name : o.party_company);
   log_(o, "サイトの申込みから作成（受付番号 " + cut(d.no, 30) + "）");
   otp_(o); save_(o);
-  MailApp.sendEmail({ to: P("NOTIFY_TO"), subject: "［電子契約］サイトから申込み：" + o.id + "　" + (o.party_company ? o.party_company + " " : "") + o.party_name, body: o.title + "\n" + o.id + "（受付番号 " + cut(d.no, 30) + "）\n" + (o.party_company ? o.party_company + "　" : "") + o.party_name + "（" + email + "）\n" + (cond ? condText(cond) + "\n" : "") + "連絡事項：" + cut(d.note, 500) + "\n\n申込者はそのまま電子契約の画面に進んでいます。締結するとまた通知します。" });
+  sendMail_({ to: P("NOTIFY_TO"), subject: "［電子契約］サイトから申込み：" + o.id + "　" + (o.party_company ? o.party_company + " " : "") + o.party_name, body: o.title + "\n" + o.id + "（受付番号 " + cut(d.no, 30) + "）\n" + (o.party_company ? o.party_company + "　" : "") + o.party_name + "（" + email + "）\n" + (cond ? condText(cond) + "\n" : "") + "連絡事項：" + cut(d.note, 500) + "\n\n申込者はそのまま電子契約の画面に進んでいます。締結するとまた通知します。" });
   return { ok: true, token: o.token };
 }
 function maskMail_(m) { m = String(m); var p = m.split("@"); return p[0].slice(0, 2) + "***@" + (p[1] || ""); }
@@ -598,8 +619,8 @@ function sign_(o, d) {
   var pf = folder.createFile(pdf); o.pdf_id = pf.getId();
   save_(o);
   var mail = { name: ISSUER.service, replyTo: P("NOTIFY_TO"), attachments: [pdf] };
-  MailApp.sendEmail(Object.assign({ to: o.party_email, subject: "【" + ISSUER.service + "】" + o.title + "（締結済み）", body: o.party_name + " 様\n\nお手続きありがとうございました。押印済みの契約書（PDF）をお送りします。大切に保管してください。\n契約番号：" + o.id + "\n\n" + (o.template === "kaiin" ? "お振込先と金額は、担当者から別のメールでご案内します。\n\n" : "") + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）" }, mail));
-  MailApp.sendEmail(Object.assign({ to: P("NOTIFY_TO"), subject: "［電子契約］締結：" + o.id + "　" + (o.party_company ? o.party_company + " " : "") + o.party_name, body: o.title + "\n" + o.id + "\n" + (o.party_company ? o.party_company + "　" : "") + o.party_name + "（" + o.party_email + "）\n\n台帳：https://docs.google.com/spreadsheets/d/" + P("SHEET_ID") }, mail));
+  sendMail_(Object.assign({ to: o.party_email, subject: "【" + ISSUER.service + "】" + o.title + "（締結済み）", body: o.party_name + " 様\n\nお手続きありがとうございました。押印済みの契約書（PDF）をお送りします。大切に保管してください。\n契約番号：" + o.id + "\n\n" + (o.template === "kaiin" ? "お振込先と金額は、担当者から別のメールでご案内します。\n\n" : "") + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）" }, mail));
+  sendMail_(Object.assign({ to: P("NOTIFY_TO"), subject: "［電子契約］締結：" + o.id + "　" + (o.party_company ? o.party_company + " " : "") + o.party_name, body: o.title + "\n" + o.id + "\n" + (o.party_company ? o.party_company + "　" : "") + o.party_name + "（" + o.party_email + "）\n\n台帳：https://docs.google.com/spreadsheets/d/" + P("SHEET_ID") }, mail));
   if (o.template === "kaiin") {
     var c0 = typeof o.cond === "string" ? parse_(o.cond, null) : o.cond;
     if (c0) { var nf = nextFirst(new Date()), ns = nf.getFullYear() + "-" + ("0" + (nf.getMonth() + 1)).slice(-2); if (!c0.start || c0.start.slice(0, 7) < ns) c0.start = ns; o.cond = normCond(c0); save_(o); }
@@ -616,8 +637,8 @@ function refMail_(o) {
   var A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", code = "";
   do { code = "SK-"; for (var i = 0; i < 5; i++) code += A.charAt(Math.floor(Math.random() * A.length)); } while (used[code]);
   o.refcode = code; save_(o);
-  MailApp.sendEmail({ to: o.party_email, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】紹介コードのお知らせ", body: o.party_name + " 様\n\n個人会員（営業協力者）の登録が完了しました。あなたの紹介コードは次のとおりです。\n\n紹介コード：" + code + "\n\n事業所・法人をご紹介いただくときは、会員登録の申込み画面の「紹介者」欄に、このコードを書いてもらってください。\n会員登録の申込み：https://119cm.net/member/apply.html\n\n紹介料の仕組みと決まりごと：https://119cm.net/member/index.html#shokai\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + P("NOTIFY_TO") });
-  MailApp.sendEmail({ to: P("NOTIFY_TO"), subject: "［電子契約］紹介コードを発行：" + code + "　" + o.party_name, body: o.id + "\n" + o.party_name + "（" + o.party_email + "）に紹介コード " + code + " を発行し、メールで送りました。" });
+  sendMail_({ to: o.party_email, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】紹介コードのお知らせ", body: o.party_name + " 様\n\n個人会員（営業協力者）の登録が完了しました。あなたの紹介コードは次のとおりです。\n\n紹介コード：" + code + "\n\n事業所・法人をご紹介いただくときは、会員登録の申込み画面の「紹介者」欄に、このコードを書いてもらってください。\n会員登録の申込み：https://119cm.net/member/apply.html\n\n紹介料の仕組みと決まりごと：https://119cm.net/member/index.html#shokai\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + P("NOTIFY_TO") });
+  sendMail_({ to: P("NOTIFY_TO"), subject: "［電子契約］紹介コードを発行：" + code + "　" + o.party_name, body: o.id + "\n" + o.party_name + "（" + o.party_email + "）に紹介コード " + code + " を発行し、メールで送りました。" });
 }
 
 /* ---- 会費の振込のご案内（締結したら自動で送る）。振込先はスクリプト プロパティ BANK_INFO に書く ---- */
@@ -628,7 +649,7 @@ function payMail_(o) {
   var bank = P("BANK_INFO"), who = (o.party_company ? o.party_company + "　" : "") + o.party_name + " 様";
   var kana = String(o.id).replace(/[^0-9]/g, "");
   if (!bank) {
-    MailApp.sendEmail({ to: P("NOTIFY_TO"), subject: "［電子契約］振込先が未設定です：" + o.id, body: "BANK_INFO（振込先）が設定されていないため、" + who + "への振込のご案内を自動で送れませんでした。手でご案内してください。\n\nお振込み額：" + yen(c.first) + "（" + c.dueText + "まで）" });
+    sendMail_({ to: P("NOTIFY_TO"), subject: "［電子契約］振込先が未設定です：" + o.id, body: "BANK_INFO（振込先）が設定されていないため、" + who + "への振込のご案内を自動で送れませんでした。手でご案内してください。\n\nお振込み額：" + yen(c.first) + "（" + c.dueText + "まで）" });
     return;
   }
   var body = who + "\n\n" + ISSUER.service + "へのご入会のお手続き、ありがとうございました。\n初回の会費のお振込みについてご案内します。\n\n" +
@@ -640,7 +661,7 @@ function payMail_(o) {
     "入会した月の会費は無料です。\n" +
     (c.pay === "month" ? "以後は、毎月1日に翌月分（" + yen(c.monthly) + "）の請求書をメールでお送りします。お支払期限は毎月10日です。\n" : "以後は、更新の前の月の1日に、次の12か月分の請求書をメールでお送りします（お支払期限はその月の10日）。\n") +
     "入金を確認しましたら、会員登録完了のお知らせをお送りします。\n\n契約番号：" + o.id + "\n\n" + invoiceText_(o, c, who) + "\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）\n" + P("NOTIFY_TO");
-  MailApp.sendEmail({ to: o.party_email, bcc: P("NOTIFY_TO"), name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】会費のお振込みのご案内（" + yen(c.first) + "・" + c.dueText + "まで）", body: body });
+  sendMail_({ to: o.party_email, bcc: P("NOTIFY_TO"), name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】会費のお振込みのご案内（" + yen(c.first) + "・" + c.dueText + "まで）", body: body });
   o.billed = JSON.stringify([c.start.slice(0, 7)]);
   log_(o, "振込のご案内（請求書 " + c.start.slice(0, 7) + "分・期限 " + c.dueText + "）を送信"); save_(o);
 }
@@ -682,13 +703,13 @@ function monthlyBilling() {
       "■お振込み額（税込）：" + yen(amt) + "（" + term + "）\n■お振込みの期限：" + due + "\n■お振込先：\n" + bank + "\n■お振込みの名義：ご依頼人名の前に、番号「" + String(o.id).replace(/[^0-9]/g, "") + "」を入れてください\n■振込手数料：恐れ入りますが、ご負担をお願いします。\n\n" +
       inv + "\n\n行き違いでお振込み済みの場合は、ご容赦ください。\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）\n" + P("NOTIFY_TO");
     try {
-      MailApp.sendEmail({ to: o.party_email, bcc: P("NOTIFY_TO"), name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】" + term + " 会費のご請求（" + yen(amt) + "・" + due + "まで）", body: body });
+      sendMail_({ to: o.party_email, bcc: P("NOTIFY_TO"), name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】" + term + " 会費のご請求（" + yen(amt) + "・" + due + "まで）", body: body });
       billed.push(T); o.billed = JSON.stringify(billed); log_(o, "請求書（" + T + "分・期限 " + due + "）を送信"); save_(o);
       hist_(o.id, "請求書を自動で送った", term + "　" + yen(amt) + "（期限 " + due + "）\n" + who, "", "自動", "電子契約");
       sent.push(o.id + "　" + who + "　" + yen(amt) + "（" + term + "）");
     } catch (e) { sent.push("【送れませんでした】" + o.id + "　" + who + "　" + e.message); }
   });
-  if (sent.length) MailApp.sendEmail({ to: P("NOTIFY_TO"), subject: "［" + ISSUER.service + "］" + T + "分の請求書を " + sent.length + " 件送りました", body: sent.join("\n") + "\n\nお支払期限：" + due + "\n入金は通帳などでご確認ください。" });
+  if (sent.length) sendMail_({ to: P("NOTIFY_TO"), subject: "［" + ISSUER.service + "］" + T + "分の請求書を " + sent.length + " 件送りました", body: sent.join("\n") + "\n\nお支払期限：" + due + "\n入金は通帳などでご確認ください。" });
   return sent.length;
 }
 function setupBilling() {
@@ -703,7 +724,7 @@ function paid_(o) {
   if (o.paid) throw new Error("すでに入金確認済みです");
   var c = typeof o.cond === "string" ? parse_(o.cond, null) : o.cond;
   o.paid = new Date(); log_(o, "入金確認・登録完了のお知らせを送信"); save_(o);
-  MailApp.sendEmail({ to: o.party_email, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】会員登録が完了しました", body: (o.party_company ? o.party_company + "　" : "") + o.party_name + " 様\n\nお振込みを確認しました。ありがとうございます。\n" + ISSUER.service + "の会員登録が完了しました。\n\n" + (c ? "会員区分：" + MEMBER_LABEL[c.type] + "\n会費の発生日：" + c.startText + "\n契約期間：" + c.startText + "〜" + c.endText + "\n" : "") + "契約番号：" + o.id + "\n\nご相談は、このメールへの返信、またはサイトの相談フォームからお寄せください。\nhttps://119cm.net/contact/index.html\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）" });
+  sendMail_({ to: o.party_email, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】会員登録が完了しました", body: (o.party_company ? o.party_company + "　" : "") + o.party_name + " 様\n\nお振込みを確認しました。ありがとうございます。\n" + ISSUER.service + "の会員登録が完了しました。\n\n" + (c ? "会員区分：" + MEMBER_LABEL[c.type] + "\n会費の発生日：" + c.startText + "\n契約期間：" + c.startText + "〜" + c.endText + "\n" : "") + "契約番号：" + o.id + "\n\nご相談は、このメールへの返信、またはサイトの相談フォームからお寄せください。\nhttps://119cm.net/contact/index.html\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）" });
   return { ok: true };
 }
 
@@ -750,7 +771,7 @@ function login_(d) {
   var ok = isA || !!acc;
   if (!ok) {
     cache.put(kf, String(nf + 1), 900); cache.put("lf_all", String(ng + 1), 3600);
-    if (nf + 1 >= 5) MailApp.sendEmail({ to: P("NOTIFY_TO"), subject: "［" + ISSUER.service + "］管理画面のログインの失敗が続いています", body: "ID「" + id.slice(0, 40) + "」でのログインに5回失敗したため、15分間止めました。心当たりがなければ、パスワードを変えてください。" });
+    if (nf + 1 >= 5) sendMail_({ to: P("NOTIFY_TO"), subject: "［" + ISSUER.service + "］管理画面のログインの失敗が続いています", body: "ID「" + id.slice(0, 40) + "」でのログインに5回失敗したため、15分間止めました。心当たりがなければ、パスワードを変えてください。" });
     hist_("", "ログインの失敗", "ID「" + id.slice(0, 40) + "」", "", "", "ログイン"); throw new Error("IDまたはパスワードが違います");
   }
   var S = isA ? { role: "admin", name: adminName_(), id: P("ADMIN_ID") } : { role: "staff", name: acc.name, id: acc.id };
@@ -767,7 +788,7 @@ function forgot_() {
   cache.put("fg_n", String(n + 1), 3600);
   var code = String(Math.floor(100000 + Math.random() * 900000));
   cache.put("fg_code", code, 1800); cache.remove("fg_bad");
-  MailApp.sendEmail({ to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］管理画面のパスワード変更の確認コード", body: "管理画面で「ID・パスワードを忘れたとき」が使われました。\n\nID：" + P("ADMIN_ID") + "\n確認コード：" + code + "（30分有効）\n\n管理画面：https://119cm.net/keiyaku/admin.html\n\n心当たりがない場合は、このメールを無視してください（パスワードは変わりません）。" });
+  sendMail_({ to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］管理画面のパスワード変更の確認コード", body: "管理画面で「ID・パスワードを忘れたとき」が使われました。\n\nID：" + P("ADMIN_ID") + "\n確認コード：" + code + "（30分有効）\n\n管理画面：https://119cm.net/keiyaku/admin.html\n\n心当たりがない場合は、このメールを無視してください（パスワードは変わりません）。" });
   return { ok: true };
 }
 function reset_(d) {
@@ -780,7 +801,7 @@ function reset_(d) {
   var pr = PropertiesService.getScriptProperties(), salt = Utilities.getUuid().replace(/-/g, "");
   pr.setProperty("ADMIN_PASS_SALT", salt); pr.setProperty("ADMIN_PASS_HASH", hash_(salt, pass)); pr.deleteProperty("ADMIN_PASS");
   cache.remove("fg_code"); cache.remove("fg_bad"); cache.remove("lf_" + P("ADMIN_ID").toLowerCase()); cache.remove("lf_all");
-  MailApp.sendEmail({ to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］管理画面のパスワードを変えました", body: "管理画面のパスワードが変更されました（" + Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy/MM/dd HH:mm") + "）。\n心当たりがない場合は、すぐに確認してください。" });
+  sendMail_({ to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］管理画面のパスワードを変えました", body: "管理画面のパスワードが変更されました（" + Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyy/MM/dd HH:mm") + "）。\n心当たりがない場合は、すぐに確認してください。" });
   hist_("", "パスワードを変更", "確認コードで変更しました", "", "", "ログイン");
   return { ok: true, id: P("ADMIN_ID") };
 }
@@ -885,7 +906,7 @@ function feedback_(o, d) {
   log_(o, kind + (comment ? "（" + comment.slice(0, 100) + "）" : "")); save_(o);
   hist_(o.id, kind, o.title + "\n" + who + (comment ? "\n" + comment : ""), "", "相手", "電子契約");
   if (o.case_no) hist_(o.case_no, kind, o.id + "　" + o.title + (comment ? "\n" + comment : ""), "", "相手", "案件");
-  MailApp.sendEmail({ to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［電子契約］" + kind + "：" + o.id + "　" + who, body: o.title + "\n" + o.id + "\n" + who + "\n\n" + (res === "ok" ? "相手が下書きを確認し、「この内容で進めてよい」と返事をしました。\n管理画面の電子契約で「この内容で本契約として送る」を押すと、同じ内容の契約書が正式に届きます。" : "相手から修正の希望が届きました。\n\n" + comment + "\n\n管理画面の電子契約で「内容を直して送り直す」を押すと、直した下書きまたは本契約を送れます。") + "\n\n管理画面：https://119cm.net/keiyaku/admin.html" });
+  sendMail_({ to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［電子契約］" + kind + "：" + o.id + "　" + who, body: o.title + "\n" + o.id + "\n" + who + "\n\n" + (res === "ok" ? "相手が下書きを確認し、「この内容で進めてよい」と返事をしました。\n管理画面の電子契約で「この内容で本契約として送る」を押すと、同じ内容の契約書が正式に届きます。" : "相手から修正の希望が届きました。\n\n" + comment + "\n\n管理画面の電子契約で「内容を直して送り直す」を押すと、直した下書きまたは本契約を送れます。") + "\n\n管理画面：https://119cm.net/keiyaku/admin.html" });
   return { ok: true, feedback: parse_(o.feedback, null) };
 }
 /* 下書き（確認してもらった内容）を、そのまま本契約に切り替えて送る。文面は変えない */
@@ -905,5 +926,5 @@ function getForEdit_(o) {
 function sendInvite_(o, fin) {
   var url = P("SIGN_URL") + "?t=" + o.token, draft = o.draft === "yes";
   var html = "<div style='font-family:sans-serif;font-size:16px;line-height:1.8;color:#14211F'><p>" + esc_(o.party_company ? o.party_company + "　" : "") + esc_(o.party_name) + " 様</p><p>" + esc_(ISSUER.service) + "です。" + (draft ? "「" + esc_(o.title) + "」の下書き（確認用）をお送りします。内容をご確認のうえ、画面のボタンからお返事をお願いします。" : (fin ? "先日ご確認いただいた内容のまま、" : "") + "「" + esc_(o.title) + "」をお送りします。下のボタンから内容をご確認のうえ、記入・押印・承認をお願いします。") + "</p><p><a href='" + url + "' style='display:inline-block;background:#0E5A63;color:#fff;padding:14px 26px;border-radius:10px;text-decoration:none;font-weight:bold'>契約書を開く</a></p><p style='font-size:14px;color:#3A4A48'>開くと、このメールアドレスに6けたの認証コードが届きます。リンクの有効期限は" + VALID_DAYS + "日です。<br>契約番号：" + esc_(o.id) + "</p><p style='font-size:14px'>" + esc_(ISSUER.service) + "（運営 " + esc_(ISSUER.name) + "）<br>" + ISSUER.tel + "（受付 " + ISSUER.hours + "）</p></div>";
-  MailApp.sendEmail({ to: o.party_email, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】" + o.title + (draft ? "（下書き）" : fin ? "（正式な契約書）" : "") + "のご案内", htmlBody: html, body: "契約書を開く：" + url });
+  sendMail_({ to: o.party_email, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】" + o.title + (draft ? "（下書き）" : fin ? "（正式な契約書）" : "") + "のご案内", htmlBody: html, body: "契約書を開く：" + url });
 }
