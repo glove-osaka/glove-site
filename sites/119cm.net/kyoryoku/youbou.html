@@ -806,6 +806,6 @@ f.addEventListener('submit',function(e){e.preventDefault();if(sending||!check())
   f.hidden=true;var d=document.getElementById('sdone');d.hidden=false;d.innerHTML='<div class="done-box" role="status"><b>受け付けました</b><p>受付番号：'+(j.no||rec.no)+'</p><p>'+(v('mail')?C.doneMail:C.doneNoMail)+'</p></div>';window.scrollTo(0,d.getBoundingClientRect().top+scrollY-140)})
  .catch(function(){sending=false;b.disabled=false;b.textContent=C.btn;need('送信できませんでした。時間をおいてもう一度お試しいただくか、'+C.mail+' へメールでお送りください。')})});
 })();</script><script>(function(){var P={"keiei": "経営・業務の改善", "jinzai": "採用・定着・研修", "hojo": "補助金・助成金の情報", "kyodo": "共同購入・固定費の見直し", "senmon": "専門家への相談", "shokei": "事業承継・連携", "shokuba": "職場・働き方の相談", "career": "資格・研修・キャリア", "fukuri": "福利厚生・暮らしの優待", "sagasu": "病院・施設・在宅サービスの相談先", "taiin": "退院・入居前後の暮らしの準備", "hiyou": "医療費・介護費の制度", "kaigo": "家族の介護と仕事の両立", "kouken": "お金の管理・成年後見", "seikatsu": "買い物・移動などの生活支援", "hikkoshi": "引越し・住み替え・家財の整理", "shukatsu": "終活・相続・遺品整理"},s=new URLSearchParams(location.search).get('s');if(s&&P[s]){var o=document.getElementById('sup');if(o){o.value=P[s]}var t=document.getElementById('preNote');if(t){t.hidden=false;t.textContent='「'+P[s]+'」についての要望として送ります。'}}})();</script>
-<script src="../assets/guide.js?v=f604c6e0" data-mode="site"></script>
+<script src="../assets/guide.js?v=bab7790d" data-mode="site"></script>
 </body>
 </html>

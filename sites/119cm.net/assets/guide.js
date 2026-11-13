@@ -135,6 +135,7 @@
   function fieldOf(t) { return t && t.closest ? t.closest(".fld") : null; }
   function labelOf(inp) { var l = inp.id && document.querySelector('label[for="' + inp.id + '"]'); return l ? l.textContent.replace(/必須/g, "").trim() : ""; }
   function isReq(inp) {
+    if (inp.disabled) return false;
     var h = HELP[inp.id]; if (h && h.req != null) return !!h.req;
     var l = inp.id && document.querySelector('label[for="' + inp.id + '"]');
     return !!(inp.required || (l && l.querySelector(".req")));

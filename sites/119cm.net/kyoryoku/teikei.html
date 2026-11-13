@@ -839,6 +839,6 @@ f.addEventListener('submit',function(e){e.preventDefault();if(sending||!check())
   f.hidden=true;var d=document.getElementById('sdone');d.hidden=false;d.innerHTML='<div class="done-box" role="status"><b>受け付けました</b><p>受付番号：'+(j.no||rec.no)+'</p><p>'+(v('mail')?C.doneMail:C.doneNoMail)+'</p></div>';window.scrollTo(0,d.getBoundingClientRect().top+scrollY-140)})
  .catch(function(){sending=false;b.disabled=false;b.textContent=C.btn;need('送信できませんでした。時間をおいてもう一度お試しいただくか、'+C.mail+' へメールでお送りください。')})});
 })();</script>
-<script src="../assets/guide.js?v=f604c6e0" data-mode="site"></script>
+<script src="../assets/guide.js?v=bab7790d" data-mode="site"></script>
 </body>
 </html>
