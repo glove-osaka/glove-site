@@ -1278,6 +1278,12 @@ def build_contact():
         trees[rid] = t
     D["trees"] = trees
     D["supNames"] = [s["name"] for s in SUP.values()]
+    D["ex"] = {
+        "kigyo": ["例：記録ソフトの入れ替えを考えている", "例：職員15名の通所介護です。来年度に向けて早めに相談したいです。"],
+        "hataraku": ["例：来月から夜勤が増えるのが不安", "例：勤務先には知られずに相談したいです。"],
+        "honnin": ["例：退院したあと、自宅で暮らせるか不安", "例：一人暮らしで、近くに頼れる家族がいません。"],
+        "kazoku": ["例：離れて暮らす母の通院の付き添いが難しい", "例：平日の昼間は仕事のため、メールでの連絡を希望します。"],
+        "none": ["例：どこに相談すればよいか分からない", "例：まず話を聞いてもらいたいです。"]}
     body = ph("相談を送る（ウェブ総合受付）", "立場を選び、相談の内容を選ぶだけで送れます。全部で4つの段階です。", [("相談を送る", None)], "head-5.jpg", "chat") + f'''
 <div class="wrap" style="padding-block:56px 88px;max-width:960px">
 {acc("chat", "受付の方法・返信・対応地域", "ウェブ受付は24時間。LINE・電話は準備中", f"""<div class="contact-box"><dl>
@@ -1294,7 +1300,7 @@ def build_contact():
 <section data-step="1" hidden><h2>相談の内容を選んでください</h2><p class="hint">上から順に、<b>大分類 → 中分類 → 小分類</b>の近いものを選んでください。<b>選ばなくても、書かなくても進めます。</b>くわしく伝えたいことがあれば「詳細」に書けます。ほかにも相談したいことがあれば「＋ 相談の内容を追加」で3つまで選べます。</p>
 <div id="cats"></div><button type="button" class="btn btn-o" id="addCat" style="margin-top:6px">＋ 相談の内容を追加</button>
 <p class="hint" style="margin-top:26px">病名・症状・服薬・要介護度・障害名・マイナンバー・口座番号・カード番号は書かないでください。</p>
-<div class="fld"><label for="memo">そのほか伝えたいこと（任意・1,000文字まで）</label><textarea id="memo" maxlength="1000" placeholder="例：来月から夜勤が増えるので、早めに相談したいです。"></textarea><p class="fine" id="cnt" aria-live="polite">0 / 1,000文字</p><p class="warn-inline" id="sens" hidden>病気や体の状態、番号などの情報が含まれている可能性があります。送る前に、その部分を消してください。</p></div><p class="hint" style="margin-top:22px"><b>状況（分かる範囲で。選ばなくても進めます）</b></p>
+<div class="fld"><label for="memo">そのほか伝えたいこと（任意・1,000文字まで）</label><textarea id="memo" maxlength="1000"></textarea><p class="fine" id="cnt" aria-live="polite">0 / 1,000文字</p><p class="warn-inline" id="sens" hidden>病気や体の状態、番号などの情報が含まれている可能性があります。送る前に、その部分を消してください。</p></div><p class="hint" style="margin-top:22px"><b>状況（分かる範囲で。選ばなくても進めます）</b></p>
 <div class="fld"><label for="when">ご希望の時期</label><select id="when"><option value="">選んでください</option><option>まず情報を知りたい</option><option>1か月以内に相談したい</option><option>3か月以内</option><option>利用・協力を検討している</option><option>時期は決まっていない</option></select></div>
 <div class="fld"><label for="pref">都道府県</label><select id="pref"><option value="">選んでください</option><option>大阪府</option><option>兵庫県</option><option>京都府</option><option>奈良県</option><option>滋賀県</option><option>和歌山県</option><option>その他の地域</option></select></div>
 <div class="fld"><label for="want">希望する対応</label><select id="want"><option value="">選んでください</option><option>相談内容を整理してほしい</option><option>使える支援・制度を知りたい</option><option>サービスの利用条件を知りたい</option><option>専門家・提携先につないでほしい</option><option>まだ分からない</option></select></div>
@@ -1317,7 +1323,7 @@ def build_contact():
 <div id="done" hidden></div>
 <div style="margin-top:40px">{extra_doors("{p}")}</div>
 </div>'''
-    js = CASCADE_JS + "<script>window.FORM_HELP={\"memo\": {\"t\": \"ほかに伝えておきたいことがあれば書きます（空のままでも進めます）。\", \"ex\": \"例：来月から夜勤が増えるので、早めに相談したいです。※病名・症状・番号は書かないでください\", \"req\": false}, \"c1a\": {\"t\": \"大分類を選びます。選ばなくても進めます。\", \"req\": false}, \"c1b\": {\"t\": \"中分類を選びます（大分類を選ぶと出てきます）。\", \"req\": false}, \"c1c\": {\"t\": \"小分類を選びます（中分類を選ぶと出てきます）。\", \"req\": false}, \"c1d\": {\"t\": \"くわしく伝えたいことがあれば書きます（空のままでも進めます）。\", \"ex\": \"例：来月から夜勤が増えるのが不安\"}, \"when\": {\"t\": \"いつごろ相談したいかを選びます（空のままでも進めます）。\", \"req\": false}, \"pref\": {\"t\": \"お住まい・事業所のある都道府県を選びます（空のままでも進めます）。\", \"req\": false}, \"want\": {\"t\": \"支援会にしてほしいことに近いものを選びます（空のままでも進めます）。\", \"req\": false}, \"nm\": {\"t\": \"お名前を入れます。返信の宛名に使います。\", \"ex\": \"例：山田 花子　名前を伏せたいときは、上で「名前・事業所名を伏せて相談」を選んでください\", \"req\": true}, \"co\": {\"t\": \"事業所名・会社名を入れます（企業・事業者の方、協力のお申し出の方のみ）。\", \"ex\": \"例：○○デイサービス\", \"req\": false}, \"mail\": {\"t\": \"返信を受け取るメールアドレスです。\", \"ex\": \"例：yamada@example.jp　携帯のメールは、パソコンからのメールを受け取れる設定にしてください\", \"req\": true}, \"tel\": {\"t\": \"電話での連絡を希望するときだけ入れます。\", \"ex\": \"例：06-1234-5678\", \"req\": false}};window.FORM_GROUPS=[{name:'role',label:'立場'}];window.FORM_CHECKS=['agree'];window.FORM_STEPWISE=true;window.FORM_SCOPE='#f';window.FORM_SUBMIT='#send';window.FORM_NEXT='#next';window.FORM_DONE_LABEL='進むボタンへ ›';</script>" + "<script>(function(){var D=" + json.dumps(D, ensure_ascii=False) + r""";
+    js = CASCADE_JS + "<script>window.FORM_HELP={\"memo\": {\"t\": \"ほかに伝えておきたいことがあれば書きます（空のままでも進めます）。\", \"ex\": \"※病名・症状・番号は書かないでください\", \"req\": false}, \"c1a\": {\"t\": \"大分類を選びます。選ばなくても進めます。\", \"req\": false}, \"c1b\": {\"t\": \"中分類を選びます（大分類を選ぶと出てきます）。\", \"req\": false}, \"c1c\": {\"t\": \"小分類を選びます（中分類を選ぶと出てきます）。\", \"req\": false}, \"c1d\": {\"t\": \"くわしく伝えたいことがあれば書きます（空のままでも進めます）。\"}, \"when\": {\"t\": \"いつごろ相談したいかを選びます（空のままでも進めます）。\", \"req\": false}, \"pref\": {\"t\": \"お住まい・事業所のある都道府県を選びます（空のままでも進めます）。\", \"req\": false}, \"want\": {\"t\": \"支援会にしてほしいことに近いものを選びます（空のままでも進めます）。\", \"req\": false}, \"nm\": {\"t\": \"お名前を入れます。返信の宛名に使います。\", \"ex\": \"例：山田 花子　名前を伏せたいときは、上で「名前・事業所名を伏せて相談」を選んでください\", \"req\": true}, \"co\": {\"t\": \"事業所名・会社名を入れます（企業・事業者の方、協力のお申し出の方のみ）。\", \"ex\": \"例：○○デイサービス\", \"req\": false}, \"mail\": {\"t\": \"返信を受け取るメールアドレスです。\", \"ex\": \"例：yamada@example.jp　携帯のメールは、パソコンからのメールを受け取れる設定にしてください\", \"req\": true}, \"tel\": {\"t\": \"電話での連絡を希望するときだけ入れます。\", \"ex\": \"例：06-1234-5678\", \"req\": false}};window.FORM_GROUPS=[{name:'role',label:'立場'}];window.FORM_CHECKS=['agree'];window.FORM_STEPWISE=true;window.FORM_SCOPE='#f';window.FORM_SUBMIT='#send';window.FORM_NEXT='#next';window.FORM_DONE_LABEL='進むボタンへ ›';</script>" + "<script>(function(){var D=" + json.dumps(D, ensure_ascii=False) + r""";
 var L=['立場','相談の内容','ご連絡先','確認'],st=0,f=document.getElementById('f'),secs=f.querySelectorAll('section[data-step]'),lis=document.querySelectorAll('#steps li'),err=document.getElementById('err'),t0=Date.now(),sending=false;
 var SENS=/(病名|診断|症状|要介護|服薬|薬の名前|障害名|既往歴|検査結果|血圧|マイナンバー|個人番号|口座番号|カード番号|\d{4}[-\s]?\d{4}[-\s]?\d{4})/;
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -1327,8 +1333,10 @@ function one(n){return vals(n)[0]||''}
 var q=new URLSearchParams(location.search),preR=q.get('role')||'',preP=q.get('p')||'',preS=q.get('s')||'';
 if(preP==='youbou'||preP==='kyoryoku'){location.replace('../kyoryoku/'+(preP==='youbou'?'youbou.html'+(preS?'?s='+encodeURIComponent(preS):''):'teikei.html'));return}
 document.getElementById('o0').innerHTML=D.roles.map(function(r){return opt('radio','role',r.id,r.name,r.short,r.id===preR)}).join('')+opt('radio','role','none','分からない・近いものがない','立場を決めずに相談できます',false);
-var C=makeCascade({tree:{},box:'cats',add:'addCat',prefix:'c',title:'相談の内容',max:3,optional:true,labels:['大分類','中分類','小分類','詳細'],ph:'例：来月から夜勤が増えるのが不安'}),curR=null,preDone=false;
-function ensureTree(){var r=one('role')||'none';if(r===curR)return;curR=r;C.reset(D.trees[r]||D.trees.none);
+var CO={tree:{},box:'cats',add:'addCat',prefix:'c',title:'相談の内容',max:3,optional:true,labels:['大分類','中分類','小分類','詳細'],ph:''},C=makeCascade(CO),curR=null,preDone=false;
+function ensureTree(){var r=one('role')||'none';if(r===curR)return;curR=r;var ex=D.ex[r]||D.ex.none;CO.ph=ex[0];var mm=document.getElementById('memo');if(mm)mm.placeholder=ex[1];
+ var H=window.FORM_HELP||{};for(var k=1;k<=3;k++){H['c'+k+'d']={t:'くわしく伝えたいことがあれば書きます（空のままでも進めます）。',ex:ex[0]};if(k>1){H['c'+k+'a']={t:'大分類を選びます。選ばなくても進めます。'};H['c'+k+'b']={t:'中分類を選びます（大分類を選ぶと出てきます）。'};H['c'+k+'c']={t:'小分類を選びます（中分類を選ぶと出てきます）。'}}}if(H.memo)H.memo.ex=ex[1]+'　※病名・症状・番号は書かないでください';
+ C.reset(D.trees[r]||D.trees.none);
  if(!preDone){preDone=true;var T=D.trees[r]||D.trees.none;if(preP==='nyukai'){for(var a in T)if(T[a]['入会の相談'])C.preset(a,'入会の相談')}else if(preS&&D.sup[preS]){var nm=D.sup[preS].name;for(var a2 in T)if(T[a2][nm]){C.preset(a2,nm);break}}}}
 function roleName(){var r=one('role');if(r==='none')return'分からない・近いものがない';var x=D.roles.filter(function(y){return y.id===r})[0];return x?x.name:''}
 function firstBig(){var f=C.firsts();return f[0]||'相談'}
