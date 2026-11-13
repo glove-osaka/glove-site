@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """医療介護総合支援会サイトの生成。家じまい相談窓口と同じ設計（CSS・部品）を使い、色だけ医療向けに替える。"""
 import os, re, json, html, shutil
-from data import SITE, ROLES, STATUS, CATS, SUP, PURPOSES, FAQ, ROLE_FAQ, ROLE_CASES, HOUSING, NEWS, PARTNER_TAX
+from data import SITE, ROLES, STATUS, CATS, SUP, PURPOSES, FAQ, ROLE_FAQ, ROLE_CASES, HOUSING, NEWS, PARTNER_TAX, CONTACT_SUB, CONTACT_SPECIAL, CONTACT_GROUPS
 # フォームの送り先：支援会専用の受付（keiyaku_config.js の KEIYAKU_API_URL）が設定されたら、そちらへ切り替える
 _k = re.search(r'KEIYAKU_API_URL = "([^"]*)"', open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "keiyaku_config.js"), encoding="utf-8").read())
 if _k and _k.group(1):
@@ -977,7 +977,7 @@ f.addEventListener('submit',function(e){e.preventDefault();if(sending||!check())
 CASCADE_JS = r"""<script>(function(){
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function opts(list,ph){return '<option value="">'+ph+'</option>'+list.map(function(x){return '<option>'+esc(x)+'</option>'}).join('')}
-window.makeCascade=function(o){var T=o.tree,box=document.getElementById(o.box),add=document.getElementById(o.add),n=0,P=o.prefix,L=o.labels;
+window.makeCascade=function(o){var T=o.tree||{},box=document.getElementById(o.box),add=document.getElementById(o.add),n=0,P=o.prefix,L=o.labels;
  function row(){if(n>=o.max)return;n++;var i=n,d=document.createElement('div');d.className='area-row';
   d.innerHTML='<div class="area-h"><b>'+o.title+' '+i+'</b>'+(i>1?'<button type="button" class="small-btn" data-del>この'+o.title+'を消す</button>':'')+'</div>'+
   '<div class="area-g"><div class="fld"><label for="'+P+i+'a">'+L[0]+(i===1||o.allReq?' <span class="req">必須</span>':'')+'</label><select id="'+P+i+'a">'+opts(Object.keys(T),'選んでください')+'</select></div>'+
@@ -993,7 +993,11 @@ window.makeCascade=function(o){var T=o.tree,box=document.getElementById(o.box),a
  function list(){return Array.prototype.map.call(box.querySelectorAll('.area-row'),function(r){var g=function(s){var e=r.querySelector('[id^="'+P+'"][id$="'+s+'"]');return e?String(e.value||'').trim():''};return{a:g('a'),b:g('b'),c:g('c'),d:g('d'),ids:['a','b','c','d'].map(function(s){return r.querySelector('[id^="'+P+'"][id$="'+s+'"]')})}})}
  return{check:function(){var Ls=list();for(var k=0;k<Ls.length;k++){var x=Ls[k],lab=o.title+' '+(k+1)+'の';if(!x.a&&k>0&&!x.d)continue;if(!x.a)return[lab+L[0]+'を選んでください。',x.ids[0]];if(!x.b)return[lab+L[1]+'を選んでください。',x.ids[1]];if(!x.c)return[lab+L[2]+'を選んでください。',x.ids[2]]}return null},
   rows:function(){return list().filter(function(x){return x.a}).map(function(x,k){return[o.title+' '+(k+1),x.a+' ＞ '+x.b+' ＞ '+x.c+(x.d?'\n　'+L[3]+'：'+x.d:'')]})},
-  firsts:function(){var r=[];list().forEach(function(x){if(x.a&&r.indexOf(x.a)<0)r.push(x.a)});return r}}};
+  firsts:function(){var r=[];list().forEach(function(x){if(x.a&&r.indexOf(x.a)<0)r.push(x.a)});return r},
+  mids:function(){var r=[];list().forEach(function(x){if(x.b&&r.indexOf(x.b)<0)r.push(x.b)});return r},
+  items:function(){return list().filter(function(x){return x.a})},
+  reset:function(t){T=t||{};box.innerHTML='';n=0;row()},
+  preset:function(a,b){var A=box.querySelector('select');if(!A||!T[a])return;A.value=a;A.onchange();if(b){var M=box.querySelectorAll('select')[1];M.value=b;M.onchange()}}}};
 })();</script>"""
 
 
@@ -1263,7 +1267,18 @@ def build_contact():
          "purposes": [{"id": a, "name": b, "short": c} for a, b, c in PURPOSES],
          "sup": {k: {"name": s["name"], "short": s["short"]} for k, s in SUP.items()},
          "endpoint": SITE["endpoint"], "site": SITE["name"], "mail": SITE["mail"]}
-    body = ph("相談を送る（ウェブ総合受付）", "立場と目的を選び、必要な範囲で内容を送ってください。全部で6つの段階です。", [("相談を送る", None)], "head-5.jpg", "chat") + f'''
+    trees = {}
+    for rid, groups in CONTACT_GROUPS.items():
+        t = {}
+        for big, keys in groups:
+            t[big] = {}
+            for k in keys:
+                if k in CONTACT_SPECIAL: t[big][CONTACT_SPECIAL[k][0]] = CONTACT_SPECIAL[k][1]
+                else: t[big][SUP[k]["name"]] = CONTACT_SUB[k]
+        trees[rid] = t
+    D["trees"] = trees
+    D["supNames"] = [s["name"] for s in SUP.values()]
+    body = ph("相談を送る（ウェブ総合受付）", "立場を選び、相談の内容を選ぶだけで送れます。全部で4つの段階です。", [("相談を送る", None)], "head-5.jpg", "chat") + f'''
 <div class="wrap" style="padding-block:56px 88px;max-width:960px">
 {acc("chat", "受付の方法・返信・対応地域", "ウェブ受付は24時間。LINE・電話は準備中", f"""<div class="contact-box"><dl>
 <dt>ウェブ受付</dt><dd>このページから24時間受け付けています。</dd>
@@ -1272,19 +1287,19 @@ def build_contact():
 <dt>LINE・電話</dt><dd>相談窓口は準備中です。受付方法のご案内は、運営会社（{SITE["tel"]}　{SITE["tel_hours"]}）でも承ります。</dd>
 <dt>対応地域</dt><dd>{SITE["area"]}</dd></dl></div>""", aid="toiawase")}
 {SAFETY}
-<ol class="steps" id="steps" aria-hidden="true" style="margin-top:30px"><li data-i="0">立場</li><li data-i="1">目的</li><li data-i="2">分野</li><li data-i="3">内容</li><li data-i="4">ご連絡先</li><li data-i="5">確認</li></ol>
+<ol class="steps" id="steps" aria-hidden="true" style="margin-top:30px"><li data-i="0">立場</li><li data-i="1">相談の内容</li><li data-i="2">ご連絡先</li><li data-i="3">確認</li></ol>
 <form class="form-card" id="f" novalidate>
 <p class="stepnow" id="stepnow"></p>
 <section data-step="0"><h2>あなたの立場を選んでください</h2><p class="hint">いちばん近いものを1つ選んでください。</p><div class="opts radio-opts" id="o0"></div></section>
-<section data-step="1" hidden><h2>目的を選んでください</h2><p class="hint">いちばん近いものを1つ選んでください。</p><div class="opts radio-opts" id="o1"></div></section>
-<section data-step="2" hidden><h2>関係する内容を選んでください</h2><p class="hint">当てはまるものを、いくつでも選べます。分からなければ、そのまま「次へ進む」を押してください。</p><div class="opts" id="o2"></div></section>
-<section data-step="3" hidden><h2>相談の内容</h2><p class="hint">必要な範囲でお書きください。病名・症状・服薬・要介護度・障害名・マイナンバー・口座番号・カード番号は書かないでください。</p>
-<div class="fld"><label for="memo">内容（1,000文字まで）</label><textarea id="memo" maxlength="1000" placeholder="例：夜勤の負担が大きく、続けられるか迷っています。相談できる先を知りたいです。"></textarea><p class="fine" id="cnt" aria-live="polite">0 / 1,000文字</p><p class="warn-inline" id="sens" hidden>病気や体の状態、番号などの情報が含まれている可能性があります。送る前に、その部分を消してください。</p></div><p class="hint" style="margin-top:22px"><b>状況（分かる範囲で。選ばなくても進めます）</b></p>
+<section data-step="1" hidden><h2>相談の内容を選んでください</h2><p class="hint">上から順に、<b>大分類 → 中分類 → 小分類</b>の近いものを選んでください。くわしく伝えたいことがあれば「詳細」に書けます（書かなくても進めます）。ほかにも相談したいことがあれば「＋ 相談の内容を追加」で3つまで選べます。</p>
+<div id="cats"></div><button type="button" class="btn btn-o" id="addCat" style="margin-top:6px">＋ 相談の内容を追加</button>
+<p class="hint" style="margin-top:26px">病名・症状・服薬・要介護度・障害名・マイナンバー・口座番号・カード番号は書かないでください。</p>
+<div class="fld"><label for="memo">そのほか伝えたいこと（任意・1,000文字まで）</label><textarea id="memo" maxlength="1000" placeholder="例：来月から夜勤が増えるので、早めに相談したいです。"></textarea><p class="fine" id="cnt" aria-live="polite">0 / 1,000文字</p><p class="warn-inline" id="sens" hidden>病気や体の状態、番号などの情報が含まれている可能性があります。送る前に、その部分を消してください。</p></div><p class="hint" style="margin-top:22px"><b>状況（分かる範囲で。選ばなくても進めます）</b></p>
 <div class="fld"><label for="when">ご希望の時期</label><select id="when"><option value="">選んでください</option><option>まず情報を知りたい</option><option>1か月以内に相談したい</option><option>3か月以内</option><option>利用・協力を検討している</option><option>時期は決まっていない</option></select></div>
 <div class="fld"><label for="pref">都道府県</label><select id="pref"><option value="">選んでください</option><option>大阪府</option><option>兵庫県</option><option>京都府</option><option>奈良県</option><option>滋賀県</option><option>和歌山県</option><option>その他の地域</option></select></div>
 <div class="fld"><label for="want">希望する対応</label><select id="want"><option value="">選んでください</option><option>相談内容を整理してほしい</option><option>使える支援・制度を知りたい</option><option>サービスの利用条件を知りたい</option><option>専門家・提携先につないでほしい</option><option>まだ分からない</option></select></div>
 <p class="note-box">命や体に関わる緊急のときは、この受付ではなく119番・110番へご連絡ください。</p></section>
-<section data-step="4" hidden><h2>ご連絡先</h2><p class="hint">返信に使います。</p>
+<section data-step="2" hidden><h2>ご連絡先</h2><p class="hint">返信に使います。</p>
 <fieldset class="fld" style="border:0;padding:0;margin:0 0 20px"><legend style="font-weight:700;font-size:1.08rem;margin-bottom:8px">お名前の扱い</legend><div class="opts radio-opts"><label><input type="radio" name="anon" value="伏せる"><span>名前・事業所名を伏せて相談<small>返信用のメールアドレスは必要です</small></span></label><label><input type="radio" name="anon" value="伝える" checked><span>名前を伝えて相談<small>返信の宛名に使います</small></span></label></div></fieldset>
 <div class="fld" id="nmwrap"><label for="nm">お名前</label><input id="nm" type="text" autocomplete="name" maxlength="60"></div>
 <div class="fld" id="cowrap"><label for="co">事業所名・会社名（企業・事業者の方、協力のお申し出の方）</label><input id="co" type="text" autocomplete="organization" maxlength="80"></div>
@@ -1292,7 +1307,7 @@ def build_contact():
 <div class="fld"><label for="tel">電話番号（任意）</label><input id="tel" type="tel" autocomplete="tel" inputmode="tel" maxlength="20"></div>
 <label class="agree" for="agree"><input type="checkbox" id="agree"><span><a href="{{p}}privacy/index.html" target="_blank" rel="noopener">個人情報の取り扱い</a>（別の画面で開きます）を読み、同意します。</span></label>
 <div class="hp" aria-hidden="true" style="position:absolute;left:-9999px"><label for="hpf">この欄は空のままにしてください</label><input id="hpf" type="text" tabindex="-1" autocomplete="off"></div></section>
-<section data-step="5" hidden><h2>内容のご確認</h2><p class="hint">この内容で送信します。修正するときは「前に戻る」を押してください。</p>
+<section data-step="3" hidden><h2>内容のご確認</h2><p class="hint">この内容で送信します。修正するときは「前に戻る」を押してください。</p>
 <dl class="sum" id="sum"></dl>
 <div class="btns" style="margin-top:22px"><button class="btn btn-p" type="submit" id="send">この内容で送信する</button><button class="btn btn-o" type="button" id="copy">内容を写し取る（コピー）</button></div>
 <p class="fine" id="copyMsg" style="margin-top:12px" role="status"></p></section>
@@ -1302,8 +1317,8 @@ def build_contact():
 <div id="done" hidden></div>
 <div style="margin-top:40px">{extra_doors("{p}")}</div>
 </div>'''
-    js = "<script>window.FORM_HELP={\"memo\": {\"t\": \"困っていること・知りたいことを、自由に書いてください。\", \"ex\": \"例：夜勤の負担が大きく、続けられるか迷っています。相談できる先を知りたいです。※病名・症状・番号は書かないでください\", \"req\": true}, \"when\": {\"t\": \"いつごろ相談したいかを選びます（空のままでも進めます）。\", \"req\": false}, \"pref\": {\"t\": \"お住まい・事業所のある都道府県を選びます（空のままでも進めます）。\", \"req\": false}, \"want\": {\"t\": \"支援会にしてほしいことに近いものを選びます（空のままでも進めます）。\", \"req\": false}, \"nm\": {\"t\": \"お名前を入れます。返信の宛名に使います。\", \"ex\": \"例：山田 花子　名前を伏せたいときは、上で「名前・事業所名を伏せて相談」を選んでください\", \"req\": true}, \"co\": {\"t\": \"事業所名・会社名を入れます（企業・事業者の方、協力のお申し出の方のみ）。\", \"ex\": \"例：○○デイサービス\", \"req\": false}, \"mail\": {\"t\": \"返信を受け取るメールアドレスです。\", \"ex\": \"例：yamada@example.jp　携帯のメールは、パソコンからのメールを受け取れる設定にしてください\", \"req\": true}, \"tel\": {\"t\": \"電話での連絡を希望するときだけ入れます。\", \"ex\": \"例：06-1234-5678\", \"req\": false}};window.FORM_GROUPS=[{name:'role',label:'立場'},{name:'purpose',label:'目的'}];window.FORM_CHECKS=['agree'];window.FORM_STEPWISE=true;window.FORM_SCOPE='#f';window.FORM_SUBMIT='#send';window.FORM_NEXT='#next';window.FORM_DONE_LABEL='進むボタンへ ›';</script>" + "<script>(function(){var D=" + json.dumps(D, ensure_ascii=False) + r""";
-var L=['立場','目的','分野','内容','ご連絡先','確認'],st=0,f=document.getElementById('f'),secs=f.querySelectorAll('section[data-step]'),lis=document.querySelectorAll('#steps li'),err=document.getElementById('err'),t0=Date.now(),sending=false;
+    js = CASCADE_JS + "<script>window.FORM_HELP={\"memo\": {\"t\": \"ほかに伝えておきたいことがあれば書きます（空のままでも進めます）。\", \"ex\": \"例：来月から夜勤が増えるので、早めに相談したいです。※病名・症状・番号は書かないでください\", \"req\": false}, \"c1a\": {\"t\": \"大分類を選びます。いちばん近いものを選んでください。\", \"req\": true}, \"c1b\": {\"t\": \"中分類を選びます（大分類を選ぶと出てきます）。\", \"req\": true}, \"c1c\": {\"t\": \"小分類を選びます（中分類を選ぶと出てきます）。\", \"req\": true}, \"c1d\": {\"t\": \"くわしく伝えたいことがあれば書きます（空のままでも進めます）。\", \"ex\": \"例：来月から夜勤が増えるのが不安\"}, \"when\": {\"t\": \"いつごろ相談したいかを選びます（空のままでも進めます）。\", \"req\": false}, \"pref\": {\"t\": \"お住まい・事業所のある都道府県を選びます（空のままでも進めます）。\", \"req\": false}, \"want\": {\"t\": \"支援会にしてほしいことに近いものを選びます（空のままでも進めます）。\", \"req\": false}, \"nm\": {\"t\": \"お名前を入れます。返信の宛名に使います。\", \"ex\": \"例：山田 花子　名前を伏せたいときは、上で「名前・事業所名を伏せて相談」を選んでください\", \"req\": true}, \"co\": {\"t\": \"事業所名・会社名を入れます（企業・事業者の方、協力のお申し出の方のみ）。\", \"ex\": \"例：○○デイサービス\", \"req\": false}, \"mail\": {\"t\": \"返信を受け取るメールアドレスです。\", \"ex\": \"例：yamada@example.jp　携帯のメールは、パソコンからのメールを受け取れる設定にしてください\", \"req\": true}, \"tel\": {\"t\": \"電話での連絡を希望するときだけ入れます。\", \"ex\": \"例：06-1234-5678\", \"req\": false}};window.FORM_GROUPS=[{name:'role',label:'立場'}];window.FORM_CHECKS=['agree'];window.FORM_STEPWISE=true;window.FORM_SCOPE='#f';window.FORM_SUBMIT='#send';window.FORM_NEXT='#next';window.FORM_DONE_LABEL='進むボタンへ ›';</script>" + "<script>(function(){var D=" + json.dumps(D, ensure_ascii=False) + r""";
+var L=['立場','相談の内容','ご連絡先','確認'],st=0,f=document.getElementById('f'),secs=f.querySelectorAll('section[data-step]'),lis=document.querySelectorAll('#steps li'),err=document.getElementById('err'),t0=Date.now(),sending=false;
 var SENS=/(病名|診断|症状|要介護|服薬|薬の名前|障害名|既往歴|検査結果|血圧|マイナンバー|個人番号|口座番号|カード番号|\d{4}[-\s]?\d{4}[-\s]?\d{4})/;
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function opt(type,name,val,label,sub,checked){return '<label><input type="'+type+'" name="'+name+'" value="'+esc(val)+'"'+(checked?' checked':'')+'><span>'+esc(label)+(sub?'<small>'+esc(sub)+'</small>':'')+'</span></label>'}
@@ -1312,38 +1327,39 @@ function one(n){return vals(n)[0]||''}
 var q=new URLSearchParams(location.search),preR=q.get('role')||'',preP=q.get('p')||'',preS=q.get('s')||'';
 if(preP==='youbou'||preP==='kyoryoku'){location.replace('../kyoryoku/'+(preP==='youbou'?'youbou.html'+(preS?'?s='+encodeURIComponent(preS):''):'teikei.html'));return}
 document.getElementById('o0').innerHTML=D.roles.map(function(r){return opt('radio','role',r.id,r.name,r.short,r.id===preR)}).join('')+opt('radio','role','none','分からない・近いものがない','立場を決めずに相談できます',false);
-document.getElementById('o1').innerHTML=D.purposes.map(function(p){return opt('radio','purpose',p.id,p.name,p.short,p.id===preP)}).join('');
+var C=makeCascade({tree:{},box:'cats',add:'addCat',prefix:'c',title:'相談の内容',max:3,labels:['大分類','中分類','小分類','詳細'],ph:'例：来月から夜勤が増えるのが不安'}),curR=null,preDone=false;
+function ensureTree(){var r=one('role')||'none';if(r===curR)return;curR=r;C.reset(D.trees[r]||D.trees.none);
+ if(!preDone){preDone=true;var T=D.trees[r]||D.trees.none;if(preP==='nyukai'){for(var a in T)if(T[a]['入会の相談'])C.preset(a,'入会の相談')}else if(preS&&D.sup[preS]){var nm=D.sup[preS].name;for(var a2 in T)if(T[a2][nm]){C.preset(a2,nm);break}}}}
 function roleName(){var r=one('role');if(r==='none')return'分からない・近いものがない';var x=D.roles.filter(function(y){return y.id===r})[0];return x?x.name:''}
-function purpName(){var p=one('purpose');var x=D.purposes.filter(function(y){return y.id===p})[0];return x?x.name:''}
-function build2(){var keep=vals('sup');if(!keep.length&&preS)keep=[preS];var r=one('role'),list=[];
- if(r&&r!=='none'){list=D.roles.filter(function(y){return y.id===r})[0].sup}else{list=Object.keys(D.sup)}
- document.getElementById('o2').innerHTML=list.map(function(k){return opt('checkbox','sup',k,D.sup[k].name,D.sup[k].short,keep.indexOf(k)>=0)}).join('')+opt('checkbox','sup','other','その他・まだ分からない','',keep.indexOf('other')>=0)}
+function firstBig(){var f=C.firsts();return f[0]||''}
 function v(id){return document.getElementById(id).value.trim()}
 function anon(){return one('anon')==='伏せる'}
-function rows(){return [['立場',roleName()],['目的',purpName()],['内容',vals('sup').map(function(k){return k==='other'?'その他・まだ分からない':D.sup[k].name}).join('、')],['時期',v('when')],['都道府県',v('pref')],['希望する対応',v('want')],['詳しい内容',v('memo')],['お名前の扱い',anon()?'伏せて相談':'伝えて相談'],['お名前',anon()?'（伏せる）':v('nm')],['事業所名',anon()?'（伏せる）':v('co')],['メール',v('mail')],['電話',v('tel')]]}
+function rows(){return [['立場',roleName()]].concat(C.rows()).concat([['時期',v('when')],['都道府県',v('pref')],['希望する対応',v('want')],['そのほか伝えたいこと',v('memo')],['お名前の扱い',anon()?'伏せて相談':'伝えて相談'],['お名前',anon()?'（伏せる）':v('nm')],['事業所名',anon()?'（伏せる）':v('co')],['メール',v('mail')],['電話',v('tel')]])}
 function build6(){document.getElementById('sum').innerHTML=rows().map(function(r){return '<div><dt>'+r[0]+'</dt><dd style="white-space:pre-line">'+(r[1]?esc(r[1]):'<span class="fine">未入力</span>')+'</dd></div>'}).join('')}
 function syncAnon(){var a=anon();document.getElementById('nmwrap').hidden=a;document.getElementById('cowrap').hidden=a}
 f.addEventListener('change',function(e){if(e.target.name==='anon')syncAnon()});
 var memo=document.getElementById('memo');memo.addEventListener('input',function(){document.getElementById('cnt').textContent=memo.value.length+' / 1,000文字';document.getElementById('sens').hidden=!SENS.test(memo.value)});
 function show(){secs.forEach(function(s,i){s.hidden=i!==st});lis.forEach(function(l,i){l.className=i<st?'done':i===st?'on':''});
- document.getElementById('stepnow').textContent='全6段階のうち '+(st+1)+' 段階め（'+L[st]+'）';
- document.getElementById('back').style.visibility=st?'visible':'hidden';document.getElementById('next').hidden=st===5;err.hidden=true;
- if(st===2)build2();if(st===4)syncAnon();if(st===5)build6();
+ document.getElementById('stepnow').textContent='全4段階のうち '+(st+1)+' 段階め（'+L[st]+'）';
+ document.getElementById('back').style.visibility=st?'visible':'hidden';document.getElementById('next').hidden=st===3;err.hidden=true;
+ if(st===1)ensureTree();if(st===2)syncAnon();if(st===3)build6();
  var t=document.getElementById('steps').getBoundingClientRect().top;if(t<0)window.scrollBy(0,t-140)}
 function need(m){err.textContent=m;err.hidden=false;return false}
 function ok(){if(st===0&&!one('role'))return need('立場を1つ選んでから、「次へ進む」を押してください。');
- if(st===1&&!one('purpose'))return need('目的を1つ選んでから、「次へ進む」を押してください。');
- if(st===3){if(!v('memo'))return need('内容を書いてから、「次へ進む」を押してください。');if(SENS.test(v('memo')))return need('病気や体の状態、番号などの情報が含まれている可能性があります。その部分を消してから進んでください。')}
- if(st===4){var m=v('mail');if(!anon()&&!v('nm'))return need('お名前を入力してください。名前を伏せる場合は「名前・事業所名を伏せて相談」を選んでください。');if(!m)return need('返信先のメールアドレスを入力してください。');if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m))return need('メールアドレスの形をご確認ください（例：name@example.jp）。');if(!document.getElementById('agree').checked)return need('個人情報の取り扱いを読み、同意の欄に印を付けてください。')}return true}
+ if(st===1){var cc=C.check();if(cc){need(cc[0]);try{cc[1].focus()}catch(x){}return false}
+  var its=C.items(),alltxt=v('memo')+its.map(function(x){return x.d}).join(' ');
+  if(its.some(function(x){return x.c==='その他'&&!x.d})&&!v('memo'))return need('小分類で「その他」を選んだときは、「詳細」か「そのほか伝えたいこと」に内容を書いてください。');
+  if(SENS.test(alltxt))return need('病気や体の状態、番号などの情報が含まれている可能性があります。その部分を消してから進んでください。')}
+ if(st===2){var m=v('mail');if(!anon()&&!v('nm'))return need('お名前を入力してください。名前を伏せる場合は「名前・事業所名を伏せて相談」を選んでください。');if(!m)return need('返信先のメールアドレスを入力してください。');if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m))return need('メールアドレスの形をご確認ください（例：name@example.jp）。');if(!document.getElementById('agree').checked)return need('個人情報の取り扱いを読み、同意の欄に印を付けてください。')}return true}
 document.getElementById('next').addEventListener('click',function(){if(ok()){st++;show()}});
 document.getElementById('back').addEventListener('click',function(){if(st>0){st--;show()}});
 function txt(){return '【'+D.site+' 受付内容】\n'+rows().map(function(r){return r[0]+'：'+(r[1]||'未入力')}).join('\n')}
 function receipt(){var d=new Date(),p=function(n){return String(n).padStart(2,'0')},a=new Uint8Array(3);crypto.getRandomValues(a);return 'IK-'+String(d.getFullYear()).slice(2)+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())+Array.prototype.map.call(a,function(x){return(x%36).toString(36)}).join('').toUpperCase()}
-f.addEventListener('submit',function(e){e.preventDefault();if(sending||st!==5)return;
+f.addEventListener('submit',function(e){e.preventDefault();if(sending||st!==3)return;
  if(document.getElementById('hpf').value){need('送信できませんでした。メールでご連絡ください。');return}
  sending=true;var b=document.getElementById('send');b.disabled=true;b.textContent='送信しています…';
- var rec={no:receipt(),ts:new Date().toISOString(),entry:D.site,name:anon()?'（名前を伏せた相談）':v('nm'),company:anon()?'':v('co'),email:v('mail'),tel:v('tel')||'（未入力）',cat:'medical',method:'メール',body:txt(),agree:true,share:false,status:'新規受付',memo:'',fields:vals('sup').map(function(k){return k==='other'?'その他・まだ分からない':D.sup[k].name}),purpose:purpName(),role:roleName()};
- fetch(D.endpoint,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({kind:'inbox'},rec,{elapsed:Date.now()-t0,catLabel:D.site+'：'+roleName()+'／'+purpName()}))})
+ var rec={no:receipt(),ts:new Date().toISOString(),entry:D.site,name:anon()?'（名前を伏せた相談）':v('nm'),company:anon()?'':v('co'),email:v('mail'),tel:v('tel')||'（未入力）',cat:'medical',method:'メール',body:txt(),agree:true,share:false,status:'新規受付',memo:'',fields:C.mids().map(function(m){return D.supNames.indexOf(m)>=0?m:'その他・まだ分からない'}).filter(function(x,i,a){return a.indexOf(x)===i}),purpose:firstBig(),role:roleName()};
+ fetch(D.endpoint,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({kind:'inbox'},rec,{elapsed:Date.now()-t0,catLabel:D.site+'：'+roleName()+'／'+firstBig()}))})
  .then(function(r){return r.json()}).then(function(j){if(!j||j.ok!==true)throw new Error('not_saved');
   f.hidden=true;document.getElementById('steps').hidden=true;var d=document.getElementById('done');d.hidden=false;
   d.innerHTML='<div class="done-box" role="status"><b>受け付けました</b><p>受付番号：'+esc(j.no||rec.no)+'</p><p>'+esc('受付後、原則として3営業日以内に、ご入力のメールアドレスへご返信します。')+'</p><p class="fine">返信が届かない場合は、迷惑メールのフォルダをご確認のうえ、'+esc(D.mail)+' までご連絡ください。</p></div>';
@@ -1352,9 +1368,9 @@ f.addEventListener('submit',function(e){e.preventDefault();if(sending||st!==5)re
 document.getElementById('copy').addEventListener('click',function(){var m=document.getElementById('copyMsg');
  function fb(){var r=document.createRange();r.selectNodeContents(document.getElementById('sum'));var s=getSelection();s.removeAllRanges();s.addRange(r);m.textContent='内容を選択しました。コピーしてお使いください。'}
  try{navigator.clipboard.writeText(txt()).then(function(){m.textContent='写し取りました（コピーしました）。'},fb)}catch(e){fb()}});
-if(preR){st=preP?2:1}show();
+if(preR){st=1}show();
 })();</script>"""
-    page("contact/index.html", "相談を送る", "医療介護総合支援会のウェブ総合受付。立場と目的を選び、相談・支援情報の問い合わせ・要望・協力の申し出を送れます。名前を伏せた相談もできます。",
+    page("contact/index.html", "相談を送る", "医療介護総合支援会のウェブ総合受付。立場を選び、相談の内容を大分類・中分類・小分類から選ぶだけで送れます。名前を伏せた相談もできます。",
          "<main id=\"main\">" + body + "</main>", cur="", extra_js=js)
 
 def build_404():
