@@ -34,11 +34,11 @@
 | プロジェクト | 「医療介護総合支援会 電子契約・受付」（ikshienkai@gmail.com のApps Script） |
 | お客様用（全員） | https://script.google.com/macros/s/AKfycbznp_C6UEbTjF6rrYOs6cdVItyAaOtWtMZzl34-Ao5ZAfkMyzjS5GHWAQhsuR0BbV3z/exec |
 | 管理画面用（自分のみ） | https://script.google.com/macros/s/AKfycbwZUSCmvDZyNJfqeAUNcGGj3z6j2HxwIi8MpBLpqcBGjn_cIuZxU7BMs2ygwcx58hkH/exec?admin=1 |
-| 公開の版 | 両方ともバージョン6（2026/11/13・119cm.net 対応） |
+| 公開の版 | 両方ともバージョン7（2026/11/13・パスワード再設定を追加） |
 | 台帳 | ドライブ「医療介護総合支援会 電子契約（台帳）」：シート 契約／受付／振分け設定／対応履歴 |
 | 自動の確認 | alertCheck が1時間ごと（遅れている案件を NOTIFY_TO へメール） |
 | 設定（スクリプト プロパティ） | ADMIN_ID / ADMIN_PASS_HASH・SALT / ADMIN_EMAILS / NOTIFY_TO / BANK_INFO / SHEET_ID / FOLDER_ID / SIGN_URL |
-| パスワードを忘れたら | ADMIN_PASS に新しいパスワードを入れて保存 → 次のログインで暗号化され自動で消える |
+| パスワードを忘れたら | ログイン画面の「ID・パスワードを忘れたとき」→ 登録メールに届くIDと確認コードで決め直す（予備：ADMIN_PASS に新しいパスワードを入れて保存） |
 
 ## サイトでできること（公開中）
 - 立場別の入口・支援メニュー・相談フォーム（6段階）・高齢者虐待の相談先検索・オープニング動画
