@@ -1405,6 +1405,9 @@ if __name__ == "__main__":
             shutil.rmtree(pth) if os.path.isdir(pth) else os.remove(pth)
     build_top(); build_about(); build_roles(); build_support(); build_status(); build_member(); build_kiyaku(); build_tokushoho(); build_apply(); build_flow(); build_faq()
     build_kyoryoku(); build_soudan(); build_company(); build_legal(); build_contact(); build_404(); build_sitemap()
+    # 自動メールの送信口（Apps Script → ここ → Xサーバーから info@119cm.net で送る）。元は medical-src/api_mail.php
+    os.makedirs(OUT + "/api", exist_ok=True)
+    shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), "api_mail.php"), OUT + "/api/mail.php")
     # Xサーバー用：404ページの住所の基準、.htaccess、robots.txt
     _p404 = os.path.join(OUT, "404.html")
     if os.path.exists(_p404):
