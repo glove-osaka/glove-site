@@ -23,6 +23,16 @@ css += """
 .tabs{display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap}.tab{min-height:50px;padding:0 20px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
 .tab.on{border-color:var(--pine);background:var(--pine);color:var(--on-pine)}.cnt{display:inline-block;margin-left:8px;min-width:24px;padding:0 7px;border-radius:12px;background:#B3261E;color:#fff;font-size:.85rem}
 .filters{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:14px}.filters label{display:flex;gap:8px;align-items:center;font-weight:700}.filters select,.filters input{min-height:44px;width:auto}
+.todo{border:3px solid var(--pine)}.todo-h{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-bottom:6px}.todo-h h2{margin:0}.todo-h .small-btn{margin-left:auto}
+.todo-l{margin:8px 0 0;padding-left:0;list-style:none;counter-reset:t}.todo-l li{counter-increment:t;display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:10px 0;border-top:1px solid var(--line)}
+.todo-l li:before{content:counter(t);flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--pine);color:#fff;font-weight:700}.todo-l li.red:before{background:#B3261E}.todo-l li.ok:before{content:"✓";background:#2E7D4F}
+.todo-l li span{flex:1 1 260px}.todo-l li small{display:block;color:var(--muted);font-size:.88rem}.todo-l li button{min-height:44px}
+.howto{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:0 16px;margin-bottom:14px}.howto summary{min-height:48px;display:flex;align-items:center;font-weight:700;cursor:pointer;color:var(--pine)}.howto summary:before{content:"？";display:grid;place-items:center;width:26px;height:26px;margin-right:8px;border-radius:50%;background:var(--pine);color:#fff;font-size:.9rem}
+.howto ol{padding-left:22px;margin:0 0 12px;line-height:1.8}.howto table{margin-bottom:10px}
+.tour-ov{position:fixed;inset:0;z-index:80}.tour-hl{position:fixed;z-index:81;border-radius:12px;box-shadow:0 0 0 4px #C99A45,0 0 0 9999px rgba(0,0,0,.55);transition:all .25s;pointer-events:none}
+.tour-tx{position:fixed;z-index:82;width:min(380px,calc(100% - 24px));background:var(--surface);color:var(--ink);border-radius:14px;padding:16px 18px;box-shadow:0 8px 30px rgba(0,0,0,.35);line-height:1.7}
+.tour-tx b{display:block;font-size:1.08rem;margin-bottom:4px}.tour-tx .tn{color:var(--muted);font-size:.85rem}.tour-tx .bt{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}.tour-tx .bt button{min-height:44px}
+.flash{outline:4px solid #C99A45;outline-offset:3px;border-radius:12px}
 .alertbar{background:#FBEBEB;color:#7a1712;border:2px solid #B3261E;border-radius:12px;padding:12px 16px;margin-bottom:14px;font-weight:700}
 .sum{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.sum button{min-height:56px;padding:6px 14px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;text-align:left}.sum button b{display:block;font-size:1.3rem}.sum button.red{border-color:#B3261E;color:#B3261E}
 .bar{display:flex;gap:3px;margin:8px 0}.bar i{flex:1;height:8px;border-radius:4px;background:var(--line)}.bar i.on{background:var(--pine)}.bar.stop i.on{background:#888}
@@ -182,7 +192,7 @@ CLIENT = HEAD("電子契約") + f'''
 <div id="fields"></div>
 <div class="fld" id="idBox" hidden>
 <label for="idFile">本人確認書類の写真<span class="req">必須</span></label>
-<p class="hint">運転免許証・マイナンバーカード（表面のみ）・保険証などを、スマホで撮影するか、写真を選んでください。</p>
+<p class="hint">運転免許証・マイナンバーカード（<b>表面のみ</b>。裏面は撮らないでください）・パスポートのどれか1つを、スマホで撮影するか、写真を選んでください。</p>
 <input type="file" id="idFile" accept="image/*" capture="environment">
 <img id="idPrev" class="idprev" alt="添付した本人確認書類" hidden>
 </div>
@@ -302,7 +312,7 @@ $('dl').addEventListener('click',function(){{$('err4').textContent='';if(pdf){{s
 </body>
 </html>
 '''
-open(os.path.join(OUT, "index.html"), "w", encoding="utf-8").write(CLIENT)
+open(os.path.join(OUT, "index.html"), "w", encoding="utf-8").write(CLIENT.replace("</body>", "<script>window.FORM_HELP={\"code\": {\"t\": \"メールに届いた6けたの数字を入れて、「確認する」を押します。\", \"ex\": \"届かないときは、迷惑メールのフォルダも見てください。10分たっても届かなければ、もう一度送ってください\", \"req\": true}, \"f_company\": {\"t\": \"事業所名・法人名を、正式な名前で入れます。\", \"ex\": \"例：株式会社○○\"}, \"f_address\": {\"t\": \"住所を、都道府県から入れます。\", \"ex\": \"例：大阪府大阪市○○区○○1-2-3\"}, \"f_rep\": {\"t\": \"代表者のお名前を入れます。\", \"ex\": \"例：山田 太郎\"}, \"f_name\": {\"t\": \"お名前を入れます。\", \"ex\": \"例：山田 花子\"}, \"f_kana\": {\"t\": \"お名前のふりがなを、ひらがなで入れます。\", \"ex\": \"例：やまだ はなこ\"}, \"f_title\": {\"t\": \"役職を入れます。\", \"ex\": \"例：施設長、事務長\"}, \"f_phone\": {\"t\": \"日中につながる電話番号を入れます。\", \"ex\": \"例：06-1234-5678\"}, \"f_birth\": {\"t\": \"生年月日を選びます。\", \"ex\": \"18歳以上の方が登録できます\"}, \"f_bank\": {\"t\": \"紹介料の振込先です。5つをまとめて書いてください。\", \"ex\": \"例：○○銀行 ○○支店 普通 1234567 ヤマダ ハナコ\"}, \"sealName\": {\"t\": \"印に入れる名字です（4文字まで）。\", \"ex\": \"自動で入っています。変えたいときだけ直してください\", \"req\": false}};window.FORM_NOBAR=true;</script>\n<script src=\"../assets/guide.js\" data-mode=\"site\"></script>\n</body>", 1))
 
 # ---------- 管理画面（サイト版：お試し表示と、Googleアカウントでの入口） ----------
 ADMIN_BODY = f'''
@@ -337,8 +347,14 @@ ADMIN_BODY = f'''
 
 <div id="panel" hidden>
 <p style="text-align:right;margin:0 0 10px"><button type="button" class="small-btn" id="logout">ログアウト</button></p>
+<section class="card todo" id="todo"><div class="todo-h"><h2>今やること</h2><span class="hint" id="todoAt"></span><button type="button" class="small-btn" id="tourBtn">はじめての方へ：操作の案内</button></div><ol class="todo-l" id="todoList"><li class="hint">読み込み中…</li></ol></section>
 <nav class="tabs" role="tablist"><button type="button" role="tab" class="tab on" data-v="inbox">案件管理<span class="cnt" id="newCnt" hidden></span></button><button type="button" role="tab" class="tab" data-v="keiyaku">電子契約</button><button type="button" role="tab" class="tab" data-v="route">振分け設定</button><button type="button" class="small-btn" id="snd" aria-pressed="true" style="margin-left:auto">警告音：オン</button></nav>
 <div data-view="inbox">
+<details class="howto" id="howInbox"><summary>この画面の使い方（案件管理）</summary><div>
+<ol><li><b>赤い印の案件から</b>対応します。新しい受付ほど上に出ます。</li><li>案件の「受付の内容を見る」を押して、内容を読みます。</li><li>読んだら「状態」を進め、「振分け先」「担当」「次の対応予定日」を入れて<b>「保存」</b>を押します。</li><li>お客様に伝えることがあれば「お客様へ報告を作る」を押します。文面は自動で作られます。<b>送るかどうかは自分で決めます</b>（電話で伝えた・今回は送らない、も選べます）。</li><li>上の数字のボタンを押すと、その状態の案件だけを表示します。</li></ol>
+<table class="list"><thead><tr><th>状態</th><th>この状態にするとき</th></tr></thead><tbody>
+<tr><td>新規受付</td><td>サイトから届いたまま（まだ読んでいない）</td></tr><tr><td>内容確認中</td><td>内容を読んだ。お客様に確認している</td></tr><tr><td>振分け済み</td><td>どの提携先に任せるか決めた</td></tr><tr><td>提携先対応中</td><td>提携先がお客様とやりとりしている</td></tr><tr><td>提案・見積り中</td><td>お客様が提案や見積りを検討している</td></tr><tr><td>完了</td><td>対応が終わった</td></tr><tr><td>見送り</td><td>お客様の都合などで進めない</td></tr></tbody></table>
+<p class="hint">放っておくと警告が出ます：新規受付のまま24時間／動きがないまま3日（黄）・7日（赤）／予定日を過ぎた／お客様へ7日報告なし。</p></div></details>
 <div class="alertbar" id="alertBar" hidden></div>
 <div class="sum" id="sum"></div>
 <section class="card">
@@ -348,6 +364,7 @@ ADMIN_BODY = f'''
 </section>
 </div>
 <div data-view="route" hidden>
+<details class="howto"><summary>この画面の使い方（振分け設定）</summary><div><ol><li>左の「分野」は、お客様がサイトで選ぶ項目です。</li><li>右の欄に、その分野を任せる提携企業・専門家の名前を入れます。複数のときは「、」で区切ります。</li><li>いちばん下の「振分け設定を保存する」を押します。</li><li>以後の新しい受付には、ここで決めた先が自動で入ります。</li></ol></div></details>
 <section class="card">
 <h2>振分け設定</h2>
 <p class="hint">お客様がサイトで選んだ分野ごとに、どの提携企業・専門家へ振り分けるかを決めます。新しい受付には、ここで決めた先（複数のときは最初の先）が自動で入ります。案件ごとに変えることもできます。複数の先は「、」で区切ってください。</p>
@@ -366,6 +383,7 @@ ADMIN_BODY = f'''
 <div class="btns"><button class="btn" type="button" id="rpSend">メールで送る</button><button class="btn o" type="button" id="rpPhone">電話で伝えた（記録する）</button><button class="btn o" type="button" id="rpSkip">今回は送らない</button><button class="small-btn" type="button" id="rpAlt">別の言い回しで作り直す</button></div>
 </div></div>
 <div data-view="keiyaku" hidden>
+<details class="howto"><summary>この画面の使い方（電子契約）</summary><div><ol><li>サイトの会員登録は、お客様が申し込むと<b>自動で契約書が作られます</b>。ここで送る必要はありません。</li><li>相手が承認すると「締結済み」になり、振込のご案内が自動で届きます。</li><li>通帳などで入金を確かめたら、その行の<b>「入金を確認した」</b>を押します。会員登録完了のメールが自動で届きます。</li><li>相手がまだ承認していないときは「もう一度送る」で案内を送り直せます。</li><li>協賛会員（審査あり）や、個別の契約書は、下の「契約書を送る」から作って送ります。</li></ol></div></details>
 <section class="card">
 <h2>送った契約書の一覧</h2>
 <div class="tbl"><table class="list"><thead><tr><th>契約番号</th><th>種類</th><th>相手</th><th>状態</th><th>送った日</th><th>操作</th></tr></thead><tbody id="rows"><tr><td colspan="6">読み込み中…</td></tr></tbody></table></div>
@@ -441,16 +459,16 @@ $('doIssue').addEventListener('click',function(){var b=this,p=payload();
  b.disabled=true;$('errI').textContent='';$('issued').hidden=true;
  api('admin.issue',p).then(function(r){$('issued').hidden=false;$('issued').innerHTML='送りました（契約番号 '+esc(r.id)+'）。<br>相手の画面：<a href="'+esc(r.url)+'" target="_blank" rel="noopener">'+esc(r.url)+'</a>';['pName','pCompany','pEmail','note','cRef','cEntry'].forEach(function(id){$(id).value=''});$('preBox').innerHTML='';onTpl();list()})
  .catch(function(e){$('errI').textContent=e.message}).then(function(){b.disabled=false})});
-function list(){api('admin.list').then(function(r){if(!r.rows.length){$('rows').innerHTML='<tr><td colspan="6">まだありません</td></tr>';return}
+function list(){api('admin.list').then(function(r){KL=r.rows||[];todo();if(!r.rows.length){$('rows').innerHTML='<tr><td colspan="6">まだありません</td></tr>';return}
  $('rows').innerHTML=r.rows.map(function(x){var cls=x.status==='締結済み'?'done':x.status==='取り消し'?'cancel':'';var st=x.paid?'入金済み':x.status==='送付済み'&&x.viewed?'確認中':x.status;
-  return'<tr><td>'+esc(x.id)+'</td><td>'+esc(x.title)+(x.draft==='yes'?'<br><span class="tag">下書き</span>':'')+'</td><td>'+esc(x.party_company?x.party_company+' ':'')+esc(x.party_name)+'<br><small>'+esc(x.party_email)+'</small></td><td><span class="tag '+cls+'">'+esc(st)+'</span></td><td>'+day(x.created)+'</td><td>'+
+  return'<tr><td>'+esc(x.id)+'</td><td>'+esc(x.title)+(x.draft==='yes'?'<br><span class="tag">下書き</span>':'')+'</td><td>'+esc(x.party_company?x.party_company+' ':'')+esc(x.party_name)+'<br><small>'+esc(x.party_email)+'</small>'+(x.refcode?'<br><span class="tag">紹介コード '+esc(x.refcode)+'</span>':'')+'</td><td><span class="tag '+cls+'">'+esc(st)+'</span></td><td>'+day(x.created)+'</td><td>'+
   (x.status==='締結済み'?'<button class="small-btn" data-pdf="'+esc(x.id)+'">PDFを保存</button>'+(x.template==='kaiin'&&!x.paid?'<button class="small-btn" data-paid="'+esc(x.id)+'">入金を確認した</button>':''):x.status==='取り消し'?'':'<button class="small-btn" data-resend="'+esc(x.id)+'">もう一度送る</button><button class="small-btn" data-cancel="'+esc(x.id)+'">取り消す</button>')+'</td></tr>'}).join('')}).catch(function(e){$('errR').textContent=e.message})}
 $('rows').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;$('errR').textContent='';
  if(b.dataset.paid&&confirm('入金を確認しましたか？相手に「会員登録完了」のメールを送ります。'))api('admin.paid',{id:b.dataset.paid}).then(list).catch(function(x){$('errR').textContent=x.message});
  if(b.dataset.resend)api('admin.resend',{id:b.dataset.resend}).then(function(){$('errR').textContent='もう一度送りました。'}).catch(function(x){$('errR').textContent=x.message});
  if(b.dataset.cancel&&confirm('この契約書を取り消しますか？相手はもう開けなくなります。'))api('admin.cancel',{id:b.dataset.cancel}).then(list).catch(function(x){$('errR').textContent=x.message});
  if(b.dataset.pdf)api('admin.pdf',{id:b.dataset.pdf}).then(function(r){var bin=atob(r.pdf),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);var u=URL.createObjectURL(new Blob([a],{type:'application/pdf'}));var l=document.createElement('a');l.href=u;l.download=r.filename;document.body.appendChild(l);l.click();setTimeout(function(){URL.revokeObjectURL(u);l.remove()},2000)}).catch(function(x){$('errR').textContent=x.message})});
-var started=false;function go(){if(started){list();inbox();return}started=true;start();inbox()}
+var started=false;function go(){if(started){list();inbox();return}started=true;start();inbox();var seen='';try{seen=localStorage.getItem('iryo-adm-tour')||''}catch(x){}if(!seen){var nb=document.createElement('p');nb.className='note';nb.id='tourNote';nb.innerHTML='はじめての方は、右上の<b>「はじめての方へ：操作の案内」</b>を押してください。画面の見方を順番にご案内します（約1分）。';$('todo').insertBefore(nb,$('todoList'));$('tourBtn').classList.add('flash')}}
 document.querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x===t)});document.querySelectorAll('[data-view]').forEach(function(v){v.hidden=v.dataset.view!==t.dataset.v})})});
 var IN=[],STEPS=['新規受付','内容確認中','振分け済み','提携先対応中','提案・見積り中','完了','見送り'],ROUTES={},H=36e5,SND=true,lastRed=-1;
 try{SND=localStorage.getItem('iryo-snd')!=='off'}catch(x){}
@@ -467,7 +485,7 @@ function alerts(x){var a=[],now=Date.now();if(!open_(x))return a;
  if(x.status!=='新規受付'&&x.email){var lc=x.contacted?(now-new Date(x.contacted))/864e5:(now-new Date(x.ts))/864e5;if(lc>=7)a.push({lv:'yel',t:'お客様へ'+Math.floor(lc)+'日報告なし'})}
  if(!x.partner&&['振分け済み','提携先対応中','提案・見積り中'].indexOf(x.status)>=0)a.push({lv:'yel',t:'振分け先が未設定'});
  return a}
-function inbox(){api('admin.cases').then(function(r){IN=r.rows||[];ROUTES=r.routes||{};drawRoute();drawIn()}).catch(function(e){$('errB').textContent=e.message})}
+function inbox(){api('admin.cases').then(function(r){IN=r.rows||[];ROUTES=r.routes||{};drawRoute();drawIn();todo()}).catch(function(e){$('errB').textContent=e.message})}
 function drawIn(){var st=$('fSt').value,pt=$('fPt').value,q=$('fQ').value.trim().toLowerCase();
  var red=0,nw=0;IN.forEach(function(x){x._a=alerts(x);if(x._a.some(function(y){return y.lv==='red'}))red++;if(x.status==='新規受付')nw++});
  $('newCnt').hidden=!nw;$('newCnt').textContent=nw;
@@ -495,6 +513,49 @@ $('sum').addEventListener('click',function(e){var b=e.target.closest('[data-st]'
 ['fSt','fPt'].forEach(function(id){$(id).addEventListener('change',drawIn)});$('fQ').addEventListener('input',drawIn);$('reloadIn').addEventListener('click',inbox);
 setInterval(function(){if(!$('panel').hidden)inbox()},300000);setInterval(function(){if(!$('panel').hidden&&IN.length)drawIn()},60000);
 function caseOf(no){return IN.filter(function(x){return x.no===no})[0]}
+/* ---- 今やること（データから自動で並べる） ---- */
+var KL=null;
+function goTab(v){var t=document.querySelector('.tab[data-v="'+v+'"]');if(t)t.click()}
+function flash(el){if(!el)return;el.scrollIntoView({block:'center',behavior:'smooth'});el.classList.add('flash');setTimeout(function(){el.classList.remove('flash')},3000)}
+function todo(){var L=[],now=Date.now();
+ var nw=IN.filter(function(x){return x.status==='新規受付'}),red=IN.filter(function(x){return(x._a||alerts(x)).some(function(y){return y.lv==='red'})&&x.status!=='新規受付'}),
+  past=IN.filter(function(x){return open_(x)&&x.next&&new Date(x.next+'T23:59:59')<new Date()}),
+  rep=IN.filter(function(x){return(x._a||[]).some(function(y){return/報告なし/.test(y.t)})}),
+  nopt=IN.filter(function(x){return!x.partner&&['振分け済み','提携先対応中','提案・見積り中'].indexOf(x.status)>=0}),
+  emptyRt=Object.keys(ROUTES).filter(function(f){return!ROUTES[f]&&!/^会員登録/.test(f)}).length;
+ if(nw.length)L.push({c:'red',t:'新しい受付が <b>'+nw.length+'件</b> あります',s:'いちばん上の案件の「受付の内容を見る」で読み、状態を「内容確認中」にして保存します。',b:'新しい受付を表示',f:function(){goTab('inbox');var b=document.querySelector('#sum [data-st="新規受付"]');if(b)b.click();flash($('inbox').querySelector('.ib'))}});
+ if(red.length)L.push({c:'red',t:'対応が止まっている案件が <b>'+red.length+'件</b> あります',s:'赤い印の案件です。次の一手を決め、対応メモを書いて保存します。',b:'その案件を表示',f:function(){goTab('inbox');$('fSt').value='alert';drawIn();flash($('inbox').querySelector('.ib'))}});
+ if(past.length)L.push({c:'red',t:'対応予定日を過ぎた案件が <b>'+past.length+'件</b>',s:'予定していた対応をして、次の予定日を入れ直します。',b:'表示する',f:function(){goTab('inbox');$('fSt').value='alert';drawIn();flash($('inbox').querySelector('.ib'))}});
+ if(KL){var unpaid=KL.filter(function(x){return x.status==='締結済み'&&x.template==='kaiin'&&!x.paid}),wait=KL.filter(function(x){return(x.status==='送付済み'||x.status==='確認中')&&x.draft!=='yes'&&now-new Date(x.created)>3*864e5});
+  if(unpaid.length)L.push({c:'',t:'会費の入金確認待ちが <b>'+unpaid.length+'件</b>',s:'通帳やネットバンキングで入金を確かめたら、その行の「入金を確認した」を押します（登録完了のメールが自動で届きます）。',b:'電子契約を開く',f:function(){goTab('keiyaku');flash($('rows').querySelector('[data-paid]'))}});
+  if(wait.length)L.push({c:'',t:'3日以上、相手の承認待ちの契約が <b>'+wait.length+'件</b>',s:'相手に届いているか確かめ、必要なら「もう一度送る」を押します。',b:'電子契約を開く',f:function(){goTab('keiyaku');flash($('rows').querySelector('[data-resend]'))}})}
+ if(rep.length)L.push({c:'',t:'お客様へ7日以上報告していない案件が <b>'+rep.length+'件</b>',s:'「お客様へ報告を作る」で文面を作り、送るか（または電話で伝えたか）を選びます。',b:'表示する',f:function(){goTab('inbox');$('fSt').value='alert';drawIn();flash($('inbox').querySelector('[data-rep]'))}});
+ if(nopt.length)L.push({c:'',t:'振分け先が決まっていない案件が <b>'+nopt.length+'件</b>',s:'案件の「振分け先」に提携先の名前を入れて保存します。',b:'表示する',f:function(){goTab('inbox');$('fPt').value='-';drawIn();flash($('inbox').querySelector('[data-k="partner"]'))}});
+ if(emptyRt)L.push({c:'',t:'振分け設定が未登録の分野が <b>'+emptyRt+'分野</b> あります',s:'分野ごとに提携企業を登録しておくと、新しい受付に振分け先が自動で入ります。',b:'振分け設定を開く',f:function(){goTab('route');flash(document.querySelector('#routeRows input[value=""]'))}});
+ if(!L.length)L.push({c:'ok',t:'いま、急いでやることはありません',s:'新しい受付が届くと、ここに表示され、警告音でもお知らせします（5分ごとに自動で最新にします）。',b:'',f:null});
+ $('todoList').innerHTML=L.map(function(x,i){return'<li class="'+x.c+'"><span>'+x.t+'<small>'+esc(x.s)+'</small></span>'+(x.b?'<button type="button" class="small-btn" data-td="'+i+'">'+esc(x.b)+' ›</button>':'')+'</li>'}).join('');
+ $('todoList').querySelectorAll('[data-td]').forEach(function(b){b.onclick=L[+b.dataset.td].f});
+ var d=new Date();$('todoAt').textContent=d.getHours()+'時'+('0'+d.getMinutes()).slice(-2)+'分の時点'}
+/* ---- 操作の案内（はじめての方） ---- */
+var TOUR=[
+ ['#todo','今やること','ログインしたら、まずここを見ます。やることが上から順に並び、右のボタンを押すとその場所へ移ります。'],
+ ['.tabs','画面の切り替え','「案件管理」「電子契約」「振分け設定」の3つの画面があります。数字は新しい受付の件数です。'],
+ ['#sum','状態ごとの件数','押すと、その状態の案件だけを表示します。赤い枠は未対応があるしるしです。'],
+ ['#inbox .ib','案件のカード','1件ずつの受付です。帯の色で進み具合が、印で急ぎかどうかが分かります。'],
+ ['#inbox .ib .grid2','状態と担当を入れる','状態・振分け先・担当・次の対応予定日を入れます。'],
+ ['#inbox .ib .ib-a','保存と報告','「保存」で記録します。「お客様へ報告を作る」で文面が作られ、送るかどうかを選べます。'],
+ ['#snd','警告音','遅れている案件があると音で知らせます。ここでオン・オフを切り替えます。'],
+ ['#howInbox','困ったときは','各画面の上の「この画面の使い方」を押すと、手順と状態の意味が読めます。']];
+function tour(i){i=i||0;var old=document.querySelector('.tour-ov');if(old)old.remove();
+ while(i<TOUR.length&&!document.querySelector(TOUR[i][0]))i++;
+ if(i>=TOUR.length){try{localStorage.setItem('iryo-adm-tour','1')}catch(x){}return}
+ var t=TOUR[i],el=document.querySelector(t[0]);goTab('inbox');el.scrollIntoView({block:'center'});
+ var ov=document.createElement('div');ov.className='tour-ov';ov.innerHTML='<div class="tour-hl"></div><div class="tour-tx" role="dialog" aria-label="操作の案内"><span class="tn">操作の案内　'+(i+1)+' / '+TOUR.length+'</span><b>'+esc(t[1])+'</b>'+esc(t[2])+'<div class="bt">'+(i?'<button type="button" class="small-btn" data-t="p">‹ 戻る</button>':'')+'<button type="button" class="btn" data-t="n" style="min-height:44px;padding:0 18px">'+(i<TOUR.length-1?'次へ ›':'終わる')+'</button><button type="button" class="small-btn" data-t="x">案内を閉じる</button></div></div>';
+ document.body.appendChild(ov);
+ setTimeout(function(){var r=el.getBoundingClientRect(),hl=ov.querySelector('.tour-hl'),tx=ov.querySelector('.tour-tx');hl.style.left=(r.left-6)+'px';hl.style.top=(r.top-6)+'px';hl.style.width=(r.width+12)+'px';hl.style.height=Math.min(r.height+12,innerHeight-40)+'px';
+  var below=r.bottom+tx.offsetHeight+24<innerHeight;tx.style.left=Math.max(12,Math.min(r.left,innerWidth-tx.offsetWidth-12))+'px';tx.style.top=(below?r.bottom+16:Math.max(12,r.top-tx.offsetHeight-16))+'px';tx.querySelector('[data-t=n]').focus()},80);
+ ov.addEventListener('click',function(e){var b=e.target.closest('[data-t]');if(!b)return;var k=b.dataset.t;ov.remove();if(k==='n')tour(i+1);else if(k==='p')tour(i-1);else{try{localStorage.setItem('iryo-adm-tour','1')}catch(x){}}})}
+$('tourBtn').addEventListener('click',function(){var n=$('tourNote');if(n)n.remove();this.classList.remove('flash');tour(0)});
 $('inbox').addEventListener('click',function(e){var card=e.target.closest('.ib');if(!card)return;var no=card.dataset.no,x=caseOf(no),b;
  if((b=e.target.closest('[data-save]'))){var v={no:no};card.querySelectorAll('[data-k]').forEach(function(el){v[el.dataset.k]=String(el.value).trim()});
   var changedSt=v.status!==x.status;b.disabled=true;b.textContent='保存中…';
@@ -551,7 +612,8 @@ if(IN_GAS){$('logout').hidden=true;go()}else if(tok){go()}else{showLogin()}
 })();
 </script>
 '''
-open(os.path.join(OUT, "admin.html"), "w", encoding="utf-8").write(HEAD("管理画面") + ADMIN_BODY + '<script src="config.js"></script>\n<script src="api.js"></script>\n' + ADMIN_JS + "</body>\n</html>\n")
+ADM_HELP = '<script>window.FORM_NOBAR=true;window.FORM_HELP={"lid":{"t":"担当者のIDを入れます。","ex":"英字の小文字で入れます。分からないときは「ID・パスワードを忘れたとき」を押すと、登録メールに届きます","req":true},"lpw":{"t":"パスワードを入れます。","ex":"大文字・小文字、全角・半角の違いにご注意ください。5回続けて間違えると15分止まります","req":true},"fgCode":{"t":"登録メールに届いた6けたの数字を入れます。","req":true},"fgP1":{"t":"新しいパスワードを8文字以上で決めます。","ex":"英字と数字をまぜると安全です","req":true},"fgP2":{"t":"確認のため、同じパスワードをもう一度入れます。","req":true},"pName":{"t":"契約の相手のお名前（ご担当者）です。","req":true},"pEmail":{"t":"契約書の案内を送る相手のメールアドレスです。","req":true}};</script>\n<script src="../assets/guide.js" data-mode="admin"></script>\n'
+open(os.path.join(OUT, "admin.html"), "w", encoding="utf-8").write(HEAD("管理画面") + ADMIN_BODY + '<script src="config.js"></script>\n<script src="api.js"></script>\n' + ADMIN_JS + ADM_HELP + "</body>\n</html>\n")
 
 # ---------- Apps Script 一式 ----------
 gs = "/* このファイルは make_keiyaku.py が作りました。直すときは元のファイルを直してください */\n" + TEXTS + CORE + "\n" + open(os.path.join(HERE, "keiyaku_gas_main.js"), encoding="utf-8").read()

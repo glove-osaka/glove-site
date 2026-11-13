@@ -360,6 +360,7 @@ def page(path, title, desc, body, cur="", extra_js="", full_title=None, ld=None)
 {body.replace("{p}", p)}
 {footer(p)}
 {COMMON_JS}{extra_js}
+<script src="{p}assets/guide.js" data-mode="site"></script>
 </body>
 </html>
 '''
@@ -629,9 +630,9 @@ def build_status():
     for st in ["open", "refer", "prep"]:
         items = "".join(f'<li><a href="{{p}}support/{k}.html">{s["name"]}</a></li>' for k, s in SUP.items() if s["status"] == st)
         if st == "open":
-            items = "<li>ウェブでの総合受付（相談・情報・要望・協力）</li><li>名前を伏せた相談</li>" + items
+            items = "<li>ウェブでの総合受付（相談・情報・要望・協力）</li><li>名前を伏せた相談</li><li><a href=\"{p}member/index.html\">会員制度（月払い・年間払い）・電子契約での入会</a></li>" + items
         if st == "prep":
-            items += "<li><a href=\"{p}member/index.html\">会員制度（月払い・年間払い）</a></li><li>公式LINEでの相談</li><li>電話での相談</li><li>寄せられた要望から生まれる新しい支援</li>"
+            items += "<li>公式LINEでの相談</li><li>電話での相談</li><li>寄せられた要望から生まれる新しい支援</li>"
         cols += f'<div class="card"><h3>{badge(st)}</h3><p class="fine" style="margin-bottom:12px">{STATUS[st][1]}</p><ul>{items}</ul></div>'
     body = ph("提供状況", "いまできることと、これから育てることを正しくお示しします。", [("提供状況", None)], "head-3.jpg", "check") + f'''
 <section class="sec"><div class="wrap"><div class="stat3">{cols}</div>
@@ -640,7 +641,7 @@ def build_status():
 
 # ---------- 会員制度 ----------
 MEMBER_TYPES = [
-    ("個人会員", "事業所・法人をご紹介いただく営業協力者（支援会のサービスはご利用いただけません）", "無料", "―", "ご紹介で入会された事業所・法人に応じて、紹介料をお支払いします（詳しくは開始時にご案内します）"),
+    ("個人会員", "事業所・法人をご紹介いただく営業協力者（支援会のサービスはご利用いただけません）", "無料", "―", "ご紹介で入会された事業所・法人に応じて、紹介料をお支払いします（下の「紹介料の仕組み」をご覧ください）"),
     ("事業所会員", "病院・診療所・介護事業所・薬局など1つの事業所", "5,500円〜", "55,000円〜", "職員5名まで。6人目から1名につき月500円（年5,000円）"),
     ("法人会員", "複数の事業所を運営する法人", "5,500円〜", "55,000円〜", "1か所目5,500円（職員5名まで）、2か所目から1か所につき5,000円（職員5名まで）、各事業所で5名を超える職員1名につき500円（金額はすべて月額）"),
     ("協賛会員", "医療・介護に関わる方へサービスを提供する企業（審査があります）", "33,000円", "330,000円", ""),
@@ -686,7 +687,7 @@ def build_member():
 <tr><th>創設会員</th><td>事業所・法人の会員が100社に達するまでに入会された方です（個人会員は数に含みません）。</td></tr>
 <tr><th>ご紹介の特典</th><td>創設会員の募集期間中に、ご紹介で事業所・法人が3社入会された会員の方は、会費が1年分無料になります。</td></tr>
 </tbody></table></div>
-<p class="fine" style="margin-top:12px">振込先などは、開始時に会員規約と「特定商取引法に基づく表記」でご案内し、お申し込みの最後の確認画面でも表示します。</p>
+<p class="fine" style="margin-top:12px">振込先は、電子契約で承認したあとにメールで自動でお知らせします。会員規約の全文は<a href="kiyaku.html">会員規約のページ</a>で、申込みの前にお読みいただけます。</p>
 </div></section>
 <section class="sec" id="shokai"><div class="wrap" style="max-width:1000px">
 {sec_h("紹介料の仕組み", "個人会員（営業協力者）への紹介料")}
@@ -706,10 +707,10 @@ def build_member():
 <li>紹介料のお支払いには、本人確認と振込口座の登録が必要です。紹介料は所得として申告が必要になる場合があります。</li>
 <li>決まりごとに反する行為があった場合は、紹介料のお支払いを止め、個人会員の登録を取り消すことがあります。</li>
 </ul>
-<p class="fine" style="margin-top:12px">詳しい決まりごとは、個人会員の規約で定めます。</p>
+<p class="fine" style="margin-top:12px">詳しい決まりごとは、<a href="kiyaku.html#kojin">個人会員規約</a>で定めています。個人会員として登録が済むと、ご自身の<b>紹介コード</b>をメールでお送りします。紹介先には、申込みの「紹介者」欄にそのコードを書いてもらってください。</p>
 <div class="btns" style="margin-top:28px"><a class="btn btn-g" href="apply.html">{ic("users")}会員登録を申し込む</a><a class="btn btn-o" href="{contact_link(None, "nyukai")}">{ic("chat")}まず相談する</a><a class="btn btn-o" href="{{p}}status/index.html">提供状況を見る</a></div>
 </div></section>'''
-    page("member/index.html", "会員制度", "医療介護総合支援会の会員制度です。事業所月5,500円〜・法人月5,500円〜・協賛月33,000円と、営業協力者の個人会員（無料）、月払いと年間払い（12か月分を10か月分の会費で）、電子契約での入会の流れと、創設会員の事前登録をご案内します。", "<main id=\"main\">" + body + "</main>", cur="")
+    page("member/index.html", "会員制度", "医療介護総合支援会の会員制度です。事業所月5,500円〜・法人月5,500円〜・協賛月33,000円と、営業協力者の個人会員（無料）、月払いと年間払い（12か月分を10か月分の会費で）、電子契約での入会の流れと、創設会員（入会金免除）をご案内します。", "<main id=\"main\">" + body + "</main>", cur="")
 
 
 # ---------- 会員登録 ----------
@@ -717,7 +718,6 @@ APPLY_JS = r"""<script>
 (function(){
 var EP=__EP__,SITE=__SITE__,f=document.getElementById('af'),t0=Date.now(),sending=false,rec={};
 var TRY=/[?&]demo=1/.test(location.search),LIVE=!!window.KEIYAKU_API_URL||TRY;
-if(LIVE)document.getElementById('preNote').hidden=true;
 function done(msg){f.hidden=true;var d=document.getElementById('adone');d.hidden=false;document.getElementById('ano').textContent=rec.no;if(msg)document.getElementById('adoneMsg').textContent=msg;d.scrollIntoView({block:'start'});try{d.focus()}catch(x){}}
 function $(i){return document.getElementById(i)}
 function v(i){var e=$(i);return e?String(e.value||'').trim():''}
@@ -785,7 +785,7 @@ def build_apply():
         ("kyosan", "協賛会員", "医療・介護向けのサービスを提供する企業（月33,000円・審査あり）"), ("kojin", "個人会員（営業協力者）", "事業所・法人を紹介する方（会費なし・サービスの利用なし）")])
     body = ph("会員登録の申込み", "1画面で申し込み、そのまま電子契約の画面に移って、記入・押印・承認まで進めます。", [("会員制度", "member/index.html"), ("会員登録の申込み", None)], "head-3.jpg", "users") + f'''
 <section class="sec"><div class="wrap" style="max-width:860px">
-<p class="note-box" id="preNote">会員制度は開始の準備中のため、いまは<b>先行受付</b>です。開始時にご連絡し、電子契約で会員規約を確認して押印・承認いただいた時点で、ご入会の契約が成立します。この申込みだけで会費は発生しません。</p>
+<p class="note-box" id="preNote">電子契約で会員規約を確認し、押印・承認した時点でご入会の契約が成立します。この申込みだけでは会費は発生しません。会員規約の全文は<a href="kiyaku.html">会員規約のページ</a>でお読みいただけます。</p>
 <ol class="flow f4" style="margin:26px 0 34px"><li><div><b>このページで申し込む</b><p>約10項目、1画面です。</p></div></li><li><div><b>そのまま電子契約の画面へ</b><p>自動で切り替わります。メールに届く認証コードで本人確認し、会員規約を確認します。</p></div></li><li><div><b>記入・押印・承認</b><p>パソコン・スマホで完結します。</p></div></li><li><div><b>振込・利用開始</b><p>入金を確認して登録完了です。</p></div></li></ol>
 <form id="af" novalidate>
 <fieldset class="fld" style="border:0;padding:0;margin:0 0 22px"><legend style="font-weight:700;font-size:1.15rem;margin-bottom:10px">1. 会員の種類</legend><div class="opts radio-opts">{radios}</div></fieldset>
@@ -802,21 +802,42 @@ def build_apply():
 <div class="fld"><label for="addr">所在地（住所）</label><input id="addr" type="text" autocomplete="street-address" maxlength="120" placeholder="例：大阪府大阪市…"></div>
 <div class="grid g2" style="gap:0 20px"><div class="fld"><label for="tel">電話番号</label><input id="tel" type="tel" autocomplete="tel" maxlength="20"></div>
 <div class="fld"><label for="mail">メールアドレス（認証コードと、押印済みの契約書の送り先）</label><input id="mail" type="email" autocomplete="email" maxlength="120"></div></div>
-<div class="fld"><label for="ref">紹介者（紹介コード、またはお名前・任意）</label><input id="ref" type="text" maxlength="60"></div>
+<div class="fld"><label for="ref">紹介者（紹介コード、またはお名前・任意）</label><p class="hint" style="margin:0 0 6px">紹介を受けた方は、個人会員からもらった紹介コード（例：SK-7KQ2M）を書いてください。</p><input id="ref" type="text" maxlength="60"></div>
 <div class="fld"><label for="note">連絡事項（任意）</label><textarea id="note" maxlength="500" style="min-height:96px"></textarea></div>
 <p class="fine" data-for="kojin" hidden>個人会員の方は、紹介料のお支払いのため、電子契約で本人確認書類の撮影と振込口座の登録をお願いします。</p>
-<div class="note-box" style="margin-top:8px"><b>ご契約の要点</b>（事業所・法人・協賛会員）：契約期間は1年（月払いも同じ）で自動更新／解約は更新の1か月前まで／月払いの途中解約は残りの月数分をお支払い／年間払いの途中解約は返金なし（入会から3か月で効果が出なかった場合を除く）／前払い・銀行振込・振込手数料はご負担。詳しくは<a href="index.html">会員制度のページ</a>をご覧ください。</div>
+<div class="note-box" style="margin-top:8px"><b>ご契約の要点</b>（事業所・法人・協賛会員）：契約期間は1年（月払いも同じ）で自動更新／解約は更新の1か月前まで／月払いの途中解約は残りの月数分をお支払い／年間払いの途中解約は返金なし（入会から3か月で効果が出なかった場合を除く）／前払い・銀行振込・振込手数料はご負担。詳しくは<a href="index.html">会員制度のページ</a>と<a href="kiyaku.html" target="_blank" rel="noopener">会員規約の全文</a>（別の画面で開きます）をご覧ください。</div>
 <label class="agree" for="agree" style="margin-top:16px"><input type="checkbox" id="agree"><span>上の要点と<a href="{{p}}privacy/index.html" target="_blank" rel="noopener">個人情報の取り扱い</a>（別の画面で開きます）を確認し、同意します。</span></label>
 <div class="hp" aria-hidden="true" style="position:absolute;left:-9999px"><label for="hpf">この欄は空のままにしてください</label><input id="hpf" type="text" tabindex="-1" autocomplete="off"></div>
 <p class="warn-inline" id="aerr" role="alert" hidden></p>
 <p class="fine" data-for="kyosan" hidden>協賛会員は審査があるため、審査のあとに電子契約へ進むご案内をメールでお送りします。</p>
 <div class="btns" style="margin-top:20px"><button class="btn btn-g" id="asend" type="submit">この内容で電子契約へ進む</button></div>
 </form>
-<div id="adone" hidden tabindex="-1" class="note-box"><h2 style="font-size:1.3rem;margin-bottom:10px">お申込みを受け付けました</h2><p>受付番号：<b id="ano"></b></p><p id="adoneMsg">会員制度の開始時に、ご入力のメールアドレスへご連絡します。届かない場合は、迷惑メールの設定をご確認ください。</p></div>
+<div id="adone" hidden tabindex="-1" class="note-box"><h2 style="font-size:1.3rem;margin-bottom:10px">お申込みを受け付けました</h2><p>受付番号：<b id="ano"></b></p><p id="adoneMsg">担当者から、ご入力のメールアドレスへ電子契約のご案内をお送りします。届かない場合は、迷惑メールの設定をご確認ください。</p></div>
 </div></section>'''
-    js = '<script src="../keiyaku/config.js"></script><script src="../keiyaku/api.js"></script>' + APPLY_JS.replace("__EP__", json.dumps(SITE["endpoint"])).replace("__SITE__", json.dumps(SITE["name"])).replace("__MAIL__", json.dumps(SITE["mail"]).replace('"', "'"))
+    js = "<script>window.FORM_HELP={\"sites\": {\"t\": \"運営している事業所の数を入れます（2以上）。\", \"ex\": \"例：3　1か所だけのときは、上で「事業所会員」を選んでください\", \"req\": true}, \"staff\": {\"t\": \"職員の数を、すべての事業所の合計で入れます。\", \"ex\": \"例：8　入れると、すぐ下に会費の目安が出ます\", \"req\": true}, \"org\": {\"t\": \"事業所名・法人名・会社名を、正式な名前で入れます。\", \"ex\": \"例：株式会社○○　○○デイサービス\", \"req\": true}, \"rep\": {\"t\": \"代表者のお名前を入れます。\", \"ex\": \"例：山田 太郎\", \"req\": true}, \"nm\": {\"t\": \"お名前を入れます。法人などの場合は、手続きをするご担当者のお名前です。\", \"ex\": \"例：山田 花子\", \"req\": true}, \"addr\": {\"t\": \"所在地（住所）を、都道府県から入れます。\", \"ex\": \"例：大阪府大阪市○○区○○1-2-3\", \"req\": true}, \"tel\": {\"t\": \"日中につながる電話番号を入れます。\", \"ex\": \"例：06-1234-5678\", \"req\": true}, \"mail\": {\"t\": \"このアドレスに、6けたの認証コードと押印済みの契約書が届きます。\", \"ex\": \"例：yamada@example.jp　よく使うアドレスを入れてください\", \"req\": true}, \"ref\": {\"t\": \"紹介を受けた方だけ入れます（空のままでも申し込めます）。\", \"ex\": \"例：SK-7KQ2M、または紹介者のお名前\", \"req\": false}, \"note\": {\"t\": \"伝えておきたいことがあれば書きます（空のままでも申し込めます）。\", \"req\": false}};window.FORM_GROUPS=[{name:'mt',label:'会員の種類'},{name:'pay',label:'お支払い方法'}];window.FORM_CHECKS=['agree'];window.FORM_SCOPE='#af';window.FORM_SUBMIT='#asend';window.FORM_DONE_LABEL='申込みボタンへ ›';</script>" + '<script src="../keiyaku/config.js"></script><script src="../keiyaku/api.js"></script>' + APPLY_JS.replace("__EP__", json.dumps(SITE["endpoint"])).replace("__SITE__", json.dumps(SITE["name"])).replace("__MAIL__", json.dumps(SITE["mail"]).replace('"', "'"))
     page("member/apply.html", "会員登録の申込み", "医療介護総合支援会の会員登録です。会員の種類と支払い方法を選んで1画面で申し込むと、そのまま電子契約の画面に移り、記入・押印・承認まで進めます。", "<main id=\"main\">" + body + "</main>", cur="", extra_js=js)
 
+
+# ---------- 会員規約の全文 ----------
+def kiyaku_html(t):
+    out = []
+    for ln in t.strip().split("\n"):
+        if not ln.strip(): continue
+        if ln.startswith("第") and "条" in ln[:6]: out.append(f'<h3 style="font-size:1.12rem;margin:22px 0 6px">{E(ln)}</h3>')
+        elif ln is t.strip().split("\n")[0]: continue
+        else: out.append(f'<p style="margin:0 0 6px">{E(ln)}</p>')
+    return "".join(out)
+def build_kiyaku():
+    from keiyaku_text import KIYAKU, KOJIN_KIYAKU
+    body = ph("会員規約", "電子契約でご確認いただく会員規約の全文です。お申し込みの前にお読みいただけます。", [("会員制度", "member/index.html"), ("会員規約", None)], "head-3.jpg", "doc") + f'''
+<section class="sec"><div class="wrap" style="max-width:900px">
+<p class="note-box">この規約は、電子契約の画面で表示する内容と同じものです。ご入会の契約は、電子契約で規約を確認し、押印・承認した時点で成立します。</p>
+<nav style="margin:18px 0 8px"><a class="btn btn-o" href="#kaiin">事業所・法人・協賛会員の規約</a>　<a class="btn btn-o" href="#kojin">個人会員（営業協力者）の規約</a></nav>
+<article class="card" id="kaiin" style="margin-top:22px"><h2 style="font-size:1.4rem;margin-bottom:10px">会員規約（事業所・法人・協賛会員）</h2>{kiyaku_html(KIYAKU)}</article>
+<article class="card" id="kojin" style="margin-top:26px"><h2 style="font-size:1.4rem;margin-bottom:10px">個人会員（営業協力者）規約</h2>{kiyaku_html(KOJIN_KIYAKU)}</article>
+<div class="btns" style="margin-top:28px"><a class="btn btn-g" href="apply.html">{ic("users")}会員登録を申し込む</a><a class="btn btn-o" href="index.html">会員制度のページへ戻る</a></div>
+</div></section>'''
+    page("member/kiyaku.html", "会員規約", "医療介護総合支援会の会員規約（事業所・法人・協賛会員）と個人会員（営業協力者）規約の全文です。会費、支払い、契約期間と更新、解約、効果が出なかった場合の途中解約などを定めています。", "<main id=\"main\">" + body + "</main>", cur="")
 
 # ---------- 流れ・費用 ----------
 def build_flow():
@@ -991,15 +1012,16 @@ def build_legal():
     doc_page("privacy/index.html", "個人情報の取り扱い", f"{S['company']}は、{S['name']}でお預かりする個人情報を、次のとおり大切に取り扱います。", "head-2.jpg", "shield", [
         ("1. 事業者の名称・住所・代表者", f"{S['company']}（{S['name']}の運営会社）\n{S['zip']} {S['addr']}\n代表取締役　{S['rep']}"),
         ("2. 取得する個人情報", "ウェブ受付で、お名前または事業所名（伏せることもできます）、メールアドレス、電話番号（任意）、都道府県、ご相談の内容など、ご相談への対応に必要な情報をお預かりします。"),
-        ("3. 病気や介護の状況などの情報（要配慮個人情報）", "受付フォームには、病名・症状・服薬・要介護度・障害名などは書かないようお願いしています。ご相談の対応にどうしても必要な場合は、ご本人の同意をいただいたうえで改めてお伺いし、その対応のためだけに利用します。受付フォームに病名などが書かれて届いた場合は、ご相談への対応に必要な範囲でのみ扱い、不要な部分は速やかに削除します。\nマイナンバー、口座番号、カード番号はお預かりしません。"),
-        ("4. 利用の目的", "・ご相談・要望・協力の申し出の内容の確認と、ご返信\n・対応できるかどうかの検討\n・ご本人の同意を得たうえでの、専門家・提携先へのおつなぎ\n・サービスの改善（個人を特定しない形での集計）"),
+        ("3. 病気や介護の状況などの情報（要配慮個人情報）", "受付フォームには、病名・症状・服薬・要介護度・障害名などは書かないようお願いしています。ご相談の対応にどうしても必要な場合は、ご本人の同意をいただいたうえで改めてお伺いし、その対応のためだけに利用します。受付フォームに病名などが書かれて届いた場合は、ご相談への対応に必要な範囲でのみ扱い、不要な部分は速やかに削除します。\nウェブ受付では、マイナンバー、口座番号、カード番号はお預かりしません（会員登録で必要な情報は、次の「会員登録と電子契約でお預かりする情報」のとおりです）。"),
+        ("3-2. 会員登録と電子契約でお預かりする情報", "会員登録と電子契約では、次の情報をお預かりします。\n・事業所・法人・協賛会員：事業所名・法人名、代表者と担当者のお名前、所在地、電話番号、メールアドレス、会員の種類、事業所と職員の数、お支払い方法、押印の画像、承認した日時と端末の情報\n・個人会員（営業協力者）：お名前・ふりがな、住所、電話番号、メールアドレス、生年月日、紹介料の振込口座、本人確認書類の写真、押印の画像、承認した日時と端末の情報\n利用の目的は、ご本人であることの確認、契約の締結と管理、会費の請求と入金の確認、紹介料の計算とお支払い、法令に基づく帳簿の保存です。本人確認書類は、マイナンバーカードは表面のみをお預かりします。裏面（個人番号）は撮影しないでください。"),
+        ("4. 利用の目的", "・ご相談・要望・協力の申し出の内容の確認と、ご返信\n・対応できるかどうかの検討\n・ご本人の同意を得たうえでの、専門家・提携先へのおつなぎ\n・会員登録・電子契約の手続き、会費の請求と入金の確認、紹介料のお支払い\n・サービスの改善（個人を特定しない形での集計）"),
         ("5. 第三者への提供", "ご本人の同意がある場合、または法令に基づく場合を除き、第三者へ提供しません。専門家・提携先へおつなぎする際は、提供する相手・目的・範囲・費用を事前にご説明し、同意をいただいてから提供します。ご本人の同意なく、勤務先へ相談の内容を伝えることはありません。"),
-        ("6. 業務の委託と、使用しているサービス", "受付の内容は、Google LLC（アメリカ合衆国）が提供するサービス（Google Apps Script、Google スプレッドシート、Gmail）を使って受信・保存しています。このサイトでは、文字の表示に Google Fonts を使用しています。\nアメリカ合衆国の個人情報の保護に関する制度は、個人情報保護委員会のウェブサイトでご確認いただけます。"),
+        ("6. 業務の委託と、使用しているサービス", "受付の内容と電子契約の書類（契約書・押印の画像・本人確認書類の写真）は、Google LLC（アメリカ合衆国）が提供するサービス（Google Apps Script、Google スプレッドシート、Google ドライブ、Gmail）を使って受信・保存しています。このサイトでは、文字の表示に Google Fonts を使用しています。\nアメリカ合衆国の個人情報の保護に関する制度は、個人情報保護委員会のウェブサイトでご確認いただけます。"),
         ("7. 安全管理のための取り組み", "・取り扱う担当者を限定し、責任者を定めます（組織的な取り組み）\n・担当者に定期的な教育を行います（人的な取り組み）\n・書類は施錠できる場所で保管し、持ち出しを制限します（物理的な取り組み）\n・電子データは利用者を限定し、二段階の認証などで保護します（技術的な取り組み）\n・外国のサービスを利用する際は、その国の制度を把握したうえで対策を講じます（外的環境の把握）"),
-        ("8. 保存の期間と削除", "受付の内容は、対応の完了から3年を目安に保存し、その後は削除します。ご本人から削除のご請求があった場合は、法令で保存が必要なものを除き、速やかに削除します。"),
+        ("8. 保存の期間と削除", "受付の内容は、対応の完了から3年を目安に保存し、その後は削除します。会員の契約書と会費・紹介料の記録は、法令に基づき契約の終了から7年間保存します。本人確認書類の写真は、個人会員の登録が終わってから1年を目安に削除します。ご本人から削除のご請求があった場合は、法令で保存が必要なものを除き、速やかに削除します。"),
         ("9. 開示・訂正・利用停止などのご請求", "ご本人またはその代理人から、保有する個人情報の開示、訂正、追加、削除、利用の停止、第三者への提供の記録の開示などのご請求があった場合は、ご本人であることを確認したうえで、遅滞なく対応します。ご請求は、下記の窓口までご連絡ください。"),
         ("10. ご相談・苦情の窓口", f"{S['company']}　{S['name']}\nメール：{S['mail']}\n電話：{S['tel']}（受付時間 {S['tel_hours']}）\n所在地：{S['zip']} {S['addr']}"),
-        ("11. 方針の見直し", "法令の改正や業務の変更にあわせて、この方針を見直すことがあります。変更した場合は、このページでお知らせします。\n制定：2026年10月18日"),
+        ("11. 方針の見直し", "法令の改正や業務の変更にあわせて、この方針を見直すことがあります。変更した場合は、このページでお知らせします。\n制定：2026年10月18日\n改定：2026年11月13日（会員登録と電子契約でお預かりする情報を追記）"),
     ], f"{S['name']}でお預かりする個人情報の取り扱いです。取得する情報、利用の目的、第三者への提供、使用しているサービス、安全管理、保存期間、開示などのご請求の方法をご説明します。")
     doc_page("terms/index.html", "利用規約・免責事項", "このサイトとウェブ受付をご利用いただく際のお約束です。", "head-2.jpg", "doc", [
         ("このサイトの内容について", "このサイトの情報は、医療・介護に関わる方への一般的なご案内です。診断・治療、法律、税務、労務、許認可などの個別の判断は、必ず医療機関や、弁護士・税理士・社会保険労務士・行政書士などの有資格者、または担当の機関にご確認ください。"),
@@ -1057,7 +1079,7 @@ def build_contact():
 </form>
 <div id="done" hidden></div>
 </div>'''
-    js = "<script>(function(){var D=" + json.dumps(D, ensure_ascii=False) + r""";
+    js = "<script>window.FORM_HELP={\"memo\": {\"t\": \"困っていること・知りたいことを、自由に書いてください。\", \"ex\": \"例：夜勤の負担が大きく、続けられるか迷っています。相談できる先を知りたいです。※病名・症状・番号は書かないでください\", \"req\": true}, \"when\": {\"t\": \"いつごろ相談したいかを選びます（空のままでも進めます）。\", \"req\": false}, \"pref\": {\"t\": \"お住まい・事業所のある都道府県を選びます（空のままでも進めます）。\", \"req\": false}, \"want\": {\"t\": \"支援会にしてほしいことに近いものを選びます（空のままでも進めます）。\", \"req\": false}, \"nm\": {\"t\": \"お名前を入れます。返信の宛名に使います。\", \"ex\": \"例：山田 花子　名前を伏せたいときは、上で「名前・事業所名を伏せて相談」を選んでください\", \"req\": true}, \"co\": {\"t\": \"事業所名・会社名を入れます（企業・事業者の方、協力のお申し出の方のみ）。\", \"ex\": \"例：○○デイサービス\", \"req\": false}, \"mail\": {\"t\": \"返信を受け取るメールアドレスです。\", \"ex\": \"例：yamada@example.jp　携帯のメールは、パソコンからのメールを受け取れる設定にしてください\", \"req\": true}, \"tel\": {\"t\": \"電話での連絡を希望するときだけ入れます。\", \"ex\": \"例：06-1234-5678\", \"req\": false}};window.FORM_GROUPS=[{name:'role',label:'立場'},{name:'purpose',label:'目的'}];window.FORM_CHECKS=['agree'];window.FORM_STEPWISE=true;window.FORM_SCOPE='#f';window.FORM_SUBMIT='#send';window.FORM_NEXT='#next';window.FORM_DONE_LABEL='進むボタンへ ›';</script>" + "<script>(function(){var D=" + json.dumps(D, ensure_ascii=False) + r""";
 var L=['立場','目的','分野','内容','ご連絡先','確認'],st=0,f=document.getElementById('f'),secs=f.querySelectorAll('section[data-step]'),lis=document.querySelectorAll('#steps li'),err=document.getElementById('err'),t0=Date.now(),sending=false;
 var SENS=/(病名|診断|症状|要介護|服薬|薬の名前|障害名|既往歴|検査結果|血圧|マイナンバー|個人番号|口座番号|カード番号|\d{4}[-\s]?\d{4}[-\s]?\d{4})/;
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -1133,13 +1155,14 @@ if __name__ == "__main__":
     import json as _j
     _gy = _j.load(open("/home/claude/gyakutai/gyakutai.json", encoding="utf-8"))
     os.makedirs(OUT + "/assets", exist_ok=True)
+    shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), "guide.js"), OUT + "/assets/guide.js")
     open(OUT + "/assets/gyakutai.js", "w", encoding="utf-8").write("window.GYAKUTAI=" + _j.dumps(_gy, ensure_ascii=False, separators=(",", ":")) + ";\n")
     CSS = load_css()
     for d in os.listdir(OUT):
         if d != "assets":
             pth = os.path.join(OUT, d)
             shutil.rmtree(pth) if os.path.isdir(pth) else os.remove(pth)
-    build_top(); build_about(); build_roles(); build_support(); build_status(); build_member(); build_apply(); build_flow(); build_faq()
+    build_top(); build_about(); build_roles(); build_support(); build_status(); build_member(); build_kiyaku(); build_apply(); build_flow(); build_faq()
     build_kyoryoku(); build_soudan(); build_company(); build_legal(); build_contact(); build_404(); build_sitemap()
     # Xサーバー用：404ページの住所の基準、.htaccess、robots.txt
     _p404 = os.path.join(OUT, "404.html")

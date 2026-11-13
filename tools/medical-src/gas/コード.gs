@@ -94,7 +94,7 @@ function buildBody(key, cond, note, party) {
    使い方は「設定のしかた.txt」を見てください。
    ===================================================================== */
 var SHEET = "契約";
-var COLS = ["id", "token", "template", "title", "party_name", "party_company", "party_email", "fields", "required", "require_id", "cond", "note", "prefill", "body", "status", "created", "expires", "viewed", "signed", "values", "seal_file", "id_file", "pdf_id", "hash", "ua", "log", "draft", "paid"];
+var COLS = ["id", "token", "template", "title", "party_name", "party_company", "party_email", "fields", "required", "require_id", "cond", "note", "prefill", "body", "status", "created", "expires", "viewed", "signed", "values", "seal_file", "id_file", "pdf_id", "hash", "ua", "log", "draft", "paid", "refcode"];
 var VALID_DAYS = 30;
 
 function P(k) { return PropertiesService.getScriptProperties().getProperty(k) || ""; }
@@ -386,7 +386,19 @@ function sign_(o, d) {
   MailApp.sendEmail(Object.assign({ to: o.party_email, subject: "【" + ISSUER.service + "】" + o.title + "（締結済み）", body: o.party_name + " 様\n\nお手続きありがとうございました。押印済みの契約書（PDF）をお送りします。大切に保管してください。\n契約番号：" + o.id + "\n\n" + (o.template === "kaiin" ? "お振込先と金額は、担当者から別のメールでご案内します。\n\n" : "") + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）" }, mail));
   MailApp.sendEmail(Object.assign({ to: P("NOTIFY_TO"), subject: "［電子契約］締結：" + o.id + "　" + (o.party_company ? o.party_company + " " : "") + o.party_name, body: o.title + "\n" + o.id + "\n" + (o.party_company ? o.party_company + "　" : "") + o.party_name + "（" + o.party_email + "）\n\n台帳：https://docs.google.com/spreadsheets/d/" + P("SHEET_ID") }, mail));
   if (o.template === "kaiin") payMail_(o);
+  if (o.template === "kojin") refMail_(o);
   return { ok: true, pdf: Utilities.base64Encode(pdf.getBytes()), filename: pdf.getName() };
+}
+
+/* ---- 個人会員の紹介コード（締結したら自動で作って送る） ---- */
+function refMail_(o) {
+  if (o.refcode) return;
+  var used = {}; rows_().forEach(function (r) { if (r.refcode) used[r.refcode] = 1; });
+  var A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", code = "";
+  do { code = "SK-"; for (var i = 0; i < 5; i++) code += A.charAt(Math.floor(Math.random() * A.length)); } while (used[code]);
+  o.refcode = code; save_(o);
+  MailApp.sendEmail({ to: o.party_email, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】紹介コードのお知らせ", body: o.party_name + " 様\n\n個人会員（営業協力者）の登録が完了しました。あなたの紹介コードは次のとおりです。\n\n紹介コード：" + code + "\n\n事業所・法人をご紹介いただくときは、会員登録の申込み画面の「紹介者」欄に、このコードを書いてもらってください。\n会員登録の申込み：https://119cm.net/member/apply.html\n\n紹介料の仕組みと決まりごと：https://119cm.net/member/index.html#shokai\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + P("NOTIFY_TO") });
+  MailApp.sendEmail({ to: P("NOTIFY_TO"), subject: "［電子契約］紹介コードを発行：" + code + "　" + o.party_name, body: o.id + "\n" + o.party_name + "（" + o.party_email + "）に紹介コード " + code + " を発行し、メールで送りました。" });
 }
 
 /* ---- 会費の振込のご案内（締結したら自動で送る）。振込先はスクリプト プロパティ BANK_INFO に書く ---- */
@@ -521,7 +533,7 @@ function adminDo_(a, d) {
     if (a === "admin.routeSet") return routeSet_(d);
     if (a === "admin.preview") return { ok: true, cond: normCond(d.cond), body: buildBody(d.template, d.cond, d.note, d.party) };
     if (a === "admin.issue") return issue_(d);
-    if (a === "admin.list") return { ok: true, rows: rows_().reverse().slice(0, 300).map(function (r) { return { id: r.id, title: r.title, party_name: r.party_name, party_company: r.party_company, party_email: r.party_email, status: r.status, template: r.template, paid: r.paid ? new Date(r.paid).toISOString() : "", created: r.created ? new Date(r.created).toISOString() : "", viewed: r.viewed ? new Date(r.viewed).toISOString() : "", signed: r.signed ? new Date(r.signed).toISOString() : "", draft: r.draft }; }) };
+    if (a === "admin.list") return { ok: true, rows: rows_().reverse().slice(0, 300).map(function (r) { return { id: r.id, title: r.title, party_name: r.party_name, party_company: r.party_company, party_email: r.party_email, status: r.status, template: r.template, paid: r.paid ? new Date(r.paid).toISOString() : "", created: r.created ? new Date(r.created).toISOString() : "", viewed: r.viewed ? new Date(r.viewed).toISOString() : "", signed: r.signed ? new Date(r.signed).toISOString() : "", draft: r.draft, refcode: r.refcode || "" }; }) };
     var o = find_("id", d.id); if (!o) throw new Error("見つかりません");
     if (a === "admin.resend") { if (o.status === "締結済み" || o.status === "取り消し") throw new Error("送り直せない状態です"); o.expires = new Date(Date.now() + VALID_DAYS * 864e5); sendInvite_(o); log_(o, "送り直し"); save_(o); return { ok: true }; }
     if (a === "admin.paid") return paid_(o);
