@@ -509,7 +509,6 @@ def build_top():
 {sec_h("よくある質問", "はじめての方からよくいただくご質問")}
 {faq_html(FAQ[:2])}
 <p style="margin-top:20px"><a class="more" href="{{p}}faq/index.html">よくある質問をすべて見る</a></p>
-<div style="margin-top:34px">{SAFETY}</div>
 </div></section></main>'''
     ld = {"@context": "https://schema.org", "@type": "Organization", "name": SITE["name"], "url": SITE["base"],
           "logo": SITE["base"] + "assets/apple-touch-icon.png", "email": SITE["mail"], "areaServed": "大阪府・関西",
@@ -902,7 +901,6 @@ def build_flow():
 <tr><th>名前を伏せた相談</th><td>できます。返信のためにメールアドレスは必要なため、完全な匿名ではありません。</td></tr>
 <tr><th>受け付けない内容</th><td>緊急の対応、診断・治療、法律・税務・労務の専門的な判断、申請書類の作成、職業紹介</td></tr>
 </tbody></table></div>
-<div style="margin-top:30px">{SAFETY}</div>
 </div></section>'''
     page("flow/index.html", "相談の流れ・費用", "医療介護総合支援会の相談の流れ、費用の考え方、返信の目安、対応地域、名前を伏せた相談についてご説明します。受付から、同意のうえで専門家・提携先へおつなぎするまでの6つの段階です。", "<main id=\"main\">" + body + "</main>", cur="flow")
 
@@ -1289,7 +1287,6 @@ def build_contact():
 <dt>メール</dt><dd><a href="mailto:{SITE["mail"]}">{SITE["mail"]}</a></dd>
 <dt>LINE・電話</dt><dd>相談窓口は準備中です。受付方法のご案内は、運営会社（{SITE["tel"]}　{SITE["tel_hours"]}）でも承ります。</dd>
 <dt>対応地域</dt><dd>{SITE["area"]}</dd></dl></div>""", aid="toiawase")}
-{SAFETY}
 <ol class="steps" id="steps" aria-hidden="true" style="margin-top:30px"><li data-i="0">立場</li><li data-i="1">相談の内容</li><li data-i="2">ご連絡先</li><li data-i="3">確認</li></ol>
 <form class="form-card" id="f" novalidate>
 <p class="stepnow" id="stepnow"></p>
@@ -1301,7 +1298,7 @@ def build_contact():
 <div class="fld"><label for="when">ご希望の時期</label><select id="when"><option value="">選んでください</option><option>まず情報を知りたい</option><option>1か月以内に相談したい</option><option>3か月以内</option><option>利用・協力を検討している</option><option>時期は決まっていない</option></select></div>
 <div class="fld"><label for="pref">都道府県</label><select id="pref"><option value="">選んでください</option><option>大阪府</option><option>兵庫県</option><option>京都府</option><option>奈良県</option><option>滋賀県</option><option>和歌山県</option><option>その他の地域</option></select></div>
 <div class="fld"><label for="want">希望する対応</label><select id="want"><option value="">選んでください</option><option>相談内容を整理してほしい</option><option>使える支援・制度を知りたい</option><option>サービスの利用条件を知りたい</option><option>専門家・提携先につないでほしい</option><option>まだ分からない</option></select></div>
-<p class="note-box">命や体に関わる緊急のときは、この受付ではなく119番・110番へご連絡ください。</p></section>
+<p class="fine" style="margin-top:18px">この受付は緊急の対応を行っていません。命や体に関わるときは119番、事件・事故は110番へ（<a href="{{p}}soudan/index.html">公的な相談窓口</a>）。</p></section>
 <section data-step="2" hidden><h2>ご連絡先</h2><p class="hint">返信に使います。</p>
 <fieldset class="fld" style="border:0;padding:0;margin:0 0 20px"><legend style="font-weight:700;font-size:1.08rem;margin-bottom:8px">お名前の扱い</legend><div class="opts radio-opts"><label><input type="radio" name="anon" value="伏せる"><span>名前・事業所名を伏せて相談<small>返信用のメールアドレスは必要です</small></span></label><label><input type="radio" name="anon" value="伝える" checked><span>名前を伝えて相談<small>返信の宛名に使います</small></span></label></div></fieldset>
 <div class="fld" id="nmwrap"><label for="nm">お名前</label><input id="nm" type="text" autocomplete="name" maxlength="60"></div>
