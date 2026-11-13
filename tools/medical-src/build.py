@@ -585,8 +585,8 @@ def build_roles():
             extra = f'<p class="note-box" style="margin-top:18px">許認可・補助金の申請のご相談は、同じ運営会社の<a href="{SITE["kigyo"]}">企業支援 総合相談窓口</a>でも承ります（書類の作成は、補助金は提携の行政書士、雇用関係の助成金は提携の社会保険労務士が担当）。</p>'
         body = ph(r["name"], r["lead"], [("立場から選ぶ", "roles/index.html"), (r["name"], None)], r["head"], r["icon"]) + f'''
 <div class="wrap" style="padding-block:64px 88px"><div class="detail"><div>
-{photo}<div class="block"><h2>{ic("chat")}よくいただくご相談</h2><ul class="checks">{"".join(f"<li>{ic('check')}<span>{t}</span></li>" for t in r["topics"])}</ul>{extra}</div>
-<div class="block"><h2>{ic("search")}関係する支援メニュー</h2><ul class="svcs">{sups}</ul></div>
+{photo}<div class="block"><h2>{ic("search")}関係する支援メニュー</h2><ul class="svcs">{sups}</ul></div>
+<div class="block"><h2>{ic("chat")}よくいただくご相談</h2><ul class="checks">{"".join(f"<li>{ic('check')}<span>{t}</span></li>" for t in r["topics"])}</ul>{extra}</div>
 <div class="block">{acc("heart", "5つの価値を、" + r["name"] + "へ", "応援・補助・支援・協力・優待", vrows)}</div>
 {housing if r["id"] == "kazoku" else ""}
 <div class="block"><h2>{ic("chat")}よくある質問</h2>{faq_html(ROLE_FAQ[r["id"]])}</div>
@@ -595,7 +595,7 @@ def build_roles():
 <div class="block"><h2>{ic("users")}ほかの立場</h2><div class="chips">{others}</div></div>
 </div>
 <aside class="side"><nav aria-label="立場"><h3>{ic("users")}立場から選ぶ</h3><ul>{"".join(f'<li><a href="{o["id"]}.html"{" aria-current=\"page\"" if o["id"] == r["id"] else ""}>{o["name"]}</a></li>' for o in ROLES)}</ul><p style="margin-top:8px"><a class="more" href="index.html">立場の一覧へ</a></p></nav>
-<div class="box"><p>{r["name"]}として、相談・要望を送れます。</p><a class="btn btn-g" href="{contact_link(r["id"])}">{ic("chat")}相談を送る</a></div></aside>
+<div class="box"><p>{r["name"]}として、相談を送れます。</p><a class="btn btn-g" href="{contact_link(r["id"])}">{ic("chat")}相談を送る</a></div></aside>
 </div></div>'''
         page(f"roles/{r['id']}.html", {"kigyo":"企業・事業者の方へ","hataraku":"医療・介護で働く方へ","honnin":"利用者・ご本人へ","kazoku":"ご家族へ"}[r["id"]], r["lead"] + "大阪・関西の医療介護総合支援会がお手伝いします。", "<main id=\"main\">" + body + "</main>", cur="roles")
 
