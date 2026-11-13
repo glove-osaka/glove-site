@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>相談管理｜企業支援 総合相談窓口</title>
+<style>
+:root{--navy:#0E2A52;--navy2:#163A6B;--gold:#C79A4A;--gold2:#8A6424;--ink:#1B2B40;--mute:#5E6E82;--line:#DCE3EC;--bg:#F3F6FA;--red:#C0392B;--redbg:#FDECEA;--yel:#B7791F;--yelbg:#FFF6E0;--grn:#2F7D5B;--grnbg:#E8F5EE;--blue:#2C5C93;--bluebg:#EAF1FA}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.7 "Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--blue)}
+.hide{display:none!important}
+/* ログイン */
+#login{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(160deg,#0B2242,#163A6B)}
+.lg-box{width:min(380px,100%);background:#fff;border-radius:16px;padding:28px 24px;box-shadow:0 20px 50px rgba(0,0,0,.3);display:grid;gap:14px}
+.lg-box h1{margin:0;font-size:1.2rem;color:var(--navy);text-align:center}
+.lg-box p{margin:0;font-size:.82rem;color:var(--mute);text-align:center}
+label.f{display:grid;gap:4px;font-size:.84rem;font-weight:700}
+label.f input,label.f select,label.f textarea{font-weight:400;font-size:.95rem}
+.route .p.sug{color:var(--gold2)}
+input[type=text],input[type=email],input[type=tel],input[type=url],input[type=password],input[type=date],select,textarea{width:100%;padding:10px 12px;border:1px solid #C6D0DC;border-radius:8px;background:#fff}
+textarea{min-height:110px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(199,154,74,.25)}
+.btn{border:1px solid transparent;border-radius:999px;padding:9px 18px;font-weight:700;background:#fff;border-color:var(--line)}
+.btn:hover{border-color:var(--gold)}
+.btn-navy{background:var(--navy);color:#fff;border-color:var(--navy)}
+.btn-navy:hover{background:var(--navy2)}
+.btn-gold{background:var(--gold);color:#fff;border-color:var(--gold)}
+.btn-red{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-sm{padding:5px 12px;font-size:.84rem}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.err{color:var(--red);font-size:.86rem;min-height:1.2em}
+/* 上部 */
+header{position:sticky;top:0;z-index:20;background:var(--navy);color:#fff;display:flex;align-items:center;gap:10px;padding:10px 16px;flex-wrap:wrap}
+header h1{margin:0;font-size:1.05rem;letter-spacing:.06em;margin-right:auto}
+header .who{font-size:.84rem;opacity:.85}
+header .btn{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.3)}
+header .btn.on{background:var(--gold);border-color:var(--gold)}
+nav.tabs{display:flex;gap:4px;padding:0 16px;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto}
+nav.tabs button{border:0;background:none;padding:12px 14px;font-weight:700;color:var(--mute);border-bottom:3px solid transparent;white-space:nowrap}
+nav.tabs button[aria-selected=true]{color:var(--navy);border-bottom-color:var(--gold)}
+nav.tabs .cnt{display:inline-block;min-width:1.6em;padding:0 6px;margin-left:6px;border-radius:999px;background:var(--red);color:#fff;font-size:.74rem;line-height:1.6}
+main{padding:16px;max-width:1280px;margin:0 auto}
+/* 集計 */
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;text-align:left}
+.kpi b{display:block;font-size:1.7rem;line-height:1.1}
+.kpi span{font-size:.8rem;color:var(--mute)}
+.kpi.red b{color:var(--red)}.kpi.yel b{color:var(--yel)}.kpi.blue b{color:var(--blue)}.kpi.grn b{color:var(--grn)}
+.kpi.red.has{background:var(--redbg);border-color:#F2B8B1;animation:blink 1.6s ease-in-out infinite}
+@keyframes blink{50%{box-shadow:0 0 0 4px rgba(192,57,43,.18)}}
+@media(max-width:760px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi:last-child{grid-column:1/-1}}
+.alertbar{display:flex;gap:10px;align-items:center;background:var(--redbg);border:1px solid #F2B8B1;color:#7A2219;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-weight:700}
+.alertbar .bell{font-size:1.3rem;animation:ring 1.2s ease-in-out infinite;transform-origin:50% 0}
+@keyframes ring{0%,60%,100%{transform:rotate(0)}10%,30%,50%{transform:rotate(14deg)}20%,40%{transform:rotate(-14deg)}}
+/* 絞り込み */
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font-size:.86rem;font-weight:700}
+.chip[aria-pressed=true]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.filters input,.filters select{width:auto;flex:1 1 180px;padding:7px 12px}
+/* 一覧 */
+.list{display:grid;gap:8px}
+.case{position:relative;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1.2fr) minmax(0,1.3fr);gap:6px 16px;align-items:center;background:#fff;border:1px solid var(--line);border-left:6px solid var(--grn);border-radius:10px;padding:12px 14px;cursor:pointer;text-align:left;width:100%}
+.case:hover{border-color:var(--gold)}
+.case.lv1{border-left-color:var(--yel)}.case.lv2{border-left-color:var(--red);background:#FFFBFA}.case.new{border-left-color:var(--red)}
+.case.done{opacity:.72;border-left-color:#AAB6C4}
+.c-top{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.8rem;color:var(--mute)}
+.c-name{font-weight:700;font-size:1rem;color:var(--navy)}
+.c-sub{font-size:.84rem;color:var(--mute)}
+.badge{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:1px 9px;font-size:.76rem;font-weight:700;border:1px solid}
+.b-red{color:var(--red);background:var(--redbg);border-color:#F2B8B1}
+.b-yel{color:var(--yel);background:var(--yelbg);border-color:#F1D59A}
+.b-grn{color:var(--grn);background:var(--grnbg);border-color:#B5DCC8}
+.b-blue{color:var(--blue);background:var(--bluebg);border-color:#BCD0EA}
+.b-gray{color:var(--mute);background:#F1F4F8;border-color:var(--line)}
+.route{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:.86rem}
+.route .arr{color:var(--gold2);font-weight:700}
+.route .p{font-weight:700;color:var(--navy)}
+.route .p.none{color:var(--yel)}
+.steps{display:flex;gap:3px;align-items:center}
+.steps i{flex:1;height:8px;border-radius:4px;background:#E2E8F0}
+.steps i.on{background:var(--gold)}
+.steps i.cur{background:var(--navy)}
+.steps.stop i.on,.steps.stop i.cur{background:#AAB6C4}
+.c-st{display:flex;justify-content:space-between;gap:8px;font-size:.8rem;margin-top:4px;color:var(--mute)}
+.c-st b{color:var(--navy)}
+@media(max-width:900px){.case{grid-template-columns:1fr}}
+.empty{background:#fff;border:1px dashed #C6D0DC;border-radius:12px;padding:30px;text-align:center;color:var(--mute)}
+/* 詳細 */
+#drawer{position:fixed;inset:0;z-index:40;display:flex;justify-content:flex-end;background:rgba(10,24,46,.45)}
+.dr{width:min(760px,100%);height:100%;overflow:auto;background:var(--bg);box-shadow:-10px 0 30px rgba(0,0,0,.2);animation:slide .25s ease}
+@keyframes slide{from{transform:translateX(40px);opacity:.4}to{transform:none;opacity:1}}
+.dr-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:10px;background:var(--navy);color:#fff;padding:12px 16px}
+.dr-head h2{margin:0;font-size:1rem;margin-right:auto}
+.dr-head .btn{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)}
+.dr-body{padding:14px 16px 40px;display:grid;gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:10px}
+.card h3{margin:0;font-size:.95rem;color:var(--navy);display:flex;align-items:center;gap:8px}
+.card h3 small{font-weight:400;color:var(--mute)}
+.stepbtns{display:flex;flex-wrap:wrap;gap:6px}
+.stepbtns button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;font-size:.84rem;font-weight:700;position:relative}
+.stepbtns button.past{background:#FBF4E6;border-color:#E9D2A4;color:var(--gold2)}
+.stepbtns button.cur{background:var(--navy);color:#fff;border-color:var(--navy)}
+.stepbtns button.stop{color:var(--red)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+.kv{display:grid;grid-template-columns:8.5em minmax(0,1fr);gap:6px 12px;font-size:.9rem;margin:0}
+.kv dt{color:var(--mute)}.kv dd{margin:0;white-space:pre-wrap;word-break:break-word}
+.hint{font-size:.82rem;color:var(--mute)}
+.hint.warn{color:var(--yel);font-weight:700}
+.hint.red{color:var(--red);font-weight:700}
+.compose{border:2px solid var(--gold)}
+.compose.flash{animation:flash 1.2s ease 2}
+@keyframes flash{50%{box-shadow:0 0 0 6px rgba(199,154,74,.35)}}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tl{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.tl li{border-left:3px solid var(--line);padding:2px 0 2px 12px;font-size:.86rem}
+.tl li.send{border-left-color:var(--gold)}
+.tl li.upd{border-left-color:var(--navy)}
+.tl time{color:var(--mute);font-size:.78rem;margin-right:8px}
+.tl .t{white-space:pre-wrap}
+/* 設定 */
+table.rt{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+table.rt th,table.rt td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle;font-size:.88rem}
+table.rt th{background:#EEF2F7;color:var(--navy)}
+table.rt input{padding:7px 10px}
+@media(max-width:760px){table.rt thead{display:none}table.rt tr{display:grid;gap:4px;padding:8px 0}table.rt td{border:0;padding:2px 10px}}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 20px;border-radius:999px;z-index:60;box-shadow:0 10px 30px rgba(0,0,0,.3);font-size:.9rem}
+.loading{position:fixed;inset:0;z-index:70;display:grid;place-items:center;background:rgba(243,246,250,.6);font-weight:700;color:var(--navy)}
+.lg-note{font-size:.8rem;color:var(--mute);margin:10px 0 0}
+.lg-link{display:block;margin:12px auto 0;background:none;border:0;color:var(--blue);text-decoration:underline;font:inherit;font-size:.88rem;cursor:pointer;padding:6px}
+#rgf .btn{width:100%;margin:6px 0}
+.assist{border-color:#C9D8EE;background:linear-gradient(#F7FAFF,#fff)}
+.as-iss{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:6px}
+.as-iss li{padding:8px 10px;border-radius:8px;font-size:.88rem;line-height:1.6}
+.as-iss li.lv2{background:var(--redbg);color:#8E2A20}.as-iss li.lv1{background:var(--yelbg);color:#7A5210}
+.lnk{background:none;border:0;color:var(--blue);text-decoration:underline;font:inherit;font-size:.84rem;cursor:pointer;padding:0 4px}
+.hint.ok{color:var(--grn)}
+.as-todo{margin:4px 0 10px;padding-left:1.4em;font-size:.9rem;line-height:1.8}
+.as-sub{font-size:.88rem;margin:8px 0 4px;color:var(--navy)}
+.as-cand{list-style:none;margin:0 0 8px;padding:0;display:grid;gap:6px}
+.as-cand li{display:flex;gap:10px;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff}
+.as-list{display:grid;gap:8px;margin-bottom:14px}
+.as-row{display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;border:1px solid var(--line);border-left:4px solid var(--line);border-radius:10px;background:#fff;padding:10px 12px;font-size:.9rem;line-height:1.7;cursor:pointer;color:var(--ink)}
+.as-row.lv2{border-left-color:var(--red)}.as-row.lv1{border-left-color:var(--yel)}
+.as-h{font-size:1rem;color:var(--navy);margin:16px 0 8px}
+.pt-cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:4px 12px;margin-top:6px;font-size:.88rem}
+.pt-cats label{display:flex;gap:6px;align-items:center;font-weight:400}
+.st-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.st-grid textarea{min-height:90px;font-size:.88rem}
+.stepbtns button{font-size:.8rem;padding:7px 8px}
+.iv-url{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.iv-url input{flex:1 1 260px;font-size:.88rem;padding:8px 10px}
+.iv-list{margin-top:10px;font-size:.88rem}.iv-list summary{cursor:pointer;color:var(--navy);font-weight:700}
+.iv-list ul{margin:8px 0 0;padding-left:1.2em;line-height:1.9}
+.ar-box{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;margin-top:6px}
+.ar-help{font-size:.8rem;color:var(--mute);margin-bottom:8px}
+.ar-on-s{color:var(--grn)}.ar-ex-s{color:var(--red)}
+.ar-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;align-items:center}
+.ar-reg{border-top:1px dashed var(--line);padding-top:6px}
+.ar-pref{padding-left:12px}
+.ar-chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:.84rem;cursor:pointer;min-height:34px;color:var(--ink)}
+.ar-chip.on{background:var(--grnbg);border-color:var(--grn);color:var(--grn);font-weight:700}
+.ar-chip.ex{background:var(--redbg);border-color:var(--red);color:var(--red);font-weight:700;text-decoration:line-through}
+.ar-more{background:none;border:0;color:var(--blue);font-size:.8rem;cursor:pointer;padding:4px 6px}
+.ar-free{display:grid;gap:4px;font-size:.84rem;margin-top:6px}
+.ar-sum{font-size:.82rem;color:var(--navy);margin-top:8px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<section id="login">
+  <form class="lg-box" id="lgf" autocomplete="on">
+    <h1>企業支援 総合相談窓口<br>相談管理</h1>
+    <p>担当者の ID とパスワードを入れてください</p>
+    <label class="f">ID<input type="text" id="lg-id" autocomplete="username" required></label>
+    <label class="f">パスワード<input type="password" id="lg-pw" autocomplete="current-password" required></label>
+    <div class="err" id="lg-err" role="alert"></div>
+    <button class="btn btn-navy" type="submit" id="lg-btn">ログイン</button>
+    <p class="lg-note">5回続けて間違えると、15分ほどログインできなくなります。</p>
+    <button class="lg-link" type="button" id="rg-open">はじめての登録・パスワードを忘れたとき</button>
+  </form>
+  <form class="lg-box hide" id="rgf" autocomplete="off">
+    <h1>ID とパスワードの登録</h1>
+    <p>窓口のメール（kigyosoudan@gmail.com）に確認コードを送ります。届いたコードを入れて、ID とパスワードを決めてください。同じ ID で登録し直すと、パスワードを変えられます。</p>
+    <button class="btn" type="button" id="rg-send">確認コードを送る</button>
+    <label class="f">確認コード（6桁）<input type="text" id="rg-code" inputmode="numeric" maxlength="6" autocomplete="one-time-code"></label>
+    <label class="f">表示する名前<input type="text" id="rg-name" placeholder="例：藤原"></label>
+    <label class="f">ログイン ID（半角の英字・数字）<input type="text" id="rg-id" autocomplete="username" autocapitalize="off" spellcheck="false"></label>
+    <label class="f">パスワード（英字と数字をまぜて10文字以上）<input type="password" id="rg-pw" autocomplete="new-password"></label>
+    <div class="err" id="rg-err" role="alert"></div>
+    <button class="btn btn-navy" type="submit" id="rg-btn">登録する</button>
+    <button class="lg-link" type="button" id="rg-back">ログインに戻る</button>
+  </form>
+</section>
+
+<section id="app" class="hide">
+  <header>
+    <h1>企業支援 総合相談窓口　相談管理</h1>
+    <span class="who" id="who"></span>
+    <button class="btn btn-sm" id="b-sound" type="button" aria-pressed="false">🔔 通知音 オフ</button>
+    <button class="btn btn-sm" id="b-reload" type="button">↻ 最新にする</button>
+    <button class="btn btn-sm" id="b-logout" type="button">ログアウト</button>
+  </header>
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="inbox" aria-selected="true">ご相談<span class="cnt hide" id="cnt-inbox"></span></button>
+    <button role="tab" data-tab="assist" aria-selected="false">🧭 アシスト<span class="cnt hide" id="cnt-assist"></span></button>
+    <button role="tab" data-tab="pt" aria-selected="false">取次先の登録</button>
+    <button role="tab" data-tab="stages" aria-selected="false">進み具合の設定</button>
+    <button role="tab" data-tab="users" aria-selected="false">担当者・パスワード</button>
+  </nav>
+  <main id="main"></main>
+</section>
+
+<div id="drawer" class="hide"></div>
+<div id="toast" class="hide"></div>
+<div id="loading" class="loading hide">読み込み中…</div>
+
+<script>
+/* ===== 共通 ===== */
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const store = { get(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} }, del(k) { try { sessionStorage.removeItem(k); } catch (e) {} } };
+const lstore = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+const API_URL = "https://script.google.com/macros/s/AKfycbyrAW_oUbA5ZXBFZ1KLcR6nfnMEnbsjAfMY9F0rYYq-RSp7P_m3SuNFh9RRy1q4ar3m/exec";
+async function call(fn, ...args) {
+  const r = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ fn, args }), credentials: "omit", cache: "no-store" });
+  const j = await r.json();
+  if (!j.ok) {
+    if (String(j.error).includes("LOGIN_REQUIRED")) toLogin("時間がたったため、もう一度ログインしてください。");
+    throw new Error(j.error);
+  }
+  return j.result;
+}
+function toast(t) { const el = $("#toast"); el.textContent = t; el.classList.remove("hide"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.add("hide"), 2600); }
+function busy(on) { $("#loading").classList.toggle("hide", !on); }
+function parseTs(s) { if (!s) return null; const m = String(s).match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/); if (!m) { const d = new Date(s); return isNaN(d) ? null : d; } return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], (+(m[4] || 0)) - 9, +(m[5] || 0), +(m[6] || 0))); }
+function ago(s) {
+  const d = parseTs(s); if (!d) return "—";
+  const m = Math.max(0, (Date.now() - d.getTime()) / 6e4);
+  if (m < 60) return Math.floor(m) + "分";
+  const h = m / 60; if (h < 24) return Math.floor(h) + "時間";
+  const dd = Math.floor(h / 24), hh = Math.floor(h % 24); return dd + "日" + (dd < 3 && hh ? hh + "時間" : "");
+}
+function jst(s) { const d = parseTs(s); if (!d) return "—"; const z = new Date(d.getTime() + 9 * 36e5); return `${z.getUTCMonth() + 1}/${z.getUTCDate()} ${String(z.getUTCHours()).padStart(2, "0")}:${String(z.getUTCMinutes()).padStart(2, "0")}`; }
+
+/* ===== 状態 ===== */
+let TOKEN = store.get("kg-token"), D = null, TAB = "inbox", FILTER = "need", Q = "", CAT = "", PART = "", OPEN = null, SOUND = lstore.get("kg-sound") === "1", SEEN = null;
+
+/* ===== ログイン ===== */
+function toLogin(msg) { TOKEN = null; store.del("kg-token"); $("#app").classList.add("hide"); $("#login").classList.remove("hide"); $("#drawer").classList.add("hide"); $("#lg-err").textContent = msg || ""; }
+$("#lgf").addEventListener("submit", async e => {
+  e.preventDefault(); unlockAudio();
+  const btn = $("#lg-btn"); btn.disabled = true; $("#lg-err").textContent = "";
+  try {
+    const r = await call("login", $("#lg-id").value, $("#lg-pw").value);
+    if (!r.ok) { $("#lg-err").textContent = r.error; return; }
+    TOKEN = r.token; store.set("kg-token", TOKEN); $("#lg-pw").value = "";
+    await load(true);
+  } catch (err) { $("#lg-err").textContent = "接続できませんでした。時間をおいてお試しください。"; }
+  finally { btn.disabled = false; }
+});
+$("#rg-open").addEventListener("click", () => { $("#lgf").classList.add("hide"); $("#rgf").classList.remove("hide"); $("#rg-err").textContent = ""; });
+$("#rg-back").addEventListener("click", () => { $("#rgf").classList.add("hide"); $("#lgf").classList.remove("hide"); });
+$("#rg-send").addEventListener("click", async () => {
+  const b = $("#rg-send"); b.disabled = true; $("#rg-err").textContent = "";
+  try { const r = await call("requestCode"); if (!r.ok) { $("#rg-err").textContent = r.error; return; } toast("確認コードを送りました（" + r.to + "）"); b.textContent = "確認コードをもう一度送る"; $("#rg-code").focus(); }
+  catch (e) { $("#rg-err").textContent = "送れませんでした。時間をおいてお試しください。"; }
+  finally { b.disabled = false; }
+});
+$("#rgf").addEventListener("submit", async e => {
+  e.preventDefault(); const btn = $("#rg-btn"); btn.disabled = true; $("#rg-err").textContent = "";
+  try {
+    const r = await call("registerWithCode", $("#rg-code").value, $("#rg-id").value, $("#rg-name").value, $("#rg-pw").value);
+    if (!r.ok) { $("#rg-err").textContent = r.error; return; }
+    $("#lg-id").value = $("#rg-id").value; $("#rg-pw").value = ""; $("#rg-code").value = "";
+    $("#rgf").classList.add("hide"); $("#lgf").classList.remove("hide");
+    $("#lg-err").textContent = r.reset ? "パスワードを登録し直しました。新しいパスワードでログインしてください。" : "登録しました。パスワードを入れてログインしてください。";
+    $("#lg-pw").focus();
+  } catch (err) { $("#rg-err").textContent = "登録できませんでした。時間をおいてお試しください。"; }
+  finally { btn.disabled = false; }
+});
+$("#b-logout").addEventListener("click", async () => { try { await call("logout", TOKEN); } catch (e) {} toLogin("ログアウトしました。"); });
+
+/* ===== 通知音 ===== */
+let AC = null;
+function unlockAudio() { try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === "suspended") AC.resume(); } catch (e) {} }
+function chime(strong) {
+  if (!SOUND || !AC) return;
+  const t = AC.currentTime; const notes = strong ? [880, 660, 880, 660] : [784, 1046];
+  notes.forEach((f, i) => { const o = AC.createOscillator(), g = AC.createGain(); o.type = "sine"; o.frequency.value = f;
+    g.gain.setValueAtTime(.0001, t + i * .22); g.gain.exponentialRampToValueAtTime(.25, t + i * .22 + .02); g.gain.exponentialRampToValueAtTime(.0001, t + i * .22 + .2);
+    o.connect(g); g.connect(AC.destination); o.start(t + i * .22); o.stop(t + i * .22 + .22); });
+}
+function paintSound() { const b = $("#b-sound"); b.textContent = SOUND ? "🔔 通知音 オン" : "🔕 通知音 オフ"; b.classList.toggle("on", SOUND); b.setAttribute("aria-pressed", SOUND); }
+$("#b-sound").addEventListener("click", () => { unlockAudio(); SOUND = !SOUND; lstore.set("kg-sound", SOUND ? "1" : "0"); paintSound(); if (SOUND) chime(false); });
+
+/* ===== 読み込み ===== */
+async function load(first) {
+  if (first) busy(true);
+  try {
+    const prev = D;
+    D = await call("adminData", TOKEN); mergeBase();
+    $("#login").classList.add("hide"); $("#app").classList.remove("hide");
+    $("#who").textContent = D.me.name + " さん";
+    paintSound();
+    D.cases.forEach(c => Object.assign(c, level(c)));
+    // 新着・警告の増加で音を鳴らす
+    const reds = D.cases.filter(c => c.lv === 2).map(c => c.no);
+    if (first) { if (reds.length) chime(true); }
+    else if (prev) {
+      const oldNos = new Set(prev.cases.map(c => c.no)), oldRed = new Set(prev.cases.filter(c => c.lv === 2).map(c => c.no));
+      const fresh = D.cases.filter(c => !oldNos.has(c.no));
+      if (fresh.length) { chime(false); toast(`新しい受付が${fresh.length}件あります`); }
+      else if (reds.some(n => !oldRed.has(n))) chime(true);
+    }
+    render();
+    if (OPEN) { const c = D.cases.find(x => x.no === OPEN); if (c) openCase(c.no, true); }
+  } catch (e) { if (TOKEN) toast("読み込みに失敗しました"); }
+  finally { busy(false); }
+}
+$("#b-reload").addEventListener("click", () => load(false));
+setInterval(() => { if (TOKEN && D && !document.hidden) load(false); }, 3 * 60 * 1000);
+
+/* ===== 注意度 ===== */
+function isEnd(c) { return (D.ends || []).includes(c.status) || c.status === D.stopped[c.kind]; }
+function level(c) {
+  if (isEnd(c)) return { lv: 0, why: "" };
+  const R = D.rules, now = Date.now(), ts = parseTs(c.ts), up = parseTs(c.updated) || ts;
+  const h = (now - (ts ? ts.getTime() : now)) / 36e5, d = (now - (up ? up.getTime() : now)) / 864e5;
+  if (c.status === D.steps[c.kind][0] && h >= R.newHours) return { lv: 2, why: `未対応のまま${ago(c.ts)}` };
+  if (d >= R.staleRedDays) return { lv: 2, why: `${Math.floor(d)}日間 進捗なし` };
+  if (d >= R.staleDays) return { lv: 1, why: `${Math.floor(d)}日間 進捗なし` };
+  if (c.status === D.steps[c.kind][0]) return { lv: 1, why: "未対応" };
+  return { lv: 0, why: "" };
+}
+const isNew = c => c.status === D.steps[c.kind][0];
+
+/* ===== 画面 ===== */
+$$("nav.tabs button").forEach(b => b.addEventListener("click", () => { TAB = b.dataset.tab; $$("nav.tabs button").forEach(x => x.setAttribute("aria-selected", x === b)); render(); }));
+function render() {
+  ["inbox"].forEach(k => { const n = D.cases.filter(c => c.kind === k && c.lv === 2).length + D.cases.filter(c => c.kind === k && isNew(c) && c.lv !== 2).length;
+    const el = $("#cnt-" + k); el.textContent = n; el.classList.toggle("hide", !n); });
+  const reds = D.cases.filter(c => c.lv === 2).length;
+  document.title = (reds ? `(${reds}) ` : "") + "相談管理｜企業支援 総合相談窓口";
+  const ac = assistAll().filter(x => x.lv >= 2).length; const ea = $("#cnt-assist"); ea.textContent = ac; ea.classList.toggle("hide", !ac);
+  if (TAB === "assist") return renderAssist();
+  if (TAB === "pt") return renderPartners();
+  if (TAB === "stages") return renderStages();
+  if (TAB === "users") return renderUsers();
+  renderList();
+}
+
+function renderList() {
+  const all = D.cases.filter(c => c.kind === TAB).sort((a, b) => (parseTs(b.ts) || 0) - (parseTs(a.ts) || 0));
+  const cnt = {
+    new: all.filter(isNew).length, red: all.filter(c => c.lv === 2).length, yel: all.filter(c => c.lv === 1 && !isNew(c)).length,
+    doing: all.filter(c => !isEnd(c) && !isNew(c)).length,
+    done: all.filter(c => isEnd(c) && (parseTs(c.updated) || 0) > Date.now() - 30 * 864e5).length
+  };
+  let list = all.filter(c => FILTER === "all" ? true : FILTER === "need" ? c.lv > 0 || isNew(c) : FILTER === "new" ? isNew(c) : FILTER === "doing" ? !isEnd(c) && !isNew(c) : isEnd(c));
+  if (CAT) list = list.filter(c => String(c.cat || "").split("、").includes(CAT));
+  if (PART) list = list.filter(c => (c.partner || "") === (PART === "__none" ? "" : PART));
+  if (Q) { const q = Q.toLowerCase(); list = list.filter(c => Object.values(c).join(" ").toLowerCase().includes(q)); }
+  const cats = [...new Set(all.flatMap(c => String(c.cat || "").split("、")).filter(Boolean))];
+  const parts = [...new Set(all.map(c => c.partner).filter(Boolean))];
+  const chips = [["need", "対応が必要"], ["new", "未対応"], ["doing", "対応中"], ["end", "完了・見送り"], ["all", "すべて"]];
+  $("#main").innerHTML = `
+    ${cnt.red ? `<div class="alertbar" role="alert"><span class="bell">🔔</span>対応が遅れている相談が ${cnt.red} 件あります。赤い線の相談から対応してください。</div>` : ""}
+    <div class="kpis">
+      <button class="kpi red ${cnt.new ? "has" : ""}" data-f="new"><b>${cnt.new}</b><span>未対応（新規受付）</span></button>
+      <button class="kpi red ${cnt.red ? "has" : ""}" data-f="need"><b>${cnt.red}</b><span>警告（遅れ・放置）</span></button>
+      <button class="kpi yel" data-f="need"><b>${cnt.yel}</b><span>注意（進捗報告なし）</span></button>
+      <button class="kpi blue" data-f="doing"><b>${cnt.doing}</b><span>対応中</span></button>
+      <button class="kpi grn" data-f="end"><b>${cnt.done}</b><span>30日以内の完了・見送り</span></button>
+    </div>
+    <div class="filters">
+      ${chips.map(([k, t]) => `<button class="chip" data-chip="${k}" aria-pressed="${FILTER === k}">${t}</button>`).join("")}
+      <input type="text" id="q" placeholder="名前・会社・受付番号で探す" value="${esc(Q)}">
+      <select id="fcat"><option value="">分野：すべて</option>${cats.map(c => `<option ${c === CAT ? "selected" : ""}>${esc(c)}</option>`).join("")}</select>
+      ${TAB === "inbox" ? `<select id="fpart"><option value="">取次ぎ先：すべて</option><option value="__none" ${PART === "__none" ? "selected" : ""}>未設定</option>${parts.map(p => `<option ${p === PART ? "selected" : ""}>${esc(p)}</option>`).join("")}</select>` : ""}
+    </div>
+    <div class="list">${list.length ? list.map(row).join("") : `<div class="empty">該当する相談はありません。</div>`}</div>`;
+  $$(".kpi").forEach(b => b.addEventListener("click", () => { FILTER = b.dataset.f; renderList(); }));
+  $$("[data-chip]").forEach(b => b.addEventListener("click", () => { FILTER = b.dataset.chip; renderList(); }));
+  $("#q").addEventListener("input", e => { Q = e.target.value; clearTimeout(renderList.t); renderList.t = setTimeout(() => { renderList(); const q = $("#q"); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }, 300); });
+  $("#fcat").addEventListener("change", e => { CAT = e.target.value; renderList(); });
+  const fp = $("#fpart"); if (fp) fp.addEventListener("change", e => { PART = e.target.value; renderList(); });
+  $$(".case").forEach(b => b.addEventListener("click", () => openCase(b.dataset.no)));
+}
+
+function catFirst(c) { return String(c.cat || "").split("、")[0]; }
+function sugg(c) { const k = candidates(c)[0]; return k ? k.p.name : ""; }
+function stepsBar(c) {
+  const st = D.steps[c.kind], i = st.indexOf(c.status), stop = c.status === D.stopped[c.kind];
+  return `<div class="steps ${stop ? "stop" : ""}" title="${esc(st.join(" → "))}">${st.map((s, j) => `<i class="${j < i ? "on" : j === i ? "cur" : ""}"></i>`).join("")}</div>`;
+}
+function stBadge(c) {
+  if (c.status === D.stopped[c.kind]) return `<span class="badge b-gray">${esc(c.status)}</span>`;
+  if (isEnd(c)) return `<span class="badge b-grn">✓ ${esc(c.status)}</span>`;
+  if (isNew(c)) return `<span class="badge b-red">● ${esc(c.status)}</span>`;
+  return `<span class="badge b-blue">${esc(c.status)}</span>`;
+}
+function row(c) {
+  const name = c.kind === "inbox" ? (c.company || "（会社名なし）") : c.company, person = c.kind === "inbox" ? c.name : c.person;
+  const cat = c.cat || c.industry || "—";
+  const warn = c.lv === 2 ? `<span class="badge b-red">⚠ ${esc(c.why)}</span>` : c.lv === 1 ? `<span class="badge b-yel">△ ${esc(c.why)}</span>` : "";
+  const contact = c.contacted ? `最終連絡 ${ago(c.contacted)}前` : "お客様へ未連絡";
+  return `<button class="case lv${c.lv} ${isNew(c) ? "new" : ""} ${isEnd(c) ? "done" : ""}" data-no="${esc(c.no)}">
+    <div><div class="c-top"><span>${esc(c.no)}</span><span>受付 ${jst(c.ts)}</span><span class="badge b-gray">受付から ${ago(c.ts)}</span>${warn}</div>
+      <div class="c-name">${esc(name)}</div><div class="c-sub">${esc(person)} 様${c.mid ? "　" + esc(c.mid) + (c.sub ? "／" + esc(c.sub) : "") : ""}</div></div>
+    <div class="route">${c.kind === "inbox" ? `<span>${esc(cat)}</span><span class="arr">→</span>${c.partner ? `<span class="p">${esc(c.partner)}</span>` : sugg(c) ? `<span class="p sug">候補：${esc(sugg(c))}</span>` : `<span class="p none">取次ぎ先 未設定</span>`}` : `<span>業種：${esc(cat)}</span>`}
+      ${c.staff ? `<span class="badge b-gray">担当 ${esc(c.staff)}</span>` : ""}</div>
+    <div>${stepsBar(c)}<div class="c-st">${stBadge(c)}<span>更新 ${ago(c.updated)}前・${contact}</span></div></div>
+  </button>`;
+}
+
+/* ===== 詳細 ===== */
+function hist(no) { return D.history.filter(h => h.no === no).sort((a, b) => (parseTs(b.at) || 0) - (parseTs(a.at) || 0)); }
+function lastContact(c) { const h = hist(c.no).find(x => x.type === "お客様へ連絡"); return h ? h.at : c.contacted; }
+function openCase(no, keep) {
+  const c = D.cases.find(x => x.no === no); if (!c) return;
+  OPEN = no;
+  const st = D.steps[c.kind], i = st.indexOf(c.status);
+  const cands = candidates(c);
+  const mids = stageMids(c.status);
+  const staffList = [...new Set(D.users.map(u => u.name).concat(c.staff ? [c.staff] : []))];
+  const info = c.kind === "inbox"
+    ? [["会社名・屋号", c.company], ["お名前", c.name + " 様"], ["メール", c.email], ["電話番号", c.tel], ["分野", c.cat], ["専門家への共有", c.share === "同意" ? "同意あり" : "あとで確認（共有の前に要確認）"], ["ご相談内容", c.body]]
+    : [["会社名", c.company], ["担当者名", c.person + " 様"], ["業種", c.industry], ["所在地", c.address], ["電話番号", c.tel], ["メール", c.email], ["提供サービス", c.service], ["対応地域", c.area], ["提携希望内容", c.want], ["備考", c.note]];
+  const lc = lastContact(c), lcH = lc ? (Date.now() - parseTs(lc).getTime()) / 36e5 : null;
+  const tl = hist(c.no);
+  const prevScroll = keep && $(".dr") ? $(".dr").scrollTop : 0;
+  $("#drawer").innerHTML = `<div class="dr" role="dialog" aria-label="相談の詳細">
+    <div class="dr-head"><h2>${esc(c.no)}　${esc(c.company || c.name)}</h2><button class="btn btn-sm" id="d-close">閉じる ✕</button></div>
+    <div class="dr-body">
+      ${c.lv ? `<div class="alertbar" style="margin:0;${c.lv === 1 ? "background:var(--yelbg);border-color:#F1D59A;color:#7A5210" : ""}"><span class="bell">${c.lv === 2 ? "🔔" : "△"}</span>${esc(c.why)}　受付から ${ago(c.ts)}・最終更新から ${ago(c.updated)}</div>` : ""}
+      ${assistCard(c, cands)}
+      <div class="card"><h3>進み具合 <small>大分類を押すとその段階に進めます</small></h3>
+        <div class="stepbtns">${st.map((s, j) => `<button data-step="${esc(s)}" class="${j < i ? "past" : j === i ? "cur" : ""}">${j + 1}. ${esc(s)}</button>`).join("")}
+          <button data-step="${esc(D.stopped[c.kind])}" class="stop ${c.status === D.stopped[c.kind] ? "cur" : ""}">${esc(D.stopped[c.kind])}</button></div>
+        <div class="grid2" style="margin-top:10px">
+          <label class="f">中分類<select id="d-mid"><option value="">（選ぶ）</option>${mids.map(m => `<option ${m.mid === c.mid ? "selected" : ""}>${esc(m.mid)}</option>`).join("")}${c.mid && !mids.some(m => m.mid === c.mid) ? `<option selected>${esc(c.mid)}</option>` : ""}</select></label>
+          <label class="f">小分類<select id="d-sub"></select></label>
+        </div>
+        <label class="f">詳細（いまの状況・決まったこと・相手の返事など）<textarea id="d-detail" style="min-height:64px" placeholder="例：〇〇行政書士事務所に紹介。11/5に初回面談の予定">${esc(c.detail || "")}</textarea></label>
+        <div class="grid2">
+          ${c.kind === "inbox" ? `<label class="f">取次ぎ先（専門家・提携先）<select id="d-partner">${partnerOptions(c.partner)}</select>
+            <span class="hint">${partnerHint(c.partner)}</span></label>` : ""}
+          <label class="f">担当者<select id="d-staff"><option value="">（未設定）</option>${staffList.map(s => `<option ${s === c.staff ? "selected" : ""}>${esc(s)}</option>`).join("")}</select></label>
+          <label class="f">次の対応予定日<input type="date" id="d-next" value="${esc((c.next || "").replace(/\//g, "-").slice(0, 10))}"></label>
+        </div>
+        <div class="row"><button class="btn btn-navy btn-sm" id="d-save">保存する</button><span class="hint">受付から ${ago(c.ts)}・最終更新から ${ago(c.updated)}</span></div>
+      </div>
+
+      <div class="card compose" id="compose"><h3>📨 お客様への進捗報告 <small>文面は自動で作ります。送るかどうかは担当者が決めます</small></h3>
+        <div class="hint ${lcH != null && lcH < D.rules.recontactHours ? "warn" : ""}">${lc ? `前回の連絡：${jst(lc)}（${ago(lc)}前）${lcH < D.rules.recontactHours ? `　※${D.rules.recontactHours}時間以内です。連絡が多すぎないか確かめてください` : ""}` : "まだお客様へ連絡していません"}</div>
+        ${!c.email ? `<div class="hint red">メールアドレスの入力がないため、お電話でご連絡ください。電話で伝えた内容は「送らずに記録」で残せます。</div>` : ""}
+        <label class="f">報告の内容<select id="r-kind">${st.filter(x => !INTERNAL.includes(x)).concat([D.stopped[c.kind], "途中経過のお知らせ"]).map(s => `<option ${s === (INTERNAL.includes(c.status) ? "途中経過のお知らせ" : c.status) ? "selected" : ""}>${esc(s)}</option>`).join("")}</select></label>
+        <label class="f">件名<input type="text" id="r-sub"></label>
+        <label class="f">本文<textarea id="r-body" rows="12" style="min-height:260px"></textarea></label>
+        <div class="row">
+          <button class="btn btn-sm" id="r-again">↻ 別の言い回しで作り直す</button>
+          <button class="btn btn-gold btn-sm" id="r-send">お客様へ送信する</button>
+          <button class="btn btn-sm" id="r-skip">送らずに記録</button>
+          <span class="hint">送り先：${esc(c.email || "（メールアドレスなし）")}</span>
+        </div>
+      </div>
+
+      <div class="card"><h3>お客様の情報</h3><dl class="kv">${info.map(([k, v]) => `<dt>${k}</dt><dd>${k === "電話番号" && v ? `<a href="tel:${esc(String(v).replace(/[^\d+]/g, ""))}">${esc(v)}</a>` : k === "メール" && v ? `<a href="mailto:${esc(v)}">${esc(v)}</a>` : esc(v || "—")}</dd>`).join("")}</dl></div>
+
+      <div class="card"><h3>対応メモ</h3>
+        ${c.memo ? `<div class="hint" style="white-space:pre-wrap;color:var(--ink)">${esc(c.memo)}</div>` : ""}
+        <textarea id="d-memo" placeholder="電話で話した内容、専門家とのやりとりなど" style="min-height:70px"></textarea>
+        <div class="row"><button class="btn btn-sm" id="d-memo-add">メモを追加</button></div></div>
+
+      <div class="card"><h3>対応の履歴</h3>${tl.length ? `<ul class="tl">${tl.map(h => `<li class="${h.type === "お客様へ連絡" ? "send" : h.type === "更新" ? "upd" : ""}"><time>${jst(h.at)}</time><b>${esc(h.type)}</b>${h.by ? "　" + esc(h.by) : ""}${h.to ? "　→ " + esc(h.to) : ""}<div class="t">${esc(h.text)}</div></li>`).join("")}</ul>` : `<div class="hint">まだ履歴はありません。</div>`}</div>
+    </div></div>`;
+  $("#drawer").classList.remove("hide");
+  if (keep) $(".dr").scrollTop = prevScroll;
+  $("#drawer").onclick = e => { if (e.target.id === "drawer") closeCase(); };
+  $("#d-close").onclick = closeCase;
+  const ps = $("#d-partner");
+  if (ps) ps.onchange = () => { if (ps.value === "__other") { const v = prompt("取次ぎ先（事務所名・会社名）を入れてください"); if (v) { const o = document.createElement("option"); o.textContent = v.trim(); o.selected = true; ps.insertBefore(o, ps.lastElementChild); } else ps.value = c.partner || ""; } };
+  const paintSub = () => { const m = mids.find(x => x.mid === $("#d-mid").value); const subs = m ? m.subs : []; const cur = $("#d-mid").value === c.mid ? c.sub : "";
+    $("#d-sub").innerHTML = `<option value="">（選ぶ）</option>` + subs.map(x => `<option ${x === cur ? "selected" : ""}>${esc(x)}</option>`).join("") + (cur && !subs.includes(cur) ? `<option selected>${esc(cur)}</option>` : ""); };
+  paintSub(); $("#d-mid").onchange = paintSub;
+  $$("[data-pick]").forEach(b => b.onclick = () => { const v = b.dataset.pick, sel = $("#d-partner"); if (![...sel.options].some(o => o.value === v)) { const o = document.createElement("option"); o.textContent = v; sel.insertBefore(o, sel.lastElementChild); } sel.value = v; $(".hint", sel.parentNode).innerHTML = partnerHint(v); toast("取次先を「" + v + "」にしました。保存を押すと確定します"); sel.scrollIntoView({ behavior: "smooth", block: "center" }); });
+  $$("[data-goto]").forEach(b => b.onclick = () => { const t = $(b.dataset.goto); if (t) { t.scrollIntoView({ behavior: "smooth", block: "center" }); if (t.focus) t.focus(); } });
+  $("#d-save").onclick = () => save(c, {});
+  $$("[data-step]").forEach(b => b.onclick = () => {
+    const s = b.dataset.step; if (s === c.status) return;
+    if (s === D.stopped[c.kind] && !confirm("「" + s + "」にしますか？")) return;
+    save(c, { status: s, mid: "", sub: "" }, true);
+  });
+  $("#d-memo-add").onclick = async () => { const m = $("#d-memo").value.trim(); if (!m) return; busy(true); try { await call("updateCase", TOKEN, c.kind, c.no, { memo: m }); toast("メモを追加しました"); await load(false); } catch (e) { toast("保存できませんでした"); } finally { busy(false); } };
+  let variant = 0;
+  const fill = () => { const r = genReport(c, $("#r-kind").value, variant); $("#r-sub").value = r.subject; $("#r-body").value = r.body; };
+  fill();
+  $("#r-kind").onchange = () => { variant = 0; fill(); };
+  $("#r-again").onclick = () => { variant++; fill(); };
+  $("#r-send").onclick = async () => {
+    if (lcH != null && lcH < D.rules.recontactHours && !confirm(`前回の連絡から${ago(lc)}しかたっていません。それでも送りますか？`)) return;
+    if (!confirm(`${c.email} へ送信します。よろしいですか？`)) return;
+    busy(true);
+    try { const r = await call("sendReport", TOKEN, c.kind, c.no, $("#r-sub").value, $("#r-body").value, true);
+      if (!r.ok) { toast(r.error); return; } toast("送信しました"); await load(false); }
+    catch (e) { toast("送信できませんでした"); } finally { busy(false); }
+  };
+  $("#r-skip").onclick = async () => { busy(true); try { await call("sendReport", TOKEN, c.kind, c.no, $("#r-sub").value, $("#r-body").value, false); toast("送らずに記録しました"); await load(false); } catch (e) { toast("記録できませんでした"); } finally { busy(false); } };
+}
+function closeCase() { OPEN = null; $("#drawer").classList.add("hide"); $("#drawer").innerHTML = ""; }
+document.addEventListener("keydown", e => { if (e.key === "Escape" && OPEN) closeCase(); });
+
+async function save(c, extra, stepped) {
+  const patch = Object.assign({ staff: $("#d-staff").value, next: $("#d-next").value ? $("#d-next").value.replace(/-/g, "/") : "", mid: $("#d-mid").value, sub: $("#d-sub").value, detail: $("#d-detail").value.trim() }, extra);
+  const ps = $("#d-partner"); if (ps) patch.partner = ps.value === "__other" ? c.partner : ps.value;
+  // 取次ぎの段階に進めたとき、取次ぎ先が空なら設定から自動で入れる
+  if (patch.status === "対応先取次" && !patch.partner) { const k = candidates(c)[0]; if (k) patch.partner = k.p.name; }
+  busy(true);
+  try {
+    await call("updateCase", TOKEN, c.kind, c.no, patch);
+    toast(stepped ? `「${patch.status}」にしました。進捗報告を確認してください` : "保存しました");
+    await load(false);
+    if (stepped && OPEN === c.no) { const cp = $("#compose"); if (cp) { cp.scrollIntoView({ behavior: "smooth", block: "start" }); cp.classList.add("flash"); } }
+  } catch (e) { toast("保存できませんでした"); } finally { busy(false); }
+}
+
+/* ===== 進捗報告の文面を作る ===== */
+function genReport(c, kind, v) {
+  const who = `${c.company ? c.company + "\n" : ""}${c.name} 様`;
+  const topic = `「${catFirst(c) || "企業"}」に関するご相談`;
+  const staff = c.staff || (D.me && D.me.name) || "担当";
+  const share = c.share === "同意";
+  const open = [
+    `このたびは企業支援 総合相談窓口へ${topic}をいただき、誠にありがとうございます。`,
+    `いつもお世話になっております。企業支援 総合相談窓口でございます。\n先日いただきました${topic}につきまして、ご連絡いたします。`,
+    `${topic}をいただき、ありがとうございます。企業支援 総合相談窓口の${staff}でございます。`
+  ][v % 3];
+  const close = [
+    `ご不明な点がございましたら、このメールへのご返信、またはお電話（平日10:00〜18:00）にてお気軽にお問い合わせください。`,
+    `ご質問やご要望がございましたら、受付番号を添えてご返信いただけますと、すぐに確認いたします。`,
+    `引き続きどうぞよろしくお願いいたします。お急ぎの場合はお電話でもご連絡ください。`
+  ][(v + 1) % 3];
+  const B = {
+    "未対応": `${topic}を確かに受け付けました。\n内容を確認のうえ、窓口の担当者より改めてご連絡いたします。`,
+    "内容確認": `いただいた内容を、担当の${staff}が確認しております。\n必要に応じて、詳しい状況をお電話・メール・Zoomでお伺いすることがございます。2〜3営業日を目安に、今後の進め方をご案内いたします。`,
+    "対応選定": `ご相談の内容をもとに、対応の方法と、おつなぎする専門家・提携先を検討しております。\n候補が決まりましたら、進め方とあわせてご案内いたします。`,
+    "対応先取次": share
+      ? `ご相談の内容に合わせて、対応する専門家（提携先）を選び、おつなぎいたしました${c.partner ? "（" + c.partner + "）" : ""}。\n専門家から直接ご連絡を差し上げる場合は、事前にお知らせいたします。専門家の報酬・費用は、専門家から直接ご案内いたします。`
+      : `ご相談の内容に合わせて、対応できる専門家（提携先）の候補を選びました。\nお客様の情報を専門家へお伝えする前に、改めてご了承のご確認をさせていただきます。追ってご連絡いたしますので、少々お待ちください。`,
+    "取次先対応中": `現在、専門家とともに、具体的な進め方や必要な準備について検討を進めております。\n進み具合に応じて、改めてご報告いたします。`,
+    "提案見積中": `ご提案内容（必要に応じてお見積り）を取りまとめております。\nまとまり次第お送りいたしますので、ご確認をお願いいたします。ご契約は電子契約で行えますので、来社や書類の郵送は不要です。`,
+    "実行中": `ご契約いただいた内容について、手続き・作業を進めております。\n節目ごとに、進み具合をご報告いたします。`,
+    "対応完了": `このたびのご相談につきまして、対応が完了いたしましたのでご報告いたします。\n今後のお手続き（お支払いなど）がございます場合は、改めてご案内いたします。`,
+    "支払い": `ご依頼いただいた内容につきまして、お支払いのご案内をお送りいたします。\n内容をご確認のうえ、期日までにお手続きをお願いいたします。ご不明な点はお気軽にお問い合わせください。`,
+    "完了": `このたびのご相談につきまして、すべてのお手続きが完了いたしました。\nご相談いただき、誠にありがとうございました。今後も、経営や事業のことでお困りの際は、いつでもお気軽にご相談ください。`,
+    "次回アプローチ": `以前ご相談いただいた件につきまして、その後のご状況はいかがでしょうか。\n更新の時期や、新しく使える制度・サービスなど、お役に立てる情報がございましたらご案内いたします。お気軽にご返信ください。`,
+    "見送り": `ご相談の内容を慎重に検討いたしましたが、誠に恐縮ながら、今回は当窓口および提携先でのお手伝いが難しいとの結論となりました。\nご期待に沿えず申し訳ございません。状況が変わった際や、別のご相談がございましたら、改めてお声がけください。`,
+    "途中経過のお知らせ": `ご相談につきまして、引き続き対応を進めております。\n現在の状況：${c.status}${c.mid ? "（" + c.mid + (c.sub ? "・" + c.sub : "") + "）" : ""}\n次の段階に進み次第、改めてご報告いたします。`
+  };
+  const title = {
+    "未対応": "受付のお知らせ", "内容確認": "内容確認のご報告", "対応選定": "進め方のご検討状況", "対応先取次": "今後の進め方のご報告", "取次先対応中": "進捗のご報告",
+    "提案見積中": "ご提案準備のご報告", "実行中": "進捗のご報告", "対応完了": "対応完了のご報告", "支払い": "お支払いのご案内", "完了": "お手続き完了のご報告",
+    "次回アプローチ": "その後のご状況について", "見送り": "ご相談へのご回答", "途中経過のお知らせ": "途中経過のご報告"
+  }[kind] || "進捗のご報告";
+  const subject = `【企業支援 総合相談窓口】${title}（受付番号 ${c.no}）`;
+  const body = `${who}\n\n${open}\n\n${B[kind] || B["途中経過のお知らせ"]}\n\n受付番号：${c.no}\n担当：${staff}\n\n${close}\n\n${D.signature}`;
+  return { subject, body };
+}
+
+/* ===== 対応アシスト ===== */
+// お客様向けの報告を出さない社内の段階
+const INTERNAL = ["手数料入金", "分配"];
+// 分野ごとに、関わることが多い専門家の種別
+const CAT_TYPES = {
+  "補助金・公的支援": ["行政書士", "中小企業診断士", "社会保険労務士", "税理士"],
+  "許認可・行政手続き": ["行政書士", "司法書士"],
+  "士業・専門家への相談": ["行政書士", "税理士", "社会保険労務士", "司法書士", "弁護士"],
+  "資金繰り・融資・資金調達": ["中小企業診断士", "税理士"],
+  "経費・固定費の見直し": ["提携事業者", "税理士"],
+  "人材・採用・労務": ["社会保険労務士", "提携事業者"],
+  "業務改善・AI・システム": ["提携事業者", "中小企業診断士"],
+  "集客・営業・売上改善": ["提携事業者", "中小企業診断士"],
+  "新規事業・商品開発・知的財産": ["中小企業診断士", "弁理士", "行政書士"],
+  "海外展開・輸出": ["提携事業者", "行政書士"],
+  "事業承継・会社の将来": ["税理士", "司法書士", "中小企業診断士", "弁護士"],
+  "経営リスク・トラブル・事業継続": ["弁護士", "社会保険労務士", "提携事業者"],
+  "その他の企業相談": []
+};
+// 相談の文面から、必要な専門家を見つけるための言葉
+const TYPE_KW = {
+  "行政書士": ["許可", "許認可", "建設業", "産廃", "産業廃棄物", "古物", "飲食店", "運送", "宅建", "届出", "補助金", "申請書", "在留", "ビザ", "経審", "入札"],
+  "社会保険労務士": ["助成金", "労務", "就業規則", "雇用", "社会保険", "労働保険", "残業", "給与計算", "採用", "解雇", "労災", "人事評価"],
+  "税理士": ["税", "決算", "確定申告", "経理", "記帳", "相続税", "節税", "インボイス", "消費税", "会計"],
+  "司法書士": ["登記", "設立", "役員変更", "本店移転", "相続登記", "増資", "定款"],
+  "弁護士": ["訴訟", "裁判", "トラブル", "未払い", "債権回収", "損害賠償", "契約違反", "紛争", "クレーム", "示談"],
+  "中小企業診断士": ["事業計画", "経営改善", "認定支援", "経営計画", "資金繰り", "融資", "事業再構築", "ものづくり"],
+  "弁理士": ["特許", "商標", "意匠", "知的財産", "知財", "ブランド名"],
+  "提携事業者": ["システム", "ホームページ", "集客", "広告", "設備", "電気代", "通信費", "保険", "リース", "輸出", "AI", "人材紹介", "コスト"]
+};
+function caseCats(c) { return String(c.cat || "").split("、").filter(Boolean); }
+function hits(text, words) { const t = String(text || ""); return [...new Set(words.filter(w => w && t.includes(w)))]; }
+function splitWords(s) { return String(s || "").split(/[、,，\s\/・]+/).map(x => x.trim()).filter(x => x.length >= 2); }
+
+/** 必要そうな専門家の種別（分野と文面から） */
+function neededTypes(c) {
+  const out = {};
+  caseCats(c).forEach(cat => (CAT_TYPES[cat] || []).forEach((t, i) => { out[t] = out[t] || { t, score: 0, why: [] }; out[t].score += 3 - Math.min(i, 2); if (!out[t].why.includes("分野")) out[t].why.push("分野"); }));
+  Object.entries(TYPE_KW).forEach(([t, kw]) => { const h = hits(c.body, kw); if (h.length) { out[t] = out[t] || { t, score: 0, why: [] }; out[t].score += h.length * 2; out[t].why.push("「" + h.slice(0, 3).join("」「") + "」"); } });
+  return Object.values(out).sort((a, b) => b.score - a.score).slice(0, 4);
+}
+/** 取次候補（登録した取次先から、点数の高い順） */
+function candidates(c) {
+  if (!D || !D.partners) return [];
+  const need = neededTypes(c), cats = caseCats(c);
+  return D.partners.filter(usable).map(p => {
+    let score = 0; const why = [];
+    const am = p.area ? areaMatch(p.area, c.body) : null;
+    if (am && am.ex) return { p, score: 0, why: [] };
+    if (am && am.ok) { score += 2; why.push("地域が対応：" + am.prefs.join("・")); }
+    const pc = String(p.cats || "").split("、").filter(Boolean), m = cats.filter(x => pc.includes(x));
+    if (m.length) { score += m.length * 5; why.push("分野が一致：" + m.join("・")); }
+    const n = need.find(x => x.t === p.type); if (n) { score += Math.min(n.score, 6); why.push("必要そうな専門家：" + p.type); }
+    const kh = hits(c.body, splitWords(p.keywords)); if (kh.length) { score += kh.length * 3; why.push("得意なことと一致：" + kh.slice(0, 4).join("・")); }
+    if (c.partner && c.partner === p.name) why.push("今の取次先");
+    return { p, score, why };
+  }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, 5);
+}
+function partnerHint(name) {
+  const p = D.partners.find(x => x.name === name);
+  if (!name) return "取次先は「取次先の登録」で登録できます。上のアシストに候補が出ます。";
+  if (!p) return "登録されていない取次先です（「取次先の登録」で登録すると、連絡先がここに出ます）。";
+  return `<b>${esc(p.type || "")}</b>${p.person ? "　担当：" + esc(p.person) : ""}${p.tel ? "　☎ " + esc(p.tel) : ""}${p.email ? "　" + esc(p.email) : ""}${p.fee ? "<br>費用・手数料：" + esc(p.fee) : ""}`;
+}
+function stageMids(big) {
+  return (D.stages || []).filter(x => x.big === big).map(x => ({ mid: x.mid, subs: String(x.subs || "").split(/[、,，]/).map(s => s.trim()).filter(Boolean) }));
+}
+const sIdx = c => D.steps.inbox.indexOf(c.status);
+const after = (c, step) => sIdx(c) >= D.steps.inbox.indexOf(step);
+const NEXT_TODO = {
+  "未対応": ["お客様へ受付の連絡をする（電話・メール）", "ご相談内容を読み、足りない情報を書き出す", "担当者を決める"],
+  "内容確認": ["電話・メール・Zoomで詳しい状況を聞く", "必要な資料（決算書・許可証など）を依頼する", "中分類で「ヒアリング」か「資料確認」を選ぶ"],
+  "対応選定": ["自社で対応するか、取次ぐかを決める", "下の取次候補から先を選び、先方へ打診する", "専門家へ情報を渡すことの同意をお客様に確かめる"],
+  "対応先取次": ["取次先へご相談の要点を伝える（同意の範囲で）", "初回面談の日程を決め、次の対応予定日に入れる", "お客様へ「今後の進め方のご報告」を送る"],
+  "取次先対応中": ["取次先に進み具合を確かめる", "お客様の書類待ちがあれば、催促の連絡をする", "詳細に、決まったことを書き残す"],
+  "提案見積中": ["見積・提案の内容を確かめる", "お客様の判断の期日を決めて予定日に入れる", "契約は電子契約で送る"],
+  "実行中": ["申請・作業の節目（提出日・審査結果の予定）を予定日に入れる", "節目ごとにお客様へ報告する"],
+  "対応完了": ["結果をお客様へ報告する", "請求の準備をする（支払いへ）"],
+  "支払い": ["請求書を送り、入金期日を予定日に入れる", "入金を確かめたら小分類を「入金確認済み」に"],
+  "手数料入金": ["手数料の請求先・金額を確かめる", "入金を確かめたら小分類を「入金確認済み」に"],
+  "分配": ["分配額を確定し、詳細に書き残す", "振込が済んだら「完了」へ"],
+  "完了": ["書類を保管する", "次の提案の時期があれば「次回アプローチ」にして予定日を入れる"],
+  "次回アプローチ": ["予定日にご状況を伺う連絡をする", "更新時期・新しい制度などの情報を添える"],
+  "見送り": ["見送りの理由を小分類と詳細に残す"]
+};
+/** 相談1件の注意点（lv 2=急ぎ 1=注意） */
+function issues(c) {
+  const out = [], today = new Date(Date.now() + 9 * 36e5).toISOString().slice(0, 10), next = (c.next || "").replace(/\//g, "-").slice(0, 10);
+  if (c.lv === 2) out.push({ lv: 2, t: c.why, go: "#d-detail" });
+  if (next && next < today && !isEnd(c)) out.push({ lv: 2, t: `予定日（${next.slice(5).replace("-", "/")}）を過ぎています`, go: "#d-next" });
+  if (next && next === today) out.push({ lv: 1, t: "今日が対応予定日です", go: "#d-next" });
+  if (!c.email && !c.tel) out.push({ lv: 2, t: "連絡先（電話・メール）がありません", go: null });
+  if (!c.staff && !isEnd(c)) out.push({ lv: 1, t: "担当者が決まっていません", go: "#d-staff" });
+  if (!isEnd(c) && !next && !isNew(c)) out.push({ lv: 1, t: "次の対応予定日が入っていません", go: "#d-next" });
+  if (!c.mid && !isNew(c)) out.push({ lv: 1, t: "中分類・小分類が選ばれていません", go: "#d-mid" });
+  if (after(c, "対応先取次") && !c.partner && !isEnd(c)) out.push({ lv: 2, t: "取次先が決まっていません", go: "#d-partner" });
+  if (after(c, "対応先取次") && c.share !== "同意" && !((D.partners.find(x => x.name === c.partner) || {}).type === "自社") && !hist(c.no).some(h => /同意/.test(h.text)) && !isEnd(c))
+    out.push({ lv: 2, t: "お客様は「専門家への共有」に同意していません。情報を渡す前に同意を確かめ、メモに残してください", go: "#d-memo" });
+  if (c.status === "手数料入金") {
+    const p = D.partners.find(x => x.name === c.partner);
+    if (p && ["行政書士", "社会保険労務士", "税理士", "司法書士", "弁護士", "弁理士"].includes(p.type))
+      out.push({ lv: 2, t: `取次先が士業（${p.type}）です。士業から紹介料を受け取ることは法律や会則で制限されている場合があり、サイトでも「紹介料なし」としています。手数料の相手と名目を確かめてください`, go: null });
+  }
+  if (c.status === "次回アプローチ" && !next) out.push({ lv: 1, t: "次回の連絡日を予定日に入れてください", go: "#d-next" });
+  return out;
+}
+function assistCard(c, cands) {
+  const iss = issues(c), todo = NEXT_TODO[c.status] || [], need = neededTypes(c);
+  return `<div class="card assist"><h3>🧭 対応アシスト <small>いまの段階「${esc(c.status)}」でやること</small></h3>
+    ${iss.length ? `<ul class="as-iss">${iss.map(x => `<li class="lv${x.lv}">${x.lv === 2 ? "⚠" : "△"} ${esc(x.t)}${x.go ? ` <button class="lnk" data-goto="${x.go}">入力へ</button>` : ""}</li>`).join("")}</ul>` : `<div class="hint ok">✓ 抜けている項目はありません</div>`}
+    ${todo.length ? `<ol class="as-todo">${todo.map(t => `<li>${esc(t)}</li>`).join("")}</ol>` : ""}
+    <div class="as-sub"><b>取次候補</b>（ご相談の分野と文面から）</div>
+    ${cands.length ? `<ul class="as-cand">${cands.map((k, i) => `<li><div><b>${i + 1}. ${esc(k.p.name)}</b> <span class="badge b-gray">${esc(k.p.type || "")}</span><div class="hint">${k.why.map(esc).join("／")}</div></div>${c.partner === k.p.name ? `<span class="badge b-grn">取次先</span>` : `<button class="btn btn-sm" data-pick="${esc(k.p.name)}">この先にする</button>`}</li>`).join("")}</ul>`
+      : `<div class="hint">${D.partners.length ? "登録した取次先の中に、合う先が見つかりませんでした。" : "取次先がまだ登録されていません。「取次先の登録」で登録すると、ここに候補が出ます。"}</div>`}
+    ${need.length ? `<div class="hint">必要そうな専門家：${need.map(n => `<b>${esc(n.t)}</b>（${esc(n.why.join("・"))}）`).join("、")}</div>` : ""}
+  </div>`;
+}
+/** すべての相談から、今やることを集める */
+function assistAll() {
+  if (!D) return [];
+  const list = [];
+  D.cases.filter(c => !isEnd(c) || c.status === "次回アプローチ").forEach(c => issues(c).forEach(x => list.push(Object.assign({ c }, x))));
+  D.cases.filter(isNew).forEach(c => { if (!list.some(x => x.c === c && x.lv === 2)) list.push({ c, lv: 1, t: "未対応の新しいご相談" }); });
+  return list.sort((a, b) => b.lv - a.lv || (parseTs(a.c.ts) || 0) - (parseTs(b.c.ts) || 0));
+}
+function renderAssist() {
+  const L = assistAll(), red = L.filter(x => x.lv === 2), yel = L.filter(x => x.lv === 1);
+  const free = D.cases.filter(c => !isEnd(c) && !c.partner && (after(c, "対応選定")));
+  const item = x => `<button class="as-row lv${x.lv}" data-no="${esc(x.c.no)}"><span class="badge ${x.lv === 2 ? "b-red" : "b-yel"}">${x.lv === 2 ? "急ぎ" : "注意"}</span><span><b>${esc(x.c.company || x.c.name)}</b>　${esc(x.c.no)}　<span class="badge b-blue">${esc(x.c.status)}</span><br>${esc(x.t)}</span></button>`;
+  $("#main").innerHTML = `<div class="card" style="margin-bottom:12px"><h3>🧭 アシスト <small>すべての相談から、今やることをまとめています</small></h3>
+      <div class="hint">急ぎ ${red.length} 件・注意 ${yel.length} 件。押すとその相談が開きます。</div></div>
+    ${red.length ? `<div class="as-list">${red.map(item).join("")}</div>` : `<div class="empty">急ぎの対応はありません。</div>`}
+    ${yel.length ? `<h3 class="as-h">注意</h3><div class="as-list">${yel.map(item).join("")}</div>` : ""}
+    ${free.length ? `<h3 class="as-h">取次先が決まっていない相談と、その候補</h3><div class="as-list">${free.map(c => { const k = candidates(c)[0]; return `<button class="as-row" data-no="${esc(c.no)}"><span class="badge b-gray">${esc(c.status)}</span><span><b>${esc(c.company || c.name)}</b>　${esc(caseCats(c).join("・"))}<br>${k ? "第1候補：" + esc(k.p.name) + "（" + esc(k.why[0] || "") + "）" : "候補なし（取次先を登録してください）"}</span></button>`; }).join("")}</div>` : ""}`;
+  $$(".as-row").forEach(b => b.onclick = () => openCase(b.dataset.no));
+}
+
+/* ===== 取次先の登録 ===== */
+// 登録がなくても選べる基本の選択肢（同じ名称で登録すると、登録した内容が優先されます）
+const BASE_PARTNERS = [
+  { name: "自社対応（株式会社グローブ）", type: "自社", cats: "経費・固定費の見直し、業務改善・AI・システム、集客・営業・売上改善、新規事業・商品開発・知的財産、その他の企業相談", keywords: "整理、計画、相談", area: "対応：全国、オンライン（Zoomなど）", fee: "自社の業務" },
+  { name: "買取大吉", type: "提携事業者", cats: "経費・固定費の見直し、事業承継・会社の将来、経営リスク・トラブル・事業継続", keywords: "買取、在庫、処分、廃業、閉店、不用品、片付け、遺品、事務所移転、什器、貴金属、ブランド", area: "" },
+  { name: "提携企業（個別に選定）", type: "提携事業者", cats: "経費・固定費の見直し、業務改善・AI・システム、集客・営業・売上改善、海外展開・輸出、人材・採用・労務", keywords: "", area: "" },
+  { name: "提携行政書士（選定中）", type: "行政書士", cats: "許認可・行政手続き、補助金・公的支援", keywords: "", area: "" },
+  { name: "提携社会保険労務士（選定中）", type: "社会保険労務士", cats: "人材・採用・労務、補助金・公的支援", keywords: "", area: "" },
+  { name: "提携税理士（選定中）", type: "税理士", cats: "資金繰り・融資・資金調達、事業承継・会社の将来", keywords: "", area: "" },
+  { name: "提携司法書士（選定中）", type: "司法書士", cats: "事業承継・会社の将来、許認可・行政手続き", keywords: "", area: "" },
+  { name: "提携弁護士（選定中）", type: "弁護士", cats: "経営リスク・トラブル・事業継続", keywords: "", area: "" },
+  { name: "提携中小企業診断士（選定中）", type: "中小企業診断士", cats: "資金繰り・融資・資金調達、補助金・公的支援、新規事業・商品開発・知的財産", keywords: "", area: "" }
+];
+function mergeBase() {
+  if (!D) return;
+  D.partners = (D.partners || []).filter(p => !p.base);
+  BASE_PARTNERS.forEach(b => { if (!D.partners.some(p => p.name === b.name)) D.partners.push(Object.assign({ id: "", base: true, active: "有効", person: "", tel: "", email: "", note: "" }, b)); });
+  if (!(D.partnerTypes || []).includes("自社")) D.partnerTypes = ["自社"].concat(D.partnerTypes || []);
+}
+const usable = p => !p.active || p.active === "有効";
+function partnerOptions(cur) {
+  const reg = D.partners.filter(p => !p.base && usable(p)), base = D.partners.filter(p => p.base);
+  const opt = p => `<option ${p.name === cur ? "selected" : ""}>${esc(p.name)}</option>`;
+  const known = D.partners.some(p => p.name === cur && (p.base || usable(p)));
+  return `<option value="">（未設定）</option>${reg.length ? `<optgroup label="登録した取次先">${reg.map(opt).join("")}</optgroup>` : ""}<optgroup label="基本の選択肢">${base.map(opt).join("")}</optgroup>${cur && !known ? `<option selected>${esc(cur)}</option>` : ""}<option value="__other">ほかの取次先を入力…</option>`;
+}
+let PT_EDIT = null, PT_NEW = false, INV_URL = "";
+function renderPartners() {
+  const P = D.partners, e = PT_EDIT ? (P.find(x => (x.id || x.name) === PT_EDIT) || {}) : {};
+  const used = name => D.cases.filter(c => c.partner === name && !isEnd(c)).length;
+  const wait = P.filter(p => p.active === "審査待ち");
+  const badge = p => p.base ? `<span class="badge b-gray">基本</span>` : p.active === "休止" ? `<span class="badge b-gray">休止</span>` : p.active === "審査待ち" ? `<span class="badge b-yel">審査待ち</span>` : `<span class="badge b-grn">有効</span>`;
+  const inv = (D.invites || []).slice(0, 10);
+  const form = `<div class="card" id="pt-form" style="margin-bottom:12px"><h3>${PT_EDIT ? "取次先の修正" : "取次先をここで登録"} <small>${PT_EDIT ? "" : "自分で入力するとき"}</small></h3>
+      ${e.base ? `<div class="hint">基本の選択肢です。保存すると、登録した取次先として扱われます。</div>` : ""}
+      <div class="grid2">
+        <label class="f">名称（必須）<input type="text" id="p-name" value="${esc(e.name || "")}" placeholder="例：〇〇行政書士事務所"></label>
+        <label class="f">種別<select id="p-type">${D.partnerTypes.map(t => `<option ${t === e.type ? "selected" : ""}>${esc(t)}</option>`).join("")}</select></label>
+        <label class="f">先方の担当者<input type="text" id="p-person" value="${esc(e.person || "")}"></label>
+        <label class="f">電話番号<input type="tel" id="p-tel" value="${esc(e.tel || "")}"></label>
+        <label class="f">メール<input type="email" id="p-email" value="${esc(e.email || "")}"></label>
+        <label class="f">状態<select id="p-active">${["有効", "審査待ち", "休止"].map(x => `<option ${x === (e.active || "有効") ? "selected" : ""}>${x}</option>`).join("")}</select></label>
+      </div>
+      <div class="f"><span>対応分野（当てはまるものをすべて）</span><div class="pt-cats">${D.categories.map(cat => `<label><input type="checkbox" value="${esc(cat)}" ${String(e.cats || "").split("、").includes(cat) ? "checked" : ""}> ${esc(cat)}</label>`).join("")}</div></div>
+      <div class="f"><span>対応地域</span><div class="ar-box" id="p-area"></div></div>
+      <label class="f">得意なこと・キーワード（「、」で区切る。ご相談の文面と照らし合わせます）<input type="text" id="p-kw" value="${esc(e.keywords || "")}" placeholder="例：建設業許可、産廃、ものづくり補助金"></label>
+      <label class="f">手数料・費用の扱い<input type="text" id="p-fee" value="${esc(e.fee || "")}" placeholder="例：紹介料なし・報酬は先方から直接ご案内"></label>
+      <label class="f">備考<textarea id="p-note" style="min-height:56px">${esc(e.note || "")}</textarea></label>
+      <div class="err" id="p-err"></div>
+      <div class="row"><button class="btn btn-navy" id="p-save">${PT_EDIT ? "修正を保存する" : "登録する"}</button><button class="btn" id="p-cancel">${PT_EDIT ? "やめる" : "閉じる"}</button></div>
+    </div>`;
+  $("#main").innerHTML = `
+    <div class="card" style="margin-bottom:12px"><h3>📨 協力企業に登録してもらう <small>URLを送ると、相手が入力して登録できます</small></h3>
+      <div class="grid2">
+        <label class="f">宛先（会社名など・メモ）<input type="text" id="iv-memo" placeholder="例：〇〇行政書士事務所"></label>
+        <label class="f">メールで送る場合の送り先（空ならURLだけ作ります）<input type="email" id="iv-to" placeholder="例：info@example.jp"></label>
+      </div>
+      <div class="row"><button class="btn btn-navy" id="iv-make">登録用のURLを作る</button><span class="hint">URLは${30}日間有効・1回の登録に使えます。届いた登録は「審査待ち」になり、承認すると取次候補に出ます。</span></div>
+      ${INV_URL ? `<div class="iv-url"><input type="text" id="iv-url" value="${esc(INV_URL)}" readonly><button class="btn btn-gold btn-sm" id="iv-copy">コピー</button><a class="btn btn-sm" href="https://line.me/R/msg/text/?${encodeURIComponent("協力企業のご登録のお願いです。下記から入力をお願いいたします。\n" + INV_URL)}" target="_blank" rel="noopener">LINEで送る</a></div>` : ""}
+      ${inv.length ? `<details class="iv-list"><summary>発行したURL（最新${inv.length}件）</summary><ul>${inv.map(v => `<li><b>${esc(v.memo || "（宛先なし）")}</b>　${esc(v.at.slice(0, 16))}　<span class="badge ${v.status === "未使用" ? "b-blue" : "b-grn"}">${esc(v.status)}</span>${v.to ? "　→ " + esc(v.to) : ""}${v.status === "未使用" ? ` <button class="lnk" data-cp="${esc(v.url)}">URLをコピー</button>` : ""}</li>`).join("")}</ul></details>` : ""}
+    </div>
+    ${wait.length ? `<div class="alertbar" style="margin-bottom:12px"><span class="bell">🔔</span>登録申込みが ${wait.length} 件届いています。内容を確かめて「承認する」を押してください。</div>` : ""}
+    ${PT_EDIT || PT_NEW ? form : `<div class="row" style="margin-bottom:12px"><button class="btn btn-navy" id="p-new">＋ 取次先をここで登録する</button></div>`}
+    <div class="card"><h3>取次先の一覧 <small>${P.filter(p => !p.base).length}件の登録＋基本の選択肢</small></h3>
+      <table class="rt"><thead><tr><th>名称</th><th>種別</th><th>対応分野・地域</th><th>連絡先</th><th>対応中</th><th>状態</th><th></th></tr></thead><tbody>${P.slice().sort((a, b) => (b.active === "審査待ち") - (a.active === "審査待ち") || (a.base ? 1 : 0) - (b.base ? 1 : 0)).map(p => `<tr><td><b>${esc(p.name)}</b>${p.person ? "<br><small>" + esc(p.person) + "</small>" : ""}</td><td>${esc(p.type)}</td><td><small>${esc(p.cats)}${p.area ? "<br>地域：" + esc(p.area) : ""}</small></td><td><small>${esc(p.tel || "")}${p.email ? "<br>" + esc(p.email) : ""}</small></td><td>${used(p.name)}件</td><td>${badge(p)}</td><td>${p.active === "審査待ち" ? `<button class="btn btn-gold btn-sm" data-ok="${esc(p.id)}">承認する</button> ` : ""}<button class="btn btn-sm" data-pe="${esc(p.id || p.name)}">${p.active === "審査待ち" ? "内容を見る" : "修正"}</button></td></tr>`).join("")}</tbody></table>
+    </div>`;
+  if (PT_EDIT || PT_NEW) {
+    areaPicker($("#p-area"), e.area || "");
+    $("#p-cancel").onclick = () => { PT_EDIT = null; PT_NEW = false; renderPartners(); };
+    $("#p-save").onclick = async () => {
+      const o = { id: e.base ? "" : (e.id || ""), name: $("#p-name").value.trim(), type: $("#p-type").value, person: $("#p-person").value.trim(), tel: $("#p-tel").value.trim(), email: $("#p-email").value.trim(), area: areaGet($("#p-area")),
+        cats: $$(".pt-cats input:checked").map(x => x.value).join("、"), keywords: $("#p-kw").value.trim(), fee: $("#p-fee").value.trim(), active: $("#p-active").value, note: $("#p-note").value.trim() };
+      $("#p-err").textContent = "";
+      if (!o.name) { $("#p-err").textContent = "名称を入れてください。"; return; }
+      busy(true);
+      try { const r = await call("savePartner", TOKEN, o); if (!r.ok) { $("#p-err").textContent = r.error; return; } D.partners = r.partners; mergeBase(); toast(PT_EDIT ? "保存しました" : "登録しました"); PT_EDIT = null; PT_NEW = false; renderPartners(); }
+      catch (err) { $("#p-err").textContent = "保存できませんでした。"; } finally { busy(false); }
+    };
+  } else $("#p-new").onclick = () => { PT_NEW = true; renderPartners(); $("#pt-form").scrollIntoView({ behavior: "smooth" }); };
+  $$("[data-pe]").forEach(b => b.onclick = () => { PT_EDIT = b.dataset.pe; PT_NEW = false; renderPartners(); $("#pt-form").scrollIntoView({ behavior: "smooth" }); });
+  $$("[data-ok]").forEach(b => b.onclick = async () => {
+    const p = D.partners.find(x => x.id === b.dataset.ok); if (!p || !confirm(`「${p.name}」を協力企業として承認しますか？`)) return;
+    busy(true); try { const r = await call("savePartner", TOKEN, Object.assign({}, p, { active: "有効" })); D.partners = r.partners; mergeBase(); toast("承認しました。取次候補に出るようになります"); renderPartners(); } catch (e2) { toast("承認できませんでした"); } finally { busy(false); }
+  });
+  const copy = t => { (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast("URLをコピーしました")).catch(() => { const i = $("#iv-url"); if (i) { i.select(); } toast("コピーできませんでした。URLを選んでコピーしてください"); }); };
+  $("#iv-make").onclick = async () => {
+    busy(true);
+    try { const r = await call("createInvite", TOKEN, $("#iv-memo").value.trim(), $("#iv-to").value.trim()); if (!r.ok) { toast(r.error); return; } INV_URL = r.url; D.invites = r.invites; toast($("#iv-to").value.trim() ? "URLを作り、メールで送りました" : "URLを作りました。コピーして送ってください"); renderPartners(); }
+    catch (err) { toast("作れませんでした"); } finally { busy(false); }
+  };
+  const cb = $("#iv-copy"); if (cb) cb.onclick = () => copy(INV_URL);
+  $$("[data-cp]").forEach(b => b.onclick = () => copy(b.dataset.cp));
+}
+
+/* ===== 対応地域の選択（押すたびに ✓対応 → ✕除外 → なし） ===== */
+const AREA_REG = [
+  ["北海道", ["北海道"]],
+  ["東北地区", ["青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県"]],
+  ["関東地区", ["茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県"]],
+  ["甲信越・北陸地区", ["新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県"]],
+  ["東海地区", ["岐阜県", "静岡県", "愛知県", "三重県"]],
+  ["関西地区", ["滋賀県", "京都府", "大阪府", "兵庫県", "奈良県", "和歌山県"]],
+  ["中国地区", ["鳥取県", "島根県", "岡山県", "広島県", "山口県"]],
+  ["四国地区", ["徳島県", "香川県", "愛媛県", "高知県"]],
+  ["九州・沖縄地区", ["福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"]]
+];
+const AREA_TOP = ["全国", "オンライン（Zoomなど）"];
+function areaParse(str) {
+  const o = { on: [], ex: [], free: "" };
+  String(str || "").split("／").forEach(part => {
+    const m = part.match(/^\s*(対応|除外|自由記載)：([\s\S]*)$/);
+    if (!m) { if (part.trim()) o.free = (o.free ? o.free + " " : "") + part.trim(); return; }
+    if (m[1] === "自由記載") o.free = m[2].trim();
+    else o[m[1] === "対応" ? "on" : "ex"] = m[2].split("、").map(x => x.trim()).filter(Boolean);
+  });
+  return o;
+}
+function areaString(o) {
+  return [o.on.length ? "対応：" + o.on.join("、") : "", o.ex.length ? "除外：" + o.ex.join("、") : "", o.free ? "自由記載：" + o.free.replace(/／/g, "/") : ""].filter(Boolean).join("／");
+}
+function areaPicker(box, value) {
+  const st = {}; const o = areaParse(value);
+  o.on.forEach(k => st[k] = 1); o.ex.forEach(k => st[k] = 2);
+  const chip = k => `<button type="button" class="ar-chip" data-ar="${k}" aria-pressed="false">${k}</button>`;
+  box.innerHTML = `<div class="ar-help">一度押すと <b class="ar-on-s">✓ 対応</b>、二度押すと <b class="ar-ex-s">✕ 除外</b>、三度押すと元に戻ります。</div>
+    <div class="ar-row">${AREA_TOP.map(chip).join("")}</div>
+    ${AREA_REG.map(([r, ps]) => `<div class="ar-reg"><div class="ar-row">${chip(r)}${ps.length > 1 ? `<button type="button" class="ar-more" aria-expanded="false">都道府県 ▾</button>` : ""}</div>${ps.length > 1 ? `<div class="ar-row ar-pref" hidden>${ps.map(chip).join("")}</div>` : ""}</div>`).join("")}
+    <label class="ar-free">自由記載（市区町村・細かい条件など）<input type="text" class="ar-free-in" value="${String(o.free || "").replace(/"/g, "&quot;")}" placeholder="例：大阪市内は訪問可、その他はZoom"></label>
+    <div class="ar-sum" aria-live="polite"></div>`;
+  const paint = () => {
+    box.querySelectorAll("[data-ar]").forEach(b => { const v = st[b.dataset.ar] || 0; b.className = "ar-chip" + (v === 1 ? " on" : v === 2 ? " ex" : ""); b.setAttribute("aria-pressed", v ? "true" : "false"); b.textContent = (v === 1 ? "✓ " : v === 2 ? "✕ " : "") + b.dataset.ar; });
+    const v = areaGet(box); box.querySelector(".ar-sum").textContent = v ? "登録内容：" + v : "まだ選ばれていません";
+  };
+  box._st = st;
+  box.querySelectorAll("[data-ar]").forEach(b => b.addEventListener("click", () => { const k = b.dataset.ar; st[k] = ((st[k] || 0) + 1) % 3; if (!st[k]) delete st[k]; paint(); }));
+  box.querySelectorAll(".ar-more").forEach(b => b.addEventListener("click", () => { const p = b.closest(".ar-reg").querySelector(".ar-pref"); p.hidden = !p.hidden; b.setAttribute("aria-expanded", !p.hidden); b.textContent = p.hidden ? "都道府県 ▾" : "閉じる ▴"; }));
+  // 選んだ都道府県がある地区は開いておく
+  AREA_REG.forEach(([r, ps], i) => { if (ps.some(p => st[p])) { const m = box.querySelectorAll(".ar-reg")[i].querySelector(".ar-more"); if (m) m.click(); } });
+  box.querySelector(".ar-free-in").addEventListener("input", paint);
+  paint();
+}
+function areaGet(box) {
+  const st = box._st || {}, order = AREA_TOP.concat(AREA_REG.flatMap(([r, ps]) => [r].concat(ps.length > 1 ? ps : [])));
+  const o = { on: order.filter(k => st[k] === 1), ex: order.filter(k => st[k] === 2), free: (box.querySelector(".ar-free-in") || {}).value || "" };
+  o.free = o.free.trim(); return areaString(o);
+}
+/** 文面に出てくる都道府県について、対応／除外を判定する（null は判断できない） */
+function areaMatch(str, text) {
+  const o = areaParse(str), t = String(text || "");
+  const prefs = AREA_REG.flatMap(([r, ps]) => ps.map(p => [p, r])).filter(([p]) => t.includes(p) || (p.length > 2 && t.includes(p.replace(/[都府県]$/, ""))));
+  if (!prefs.length) return null;
+  let ok = false, ex = false;
+  prefs.forEach(([p, r]) => {
+    if (o.ex.includes(p) || (o.ex.includes(r) && !o.on.includes(p))) ex = true;
+    else if (o.on.includes(p) || o.on.includes(r) || o.on.includes("全国")) ok = true;
+  });
+  return { ok, ex, prefs: prefs.map(x => x[0]) };
+}
+
+/* ===== 進み具合の設定 ===== */
+function renderStages() {
+  const bigs = D.steps.inbox.concat([D.stopped.inbox]);
+  $("#main").innerHTML = `<div class="card" style="margin-bottom:12px"><h3>進み具合の設定 <small>大分類ごとに、中分類と小分類を決めます</small></h3>
+      <div class="hint">1行に1つの中分類を書きます。書き方：<b>中分類：小分類、小分類、小分類</b>（例：見積：見積の作成中、見積の提出済み）</div></div>
+    <div class="st-grid">${bigs.map((b, i) => `<label class="f card"><span><b>${i < D.steps.inbox.length ? (i + 1) + ". " : ""}${esc(b)}</b></span><textarea data-big="${esc(b)}" rows="4">${esc((D.stages || []).filter(x => x.big === b).map(x => x.mid + "：" + x.subs).join("\n"))}</textarea></label>`).join("")}</div>
+    <div class="row" style="margin-top:12px"><button class="btn btn-navy" id="st-save">保存する</button></div>`;
+  $("#st-save").onclick = async () => {
+    const rows = [];
+    $$("[data-big]").forEach(t => t.value.split("\n").map(l => l.trim()).filter(Boolean).forEach(l => { const m = l.split(/[：:]/); rows.push({ big: t.dataset.big, mid: m[0].trim(), subs: (m.slice(1).join("：") || "").trim() }); }));
+    busy(true); try { const r = await call("saveStages", TOKEN, rows); D.stages = r.stages; toast("保存しました"); } catch (e) { toast("保存できませんでした"); } finally { busy(false); }
+  };
+}
+
+/* ===== 担当者・パスワード ===== */
+function renderUsers() {
+  $("#main").innerHTML = `<div class="grid2">
+    <div class="card"><h3>パスワードの変更</h3>
+      <label class="f">今のパスワード<input type="password" id="pw-old" autocomplete="current-password"></label>
+      <label class="f">新しいパスワード（英字と数字をまぜて10文字以上）<input type="password" id="pw-new" autocomplete="new-password"></label>
+      <div class="err" id="pw-err"></div><div class="row"><button class="btn btn-navy btn-sm" id="pw-save">変更する</button></div></div>
+    <div class="card"><h3>担当者の追加</h3>
+      <label class="f">表示する名前<input type="text" id="u-name" placeholder="例：山田"></label>
+      <label class="f">ログイン ID（半角英数字）<input type="text" id="u-id" autocomplete="off"></label>
+      <label class="f">最初のパスワード（英字と数字をまぜて10文字以上）<input type="password" id="u-pw" autocomplete="new-password"></label>
+      <div class="err" id="u-err"></div><div class="row"><button class="btn btn-navy btn-sm" id="u-add">追加する</button></div></div>
+  </div>
+  <div class="card" style="margin-top:12px"><h3>登録されている担当者</h3><ul class="tl" id="u-list">${D.users.map(u => `<li>${esc(u.name)}（ID：${esc(u.id)}）${u.id !== D.me.id ? ` <button class="btn btn-sm" data-rm="${esc(u.id)}">削除</button>` : "　← あなた"}</li>`).join("")}</ul></div>`;
+  $("#pw-save").onclick = async () => { $("#pw-err").textContent = ""; try { const r = await call("changePassword", TOKEN, $("#pw-old").value, $("#pw-new").value); if (!r.ok) { $("#pw-err").textContent = r.error; return; } $("#pw-old").value = $("#pw-new").value = ""; toast("パスワードを変更しました"); } catch (e) { $("#pw-err").textContent = "変更できませんでした"; } };
+  $("#u-add").onclick = async () => { $("#u-err").textContent = ""; try { const r = await call("addUser", TOKEN, $("#u-id").value, $("#u-name").value, $("#u-pw").value); if (!r.ok) { $("#u-err").textContent = r.error; return; } D.users = r.users; toast("追加しました"); renderUsers(); } catch (e) { $("#u-err").textContent = "追加できませんでした"; } };
+  $$("[data-rm]").forEach(b => b.onclick = async () => { if (!confirm("この担当者を削除しますか？")) return; try { const r = await call("removeUser", TOKEN, b.dataset.rm); if (!r.ok) { toast(r.error); return; } D.users = r.users; renderUsers(); } catch (e) { toast("削除できませんでした"); } });
+}
+
+document.addEventListener("pointerdown", unlockAudio, { once: true });
+/* ===== 起動 ===== */
+if (TOKEN) load(true).catch(() => toLogin()); else toLogin();
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+# 企業支援 総合相談窓口（https://bsd.osaka/）を Xサーバーへ自動で載せる
+# sites/bsd.osaka/ が変わったときに動く。手動でも動かせる（Actions → この仕組み → Run workflow）
+# 必要な設定（リポジトリの Settings → Secrets and variables → Actions）
+#   Secrets  : FTP_BSD_PASSWORD（Xサーバーで作ったFTPアカウント deploy@bsd.osaka のパスワード）
+#   FTPアカウントの接続先は /home/madvi/bsd.osaka/public_html（＝公開フォルダ）
+name: 企業支援サイトをXサーバーへ公開
+on:
+  push:
+    branches: [main]
+    paths: ["sites/bsd.osaka/**"]
+  workflow_dispatch:
+concurrency:
+  group: deploy-bsd
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: FTPで転送（変わったファイルだけ）
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: sv17329.xserver.jp
+          username: deploy@bsd.osaka
+          password: ${{ secrets.FTP_BSD_PASSWORD }}
+          protocol: ftps
+          port: 21
+          local-dir: ./sites/bsd.osaka/
+          server-dir: ./
+          state-name: .ftp-deploy-sync-state.json

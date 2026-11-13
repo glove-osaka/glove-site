@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /kanri/
+Disallow: /kyoryoku/
+Sitemap: https://bsd.osaka/sitemap.xml

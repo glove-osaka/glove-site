@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>協力企業のご登録｜企業支援 総合相談窓口</title>
+<style>
+:root{--navy:#0E2A52;--navy2:#163A6B;--gold:#C79A4A;--ink:#1B2B40;--mute:#5E6E82;--line:#DCE3EC;--bg:#F3F6FA;--red:#C0392B;--redbg:#FDECEA;--grn:#2F7D5B;--grnbg:#E8F5EE;--blue:#2C5C93}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.8 "BIZ UDPGothic","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif}
+header{background:var(--navy);color:#fff;padding:14px 16px}
+header .in{max-width:860px;margin:0 auto}
+header b{display:block;font-size:1.05rem}header small{opacity:.85}
+main{max-width:860px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:1.4rem;color:var(--navy);margin:0 0 8px}
+.lead{color:var(--mute);margin:0 0 18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
+.card h2{font-size:1.05rem;color:var(--navy);margin:0 0 10px}
+.f{display:grid;gap:4px;margin-bottom:12px;font-weight:700;font-size:.94rem}
+.f small{font-weight:400;color:var(--mute)}
+.req{color:var(--red);font-size:.8rem;margin-left:6px}
+input[type=text],input[type=tel],input[type=email],input[type=url],select,textarea{width:100%;font:inherit;font-weight:400;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--navy)}
+textarea{min-height:80px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px 12px;font-weight:400;font-size:.92rem}
+.cats label{display:flex;gap:8px;align-items:center;min-height:36px}
+.cats input,.agree input{width:20px;height:20px}
+.agree{display:flex;gap:10px;align-items:flex-start;font-size:.92rem;line-height:1.7}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 28px;border-radius:10px;border:0;background:var(--navy);color:#fff;font:inherit;font-weight:700;font-size:1.05rem;cursor:pointer;width:100%}
+.btn:disabled{opacity:.6}
+.err{color:var(--red);font-size:.92rem;min-height:1.4em;margin:8px 0}
+.msg{text-align:center;padding:30px 18px}
+.msg b{display:block;font-size:1.2rem;color:var(--navy);margin-bottom:8px}
+.note{font-size:.84rem;color:var(--mute)}
+.ar-box{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;font-weight:400}
+.ar-help{font-size:.82rem;color:var(--mute);margin-bottom:8px}
+.ar-on-s{color:var(--grn)}.ar-ex-s{color:var(--red)}
+.ar-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;align-items:center}
+.ar-reg{border-top:1px dashed var(--line);padding-top:6px}
+.ar-pref{padding-left:12px}
+.ar-chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font:inherit;font-size:.88rem;cursor:pointer;min-height:38px;color:var(--ink)}
+.ar-chip.on{background:var(--grnbg);border-color:var(--grn);color:var(--grn);font-weight:700}
+.ar-chip.ex{background:var(--redbg);border-color:var(--red);color:var(--red);font-weight:700;text-decoration:line-through}
+.ar-more{background:none;border:0;color:var(--blue);font:inherit;font-size:.84rem;cursor:pointer;padding:4px 6px}
+.ar-free{display:grid;gap:4px;font-size:.88rem;margin-top:6px}
+.ar-sum{font-size:.86rem;color:var(--navy);margin-top:8px;line-height:1.6}
+</style>
+</head>
+<body>
+<header><div class="in"><b>企業支援 総合相談窓口</b><small>運営：株式会社グローブ　協力企業のご登録</small></div></header>
+<main>
+<div id="loading" class="card msg">読み込んでいます…</div>
+<div id="stop" class="card msg" hidden><b>ご登録のページを開けませんでした</b><p id="stopMsg"></p><p class="note">お問い合わせ：06-6355-0779（平日10:00〜18:00）／kigyosoudan@gmail.com</p></div>
+<div id="done" class="card msg" hidden><b>ご登録を受け付けました</b><p>ありがとうございます。内容を確認のうえ、担当者より改めてご連絡いたします。<br>確認のメールをお送りしましたので、ご確認ください。</p></div>
+<form id="f" hidden novalidate>
+<h1>協力企業のご登録</h1>
+<p class="lead" id="hello">企業様からのご相談を、内容に合う専門家・協力企業様へおつなぎしています。下記をご入力ください（5分ほどで終わります）。</p>
+<div class="card"><h2>基本の情報</h2>
+<div class="grid2">
+<label class="f">会社名・事務所名<span class="req">必須</span><input type="text" id="name" autocomplete="organization" required></label>
+<label class="f">種別<select id="type"></select></label>
+<label class="f">ご担当者名<span class="req">必須</span><input type="text" id="person" autocomplete="name" required></label>
+<label class="f">電話番号<span class="req">必須</span><input type="tel" id="tel" autocomplete="tel" required></label>
+<label class="f">メール<span class="req">必須</span><input type="email" id="email" autocomplete="email" required></label>
+<label class="f">ホームページ<input type="url" id="url" placeholder="https://"></label>
+</div>
+<label class="f">所在地<input type="text" id="address" autocomplete="street-address"></label>
+</div>
+<div class="card"><h2>対応できること</h2>
+<div class="f">対応分野<small>当てはまるものをすべて選んでください</small><div class="cats" id="cats"></div></div>
+<label class="f">得意なこと・キーワード<small>「、」で区切って入れてください。ご相談の内容と照らし合わせて、合うご相談をおつなぎします</small><input type="text" id="keywords" placeholder="例：建設業許可、産廃、ものづくり補助金"></label>
+<div class="f">対応地域<div class="ar-box" id="area"></div></div>
+</div>
+<div class="card"><h2>そのほか</h2>
+<label class="f">費用・手数料の扱い<small>例：報酬はご相談者へ直接ご案内、紹介料なし など</small><input type="text" id="fee"></label>
+<label class="f">備考<textarea id="note" placeholder="対応できる時間帯、得意な業種など"></textarea></label>
+<label class="agree"><input type="checkbox" id="agree"><span>ご登録の内容を、当窓口がご相談者へのおつなぎのために使うことに同意します。ご相談者の情報は、ご相談者の同意の範囲でお伝えします。（必須）</span></label>
+</div>
+<div class="err" id="err" role="alert"></div>
+<button class="btn" type="submit" id="go">この内容で登録する</button>
+<p class="note">ご登録の内容を確認のうえ、改めてご連絡いたします。確認が済むまでは、ご相談のおつなぎは行いません。</p>
+</form>
+</main>
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbyrAW_oUbA5ZXBFZ1KLcR6nfnMEnbsjAfMY9F0rYYq-RSp7P_m3SuNFh9RRy1q4ar3m/exec";
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+async function call(fn, ...args) {
+  const r = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ fn, args }), credentials: "omit", cache: "no-store" });
+  const j = await r.json(); if (!j.ok) throw new Error(j.error); return j.result;
+}
+/* ===== 対応地域の選択（押すたびに ✓対応 → ✕除外 → なし） ===== */
+const AREA_REG = [
+  ["北海道", ["北海道"]],
+  ["東北地区", ["青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県"]],
+  ["関東地区", ["茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県"]],
+  ["甲信越・北陸地区", ["新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県"]],
+  ["東海地区", ["岐阜県", "静岡県", "愛知県", "三重県"]],
+  ["関西地区", ["滋賀県", "京都府", "大阪府", "兵庫県", "奈良県", "和歌山県"]],
+  ["中国地区", ["鳥取県", "島根県", "岡山県", "広島県", "山口県"]],
+  ["四国地区", ["徳島県", "香川県", "愛媛県", "高知県"]],
+  ["九州・沖縄地区", ["福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"]]
+];
+const AREA_TOP = ["全国", "オンライン（Zoomなど）"];
+function areaParse(str) {
+  const o = { on: [], ex: [], free: "" };
+  String(str || "").split("／").forEach(part => {
+    const m = part.match(/^\s*(対応|除外|自由記載)：([\s\S]*)$/);
+    if (!m) { if (part.trim()) o.free = (o.free ? o.free + " " : "") + part.trim(); return; }
+    if (m[1] === "自由記載") o.free = m[2].trim();
+    else o[m[1] === "対応" ? "on" : "ex"] = m[2].split("、").map(x => x.trim()).filter(Boolean);
+  });
+  return o;
+}
+function areaString(o) {
+  return [o.on.length ? "対応：" + o.on.join("、") : "", o.ex.length ? "除外：" + o.ex.join("、") : "", o.free ? "自由記載：" + o.free.replace(/／/g, "/") : ""].filter(Boolean).join("／");
+}
+function areaPicker(box, value) {
+  const st = {}; const o = areaParse(value);
+  o.on.forEach(k => st[k] = 1); o.ex.forEach(k => st[k] = 2);
+  const chip = k => `<button type="button" class="ar-chip" data-ar="${k}" aria-pressed="false">${k}</button>`;
+  box.innerHTML = `<div class="ar-help">一度押すと <b class="ar-on-s">✓ 対応</b>、二度押すと <b class="ar-ex-s">✕ 除外</b>、三度押すと元に戻ります。</div>
+    <div class="ar-row">${AREA_TOP.map(chip).join("")}</div>
+    ${AREA_REG.map(([r, ps]) => `<div class="ar-reg"><div class="ar-row">${chip(r)}${ps.length > 1 ? `<button type="button" class="ar-more" aria-expanded="false">都道府県 ▾</button>` : ""}</div>${ps.length > 1 ? `<div class="ar-row ar-pref" hidden>${ps.map(chip).join("")}</div>` : ""}</div>`).join("")}
+    <label class="ar-free">自由記載（市区町村・細かい条件など）<input type="text" class="ar-free-in" value="${String(o.free || "").replace(/"/g, "&quot;")}" placeholder="例：大阪市内は訪問可、その他はZoom"></label>
+    <div class="ar-sum" aria-live="polite"></div>`;
+  const paint = () => {
+    box.querySelectorAll("[data-ar]").forEach(b => { const v = st[b.dataset.ar] || 0; b.className = "ar-chip" + (v === 1 ? " on" : v === 2 ? " ex" : ""); b.setAttribute("aria-pressed", v ? "true" : "false"); b.textContent = (v === 1 ? "✓ " : v === 2 ? "✕ " : "") + b.dataset.ar; });
+    const v = areaGet(box); box.querySelector(".ar-sum").textContent = v ? "登録内容：" + v : "まだ選ばれていません";
+  };
+  box._st = st;
+  box.querySelectorAll("[data-ar]").forEach(b => b.addEventListener("click", () => { const k = b.dataset.ar; st[k] = ((st[k] || 0) + 1) % 3; if (!st[k]) delete st[k]; paint(); }));
+  box.querySelectorAll(".ar-more").forEach(b => b.addEventListener("click", () => { const p = b.closest(".ar-reg").querySelector(".ar-pref"); p.hidden = !p.hidden; b.setAttribute("aria-expanded", !p.hidden); b.textContent = p.hidden ? "都道府県 ▾" : "閉じる ▴"; }));
+  // 選んだ都道府県がある地区は開いておく
+  AREA_REG.forEach(([r, ps], i) => { if (ps.some(p => st[p])) { const m = box.querySelectorAll(".ar-reg")[i].querySelector(".ar-more"); if (m) m.click(); } });
+  box.querySelector(".ar-free-in").addEventListener("input", paint);
+  paint();
+}
+function areaGet(box) {
+  const st = box._st || {}, order = AREA_TOP.concat(AREA_REG.flatMap(([r, ps]) => [r].concat(ps.length > 1 ? ps : [])));
+  const o = { on: order.filter(k => st[k] === 1), ex: order.filter(k => st[k] === 2), free: (box.querySelector(".ar-free-in") || {}).value || "" };
+  o.free = o.free.trim(); return areaString(o);
+}
+/** 文面に出てくる都道府県について、対応／除外を判定する（null は判断できない） */
+function areaMatch(str, text) {
+  const o = areaParse(str), t = String(text || "");
+  const prefs = AREA_REG.flatMap(([r, ps]) => ps.map(p => [p, r])).filter(([p]) => t.includes(p) || (p.length > 2 && t.includes(p.replace(/[都府県]$/, ""))));
+  if (!prefs.length) return null;
+  let ok = false, ex = false;
+  prefs.forEach(([p, r]) => {
+    if (o.ex.includes(p) || (o.ex.includes(r) && !o.on.includes(p))) ex = true;
+    else if (o.on.includes(p) || o.on.includes(r) || o.on.includes("全国")) ok = true;
+  });
+  return { ok, ex, prefs: prefs.map(x => x[0]) };
+}
+
+const code = new URLSearchParams(location.search).get("t") || "";
+function stop(m) { $("#loading").hidden = true; $("#stop").hidden = false; $("#stopMsg").textContent = m; }
+(async () => {
+  if (!code) return stop("URLが正しくありません。送られてきたURLを、そのまま開いてください。");
+  let r; try { r = await call("inviteInfo", code); } catch (e) { return stop("接続できませんでした。時間をおいて、もう一度開いてください。"); }
+  if (!r.ok) return stop(r.error);
+  $("#loading").hidden = true; $("#f").hidden = false;
+  if (r.memo) { $("#name").value = r.memo; $("#hello").textContent = r.memo + " 御中　" + $("#hello").textContent; }
+  $("#type").innerHTML = r.types.map(t => `<option ${t === "提携事業者" ? "selected" : ""}>${esc(t)}</option>`).join("");
+  $("#cats").innerHTML = r.categories.map(c => `<label><input type="checkbox" value="${esc(c)}"> ${esc(c)}</label>`).join("");
+  areaPicker($("#area"), "");
+})();
+$("#f").addEventListener("submit", async e => {
+  e.preventDefault(); $("#err").textContent = "";
+  const v = id => $("#" + id).value.trim();
+  const miss = [["name", "会社名・事務所名"], ["person", "ご担当者名"], ["tel", "電話番号"], ["email", "メール"]].filter(([k]) => !v(k)).map(x => x[1]);
+  if (miss.length) { $("#err").textContent = miss.join("・") + "を入れてください。"; $("#" + [["name"], ["person"], ["tel"], ["email"]].find(([k]) => !v(k))[0]).focus(); return; }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v("email"))) { $("#err").textContent = "メールアドレスが正しくありません。"; $("#email").focus(); return; }
+  if (!$("#agree").checked) { $("#err").textContent = "同意の確認にチェックを入れてください。"; return; }
+  const p = { name: v("name"), type: $("#type").value, person: v("person"), tel: v("tel"), email: v("email"), url: v("url"), address: v("address"),
+    cats: $$("#cats input:checked").map(x => x.value), keywords: v("keywords"), area: areaGet($("#area")), fee: v("fee"), note: v("note"), agree: true };
+  const b = $("#go"); b.disabled = true; b.textContent = "送信しています…";
+  try { const r = await call("partnerApply", code, p); if (!r.ok) { $("#err").textContent = r.error; return; } $("#f").hidden = true; $("#done").hidden = false; window.scrollTo(0, 0); }
+  catch (err) { $("#err").textContent = "送信できませんでした。時間をおいてお試しください。"; }
+  finally { b.disabled = false; b.textContent = "この内容で登録する"; }
+});
+</script>
+</body>
+</html>
