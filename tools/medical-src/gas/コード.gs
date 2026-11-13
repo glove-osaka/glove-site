@@ -101,7 +101,7 @@ function buildBody(key, cond, note, party) {
    使い方は「設定のしかた.txt」を見てください。
    ===================================================================== */
 var SHEET = "契約";
-var COLS = ["id", "token", "template", "title", "party_name", "party_company", "party_email", "fields", "required", "require_id", "cond", "note", "prefill", "body", "status", "created", "expires", "viewed", "signed", "values", "seal_file", "id_file", "pdf_id", "hash", "ua", "log", "draft", "paid", "refcode", "billed", "stopped"];
+var COLS = ["id", "token", "template", "title", "party_name", "party_company", "party_email", "fields", "required", "require_id", "cond", "note", "prefill", "body", "status", "created", "expires", "viewed", "signed", "values", "seal_file", "id_file", "pdf_id", "hash", "ua", "log", "draft", "paid", "refcode", "billed", "stopped", "case_no"];
 var VALID_DAYS = 30;
 
 function P(k) { return PropertiesService.getScriptProperties().getProperty(k) || ""; }
@@ -429,7 +429,7 @@ function apply_(d) {
   var cond = kj ? "" : normCond({ type: type, pay: d.pay, sites: d.sites, staff: d.staff, referrer: cut(d.referrer, 60), founder: true });
   var o = { id: newId_(), token: newToken_(), template: t.key, title: kj ? t.title : memberTitle(type), party_name: cut(d.name, 40), party_company: kj ? "" : cut(d.org, 80), party_email: email, fields: t.fields.slice(), required: t.required, require_id: t.requireId ? "yes" : "", cond: cond, note: "",
     prefill: kj ? { name: cut(d.name, 40), address: cut(d.address), phone: cut(d.phone, 20) } : { company: cut(d.org, 80), address: cut(d.address), rep: cut(d.rep, 40), name: cut(d.name, 40), phone: cut(d.phone, 20) },
-    status: "送付済み", created: new Date(), expires: new Date(Date.now() + VALID_DAYS * 864e5), draft: "" };
+    status: "送付済み", created: new Date(), expires: new Date(Date.now() + VALID_DAYS * 864e5), draft: "", case_no: cut(d.no, 40) };
   o.body = buildBody(t.key, cond, "", kj ? o.party_name : o.party_company);
   log_(o, "サイトの申込みから作成（受付番号 " + cut(d.no, 30) + "）");
   otp_(o); save_(o);
@@ -682,7 +682,7 @@ function adminDo_(a, d) {
     if (a === "admin.staffSet") { var sb = staff_(), r2 = staffSet_(d), ch2 = []; r2.staff.forEach(function (n) { if (sb.indexOf(n) < 0) ch2.push("追加：" + n); }); sb.forEach(function (n) { if (r2.staff.indexOf(n) < 0) ch2.push("削除：" + n); }); if (ch2.length) hist_("", "担当者の登録・変更", ch2.join("\n")); return r2; }
     if (a === "admin.preview") return { ok: true, cond: normCond(d.cond), body: buildBody(d.template, d.cond, d.note, d.party) };
     if (a === "admin.issue") { var ri = issue_(d), ti = tplOf(d.template), pp = d.party || {}; hist_(ri.id, d.draft ? "契約書の下書きを送った" : "契約書を送った", (ti && ti.base ? memberTitle(ti.mtype) : ti ? ti.title : "") + "\n" + (pp.company ? pp.company + " " : "") + (pp.name || "") + "（" + (pp.email || "") + "）", "", null, "電子契約"); return ri; }
-    if (a === "admin.list") return { ok: true, rows: rows_().reverse().slice(0, 300).map(function (r) { return { id: r.id, title: r.title, party_name: r.party_name, party_company: r.party_company, party_email: r.party_email, status: r.status, template: r.template, paid: r.paid ? new Date(r.paid).toISOString() : "", created: r.created ? new Date(r.created).toISOString() : "", viewed: r.viewed ? new Date(r.viewed).toISOString() : "", signed: r.signed ? new Date(r.signed).toISOString() : "", draft: r.draft, refcode: r.refcode || "", typeLabel: (function () { var c = parse_(r.cond, null); return c && MEMBER_LABEL[c.type] || ""; })(), pay: (function () { var c = parse_(r.cond, null); return c ? c.pay : ""; })(), phone: (parse_(r.values, {}) || {}).phone || "", billed: parse_(r.billed, []).slice(-1)[0] || "", stopped: r.stopped ? new Date(r.stopped).toISOString() : "" }; }) };
+    if (a === "admin.list") return { ok: true, rows: rows_().reverse().slice(0, 300).map(function (r) { return { id: r.id, title: r.title, party_name: r.party_name, party_company: r.party_company, party_email: r.party_email, status: r.status, template: r.template, paid: r.paid ? new Date(r.paid).toISOString() : "", created: r.created ? new Date(r.created).toISOString() : "", viewed: r.viewed ? new Date(r.viewed).toISOString() : "", signed: r.signed ? new Date(r.signed).toISOString() : "", draft: r.draft, refcode: r.refcode || "", typeLabel: (function () { var c = parse_(r.cond, null); return c && MEMBER_LABEL[c.type] || ""; })(), pay: (function () { var c = parse_(r.cond, null); return c ? c.pay : ""; })(), phone: (parse_(r.values, {}) || {}).phone || "", billed: parse_(r.billed, []).slice(-1)[0] || "", stopped: r.stopped ? new Date(r.stopped).toISOString() : "", case_no: String(r.case_no || "") }; }) };
     var o = find_("id", d.id); if (!o) throw new Error("見つかりません");
     var who_ = o.title + "\n" + (o.party_company ? o.party_company + " " : "") + o.party_name, LG = { "admin.resend": "契約書を送り直した", "admin.paid": "入金を確認した（登録完了のメールを送信）", "admin.stop": "退会にした（請求を停止）", "admin.cancel": "契約書を取り消した", "admin.pdf": "契約書のPDFを保存した" };
     if (LG[a]) { var res_ = adminOne_(a, d, o); hist_(o.id, LG[a], who_, "", null, "電子契約"); return res_; }
@@ -704,9 +704,10 @@ function issue_(d) {
   if (!p.name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email || "")) throw new Error("相手のお名前と、正しいメールアドレスを入れてください");
   var fields = orderFields(t, d.fields);
   var cond = t.cond ? normCond(d.cond) : "";
-  var o = { id: newId_(), token: newToken_(), template: bt.key, title: t.base ? memberTitle(t.mtype) : t.title, party_name: p.name, party_company: p.company || "", party_email: p.email, fields: fields, required: t.required, require_id: (d.requireId || t.requireId) ? "yes" : "", cond: cond, note: d.note || "", prefill: d.prefill || {}, status: "送付済み", created: new Date(), expires: new Date(Date.now() + VALID_DAYS * 864e5), draft: d.draft ? "yes" : "" };
+  var o = { id: newId_(), token: newToken_(), template: bt.key, title: t.base ? memberTitle(t.mtype) : t.title, party_name: p.name, party_company: p.company || "", party_email: p.email, fields: fields, required: t.required, require_id: (d.requireId || t.requireId) ? "yes" : "", cond: cond, note: d.note || "", prefill: d.prefill || {}, status: "送付済み", created: new Date(), expires: new Date(Date.now() + VALID_DAYS * 864e5), draft: d.draft ? "yes" : "", case_no: String(d.caseNo || "").slice(0, 40) };
   o.body = buildBody(t.key, cond, o.note, p.company || p.name);
-  log_(o, "作成・送付"); save_(o); sendInvite_(o);
+  log_(o, "作成・送付" + (o.case_no ? "（案件 " + o.case_no + "）" : "")); save_(o); sendInvite_(o);
+  if (o.case_no) { hist_(o.case_no, d.draft ? "電子契約の下書きを送った" : "電子契約を送った", o.id + "　" + o.title, "", null, "案件"); try { var cc = findCase_(o.case_no); inboxSheet_().getRange(cc.row, 14).setValue(new Date()); } catch (e) { } }
   return { ok: true, id: o.id, url: P("SIGN_URL") + "?t=" + o.token };
 }
 function sendInvite_(o) {
