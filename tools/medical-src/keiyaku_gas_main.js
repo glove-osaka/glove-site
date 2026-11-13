@@ -5,7 +5,7 @@
    使い方は「設定のしかた.txt」を見てください。
    ===================================================================== */
 var SHEET = "契約";
-var COLS = ["id", "token", "template", "title", "party_name", "party_company", "party_email", "fields", "required", "require_id", "cond", "note", "prefill", "body", "status", "created", "expires", "viewed", "signed", "values", "seal_file", "id_file", "pdf_id", "hash", "ua", "log", "draft", "paid", "refcode"];
+var COLS = ["id", "token", "template", "title", "party_name", "party_company", "party_email", "fields", "required", "require_id", "cond", "note", "prefill", "body", "status", "created", "expires", "viewed", "signed", "values", "seal_file", "id_file", "pdf_id", "hash", "ua", "log", "draft", "paid", "refcode", "billed", "stopped"];
 var VALID_DAYS = 30;
 
 function P(k) { return PropertiesService.getScriptProperties().getProperty(k) || ""; }
@@ -149,6 +149,7 @@ function setupAlerts() {
   ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === "alertCheck") ScriptApp.deleteTrigger(t); });
   ScriptApp.newTrigger("alertCheck").timeBased().everyHours(1).create();
   Logger.log("1時間ごとの確認を設定しました");
+  setupBilling();
 }
 
 /* ---- 台帳 ---- */
@@ -296,7 +297,11 @@ function sign_(o, d) {
   var mail = { name: ISSUER.service, replyTo: P("NOTIFY_TO"), attachments: [pdf] };
   MailApp.sendEmail(Object.assign({ to: o.party_email, subject: "【" + ISSUER.service + "】" + o.title + "（締結済み）", body: o.party_name + " 様\n\nお手続きありがとうございました。押印済みの契約書（PDF）をお送りします。大切に保管してください。\n契約番号：" + o.id + "\n\n" + (o.template === "kaiin" ? "お振込先と金額は、担当者から別のメールでご案内します。\n\n" : "") + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）" }, mail));
   MailApp.sendEmail(Object.assign({ to: P("NOTIFY_TO"), subject: "［電子契約］締結：" + o.id + "　" + (o.party_company ? o.party_company + " " : "") + o.party_name, body: o.title + "\n" + o.id + "\n" + (o.party_company ? o.party_company + "　" : "") + o.party_name + "（" + o.party_email + "）\n\n台帳：https://docs.google.com/spreadsheets/d/" + P("SHEET_ID") }, mail));
-  if (o.template === "kaiin") payMail_(o);
+  if (o.template === "kaiin") {
+    var c0 = typeof o.cond === "string" ? parse_(o.cond, null) : o.cond;
+    if (c0) { var nf = nextFirst(new Date()), ns = nf.getFullYear() + "-" + ("0" + (nf.getMonth() + 1)).slice(-2); if (!c0.start || c0.start.slice(0, 7) < ns) c0.start = ns; o.cond = normCond(c0); save_(o); }
+    payMail_(o);
+  }
   if (o.template === "kojin") refMail_(o);
   return { ok: true, pdf: Utilities.base64Encode(pdf.getBytes()), filename: pdf.getName() };
 }
@@ -316,6 +321,7 @@ function refMail_(o) {
 function payMail_(o) {
   var c = typeof o.cond === "string" ? parse_(o.cond, null) : o.cond;
   if (!c || !c.first) return;
+  c.dueText = Utilities.formatDate(new Date(Date.now() + 7 * 864e5), "Asia/Tokyo", "yyyy年M月d日");
   var bank = P("BANK_INFO"), who = (o.party_company ? o.party_company + "　" : "") + o.party_name + " 様";
   var kana = String(o.id).replace(/[^0-9]/g, "");
   if (!bank) {
@@ -328,10 +334,12 @@ function payMail_(o) {
     "■お振込先：\n" + bank + "\n" +
     "■お振込みの名義：ご依頼人名の前に、番号「" + kana + "」を入れてください（例：" + kana + " " + (o.party_company || o.party_name) + "）\n" +
     "■振込手数料：恐れ入りますが、ご負担をお願いします。\n\n" +
-    (c.pay === "month" ? "2か月目からは、毎月末日までに翌月分（" + yen(c.monthly) + "）をお振込みください。\n" : "") +
+    "入会した月の会費は無料です。\n" +
+    (c.pay === "month" ? "以後は、毎月1日に翌月分（" + yen(c.monthly) + "）の請求書をメールでお送りします。お支払期限は毎月10日です。\n" : "以後は、更新の前の月の1日に、次の12か月分の請求書をメールでお送りします（お支払期限はその月の10日）。\n") +
     "入金を確認しましたら、会員登録完了のお知らせをお送りします。\n\n契約番号：" + o.id + "\n\n" + invoiceText_(o, c, who) + "\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）\n" + P("NOTIFY_TO");
   MailApp.sendEmail({ to: o.party_email, bcc: P("NOTIFY_TO"), name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】会費のお振込みのご案内（" + yen(c.first) + "・" + c.dueText + "まで）", body: body });
-  log_(o, "振込のご案内を送信"); save_(o);
+  o.billed = JSON.stringify([c.start.slice(0, 7)]);
+  log_(o, "振込のご案内（請求書 " + c.start.slice(0, 7) + "分・期限 " + c.dueText + "）を送信"); save_(o);
 }
 /* 適格請求書（メール本文に載せる） */
 function invoiceText_(o, c, who) {
@@ -340,7 +348,7 @@ function invoiceText_(o, c, who) {
   return "━━━━━━ ご請求書（適格請求書） ━━━━━━\n" +
     "宛名：" + who + "\n" +
     "発行日：" + d + "\n" +
-    "請求番号：" + o.id + "-01\n" +
+    "請求番号：" + o.id + "-" + String(c.start || "").slice(0, 7).replace("-", "") + "\n" +
     "内容：" + ISSUER.service + "　" + kind + "\n" +
     "ご請求額（税込）：" + yen(amt) + "\n" +
     "　10％対象：" + yen(amt) + "（うち消費税 " + yen(tax) + "）\n" +
@@ -351,6 +359,40 @@ function invoiceText_(o, c, who) {
     "━━━━━━━━━━━━━━━━━━━━━━━━\n" +
     "このメールが請求書を兼ねます。保存しておいてください。";
 }
+/* ---- 毎月1日：翌月分の請求書を自動で送る（期限はその月の10日） ---- */
+function monthlyBilling() {
+  var now = new Date(), nf = nextFirst(now), T = nf.getFullYear() + "-" + ("0" + (nf.getMonth() + 1)).slice(-2);
+  var due = Utilities.formatDate(new Date(now.getFullYear(), now.getMonth(), 10), "Asia/Tokyo", "yyyy年M月d日");
+  var sent = [], bank = P("BANK_INFO") || "（振込先は、入会時のご案内をご覧ください）";
+  rows_().forEach(function (o) {
+    if (o.template !== "kaiin" || o.status !== "締結済み" || o.stopped || o.draft === "yes") return;
+    var c = parse_(o.cond, null); if (!c || !c.start) return;
+    var billed = parse_(o.billed, []), S = String(c.start).slice(0, 7);
+    if (T < S || billed.indexOf(T) >= 0) return;
+    var diff = (+T.slice(0, 4) - +S.slice(0, 4)) * 12 + (+T.slice(5, 7) - +S.slice(5, 7));
+    if (c.pay === "year" && diff % 12 !== 0) return;
+    var amt = c.pay === "year" ? c.monthly * 10 : c.monthly, who = (o.party_company ? o.party_company + "　" : "") + o.party_name + " 様";
+    var ymT = +T.slice(0, 4) + "年" + (+T.slice(5, 7)) + "月";
+    var term = c.pay === "year" ? ymT + "からの12か月分" : ymT + "分";
+    var inv = invoiceText_(o, { type: c.type, pay: c.pay, first: amt, start: T, startText: ymT + "1日", dueText: due }, who);
+    var body = who + "\n\nいつも" + ISSUER.service + "をご利用いただき、ありがとうございます。\n" + term + "の会費のご請求をお送りします。\n\n" +
+      "■お振込み額（税込）：" + yen(amt) + "（" + term + "）\n■お振込みの期限：" + due + "\n■お振込先：\n" + bank + "\n■お振込みの名義：ご依頼人名の前に、番号「" + String(o.id).replace(/[^0-9]/g, "") + "」を入れてください\n■振込手数料：恐れ入りますが、ご負担をお願いします。\n\n" +
+      inv + "\n\n行き違いでお振込み済みの場合は、ご容赦ください。\n\n" + ISSUER.service + "（運営 " + ISSUER.name + "）\n" + ISSUER.tel + "（受付 " + ISSUER.hours + "）\n" + P("NOTIFY_TO");
+    try {
+      MailApp.sendEmail({ to: o.party_email, bcc: P("NOTIFY_TO"), name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】" + term + " 会費のご請求（" + yen(amt) + "・" + due + "まで）", body: body });
+      billed.push(T); o.billed = JSON.stringify(billed); log_(o, "請求書（" + T + "分・期限 " + due + "）を送信"); save_(o);
+      sent.push(o.id + "　" + who + "　" + yen(amt) + "（" + term + "）");
+    } catch (e) { sent.push("【送れませんでした】" + o.id + "　" + who + "　" + e.message); }
+  });
+  if (sent.length) MailApp.sendEmail({ to: P("NOTIFY_TO"), subject: "［" + ISSUER.service + "］" + T + "分の請求書を " + sent.length + " 件送りました", body: sent.join("\n") + "\n\nお支払期限：" + due + "\n入金は通帳などでご確認ください。" });
+  return sent.length;
+}
+function setupBilling() {
+  ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === "monthlyBilling") ScriptApp.deleteTrigger(t); });
+  ScriptApp.newTrigger("monthlyBilling").timeBased().onMonthDay(1).atHour(9).inTimezone("Asia/Tokyo").create();
+  Logger.log("毎月1日 9時ごろに、翌月分の請求書を自動で送る設定をしました");
+}
+
 /* 入金を確認したら、会員登録完了のお知らせを送る */
 function paid_(o) {
   if (o.status !== "締結済み") throw new Error("締結済みの契約ではありません");
@@ -462,10 +504,11 @@ function adminDo_(a, d) {
     if (a === "admin.routeSet") return routeSet_(d);
     if (a === "admin.preview") return { ok: true, cond: normCond(d.cond), body: buildBody(d.template, d.cond, d.note, d.party) };
     if (a === "admin.issue") return issue_(d);
-    if (a === "admin.list") return { ok: true, rows: rows_().reverse().slice(0, 300).map(function (r) { return { id: r.id, title: r.title, party_name: r.party_name, party_company: r.party_company, party_email: r.party_email, status: r.status, template: r.template, paid: r.paid ? new Date(r.paid).toISOString() : "", created: r.created ? new Date(r.created).toISOString() : "", viewed: r.viewed ? new Date(r.viewed).toISOString() : "", signed: r.signed ? new Date(r.signed).toISOString() : "", draft: r.draft, refcode: r.refcode || "" }; }) };
+    if (a === "admin.list") return { ok: true, rows: rows_().reverse().slice(0, 300).map(function (r) { return { id: r.id, title: r.title, party_name: r.party_name, party_company: r.party_company, party_email: r.party_email, status: r.status, template: r.template, paid: r.paid ? new Date(r.paid).toISOString() : "", created: r.created ? new Date(r.created).toISOString() : "", viewed: r.viewed ? new Date(r.viewed).toISOString() : "", signed: r.signed ? new Date(r.signed).toISOString() : "", draft: r.draft, refcode: r.refcode || "", billed: parse_(r.billed, []).slice(-1)[0] || "", stopped: r.stopped ? new Date(r.stopped).toISOString() : "" }; }) };
     var o = find_("id", d.id); if (!o) throw new Error("見つかりません");
     if (a === "admin.resend") { if (o.status === "締結済み" || o.status === "取り消し") throw new Error("送り直せない状態です"); o.expires = new Date(Date.now() + VALID_DAYS * 864e5); sendInvite_(o); log_(o, "送り直し"); save_(o); return { ok: true }; }
     if (a === "admin.paid") return paid_(o);
+    if (a === "admin.stop") { if (o.stopped) throw new Error("すでに請求を止めています"); o.stopped = new Date(); log_(o, "退会・請求を停止"); save_(o); return { ok: true }; }
     if (a === "admin.cancel") { if (o.status === "締結済み") throw new Error("締結済みの契約は取り消せません"); o.status = "取り消し"; log_(o, "取り消し"); save_(o); return { ok: true }; }
     if (a === "admin.pdf") { if (!o.pdf_id) throw new Error("まだ締結されていません"); var f = DriveApp.getFileById(o.pdf_id); return { ok: true, pdf: Utilities.base64Encode(f.getBlob().getBytes()), filename: f.getName() }; }
     throw new Error("不明な操作です");

@@ -127,6 +127,7 @@ API = "/* 電子契約：通信と、設定前のお試し表示（この端末�
       list.unshift(oo); store(list); return wait({ ok: true, token: oo.token });
     }
     if (action === "admin.resend") return wait({ ok: true });
+    if (action === "admin.stop") { list.forEach(function (x) { if (x.id === d.id) x.stopped = new Date().toISOString(); }); store(list); return wait({ ok: true }); }
     if (action === "admin.paid") { list.forEach(function (x) { if (x.id === d.id) x.paid = new Date().toISOString(); }); store(list); return wait({ ok: true }); }
     if (action === "admin.cancel") { list.forEach(function (x) { if (x.id === d.id) x.status = "取り消し"; }); store(list); return wait({ ok: true }); }
     if (action === "admin.pdf" || action === "client.pdf") return Promise.reject(new Error("お試し表示では、契約書のPDFは作られません"));
@@ -383,7 +384,7 @@ ADMIN_BODY = f'''
 <div class="btns"><button class="btn" type="button" id="rpSend">メールで送る</button><button class="btn o" type="button" id="rpPhone">電話で伝えた（記録する）</button><button class="btn o" type="button" id="rpSkip">今回は送らない</button><button class="small-btn" type="button" id="rpAlt">別の言い回しで作り直す</button></div>
 </div></div>
 <div data-view="keiyaku" hidden>
-<details class="howto"><summary>この画面の使い方（電子契約）</summary><div><ol><li>サイトの会員登録は、お客様が申し込むと<b>自動で契約書が作られます</b>。ここで送る必要はありません。</li><li>相手が承認すると「締結済み」になり、振込のご案内が自動で届きます。</li><li>通帳などで入金を確かめたら、その行の<b>「入金を確認した」</b>を押します。会員登録完了のメールが自動で届きます。</li><li>相手がまだ承認していないときは「もう一度送る」で案内を送り直せます。</li><li>協賛会員（審査あり）や、個別の契約書は、下の「契約書を送る」から作って送ります。</li></ol></div></details>
+<details class="howto"><summary>この画面の使い方（電子契約）</summary><div><ol><li>サイトの会員登録は、お客様が申し込むと<b>自動で契約書が作られます</b>。ここで送る必要はありません。</li><li>相手が承認すると「締結済み」になり、請求書つきの振込のご案内が自動で届きます（期限は承認日から7日。入会した月は無料）。</li><li><b>毎月1日の朝に、翌月分の請求書が自動で全員に届きます</b>（期限は10日）。送った内容は登録メールにも届きます。</li><li>会員が退会するときは、その行の「退会（請求を止める）」を押します。翌月から請求書が止まります。</li><li>通帳などで入金を確かめたら、その行の<b>「入金を確認した」</b>を押します。会員登録完了のメールが自動で届きます。</li><li>相手がまだ承認していないときは「もう一度送る」で案内を送り直せます。</li><li>協賛会員（審査あり）や、個別の契約書は、下の「契約書を送る」から作って送ります。</li></ol></div></details>
 <section class="card">
 <h2>送った契約書の一覧</h2>
 <div class="tbl"><table class="list"><thead><tr><th>契約番号</th><th>種類</th><th>相手</th><th>状態</th><th>送った日</th><th>操作</th></tr></thead><tbody id="rows"><tr><td colspan="6">読み込み中…</td></tr></tbody></table></div>
@@ -461,10 +462,11 @@ $('doIssue').addEventListener('click',function(){var b=this,p=payload();
  .catch(function(e){$('errI').textContent=e.message}).then(function(){b.disabled=false})});
 function list(){api('admin.list').then(function(r){KL=r.rows||[];todo();if(!r.rows.length){$('rows').innerHTML='<tr><td colspan="6">まだありません</td></tr>';return}
  $('rows').innerHTML=r.rows.map(function(x){var cls=x.status==='締結済み'?'done':x.status==='取り消し'?'cancel':'';var st=x.paid?'入金済み':x.status==='送付済み'&&x.viewed?'確認中':x.status;
-  return'<tr><td>'+esc(x.id)+'</td><td>'+esc(x.title)+(x.draft==='yes'?'<br><span class="tag">下書き</span>':'')+'</td><td>'+esc(x.party_company?x.party_company+' ':'')+esc(x.party_name)+'<br><small>'+esc(x.party_email)+'</small>'+(x.refcode?'<br><span class="tag">紹介コード '+esc(x.refcode)+'</span>':'')+'</td><td><span class="tag '+cls+'">'+esc(st)+'</span></td><td>'+day(x.created)+'</td><td>'+
-  (x.status==='締結済み'?'<button class="small-btn" data-pdf="'+esc(x.id)+'">PDFを保存</button>'+(x.template==='kaiin'&&!x.paid?'<button class="small-btn" data-paid="'+esc(x.id)+'">入金を確認した</button>':''):x.status==='取り消し'?'':'<button class="small-btn" data-resend="'+esc(x.id)+'">もう一度送る</button><button class="small-btn" data-cancel="'+esc(x.id)+'">取り消す</button>')+'</td></tr>'}).join('')}).catch(function(e){$('errR').textContent=e.message})}
+  return'<tr><td>'+esc(x.id)+'</td><td>'+esc(x.title)+(x.draft==='yes'?'<br><span class="tag">下書き</span>':'')+'</td><td>'+esc(x.party_company?x.party_company+' ':'')+esc(x.party_name)+'<br><small>'+esc(x.party_email)+'</small>'+(x.refcode?'<br><span class="tag">紹介コード '+esc(x.refcode)+'</span>':'')+(x.billed?'<br><span class="tag">請求済み：'+esc(x.billed.replace('-','年'))+'月分まで</span>':'')+(x.stopped?'<br><span class="tag cancel">退会（請求停止）</span>':'')+'</td><td><span class="tag '+cls+'">'+esc(st)+'</span></td><td>'+day(x.created)+'</td><td>'+
+  (x.status==='締結済み'?'<button class="small-btn" data-pdf="'+esc(x.id)+'">PDFを保存</button>'+(x.template==='kaiin'&&!x.paid?'<button class="small-btn" data-paid="'+esc(x.id)+'">入金を確認した</button>':'')+(x.template==='kaiin'&&!x.stopped?'<button class="small-btn" data-stop="'+esc(x.id)+'">退会（請求を止める）</button>':''):x.status==='取り消し'?'':'<button class="small-btn" data-resend="'+esc(x.id)+'">もう一度送る</button><button class="small-btn" data-cancel="'+esc(x.id)+'">取り消す</button>')+'</td></tr>'}).join('')}).catch(function(e){$('errR').textContent=e.message})}
 $('rows').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;$('errR').textContent='';
  if(b.dataset.paid&&confirm('入金を確認しましたか？相手に「会員登録完了」のメールを送ります。'))api('admin.paid',{id:b.dataset.paid}).then(list).catch(function(x){$('errR').textContent=x.message});
+ if(b.dataset.stop&&confirm('この会員を退会扱いにして、毎月の請求書を止めますか？（元に戻すときは担当者に連絡してください）'))api('admin.stop',{id:b.dataset.stop}).then(list).catch(function(x){$('errR').textContent=x.message});
  if(b.dataset.resend)api('admin.resend',{id:b.dataset.resend}).then(function(){$('errR').textContent='もう一度送りました。'}).catch(function(x){$('errR').textContent=x.message});
  if(b.dataset.cancel&&confirm('この契約書を取り消しますか？相手はもう開けなくなります。'))api('admin.cancel',{id:b.dataset.cancel}).then(list).catch(function(x){$('errR').textContent=x.message});
  if(b.dataset.pdf)api('admin.pdf',{id:b.dataset.pdf}).then(function(r){var bin=atob(r.pdf),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);var u=URL.createObjectURL(new Blob([a],{type:'application/pdf'}));var l=document.createElement('a');l.href=u;l.download=r.filename;document.body.appendChild(l);l.click();setTimeout(function(){URL.revokeObjectURL(u);l.remove()},2000)}).catch(function(x){$('errR').textContent=x.message})});

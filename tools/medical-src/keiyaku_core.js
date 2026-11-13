@@ -48,7 +48,7 @@ function normCond(c) {
   o.first = o.pay === "year" ? o.monthly * 10 : o.monthly;
   o.startText = ymd(st);
   o.endText = ymd(new Date(st.getFullYear() + 1, st.getMonth(), 0));
-  o.dueText = ymd(new Date(st.getFullYear(), st.getMonth(), 0));
+  o.dueText = "入会日（承認した日）から7日以内";
   return o;
 }
 function condText(c) {
@@ -56,7 +56,8 @@ function condText(c) {
   L.push("　会員区分：" + MEMBER_LABEL[o.type] + (o.type === "kyosan" ? "" : "（事業所数 " + o.sites + "か所、職員数 " + o.staff + "名）"));
   L.push("　支払方法：" + (o.pay === "year" ? "年間払い（12か月分を10か月分の額で）" : "月払い") + "　銀行振込・前払い。振込手数料は申込者の負担");
   L.push("　月額会費（税込）：" + yen(o.monthly) + (o.pay === "year" ? "　→　年間払いの額（税込）：" + yen(o.monthly * 10) : ""));
-  L.push("　初回のお振込み額（税込）：" + yen(o.first) + "（" + o.dueText + "まで）");
+  L.push("　初回のお振込み額（税込）：" + yen(o.first) + "（" + o.dueText + "。入会した月の会費は無料）");
+  L.push("　2回目以降：毎月1日に翌月分" + (o.pay === "year" ? "（年間払いは更新の前月1日に12か月分）" : "") + "の請求書をメールで送ります。お支払期限は毎月10日です");
   L.push("　会費の発生日：" + o.startText);
   L.push("　契約期間：" + o.startText + "〜" + o.endText + "（1年。期間が終わる1か月前までに申し出がなければ1年ごとに自動更新）");
   L.push("　入会金：" + (o.founder ? "創設会員のため免除" : (o.entryFee || "別に定める額（担当者からご案内します）")));

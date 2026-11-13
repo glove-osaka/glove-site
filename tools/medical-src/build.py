@@ -658,10 +658,10 @@ def build_member():
 <section class="sec band"><div class="wrap" style="max-width:1000px">
 {sec_h("お支払い", "月払いと年間払いの2通り（銀行振込）")}
 <div class="grid g2">
-<div class="card"><h3 style="font-size:1.35rem;margin-bottom:8px">{ic("clock")} 月払い</h3><p>前払いです。毎月末日までに、<b>翌月分</b>の会費を指定の口座へお振込みいただきます。</p></div>
-<div class="card"><h3 style="font-size:1.35rem;margin-bottom:8px">{ic("check")} 年間払い</h3><p>前払いです。12か月分を<b>10か月分の会費</b>で、開始月の前月末日までにまとめてお振込みいただきます（2か月分お得です）。</p></div>
+<div class="card"><h3 style="font-size:1.35rem;margin-bottom:8px">{ic("clock")} 月払い</h3><p>前払いです。毎月1日に<b>翌月分</b>の請求書をメールでお送りします。<b>毎月10日まで</b>に指定の口座へお振込みください。</p></div>
+<div class="card"><h3 style="font-size:1.35rem;margin-bottom:8px">{ic("check")} 年間払い</h3><p>前払いです。12か月分を<b>10か月分の会費</b>でまとめてお振込みいただきます（2か月分お得です）。更新のときは、前の月の1日に請求書をお送りし、10日までにお振込みいただきます。</p></div>
 </div>
-<p class="note-box" style="margin-top:18px">会費は<b>入会の翌月1日</b>から発生します（入会した月の会費はかかりません）。更新日は毎月1日です（年間払いの方は、12か月ごとの1日に更新されます）。振込手数料は会員のご負担です。</p>
+<p class="note-box" style="margin-top:18px"><b>入会した月の会費は無料</b>です。会費は入会の翌月1日から発生し、入会時に翌月分（年間払いの方は12か月分）の請求書をお送りします。お支払期限は<b>入会日から7日以内</b>です。更新日は毎月1日です（年間払いの方は、12か月ごとの1日に更新されます）。振込手数料は会員のご負担です。</p>
 <p class="note-box" style="margin-top:12px">入会金：<b>創設会員は免除</b>します（創設会員は、事業所・法人の会員が100社に達するまでに入会された方です）。</p>
 </div></section>
 <section class="sec"><div class="wrap" style="max-width:1000px">
@@ -669,7 +669,7 @@ def build_member():
 <ol class="flow f4">
 <li><div><b>ウェブで申し込む</b><p>会員の種類と、月払い・年間払いを選びます。</p></div></li>
 <li><div><b>そのまま電子契約の画面へ</b><p>申込みのあと、自動で電子契約の画面に切り替わります。メールに届く認証コードで本人確認をしたうえで、会員規約を読み、必要事項の記入と押印をして承認します。押印済みの契約書は、いつでも保存できます。</p></div></li>
-<li><div><b>会費を振り込む</b><p>入会した月の末日までに、翌月分の会費（年間払いの方は1年分）を前払いでお振込みいただきます。</p></div></li>
+<li><div><b>会費を振り込む</b><p>入会した月は無料です。メールで届く請求書に従い、入会日から7日以内に翌月分（年間払いの方は1年分）をお振込みいただきます。以後は毎月1日に請求書が届き、10日までのお振込みです。</p></div></li>
 <li><div><b>利用を始める</b><p>お振込みを確認しだい、会員登録の完了をメールでお知らせし、会員向けの支援をご利用いただけます。</p></div></li>
 </ol>
 <p style="margin-top:18px"><a class="btn btn-o" href="../keiyaku/index.html?demo=1" target="_blank" rel="noopener">電子契約の画面を見本で試す</a>　<span class="fine">見本では、認証コードは 123456 です。入力した内容は送信されません。</span></p>
@@ -737,7 +737,7 @@ function upd(){var t=typ(),biz=(t==='jigyosho'||t==='hojin'||t==='kyosan');
  if(!t||t==='kojin'){box.hidden=true;return}
  box.hidden=false;var ann=pay()==='年間払い';
  $('estm').textContent=yen(m)+(t==='hojin'?'〜':'');$('esty').textContent=yen(m*10)+(t==='hojin'?'〜':'');
- $('est1').textContent=(ann?yen(m*10)+'（1年分）':yen(m)+'（翌月分）')+'を、入会した月の末日までにお振込み';
+ $('est1').textContent=(ann?yen(m*10)+'（1年分）':yen(m)+'（翌月分）')+'を、入会日から7日以内にお振込み（入会した月は無料）';
 }
 f.addEventListener('change',function(){$('aerr').hidden=true;upd()});f.addEventListener('input',upd);upd();
 function need(msg,id){var e=$('aerr');e.textContent=msg;e.hidden=false;if(id&&$(id)){try{$(id).focus()}catch(x){}}e.scrollIntoView({block:'center'});return false}
@@ -789,7 +789,7 @@ def build_apply():
 <ol class="flow f4" style="margin:26px 0 34px"><li><div><b>このページで申し込む</b><p>約10項目、1画面です。</p></div></li><li><div><b>そのまま電子契約の画面へ</b><p>自動で切り替わります。メールに届く認証コードで本人確認し、会員規約を確認します。</p></div></li><li><div><b>記入・押印・承認</b><p>パソコン・スマホで完結します。</p></div></li><li><div><b>振込・利用開始</b><p>入金を確認して登録完了です。</p></div></li></ol>
 <form id="af" novalidate>
 <fieldset class="fld" style="border:0;padding:0;margin:0 0 22px"><legend style="font-weight:700;font-size:1.15rem;margin-bottom:10px">1. 会員の種類</legend><div class="opts radio-opts">{radios}</div></fieldset>
-<fieldset class="fld" data-for="jigyosho hojin kyosan" hidden style="border:0;padding:0;margin:0 0 22px"><legend style="font-weight:700;font-size:1.15rem;margin-bottom:10px">2. お支払い方法</legend><div class="opts radio-opts"><label><input type="radio" name="pay" value="月払い"><span>月払い<small>毎月末日までに翌月分をお振込み</small></span></label><label><input type="radio" name="pay" value="年間払い"><span>年間払い<small>10か月分で12か月（2か月分お得）</small></span></label></div></fieldset>
+<fieldset class="fld" data-for="jigyosho hojin kyosan" hidden style="border:0;padding:0;margin:0 0 22px"><legend style="font-weight:700;font-size:1.15rem;margin-bottom:10px">2. お支払い方法</legend><div class="opts radio-opts"><label><input type="radio" name="pay" value="月払い"><span>月払い<small>毎月1日に翌月分の請求書、10日までにお振込み</small></span></label><label><input type="radio" name="pay" value="年間払い"><span>年間払い<small>10か月分で12か月（2か月分お得）</small></span></label></div></fieldset>
 <div class="grid g2" style="gap:0 20px">
 <div class="fld" data-for="hojin" hidden><label for="sites">事業所の数</label><input id="sites" type="number" min="2" inputmode="numeric" placeholder="例：3"></div>
 <div class="fld" data-for="jigyosho hojin" hidden><label for="staff">職員の数（合計）</label><input id="staff" type="number" min="1" inputmode="numeric" placeholder="例：8"></div>
@@ -853,7 +853,7 @@ def build_tokushoho():
         ("販売価格（会費・税込）", "事業所会員：月額5,500円（職員5名まで。6人目から1名につき月500円）<br>法人会員：1か所目月額5,500円、2か所目から1か所につき月額5,000円（いずれも職員5名まで。超える職員1名につき月500円）<br>協賛会員：月額33,000円<br>個人会員（営業協力者）：無料<br>年間払いは、いずれも月額の10か月分で12か月ご利用いただけます。"),
         ("会費以外に必要な料金", "会費の振込手数料（会員のご負担）。入会金は、創設会員（事業所・法人の会員が100社に達するまでに入会された方）は免除します。"),
         ("お支払い方法", "銀行振込（前払い）。振込先は、電子契約で承認したあとにメールでお知らせします。"),
-        ("お支払いの時期", "会費は入会の翌月1日から発生します。<br>月払い：入会した月の末日までに翌月分、以後は毎月末日までに翌月分<br>年間払い：12か月分を、その12か月が始まる月の前月末日まで"),
+        ("お支払いの時期", "入会した月の会費は無料で、入会の翌月1日から発生します。毎月1日に翌月分の請求書をメールでお送りします。<br>入会時：入会日から7日以内に翌月分（年間払いは12か月分）<br>月払い：以後は毎月10日までに翌月分<br>年間払い：更新時は、新しい12か月が始まる月の前月10日まで"),
         ("サービスの提供時期", "入金を確認しだい、会員登録の完了をメールでお知らせし、会員向けの支援をご利用いただけます。"),
         ("お申し込みの方法", "このサイトの会員登録のページから申し込み、電子契約で会員規約を確認して押印・承認していただきます。承認した時点で契約が成立します。"),
         ("契約期間・更新", "1年（月払いも同じ）。期間が終わる1か月前までに申し出がない場合、同じ条件で1年ごとに自動で更新します。"),
