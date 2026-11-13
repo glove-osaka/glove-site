@@ -1095,4 +1095,11 @@ shim = ("<script>window.IN_GAS=true;\n(function(){" + TEXTS + CORE +
 gas_admin = ('<!doctype html><html lang="ja"><head><base target="_top"><meta charset="utf-8"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDPMincho:wght@700&display=swap"><style>'
              + css + '</style></head><body>' + ADMIN_BODY.replace('href="../index.html"', 'href="https://119cm.net/"') + shim + ADM_DATA + ADMIN_JS + "</body></html>\n")
 open(os.path.join(GAS, "admin.html"), "w", encoding="utf-8").write(gas_admin)
+# 古い api.js・config.js が残らないよう、中身から作った番号を付ける
+for _f in ("api.js", "config.js"):
+    _v = _hl.md5(open(os.path.join(OUT, _f), "rb").read()).hexdigest()[:8]
+    for _h in os.listdir(OUT):
+        if _h.endswith(".html"):
+            _pth = os.path.join(OUT, _h); _t = open(_pth, encoding="utf-8").read()
+            if 'src="' + _f + '"' in _t: open(_pth, "w", encoding="utf-8").write(_t.replace('src="' + _f + '"', 'src="' + _f + '?v=' + _v + '"'))
 print("ok", OUT, GAS)
