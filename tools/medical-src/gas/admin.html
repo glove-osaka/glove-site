@@ -308,7 +308,7 @@ body.adm main{max-width:1280px}.ctbl td:nth-child(1),.ctbl td:nth-child(2){white
 
 <div class="fld" id="condBox" hidden><label>契約の内容（会費は自動で計算します）</label>
 <div class="cond">
-<div class="fld"><label for="cType">会員区分</label><select id="cType"><option value="jigyosho">事業所会員</option><option value="hojin">法人会員</option><option value="kyosan">協賛会員</option></select></div>
+<div class="fld" id="cTypeBox"><label for="cType">会員区分</label><select id="cType"><option value="jigyosho">事業所会員</option><option value="hojin">法人会員</option><option value="kyosan">協賛会員</option></select></div>
 <div class="fld"><label for="cPay">支払方法</label><select id="cPay"><option value="month">月払い</option><option value="year">年間払い（10か月分）</option></select></div>
 <div class="fld" id="cSitesBox"><label for="cSites">事業所数</label><input type="number" id="cSites" min="1" value="1" inputmode="numeric"></div>
 <div class="fld" id="cStaffBox"><label for="cStaff">職員数（合計）</label><input type="number" id="cStaff" min="0" value="5" inputmode="numeric"></div>
@@ -362,6 +362,9 @@ var TEMPLATES = [
   { key: "teikei", title: "業務提携契約書（提携先）", cond: false, fields: ["company", "rep", "name", "title", "address", "phone"], required: ["company", "rep", "address", "phone"], requireId: false, seal: "square", note: "提携の条件（業務分野・手数料の率・支払時期など）" }
 ];
 var MEMBER_LABEL = { jigyosho: "事業所会員", hojin: "法人会員", kyosan: "協賛会員" };
+function memberTitle(type) { return (MEMBER_LABEL[type] || "会員") + " 申込書"; }
+/* 会員申込書は「事業所会員」「法人会員」「協賛会員」の3種類に分ける（保存するときは kaiin として扱い、会員区分は固定） */
+(function () { var b = TEMPLATES[0], add = ["jigyosho", "hojin", "kyosan"].map(function (m) { var o = {}; for (var k in b) o[k] = b[k]; o.key = "kaiin_" + m; o.base = "kaiin"; o.mtype = m; o.title = memberTitle(m); return o; }); b.hidden = true; TEMPLATES.splice.apply(TEMPLATES, [1, 0].concat(add)); })();
 function tplOf(key) { for (var i = 0; i < TEMPLATES.length; i++) if (TEMPLATES[i].key === key) return TEMPLATES[i]; return null; }
 function fieldLabel(t, k) { return (t && t.labels && t.labels[k]) || FIELDS[k].label; }
 /* 項目の並びをひな形の順にそろえ、必須の項目を必ず入れる */
@@ -412,8 +415,9 @@ function condText(c) {
 function buildBody(key, cond, note, party) {
   var t = tplOf(key), b = "";
   var who = party || "[[name]]";
-  if (key === "kaiin") {
-    b = "医療介護総合支援会　会員申込書\n\n株式会社グローブ　御中\n\n申込者は、下に続く「医療介護総合支援会 会員規約」に同意し、次のとおり入会を申し込みます。\n\n1．申込者\n　事業所名・法人名：[[company]]\n　所在地：[[address]]\n　代表者名：[[rep]]\n　ご担当者名：[[name]]\n　電話番号：[[phone]]\n\n2．契約の内容\n" + condText(cond) +
+  if (key === "kaiin" || /^kaiin_/.test(key)) {
+    if (t && t.mtype) cond = Object.assign({}, cond || {}, { type: t.mtype });
+    b = "医療介護総合支援会　" + memberTitle(normCond(cond).type) + "\n\n株式会社グローブ　御中\n\n申込者は、下に続く「医療介護総合支援会 会員規約」に同意し、次のとおり入会を申し込みます。\n\n1．申込者\n　事業所名・法人名：[[company]]\n　所在地：[[address]]\n　代表者名：[[rep]]\n　ご担当者名：[[name]]\n　電話番号：[[phone]]\n\n2．契約の内容\n" + condText(cond) +
       "\n\n3．特にご確認いただく事項\n　・契約期間は1年で、月払いも同じです。終了日の1か月前までに解約の申し出がない場合は、1年ごとに自動で更新されます。\n　・月払いで途中解約する場合は、残りの月数分の会費をお支払いいただきます。年間払いの途中解約は返金しません。\n　・会費が発生してから3か月の時点で、当社の提案を実施しても効果が会費を下回った場合は、会員規約第11条により途中解約できます。\n　・当社は、本会を紹介した個人会員に会費・手数料の一部を紹介料として支払うことがあります（会費に上乗せはありません）。\n\n――――――――――――――――――――\n\n" + KIYAKU_TEXT;
   } else if (key === "kojin") {
     b = "医療介護総合支援会　個人会員（営業協力者）登録書\n\n株式会社グローブ　御中\n\n私は、下に続く「医療介護総合支援会 個人会員（営業協力者）規約」に同意し、個人会員として登録を申し込みます。\n\n1．登録者\n　お名前：[[name]]（[[kana]]）\n　ご住所：[[address]]\n　電話番号：[[phone]]\n　生年月日：[[birth]]\n　紹介料の振込口座：[[bank]]\n\n2．確認事項\n　・個人会員の登録と継続に費用はかかりません。本会の支援サービスは利用できません。\n　・紹介料は、紹介先の会費の20%と、手数料の20%（紹介先へ還元した額を差し引いた残り）です。毎月末日締め、翌月15日までに計算し、翌月末日に振り込みます。\n　・個人会員を紹介しても紹介料はありません。\n　・紹介料の税金の申告は、ご自身で行っていただきます。\n\n――――――――――――――――――――\n\n" + KOJIN_TEXT;
@@ -438,7 +442,7 @@ function day(s){if(!s)return'';var d=new Date(s);return isNaN(d)?esc(s):(d.getMo
 function api(a,d){return keiyakuApi(a,d||{})}
 var n=new Date(),nx=new Date(n.getFullYear(),n.getMonth()+1,1);$('cStart').value=nx.getFullYear()+'-'+('0'+(nx.getMonth()+1)).slice(-2);
 function start(){$('panel').hidden=false;
- api('admin.templates').then(function(r){TPL=r.templates;FIELDS=r.fields;$('tpl').innerHTML=TPL.map(function(t){return'<option value="'+t.key+'">'+esc(t.title)+'</option>'}).join('');onTpl()}).catch(function(e){$('errI').textContent=e.message});list()}
+ api('admin.templates').then(function(r){TPL=r.templates;FIELDS=r.fields;$('tpl').innerHTML=TPL.filter(function(t){return!t.hidden}).map(function(t){return'<option value="'+t.key+'">'+esc(t.title)+'</option>'}).join('');onTpl()}).catch(function(e){$('errI').textContent=e.message});list()}
 function cur(){var k=$('tpl').value;return TPL.filter(function(x){return x.key===k})[0]}
 function cond(){return{type:$('cType').value,pay:$('cPay').value,sites:$('cSites').value,staff:$('cStaff').value,start:$('cStart').value,referrer:$('cRef').value.trim(),founder:$('cFounder').checked,entryFee:$('cEntry').value.trim()}}
 function onCond(){var t=$('cType').value;$('cSitesBox').hidden=t!=='hojin';$('cStaffBox').hidden=t==='kyosan';$('cEntryBox').hidden=$('cFounder').checked;
@@ -450,14 +454,15 @@ function drawPre(){var old={};[].forEach.call($('preBox').querySelectorAll('inpu
 function onTpl(){var t=cur();if(!t)return;
  $('fieldChk').innerHTML=Object.keys(FIELDS).map(function(k){var req=t.required.indexOf(k)>=0;return'<label><input type="checkbox" value="'+k+'"'+(t.fields.indexOf(k)>=0||req?' checked':'')+(req?' disabled':'')+'>'+esc(FIELDS[k].label)+(req?'（※必須）':'')+'</label>'}).join('');
  $('fieldChk').onchange=drawPre;drawPre();
+ if(t.mtype){$('cType').value=t.mtype}$('cTypeBox').hidden=!!t.mtype;
  $('reqId').checked=!!t.requireId;$('condBox').hidden=!t.cond;$('noteBox').hidden=!t.note;$('noteLabel').textContent=t.note||'特記事項';$('prev').hidden=true;if(t.cond)onCond()}
 $('tpl').addEventListener('change',onTpl);
 function payload(){var t=cur(),pre={};[].forEach.call($('preBox').querySelectorAll('input'),function(i){if(i.value.trim())pre[i.dataset.k]=i.value.trim()});
  return{template:t.key,party:{name:$('pName').value.trim(),company:$('pCompany').value.trim(),email:$('pEmail').value.trim()},fields:[].map.call($('fieldChk').querySelectorAll('input:checked'),function(i){return i.value}),requireId:$('reqId').checked,cond:t.cond?cond():null,note:t.note?$('note').value.trim():'',prefill:pre,draft:$('draft').checked}}
 $('doPrev').addEventListener('click',function(){var p=payload();$('prev').textContent=K.buildBody(p.template,p.cond,p.note,p.party.company||p.party.name||'（相手のお名前）').replace(/\[\[(\w+)\]\]/g,function(_,k){return p.prefill[k]?p.prefill[k]+'（相手が直せます）':'＿＿＿（相手が記入）'});$('prev').hidden=false});
 $('doIssue').addEventListener('click',function(){var b=this,p=payload();
- if(p.template==='kaiin'&&p.cond.type==='hojin'&&(+p.cond.sites||1)<2&&!confirm('法人会員で事業所数が1か所です。このまま送りますか？'))return;
- if(p.template==='kaiin'&&p.cond.type==='kyosan'&&!confirm('協賛会員は審査が必要です。審査は済んでいますか？'))return;
+ if(/^kaiin/.test(p.template)&&p.cond.type==='hojin'&&(+p.cond.sites||1)<2&&!confirm('法人会員で事業所数が1か所です。このまま送りますか？'))return;
+ if(/^kaiin/.test(p.template)&&p.cond.type==='kyosan'&&!confirm('協賛会員は審査が必要です。審査は済んでいますか？'))return;
  b.disabled=true;$('errI').textContent='';$('issued').hidden=true;
  api('admin.issue',p).then(function(r){$('issued').hidden=false;$('issued').innerHTML='送りました（契約番号 '+esc(r.id)+'）。<br>相手の画面：<a href="'+esc(r.url)+'" target="_blank" rel="noopener">'+esc(r.url)+'</a>';['pName','pCompany','pEmail','note','cRef','cEntry'].forEach(function(id){$(id).value=''});$('preBox').innerHTML='';onTpl();list()})
  .catch(function(e){$('errI').textContent=e.message}).then(function(){b.disabled=false})});

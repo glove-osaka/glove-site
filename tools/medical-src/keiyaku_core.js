@@ -18,6 +18,9 @@ var TEMPLATES = [
   { key: "teikei", title: "業務提携契約書（提携先）", cond: false, fields: ["company", "rep", "name", "title", "address", "phone"], required: ["company", "rep", "address", "phone"], requireId: false, seal: "square", note: "提携の条件（業務分野・手数料の率・支払時期など）" }
 ];
 var MEMBER_LABEL = { jigyosho: "事業所会員", hojin: "法人会員", kyosan: "協賛会員" };
+function memberTitle(type) { return (MEMBER_LABEL[type] || "会員") + " 申込書"; }
+/* 会員申込書は「事業所会員」「法人会員」「協賛会員」の3種類に分ける（保存するときは kaiin として扱い、会員区分は固定） */
+(function () { var b = TEMPLATES[0], add = ["jigyosho", "hojin", "kyosan"].map(function (m) { var o = {}; for (var k in b) o[k] = b[k]; o.key = "kaiin_" + m; o.base = "kaiin"; o.mtype = m; o.title = memberTitle(m); return o; }); b.hidden = true; TEMPLATES.splice.apply(TEMPLATES, [1, 0].concat(add)); })();
 function tplOf(key) { for (var i = 0; i < TEMPLATES.length; i++) if (TEMPLATES[i].key === key) return TEMPLATES[i]; return null; }
 function fieldLabel(t, k) { return (t && t.labels && t.labels[k]) || FIELDS[k].label; }
 /* 項目の並びをひな形の順にそろえ、必須の項目を必ず入れる */
@@ -68,8 +71,9 @@ function condText(c) {
 function buildBody(key, cond, note, party) {
   var t = tplOf(key), b = "";
   var who = party || "[[name]]";
-  if (key === "kaiin") {
-    b = "医療介護総合支援会　会員申込書\n\n株式会社グローブ　御中\n\n申込者は、下に続く「医療介護総合支援会 会員規約」に同意し、次のとおり入会を申し込みます。\n\n1．申込者\n　事業所名・法人名：[[company]]\n　所在地：[[address]]\n　代表者名：[[rep]]\n　ご担当者名：[[name]]\n　電話番号：[[phone]]\n\n2．契約の内容\n" + condText(cond) +
+  if (key === "kaiin" || /^kaiin_/.test(key)) {
+    if (t && t.mtype) cond = Object.assign({}, cond || {}, { type: t.mtype });
+    b = "医療介護総合支援会　" + memberTitle(normCond(cond).type) + "\n\n株式会社グローブ　御中\n\n申込者は、下に続く「医療介護総合支援会 会員規約」に同意し、次のとおり入会を申し込みます。\n\n1．申込者\n　事業所名・法人名：[[company]]\n　所在地：[[address]]\n　代表者名：[[rep]]\n　ご担当者名：[[name]]\n　電話番号：[[phone]]\n\n2．契約の内容\n" + condText(cond) +
       "\n\n3．特にご確認いただく事項\n　・契約期間は1年で、月払いも同じです。終了日の1か月前までに解約の申し出がない場合は、1年ごとに自動で更新されます。\n　・月払いで途中解約する場合は、残りの月数分の会費をお支払いいただきます。年間払いの途中解約は返金しません。\n　・会費が発生してから3か月の時点で、当社の提案を実施しても効果が会費を下回った場合は、会員規約第11条により途中解約できます。\n　・当社は、本会を紹介した個人会員に会費・手数料の一部を紹介料として支払うことがあります（会費に上乗せはありません）。\n\n――――――――――――――――――――\n\n" + KIYAKU_TEXT;
   } else if (key === "kojin") {
     b = "医療介護総合支援会　個人会員（営業協力者）登録書\n\n株式会社グローブ　御中\n\n私は、下に続く「医療介護総合支援会 個人会員（営業協力者）規約」に同意し、個人会員として登録を申し込みます。\n\n1．登録者\n　お名前：[[name]]（[[kana]]）\n　ご住所：[[address]]\n　電話番号：[[phone]]\n　生年月日：[[birth]]\n　紹介料の振込口座：[[bank]]\n\n2．確認事項\n　・個人会員の登録と継続に費用はかかりません。本会の支援サービスは利用できません。\n　・紹介料は、紹介先の会費の20%と、手数料の20%（紹介先へ還元した額を差し引いた残り）です。毎月末日締め、翌月15日までに計算し、翌月末日に振り込みます。\n　・個人会員を紹介しても紹介料はありません。\n　・紹介料の税金の申告は、ご自身で行っていただきます。\n\n――――――――――――――――――――\n\n" + KOJIN_TEXT;

@@ -321,7 +321,7 @@ function apply_(d) {
   var cut = function (x, m) { return String(x || "").trim().slice(0, m || 120); };
   var kj = type === "kojin", t = tplOf(kj ? "kojin" : "kaiin");
   var cond = kj ? "" : normCond({ type: type, pay: d.pay, sites: d.sites, staff: d.staff, referrer: cut(d.referrer, 60), founder: true });
-  var o = { id: newId_(), token: newToken_(), template: t.key, title: t.title, party_name: cut(d.name, 40), party_company: kj ? "" : cut(d.org, 80), party_email: email, fields: t.fields.slice(), required: t.required, require_id: t.requireId ? "yes" : "", cond: cond, note: "",
+  var o = { id: newId_(), token: newToken_(), template: t.key, title: kj ? t.title : memberTitle(type), party_name: cut(d.name, 40), party_company: kj ? "" : cut(d.org, 80), party_email: email, fields: t.fields.slice(), required: t.required, require_id: t.requireId ? "yes" : "", cond: cond, note: "",
     prefill: kj ? { name: cut(d.name, 40), address: cut(d.address), phone: cut(d.phone, 20) } : { company: cut(d.org, 80), address: cut(d.address), rep: cut(d.rep, 40), name: cut(d.name, 40), phone: cut(d.phone, 20) },
     status: "送付済み", created: new Date(), expires: new Date(Date.now() + VALID_DAYS * 864e5), draft: "" };
   o.body = buildBody(t.key, cond, "", kj ? o.party_name : o.party_company);
@@ -581,11 +581,12 @@ function adminDo_(a, d) {
 }
 function issue_(d) {
   var t = tplOf(d.template); if (!t) throw new Error("契約書の種類を選んでください");
+  var bt = t.base ? tplOf(t.base) : t; if (t.base) d.cond = Object.assign({}, d.cond || {}, { type: t.mtype });
   var p = d.party || {};
   if (!p.name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email || "")) throw new Error("相手のお名前と、正しいメールアドレスを入れてください");
   var fields = orderFields(t, d.fields);
   var cond = t.cond ? normCond(d.cond) : "";
-  var o = { id: newId_(), token: newToken_(), template: t.key, title: t.title, party_name: p.name, party_company: p.company || "", party_email: p.email, fields: fields, required: t.required, require_id: (d.requireId || t.requireId) ? "yes" : "", cond: cond, note: d.note || "", prefill: d.prefill || {}, status: "送付済み", created: new Date(), expires: new Date(Date.now() + VALID_DAYS * 864e5), draft: d.draft ? "yes" : "" };
+  var o = { id: newId_(), token: newToken_(), template: bt.key, title: t.base ? memberTitle(t.mtype) : t.title, party_name: p.name, party_company: p.company || "", party_email: p.email, fields: fields, required: t.required, require_id: (d.requireId || t.requireId) ? "yes" : "", cond: cond, note: d.note || "", prefill: d.prefill || {}, status: "送付済み", created: new Date(), expires: new Date(Date.now() + VALID_DAYS * 864e5), draft: d.draft ? "yes" : "" };
   o.body = buildBody(t.key, cond, o.note, p.company || p.name);
   log_(o, "作成・送付"); save_(o); sendInvite_(o);
   return { ok: true, id: o.id, url: P("SIGN_URL") + "?t=" + o.token };
