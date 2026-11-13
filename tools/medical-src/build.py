@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """医療介護総合支援会サイトの生成。家じまい相談窓口と同じ設計（CSS・部品）を使い、色だけ医療向けに替える。"""
 import os, re, json, html, shutil
-from data import SITE, ROLES, STATUS, CATS, SUP, PURPOSES, FAQ, ROLE_FAQ, ROLE_CASES, HOUSING, NEWS, PARTNER_TAX, CONTACT_SUB, CONTACT_SPECIAL, CONTACT_GROUPS, SOFT_SUP, SOFT_BADGE
+from data import REGION_ORDER, zone_tree, SITE, ROLES, STATUS, CATS, SUP, PURPOSES, FAQ, ROLE_FAQ, ROLE_CASES, HOUSING, NEWS, PARTNER_TAX, CONTACT_SUB, CONTACT_SPECIAL, CONTACT_GROUPS, SOFT_SUP, SOFT_BADGE
 # フォームの送り先：支援会専用の受付（keiyaku_config.js の KEIYAKU_API_URL）が設定されたら、そちらへ切り替える
 _k = re.search(r'KEIYAKU_API_URL = "([^"]*)"', open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "keiyaku_config.js"), encoding="utf-8").read())
 if _k and _k.group(1):
@@ -1001,22 +1001,6 @@ window.makeCascade=function(o){var T=o.tree||{},box=document.getElementById(o.bo
   preset:function(a,b){var A=box.querySelector('select');if(!A||!T[a])return;A.value=a;A.onchange();if(b){var M=box.querySelectorAll('select')[1];M.value=b;M.onchange()}}}};
 })();</script>"""
 
-
-REGION_ORDER = [("近畿", ["大阪府", "兵庫県", "京都府", "奈良県", "滋賀県", "和歌山県", "三重県"]), ("北海道・東北", ["北海道", "青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県"]), ("関東", ["茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県"]), ("中部", ["新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県", "静岡県", "愛知県"]), ("中国", ["鳥取県", "島根県", "岡山県", "広島県", "山口県"]), ("四国", ["徳島県", "香川県", "愛媛県", "高知県"]), ("九州・沖縄", ["福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"])]
-def zone_tree():
-    import re as _re
-    C = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "jp_cities.json"), encoding="utf-8"))
-    t = {}
-    for reg, prefs in REGION_ORDER:
-        t[reg] = {}
-        for p in prefs:
-            cs = C[p]; big = []
-            for c in cs:
-                m = _re.match(r"^(.+?市)(.+区)$", c)
-                if m and m.group(1) + "（全区）" not in big: big.append(m.group(1) + "（全区）")
-            t[reg][p] = ["全域"] + big + cs
-    t["全国"] = {"全国": ["全国（訪問・来訪とも）", "全国（オンライン・電話のみ）"]}
-    return t
 
 def build_teikei():
     kinds = [("提携企業として、会員へサービスを提供したい", "仕入れ・設備・ITなど、医療・介護の事業者向けのサービス"), ("専門家として協力したい", "弁護士・税理士・社会保険労務士・行政書士・医師など"), ("協賛会員として参加したい", "会員制度の協賛会員（審査があります）"), ("その他の協力", "共同での取り組み・情報提供など")]

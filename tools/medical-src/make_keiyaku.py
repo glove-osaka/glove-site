@@ -46,6 +46,7 @@ body.adm main{max-width:1280px}.ctbl td:nth-child(1),.ctbl td:nth-child(2){white
 .fb-l{flex-basis:100%;padding:8px 12px;border-radius:8px;font-size:.92rem}.fb-l.ok{background:#E3F2E9;color:#1e5b34}.fb-l.fix{background:#FFF3D6;color:#6b4a0c}.ct-box{margin:12px 0;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:#F7FAFA}.ct-box>b{display:block;margin-bottom:4px}.ct-l{list-style:none;margin:0;padding:0}.ct-l li{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;padding:6px 0;border-top:1px dashed var(--line)}.ct-l li:first-child{border-top:0}.ct-st{display:inline-block;padding:1px 9px;border-radius:999px;font-size:.82rem;font-weight:700;background:#EDE7F6;color:#4527a0}.ct-st.dr{background:#FFF3D6;color:#6b4a0c}.ct-st.ok{background:#E3F2E9;color:#1e5b34}.ct-st.no{background:#eee;color:#666}.case-ln{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .fb-box{margin-top:18px;padding:18px 20px;border:2px solid var(--pine);border-radius:12px;background:var(--pine-soft)}.fb-box .btns{display:flex;flex-wrap:wrap;gap:10px}
 body.role-staff .adm-only{display:none!important}.me-badge{display:inline-flex;align-items:center;gap:6px;font-weight:700;padding:6px 12px;border-radius:999px;background:var(--pine-soft)}.st-wait{display:inline-block;padding:1px 8px;border-radius:999px;font-size:.8rem;font-weight:700;background:#FFF3D6;color:#6b4a0c}.st-mine{display:inline-block;padding:1px 8px;border-radius:999px;font-size:.8rem;font-weight:700;background:#E3F2E9;color:#1e5b34}
+.zr{display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr)) minmax(0,1.3fr) auto;gap:8px;align-items:center;margin-bottom:8px}.zr .zn{font-size:.85rem;font-weight:700;color:var(--muted);white-space:nowrap}.zr select,.zr input{width:100%;min-width:0}@media (max-width:760px){.zr{grid-template-columns:1fr 1fr}.zr .zn{grid-column:1/-1}}
 .roster{display:grid;grid-template-columns:260px 1fr;gap:16px}@media (max-width:860px){.roster{grid-template-columns:1fr}}
 .r-tree{border:1px solid var(--line);border-radius:12px;padding:10px;max-height:70vh;overflow:auto;background:var(--surface)}.r-tree h4{margin:10px 6px 4px;font-size:.85rem;color:var(--muted)}.r-tree button{display:flex;justify-content:space-between;gap:8px;width:100%;text-align:left;min-height:38px;padding:6px 10px;border:0;border-radius:8px;background:none;color:var(--ink);font:inherit;cursor:pointer}.r-tree button:hover{background:var(--pine-soft)}.r-tree button.on{background:var(--pine);color:#fff}.r-tree button b{font-weight:700}.r-tree .l2{padding-left:22px;font-size:.92rem}.r-tree .l3{padding-left:36px;font-size:.88rem}
 .pt-box{margin-top:10px}.pt-box>label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:4px}.pt-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.pt-g select{min-height:44px;font-size:.95rem}.pt-box input{margin-top:8px;min-height:44px}
@@ -481,7 +482,7 @@ ADMIN_BODY = f'''
 <div><label for="pfC">小分類（任意）</label><select id="pfC" disabled></select></div>
 <div><label for="pfEmail">メール（案件の送り先）</label><input id="pfEmail" type="email" maxlength="120" placeholder="例：info@example.jp"></div>
 <div><label for="pfTel">電話</label><input id="pfTel" type="tel" maxlength="30" placeholder="例：06-0000-0000"></div>
-<div><label for="pfArea">対応できる地域</label><input id="pfArea" type="text" maxlength="120" placeholder="例：大阪府全域、兵庫県（阪神）"></div>
+<div class="wide"><label>対応できる地域（地方 → 都道府県 → 市区町村）</label><div id="pfZones"></div></div>
 <div class="wide"><label for="pfNote">メモ（条件・料金・注意など）</label><input id="pfNote" type="text" maxlength="300"></div>
 </div>
 <p class="err" id="errPt" role="alert"></p>
@@ -684,13 +685,13 @@ $('staffNew').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preve
 $('staffList').addEventListener('click',function(e){var b=e.target.closest('[data-rm]');if(!b)return;STAFF.splice(+b.dataset.rm,1);drawStaff()});
 $('saveStaff').addEventListener('click',function(){var b=this;b.disabled=true;$('errSt').textContent='';api('admin.staffSet',{list:STAFF}).then(function(r){STAFF=r.staff||STAFF;drawStaff();$('errSt').textContent='保存しました。';drawIn();todo()}).catch(function(er){$('errSt').textContent=er.message}).then(function(){b.disabled=false})});
 /* ---- 設定：提携先一覧 ---- */
-var PF_EDIT=-1,PFK={name:'pfName',person:'pfPerson',email:'pfEmail',tel:'pfTel',area:'pfArea',note:'pfNote'};
+var PF_EDIT=-1,PFK={name:'pfName',person:'pfPerson',email:'pfEmail',tel:'pfTel',note:'pfNote'},PZN=makeZones('pfZones',5);
 function pfFill(a,b,c){var T=window.PARTNER_TAX||{};$('pfA').innerHTML=opt(Object.keys(T),a||'','選ぶ');$('pfB').innerHTML=opt(a&&T[a]?Object.keys(T[a]):[],b||'','選ぶ');$('pfB').disabled=!a;$('pfC').innerHTML=opt(a&&b&&T[a]&&T[a][b]?T[a][b]:[],c||'','（任意）');$('pfC').disabled=!b}
-function pfSet(p,idx){p=p||{};PF_EDIT=idx==null?-1:idx;Object.keys(PFK).forEach(function(k){$(PFK[k]).value=p[k]||''});pfFill(p.a,p.b,p.c);$('pfSave').textContent=PF_EDIT>=0?'この内容で更新する':'この内容で登録する';$('errPt').textContent=''}
+function pfSet(p,idx){p=p||{};PF_EDIT=idx==null?-1:idx;Object.keys(PFK).forEach(function(k){$(PFK[k]).value=p[k]||''});PZN.set(p.area||'');pfFill(p.a,p.b,p.c);$('pfSave').textContent=PF_EDIT>=0?'この内容で更新する':'この内容で登録する';$('errPt').textContent=''}
 $('pfA').addEventListener('change',function(){pfFill(this.value,'','')});$('pfB').addEventListener('change',function(){pfFill($('pfA').value,this.value,'')});
 $('pfClear').addEventListener('click',function(){pfSet({})});
 function savePartners(list,msg){$('pfSave').disabled=true;return api('admin.partnerSet',{rows:list}).then(function(r){PARTNERS=r.partners||list;$('pfSave').disabled=false;drawPt();$('errPt').textContent=msg;drawIn();todo()},function(er){$('pfSave').disabled=false;$('errPt').textContent=er.message;throw er})}
-$('pfSave').addEventListener('click',function(){var p={};Object.keys(PFK).forEach(function(k){p[k]=$(PFK[k]).value.trim()});p.a=$('pfA').value;p.b=$('pfB').value;p.c=$('pfC').value;
+$('pfSave').addEventListener('click',function(){var p={};Object.keys(PFK).forEach(function(k){p[k]=$(PFK[k]).value.trim()});p.area=PZN.get();if(!PZN.ok()){$('errPt').textContent='対応できる地域は、地方を選んだら都道府県も選んでください。';return}p.a=$('pfA').value;p.b=$('pfB').value;p.c=$('pfC').value;
  if(!p.name){$('errPt').textContent='提携先の名前を入れてください。';$('pfName').focus();return}
  if(!p.a||!p.b){$('errPt').textContent='大分類と中分類を選んでください。';(p.a?$('pfB'):$('pfA')).focus();return}
  if(p.email&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email)){$('errPt').textContent='メールアドレスの形を確かめてください（例：info@example.jp）。';$('pfEmail').focus();return}
@@ -1033,6 +1034,23 @@ if(IN_GAS){$('logout').hidden=true;go()}else if(tok){go()}else{showLogin()}
 from data import PARTNER_TAX as _PT, ROUTE_AUTO as _RA
 ADM_DATA = "<script>window.CASE_SEGS=" + json.dumps(__import__("data").CASE_SEGS, ensure_ascii=False) + ";window.PARTNER_TAX=" + json.dumps(_PT, ensure_ascii=False) + ";window.ROUTE_AUTO_N=" + json.dumps({_SUP[k]["name"]: list(v) for k, v in _RA.items()}, ensure_ascii=False) + ";</script>\n"
 ADM_HELP = '<script>window.FORM_NOBAR=true;window.FORM_HELP={"lid":{"t":"担当者のIDを入れます。","ex":"英字の小文字で入れます。分からないときは「ID・パスワードを忘れたとき」を押すと、登録メールに届きます","req":true},"lpw":{"t":"パスワードを入れます。","ex":"大文字・小文字、全角・半角の違いにご注意ください。5回続けて間違えると15分止まります","req":true},"fgCode":{"t":"登録メールに届いた6けたの数字を入れます。","req":true},"fgP1":{"t":"新しいパスワードを8文字以上で決めます。","ex":"英字と数字をまぜると安全です","req":true},"fgP2":{"t":"確認のため、同じパスワードをもう一度入れます。","req":true},"pName":{"t":"契約の相手のお名前（ご担当者）です。","req":true},"pEmail":{"t":"契約書の案内を送る相手のメールアドレスです。","req":true}};</script>\n<script src="../assets/guide.js" data-mode="admin"></script>\n'
+ZONE_DATA = "<script>window.ZONE_TREE=" + json.dumps(__import__("data").zone_tree(), ensure_ascii=False) + ";</script>\n"
+ZONE_JS = r"""<script>
+/* 対応できる地域を「地方 → 都道府県 → 市区町村 → 詳細」で選ぶ（5つまで） */
+window.makeZones=function(box,max){var Z=window.ZONE_TREE||{},el=document.getElementById(box),rows=[];max=max||5;
+ function e(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+ function o(l,cur,ph){return'<option value="">'+ph+'</option>'+l.map(function(v){return'<option'+(v===cur?' selected':'')+'>'+e(v)+'</option>'}).join('')}
+ function draw(){el.innerHTML=rows.map(function(r,i){var ps=r.a&&Z[r.a]?Object.keys(Z[r.a]):[],cs=r.a&&r.b&&Z[r.a][r.b]?Z[r.a][r.b]:[];
+  return'<div class="zr" data-i="'+i+'"><span class="zn">地域 '+(i+1)+'</span><select data-z="a" aria-label="地方（大分類）">'+o(Object.keys(Z),r.a,'地方を選ぶ')+'</select><select data-z="b" aria-label="都道府県（中分類）"'+(r.a?'':' disabled')+'>'+o(ps,r.b,'都道府県')+'</select><select data-z="c" aria-label="市区町村（小分類）"'+(r.b?'':' disabled')+'>'+o(cs,r.c,'市区町村')+'</select><input type="text" data-z="d" value="'+e(r.d)+'" maxlength="80" placeholder="詳細（任意）例：北区・都島区のみ" aria-label="詳細">'+(rows.length>1?'<button type="button" class="small-btn" data-zdel>消す</button>':'')+'</div>'}).join('')+(rows.length<max?'<button type="button" class="small-btn" data-zadd>＋ 地域を追加</button>':'')}
+ el.addEventListener('change',function(ev){var r=ev.target.closest('.zr');if(!r)return;var x=rows[+r.dataset.i],k=ev.target.dataset.z;x[k]=ev.target.value;if(k==='a'){x.b='';x.c=''}if(k==='b')x.c='';if(k!=='d')draw()});
+ el.addEventListener('input',function(ev){var r=ev.target.closest('.zr');if(r&&ev.target.dataset.z==='d')rows[+r.dataset.i].d=ev.target.value});
+ el.addEventListener('click',function(ev){if(ev.target.closest('[data-zadd]')){rows.push({a:'',b:'',c:'',d:''});draw()}var d=ev.target.closest('[data-zdel]');if(d){rows.splice(+d.closest('.zr').dataset.i,1);draw()}});
+ var api={get:function(){return rows.filter(function(r){return r.b||r.d}).map(function(r){var t=r.b==='全国'?(r.c||'全国'):(r.b+(r.c&&r.c!=='全域'?' '+r.c:' 全域'));if(!r.b)t='';return(t+(r.d?(t?'（'+r.d+'）':r.d):'')).trim()}).filter(Boolean).join('、')},
+  ok:function(){return rows.every(function(r){return!r.a||r.b})},
+  set:function(str){rows=[];String(str||'').split('、').forEach(function(t){t=t.trim();if(!t)return;var m=t.match(/^(\S+?[都道府県])\s+(.+)$/),hit=null;if(m)Object.keys(Z).forEach(function(a){var cs=Z[a][m[1]];if(!cs)return;var c='';cs.forEach(function(x){if(m[2].indexOf(x)===0&&x.length>c.length)c=x});if(c)hit={a:a,b:m[1],c:c,d:m[2].slice(c.length).replace(/^（/,'').replace(/）$/,'')}});rows.push(hit||{a:'',b:'',c:'',d:t})});if(!rows.length)rows.push({a:'',b:'',c:'',d:''});draw()}};
+ api.set('');return api};
+</script>
+"""
 # ---------- 提携先の登録フォーム（担当者がメールで送ったリンクから、相手が記入する） ----------
 PARTNER_PAGE = HEAD("提携先の登録") + f"""
 <div class="demo" id="demoBar" hidden>お試し表示です（入力した内容は送信されません）</div>
@@ -1054,7 +1072,7 @@ PARTNER_PAGE = HEAD("提携先の登録") + f"""
 <div class="fld"><label for="pC">小分類（任意）</label><select id="pC" disabled></select></div>
 <div class="fld"><label for="pEmail">ご紹介を受け取るメールアドレス <span class="req">※必須</span></label><input type="email" id="pEmail" maxlength="120" autocomplete="email"></div>
 <div class="fld"><label for="pTel">電話番号</label><input type="tel" id="pTel" maxlength="30" autocomplete="tel"></div>
-<div class="fld"><label for="pArea">対応できる地域</label><input type="text" id="pArea" maxlength="120" placeholder="例：大阪府全域、兵庫県（阪神）"></div>
+<fieldset class="fld" style="border:0;padding:0;margin:0 0 22px"><legend style="font-weight:700;margin-bottom:6px">対応できる地域</legend><p class="hint" style="margin:0 0 8px">地方 → 都道府県 → 市区町村 の順に選びます。都道府県の全体なら「全域」を選んでください。5つまで追加できます。</p><div id="pZones"></div></fieldset>
 <div class="fld"><label for="pNote">サービスの内容・条件など（任意）</label><textarea id="pNote" maxlength="300" placeholder="例：初回相談無料、訪問対応可"></textarea></div>
 <p class="err" id="errP" role="alert"></p>
 <div class="btns"><button class="btn" type="button" id="pSend">この内容で登録する</button></div>
@@ -1063,18 +1081,19 @@ PARTNER_PAGE = HEAD("提携先の登録") + f"""
 </main>
 <script src="config.js"></script>
 <script src="api.js"></script>
-""" + ADM_DATA + r"""<script>
-(function(){var $=function(i){return document.getElementById(i)},t=new URLSearchParams(location.search).get('t')||'',T=window.PARTNER_TAX||{};
+""" + ADM_DATA + ZONE_DATA + ZONE_JS + r"""<script>
+(function(){var $=function(i){return document.getElementById(i)},t=new URLSearchParams(location.search).get('t')||'',T=window.PARTNER_TAX||{},ZN=makeZones('pZones',5);
 if(window.KEIYAKU_DEMO)$('demoBar').hidden=false;
 function esc(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function opt(l,cur,ph){return'<option value="">'+ph+'</option>'+l.map(function(v){return'<option'+(v===cur?' selected':'')+'>'+esc(v)+'</option>'}).join('')}
 function fill(a,b,c){$('pA').innerHTML=opt(Object.keys(T),a,'選んでください');$('pB').innerHTML=opt(a&&T[a]?Object.keys(T[a]):[],b,'選んでください');$('pB').disabled=!a;$('pC').innerHTML=opt(a&&b&&T[a]&&T[a][b]?T[a][b]:[],c,'（任意）');$('pC').disabled=!b}
 $('pA').addEventListener('change',function(){fill(this.value,'','')});$('pB').addEventListener('change',function(){fill($('pA').value,this.value,'')});
 keiyakuApi('client.pinv',{t:t}).then(function(r){$('loading').hidden=true;$('pf').hidden=false;$('pTo').textContent=r.name+' 宛てのご案内です。';$('pEmail').value=r.email||'';fill('','','')}).catch(function(e){$('loading').hidden=true;$('errTop').textContent=e.message});
-$('pSend').addEventListener('click',function(){var b=this,row={name:$('pName').value.trim(),person:$('pPerson').value.trim(),a:$('pA').value,b:$('pB').value,c:$('pC').value,email:$('pEmail').value.trim(),tel:$('pTel').value.trim(),area:$('pArea').value.trim(),note:$('pNote').value.trim()};$('errP').textContent='';
+$('pSend').addEventListener('click',function(){var b=this,row={name:$('pName').value.trim(),person:$('pPerson').value.trim(),a:$('pA').value,b:$('pB').value,c:$('pC').value,email:$('pEmail').value.trim(),tel:$('pTel').value.trim(),area:ZN.get(),note:$('pNote').value.trim()};$('errP').textContent='';
  if(!row.name){$('errP').textContent='会社名・事務所名を入れてください。';$('pName').focus();return}
  if(!row.a||!row.b){$('errP').textContent='大分類と中分類を選んでください。';$('pA').focus();return}
  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(row.email)){$('errP').textContent='メールアドレスを正しく入れてください。';$('pEmail').focus();return}
+ if(!ZN.ok()){$('errP').textContent='対応できる地域は、地方を選んだら都道府県も選んでください（使わない行は「消す」を押します）。';return}
  b.disabled=true;b.textContent='送っています…';keiyakuApi('client.pinvSubmit',{t:t,row:row}).then(function(){$('pf').hidden=true;$('pDone').hidden=false;window.scrollTo(0,0)}).catch(function(e){$('errP').textContent=e.message;b.disabled=false;b.textContent='この内容で登録する'})});
 })();
 </script>
@@ -1084,7 +1103,7 @@ $('pSend').addEventListener('click',function(){var b=this,row={name:$('pName').v
 </html>
 """
 open(os.path.join(OUT, "partner.html"), "w", encoding="utf-8").write(PARTNER_PAGE)
-open(os.path.join(OUT, "admin.html"), "w", encoding="utf-8").write(HEAD("管理画面") + ADMIN_BODY + '<script src="config.js"></script>\n<script src="api.js"></script>\n' + ADM_DATA + ADMIN_JS + ADM_HELP + "</body>\n</html>\n")
+open(os.path.join(OUT, "admin.html"), "w", encoding="utf-8").write(HEAD("管理画面") + ADMIN_BODY + '<script src="config.js"></script>\n<script src="api.js"></script>\n' + ADM_DATA + ZONE_DATA + ZONE_JS + ADMIN_JS + ADM_HELP + "</body>\n</html>\n")
 
 # ---------- Apps Script 一式 ----------
 gs = "/* このファイルは make_keiyaku.py が作りました。直すときは元のファイルを直してください */\n" + TEXTS + CORE + "\n" + open(os.path.join(HERE, "keiyaku_gas_main.js"), encoding="utf-8").read()
@@ -1093,7 +1112,7 @@ shim = ("<script>window.IN_GAS=true;\n(function(){" + TEXTS + CORE +
         "window.KEIYAKU_CORE={TEMPLATES:TEMPLATES,FIELDS:FIELDS,normCond:normCond,buildBody:buildBody,yen:yen,MEMBER_LABEL:MEMBER_LABEL};})();\n"
         "window.keiyakuApi=function(a,d){return new Promise(function(res,rej){google.script.run.withSuccessHandler(function(r){r&&r.ok?res(r):rej(new Error(r&&r.error||'うまくいきませんでした'))}).withFailureHandler(function(e){rej(new Error(e&&e.message||String(e)))}).adminCall(a,d)})};</script>\n")
 gas_admin = ('<!doctype html><html lang="ja"><head><base target="_top"><meta charset="utf-8"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDPMincho:wght@700&display=swap"><style>'
-             + css + '</style></head><body>' + ADMIN_BODY.replace('href="../index.html"', 'href="https://119cm.net/"') + shim + ADM_DATA + ADMIN_JS + "</body></html>\n")
+             + css + '</style></head><body>' + ADMIN_BODY.replace('href="../index.html"', 'href="https://119cm.net/"') + shim + ADM_DATA + ZONE_DATA + ZONE_JS + ADMIN_JS + "</body></html>\n")
 open(os.path.join(GAS, "admin.html"), "w", encoding="utf-8").write(gas_admin)
 # 古い api.js・config.js が残らないよう、中身から作った番号を付ける
 for _f in ("api.js", "config.js"):

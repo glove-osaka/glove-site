@@ -1,0 +1,947 @@
+<!doctype html><html lang="ja"><head><base target="_top"><meta charset="utf-8"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDPMincho:wght@700&display=swap"><style>:root{--bg:#F6F8F7;--surface:#fff;--ink:#14211F;--muted:#3A4A48;--line:#C6D4D3;--pine:#0E5A63;--pine-2:#0B4A52;--pine-soft:#E3F0F0;--gold:#8A621C;--gold-bright:#C99A45;--red:#B3261E;--on-pine:#fff;--f-body:"BIZ UDPGothic","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans CJK JP",sans-serif;--f-display:"BIZ UDPMincho","Hiragino Mincho ProN","Yu Mincho","Noto Serif CJK JP",serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1718;--surface:#152022;--ink:#EEF4F4;--muted:#BFD0D0;--line:#32464A;--pine:#86C7C9;--pine-2:#A6DADB;--pine-soft:#16292B;--gold:#E0BD7C;--red:#F2B8B5;--on-pine:#081F22}}
+*{box-sizing:border-box}
+html{font-size:18px;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);line-height:1.85}
+.top{background:var(--surface);border-bottom:1px solid var(--line)}
+.top .in{max-width:880px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none}
+.brand svg{width:44px;height:44px;color:var(--pine)}
+.brand b{font-family:var(--f-display);font-size:1.15rem;letter-spacing:.08em;display:block}
+.brand small{display:block;font-size:.8rem;color:var(--muted)}
+.tel{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 14px;border-radius:10px;background:var(--pine-soft);color:var(--pine);font-weight:700;text-decoration:none}
+.tel b{white-space:nowrap}.tel small{white-space:nowrap;font-weight:400;font-size:.82rem;color:var(--muted)}
+main{max-width:880px;margin:0 auto;padding:24px 16px 80px}
+h1{font-family:var(--f-display);font-size:1.6rem;line-height:1.5;margin:8px 0 6px}
+h2{font-size:1.25rem;margin:0 0 12px}
+.steps{display:flex;gap:6px;list-style:none;padding:0;margin:18px 0 26px;flex-wrap:wrap}
+.steps li{flex:1 1 0;min-width:96px;text-align:center;padding:10px 6px;border-radius:10px;background:var(--surface);border:2px solid var(--line);font-weight:700;font-size:.92rem;color:var(--muted)}
+.steps li b{display:block;font-size:1.1rem}
+.steps li.on{border-color:var(--pine);color:var(--pine);background:var(--pine-soft)}
+.steps li.done{border-color:var(--pine);color:var(--on-pine);background:var(--pine)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 20px;margin-bottom:20px}
+.doc{white-space:pre-wrap;font-family:var(--f-display);font-size:1.02rem;line-height:2;max-height:60vh;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:18px;background:var(--bg)}
+.hint{color:var(--muted);font-size:.95rem}
+.fld{margin-bottom:18px}
+.fld label{display:block;font-weight:700;margin-bottom:6px}
+.fld .req{display:inline;margin-left:8px;font-size:.9em;font-weight:700;color:#B3261E;background:none;padding:0}
+input[type=text],input[type=tel],input[type=email],input[type=date],input[type=number],input[type=month],input[type=password],textarea,select{width:100%;min-height:54px;padding:10px 14px;font:inherit;font-size:1.05rem;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+textarea{min-height:96px}
+input:focus,textarea:focus,select:focus{outline:3px solid var(--gold-bright);outline-offset:1px;border-color:var(--pine)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:60px;padding:0 28px;border-radius:12px;border:2px solid var(--pine);background:var(--pine);color:var(--on-pine);font:inherit;font-weight:700;font-size:1.1rem;cursor:pointer;text-decoration:none}
+.btn:hover{background:var(--pine-2)}
+.btn.o{background:var(--surface);color:var(--pine)}
+.btn.gold{background:var(--gold-bright);border-color:var(--gold-bright);color:#1A1406}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+.agree{display:flex;gap:12px;align-items:flex-start;padding:16px;border:2px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer}
+.agree input{width:28px;height:28px;flex-shrink:0;margin-top:3px}
+.seal-wrap{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.seal-box{width:150px;height:150px;border:2px dashed var(--line);border-radius:12px;display:grid;place-items:center;background:var(--surface)}
+.seal-box canvas{width:120px;height:120px}
+.err{color:var(--red);font-weight:700;min-height:1.6em;margin-top:10px}
+.ok{background:var(--pine-soft);border:2px solid var(--pine);border-radius:14px;padding:22px}
+.note{background:#F5ECD9;color:#3a2c10;border-radius:10px;padding:14px 16px;font-size:.95rem}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .note{background:#3a2f1a;color:#f2e6cc}}
+.demo{background:var(--gold-bright);color:#1A1406;text-align:center;font-weight:700;padding:8px 12px;font-size:.92rem}
+.idprev{max-width:260px;border-radius:10px;border:1px solid var(--line);display:block;margin-top:10px}
+table.list{width:100%;border-collapse:collapse;font-size:.95rem}
+table.list th,table.list td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left;vertical-align:top}
+table.list th{background:var(--pine-soft)}
+.tag{display:inline-block;border-radius:6px;padding:0 8px;font-size:.85rem;font-weight:700;background:var(--pine-soft);color:var(--pine)}
+.tag.done{background:var(--pine);color:var(--on-pine)}.tag.cancel{background:#eee;color:#555}
+.chk{display:flex;flex-wrap:wrap;gap:10px}
+.chk label{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 14px;border:2px solid var(--line);border-radius:10px;background:var(--surface);font-weight:400;cursor:pointer}
+.chk input{width:22px;height:22px}
+.items-row{display:grid;grid-template-columns:2fr 70px 120px 1fr 44px;gap:8px;margin-bottom:8px}
+.items-row input{min-height:48px;font-size:1rem}
+.items-row button{min-height:48px;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font-size:1.2rem;cursor:pointer}
+.tbl{overflow-x:auto}
+.small-btn{min-height:44px;padding:0 12px;border-radius:8px;border:2px solid var(--pine);background:var(--surface);color:var(--pine);font:inherit;font-weight:700;cursor:pointer;margin:2px}
+h2:focus{outline:none}
+@media (max-width:640px){.steps{gap:4px}.steps li{min-width:0;padding:8px 2px;font-size:.72rem}.steps li b{font-size:1rem}.tel{font-size:.9rem}.items-row{grid-template-columns:1fr 1fr}.items-row input:first-child{grid-column:1/-1}h1{font-size:1.35rem}}
+
+/* ---- 管理画面 ---- */
+.adm main{max-width:1100px}
+.tabs{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);display:flex;gap:4px;overflow-x:auto;padding:8px max(12px,calc((100vw - 1100px)/2))}
+.tabs button{flex:0 0 auto;min-height:52px;padding:0 18px;border:2px solid transparent;border-radius:10px;background:none;color:var(--muted);font:inherit;font-weight:700;font-size:1.02rem;cursor:pointer}
+.tabs button.on{background:var(--pine);color:var(--on-pine)}
+.tabs button:not(.on):hover{border-color:var(--line)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+.tile{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:16px 18px;border:2px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;text-align:left}
+.tile b{font-size:2rem;line-height:1.2;color:var(--pine)}
+.tile span{font-weight:700;font-size:.95rem;color:var(--muted)}
+.tile.hot{border-color:var(--gold-bright);background:#FBF3E4}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tile.hot{background:#3a2f1a}}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.bar .q{flex:1 1 220px;width:auto}
+.bar .fs{flex:0 0 auto;width:auto;min-width:160px}
+tr.row{cursor:pointer}tr.row:hover td,tr.row:focus td{background:var(--pine-soft)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:0 18px}
+.grid .wide{grid-column:1/-1}
+.sub{border-top:1px solid var(--line);margin-top:24px;padding-top:18px}
+.sub h3{margin:0 0 10px;font-size:1.1rem}
+.ul{list-style:none;padding:0;margin:0 0 10px}.ul li{padding:8px 0;border-bottom:1px dashed var(--line)}
+.log{list-style:none;padding:0;margin:14px 0 0}.log li{padding:10px 0;border-bottom:1px dashed var(--line)}.log small{display:block;color:var(--muted)}
+.lnk{background:none;border:0;padding:0;color:var(--pine);font:inherit;text-decoration:underline;cursor:pointer;text-align:left}
+.danger{margin-top:28px;text-align:right}.small-btn.warn{border-color:var(--red);color:var(--red)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 22px;border-radius:10px;font-weight:700;z-index:20}
+.st-新規{background:#FBE3E1;color:#8C1D18}.st-完了,.st-成約{background:var(--pine);color:var(--on-pine)}.st-見送り,.st-不成約,.st-取り下げ{background:#eee;color:#555}
+.login{max-width:520px;margin:24px auto}
+.showpw{display:inline-flex!important;align-items:center;gap:8px;margin-top:8px;font-weight:400!important;cursor:pointer}.showpw input{width:22px;height:22px}
+.tabs .acct{margin-left:auto;font-size:.92rem}.tabs .acct+.acct{margin-left:0}
+[hidden]{display:none!important}
+/* 案件管理 */
+.prog{display:inline-flex;gap:3px;vertical-align:middle}.prog i{width:14px;height:10px;border-radius:3px;background:var(--line)}.prog i.d{background:var(--pine)}.prog i.c{background:var(--gold-bright)}
+.progt{display:block;font-weight:700;color:var(--ink);margin-top:2px}
+.al{display:inline-block;margin:2px 4px 2px 0;padding:1px 8px;border-radius:6px;font-size:.82rem;font-weight:700;white-space:nowrap}
+.al-red{background:#B3261E;color:#fff}.al-yellow{background:#F6E2B3;color:#4a3606}
+.idle{font-size:1.05rem}.idle.y{color:#8A621C}.idle.r{color:#B3261E}
+tr.lv-red td:first-child{box-shadow:inset 6px 0 0 #B3261E}tr.lv-yellow td:first-child{box-shadow:inset 6px 0 0 #E0B04A}
+tr.is-new td{font-weight:700}
+li.lv-red{border-left:6px solid #B3261E;padding-left:10px}li.lv-yellow{border-left:6px solid #E0B04A;padding-left:10px}
+.sv{display:block;font-size:.9rem;line-height:1.6}.sv em{font-style:normal;color:var(--pine)}.sv small{color:var(--red)}
+.tile.t-red{border-color:#B3261E;background:#FBE3E1}.tile.t-red b{color:#B3261E}.tile.t-yellow{border-color:#E0B04A;background:#FBF3E4}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tile.t-red{background:#3d1b19}:root:not([data-theme="light"]) .tile.t-yellow{background:#3a2f1a}:root:not([data-theme="light"]) .al-yellow{background:#5a4512;color:#fff3d6}}
+.stages{display:grid;gap:8px}.stg{display:grid;grid-template-columns:7em 1fr 3em;align-items:center;gap:10px}.stg i{display:block;height:18px;border-radius:5px;background:var(--pine);min-width:3px}.stg b{text-align:right}
+.edtop{background:var(--pine-soft);border-radius:10px;padding:12px 14px;margin-bottom:16px}
+.chk.svc label{min-height:44px;font-size:.95rem}
+dialog.rep{width:min(760px,calc(100vw - 24px));max-height:calc(100vh - 24px);border:0;border-radius:14px;padding:22px 20px;background:var(--surface);color:var(--ink)}
+dialog.rep::backdrop{background:rgba(0,0,0,.45)}
+dialog.rep textarea{min-height:300px;font-size:1rem;line-height:1.8}
+.asg{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.small-btn.bi{border-style:dashed}
+/* 対応地域の選択 */
+.ap-row{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+.ap-chip{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border:2px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font:inherit;font-size:.95rem;cursor:pointer}
+.ap-chip .ap-mark{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;border:2px solid var(--line);font-size:.8rem;font-weight:700}
+.ap-chip.ap-on{border-color:var(--pine);background:var(--pine-soft);color:var(--pine);font-weight:700}.ap-chip.ap-on .ap-mark{background:var(--pine);border-color:var(--pine);color:var(--on-pine)}
+.ap-chip.ap-ex{border-color:#B3261E;background:#FBE3E1;color:#8C1D18;text-decoration:line-through}.ap-chip.ap-ex .ap-mark{background:#B3261E;border-color:#B3261E;color:#fff}
+.ap-chip small{text-decoration:none;font-size:.78rem}
+.ap-k{display:inline-block;padding:0 8px;border-radius:6px}.ap-k.on{background:var(--pine-soft);color:var(--pine)}.ap-k.ex{background:#FBE3E1;color:#8C1D18}
+.ap-pref{margin:8px 0;border:1px solid var(--line);border-radius:10px;padding:8px 12px}.ap-pref summary{cursor:pointer;font-weight:700;min-height:40px;display:flex;align-items:center}
+.ap-grp{margin:8px 0}.ap-grp b{font-size:.9rem;color:var(--muted)}
+.ap-memo{margin-top:8px}.ap-sum{margin:8px 0 0;font-weight:700}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ap-chip.ap-ex{background:#3d1b19;color:#ffb4ab}}
+.ap-chip small{display:inline-block}
+
+[hidden]{display:none!important}
+.tabs{display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap}.tab{min-height:50px;padding:0 20px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+.tab.on{border-color:var(--pine);background:var(--pine);color:var(--on-pine)}.cnt{display:inline-block;margin-left:8px;min-width:24px;padding:0 7px;border-radius:12px;background:#B3261E;color:#fff;font-size:.85rem}
+.filters{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:14px}.filters label{display:flex;gap:8px;align-items:center;font-weight:700}.filters select,.filters input{min-height:44px;width:auto}
+.todo{border:3px solid var(--pine)}.todo-h{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-bottom:6px}.todo-h h2{margin:0}.todo-h .small-btn{margin-left:auto}
+.todo-l{margin:8px 0 0;padding-left:0;list-style:none;counter-reset:t}.todo-l li{counter-increment:t;display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:10px 0;border-top:1px solid var(--line)}
+.todo-l li:before{content:counter(t);flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--pine);color:#fff;font-weight:700}.todo-l li.red:before{background:#B3261E}.todo-l li.ok:before{content:"✓";background:#2E7D4F}
+.todo-l li span{flex:1 1 260px}.todo-l li small{display:block;color:var(--muted);font-size:.88rem}.todo-l li button{min-height:44px}
+.howto{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:0 16px;margin-bottom:14px}.howto summary{min-height:48px;display:flex;align-items:center;font-weight:700;cursor:pointer;color:var(--pine)}.howto summary:before{content:"？";display:grid;place-items:center;width:26px;height:26px;margin-right:8px;border-radius:50%;background:var(--pine);color:#fff;font-size:.9rem}
+.howto ol{padding-left:22px;margin:0 0 12px;line-height:1.8}.howto table{margin-bottom:10px}
+.tour-ov{position:fixed;inset:0;z-index:80}.tour-hl{position:fixed;z-index:81;border-radius:12px;box-shadow:0 0 0 4px #C99A45,0 0 0 9999px rgba(0,0,0,.55);transition:all .25s;pointer-events:none}
+.tour-tx{position:fixed;z-index:82;width:min(380px,calc(100% - 24px));background:var(--surface);color:var(--ink);border-radius:14px;padding:16px 18px;box-shadow:0 8px 30px rgba(0,0,0,.35);line-height:1.7}
+.tour-tx b{display:block;font-size:1.08rem;margin-bottom:4px}.tour-tx .tn{color:var(--muted);font-size:.85rem}.tour-tx .bt{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}.tour-tx .bt button{min-height:44px}
+.flash{outline:4px solid #C99A45;outline-offset:3px;border-radius:12px}
+body.adm main{max-width:1280px}.ctbl td:nth-child(1),.ctbl td:nth-child(2){white-space:nowrap}.vt-sw{display:inline-flex;gap:0;margin-left:auto}.vt-sw .small-btn{border-radius:0}.vt-sw .small-btn:first-child{border-radius:10px 0 0 10px}.vt-sw .small-btn:last-child{border-radius:0 10px 10px 0}.vt-sw .small-btn.on,.seg-b.on{background:var(--pine);color:#fff;border-color:var(--pine)}
+.ctbl{width:100%;border-collapse:collapse;font-size:.95rem}.ctbl th{background:var(--pine-soft);text-align:left;padding:8px 10px;font-size:.85rem;white-space:nowrap}.ctbl td{padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
+.ctbl tr.cr{cursor:pointer}.ctbl tr.cr td{border-top:2px solid var(--line)}.ctbl tr.cr.z td{background:#F6F9F9}.ctbl tr.cr:hover td{background:#F4F8F8}.ctbl tr.cr.open td{background:var(--pine-soft)}.ctbl tr.cr.new td:first-child{box-shadow:inset 5px 0 0 #B3261E}.ctbl tr.cd td{background:#FAFCFC;padding:10px}
+.ctbl .sm{display:block;color:var(--muted);font-size:.82rem;margin-top:2px}.st{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.82rem;font-weight:700;background:var(--pine-soft);color:var(--pine);white-space:nowrap}.st.s0{background:#B3261E;color:#fff}.st.s5,.st.s6{background:#E8E8E8;color:#555}
+.kd{display:inline-block;padding:1px 7px;border-radius:6px;font-size:.78rem;font-weight:700;background:#E7F1FB;color:#163d6b;margin-bottom:3px}.kd.k2{background:#F5ECD9;color:#6b4a0c}.kd.k3{background:#EDE7F6;color:#4527a0}.kd.k4{background:#E3F2E9;color:#1e5b34}
+.seg{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}.seg-b{min-height:48px;padding:0 18px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+.segbar{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}.segbar button{min-height:44px;padding:4px 12px;border-radius:10px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:.92rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px}.segbar button.on{border-color:var(--pine);background:var(--pine);color:#fff}.segbar button.zero{opacity:.55}.segbar button i{font-style:normal;background:#B3261E;color:#fff;border-radius:999px;padding:0 7px;font-size:.78rem}.segbar button b{font-weight:400;font-size:.82rem}.segbar .gap{width:100%;height:0}.seg-note{margin:0 0 12px;padding:10px 14px;border-left:4px solid var(--pine);background:var(--pine-soft);border-radius:6px;font-size:.92rem}.self-pt{margin:4px 0 0;padding:10px 12px;border:1px dashed var(--line);border-radius:8px;background:#F6F9F9}.kd.k5{background:#FDE7E7;color:#8a1c1c}.kd.k6{background:#E0F2F1;color:#0b5149}.kd.k7{background:#FFF3D6;color:#6b4a0c}
+.ctbl tr.cd td{white-space:normal}.fac-box{margin:12px 0;padding:12px 14px;border:2px solid #E3D3A8;border-radius:10px;background:#FFFBF0}.fac-box>label{font-weight:700}.fac-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px 12px;margin-top:8px}.fac-g>div{min-width:0}.fac-g small{display:block;color:var(--muted);font-size:.8rem;margin-bottom:2px}.fac-g select,.fac-g input{width:100%}.fac-box[data-m="会員の病院・施設"] .fc-non,.fac-box[data-m="未確認"] .fc-non{display:none}.fac-box:not([data-m="会員の病院・施設"]) .fc-mem{display:none}
+.req{color:#B3261E;font-weight:700;font-size:.85em}.pf-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px 16px}.pf-g>div{min-width:0}.pf-g label{display:block;font-weight:700;font-size:.92rem;margin-bottom:4px}.pf-g input,.pf-g select{width:100%}.pf-g .wide{grid-column:1/-1}.fw-inc{border:1px solid var(--line);border-radius:8px;padding:8px 14px 10px;margin:0 0 12px;display:flex;flex-wrap:wrap;gap:6px 20px}.fw-inc legend{font-weight:700;font-size:.9rem;padding:0 4px}.fw-inc label{display:flex;gap:6px;align-items:center}.fw-ok{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border:2px solid #B3261E;border-radius:10px;background:#FFF5F4;margin:10px 0;cursor:pointer}.fw-ok input,.fw-st input{width:22px;height:22px;flex:none;margin-top:2px}.fw-st{display:flex;gap:10px;align-items:center;margin:0 0 8px;cursor:pointer}.small-btn.fw-b{border-color:var(--pine);background:var(--pine);color:#fff}
+.adm-top{display:flex;justify-content:flex-end;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 10px}.actor{display:inline-flex;align-items:center;gap:8px;font-weight:700}.actor select{min-height:44px}.actor.need select{border:2px solid #B3261E;background:#FFF5F4}.lgt td{vertical-align:top}.lgt .sm{display:block;color:var(--muted);font-size:.82rem}.lg-pre{white-space:pre-wrap;font:inherit;font-size:.88rem;margin:6px 0 0;color:var(--ink)}.lnk{background:none;border:0;padding:0;color:var(--pine);text-decoration:underline;font:inherit;cursor:pointer}.hist details summary{cursor:pointer}
+.fb-l{flex-basis:100%;padding:8px 12px;border-radius:8px;font-size:.92rem}.fb-l.ok{background:#E3F2E9;color:#1e5b34}.fb-l.fix{background:#FFF3D6;color:#6b4a0c}.ct-box{margin:12px 0;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:#F7FAFA}.ct-box>b{display:block;margin-bottom:4px}.ct-l{list-style:none;margin:0;padding:0}.ct-l li{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;padding:6px 0;border-top:1px dashed var(--line)}.ct-l li:first-child{border-top:0}.ct-st{display:inline-block;padding:1px 9px;border-radius:999px;font-size:.82rem;font-weight:700;background:#EDE7F6;color:#4527a0}.ct-st.dr{background:#FFF3D6;color:#6b4a0c}.ct-st.ok{background:#E3F2E9;color:#1e5b34}.ct-st.no{background:#eee;color:#666}.case-ln{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.fb-box{margin-top:18px;padding:18px 20px;border:2px solid var(--pine);border-radius:12px;background:var(--pine-soft)}.fb-box .btns{display:flex;flex-wrap:wrap;gap:10px}
+body.role-staff .adm-only{display:none!important}.me-badge{display:inline-flex;align-items:center;gap:6px;font-weight:700;padding:6px 12px;border-radius:999px;background:var(--pine-soft)}.st-wait{display:inline-block;padding:1px 8px;border-radius:999px;font-size:.8rem;font-weight:700;background:#FFF3D6;color:#6b4a0c}.st-mine{display:inline-block;padding:1px 8px;border-radius:999px;font-size:.8rem;font-weight:700;background:#E3F2E9;color:#1e5b34}
+.zr{display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr)) minmax(0,1.3fr) auto;gap:8px;align-items:center;margin-bottom:8px}.zr .zn{font-size:.85rem;font-weight:700;color:var(--muted);white-space:nowrap}.zr select,.zr input{width:100%;min-width:0}@media (max-width:760px){.zr{grid-template-columns:1fr 1fr}.zr .zn{grid-column:1/-1}}
+.roster{display:grid;grid-template-columns:260px 1fr;gap:16px}@media (max-width:860px){.roster{grid-template-columns:1fr}}
+.r-tree{border:1px solid var(--line);border-radius:12px;padding:10px;max-height:70vh;overflow:auto;background:var(--surface)}.r-tree h4{margin:10px 6px 4px;font-size:.85rem;color:var(--muted)}.r-tree button{display:flex;justify-content:space-between;gap:8px;width:100%;text-align:left;min-height:38px;padding:6px 10px;border:0;border-radius:8px;background:none;color:var(--ink);font:inherit;cursor:pointer}.r-tree button:hover{background:var(--pine-soft)}.r-tree button.on{background:var(--pine);color:#fff}.r-tree button b{font-weight:700}.r-tree .l2{padding-left:22px;font-size:.92rem}.r-tree .l3{padding-left:36px;font-size:.88rem}
+.pt-box{margin-top:10px}.pt-box>label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:4px}.pt-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.pt-g select{min-height:44px;font-size:.95rem}.pt-box input{margin-top:8px;min-height:44px}
+@media (max-width:760px){.pt-g{grid-template-columns:1fr 1fr}}
+.chip{display:inline-flex;align-items:center;gap:6px;margin:0 8px 8px 0;padding:6px 6px 6px 12px;border-radius:999px;background:var(--pine-soft);color:var(--pine);font-weight:700}.chip button{width:28px;height:28px;border-radius:50%;border:0;background:#fff;color:var(--ink);cursor:pointer;font-weight:700}
+.ptab input,.ptab select{min-height:42px;width:100%;font-size:.95rem}.ptab td{padding:6px}.ptab td:first-child{min-width:200px}.ptab .small-btn{white-space:nowrap}
+.memo2{display:flex;gap:8px;flex:1;min-width:260px}.memo2 select{min-height:44px;width:auto}.memo2 input{flex:1;min-width:140px;min-height:44px}
+.alertbar{background:#FBEBEB;color:#7a1712;border:2px solid #B3261E;border-radius:12px;padding:12px 16px;margin-bottom:14px;font-weight:700}
+.sum{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.sum button{min-height:56px;padding:6px 14px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;text-align:left}.sum button b{display:block;font-size:1.3rem}.sum button.red{border-color:#B3261E;color:#B3261E}
+.bar{display:flex;gap:3px;margin:8px 0}.bar i{flex:1;height:8px;border-radius:4px;background:var(--line)}.bar i.on{background:var(--pine)}.bar.stop i.on{background:#888}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.tg{display:inline-block;border-radius:6px;padding:1px 8px;font-size:.85rem;font-weight:700;background:var(--pine-soft);color:var(--pine)}.tg.red{background:#B3261E;color:#fff}.tg.yel{background:#F5ECD9;color:#6b4a0c}.tg.pt{background:#E7F1FB;color:#163d6b}
+.age{font-weight:700}.age.y{color:#8A621C}.age.r{color:#B3261E}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin-top:8px}.grid2 label{font-size:.85rem;color:var(--muted);display:block}.grid2 input,.grid2 select{min-height:44px;font-size:1rem}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;padding:16px;z-index:50}.modal-in{background:var(--surface);border-radius:16px;padding:22px;max-width:720px;width:100%;max-height:92vh;overflow:auto}
+.filters label{white-space:nowrap}
+@media (max-width:640px){.filters label{width:100%;white-space:normal}.filters select,.filters input{flex:1;min-width:0}.grid2{grid-template-columns:1fr 1fr}.ib-h{display:block}.ib-a input{min-width:0;flex-basis:100%}.tabs .small-btn{margin-left:0!important}}
+.hist{font-size:.88rem;color:var(--muted);margin:6px 0 0;padding-left:18px}
+.ib{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px;background:var(--surface)}.ib.new{border-left:6px solid #B3261E}.ib.doing{border-left:6px solid var(--gold-bright)}.ib.done{opacity:.75}
+.ib-h{display:flex;gap:10px;flex-wrap:wrap;align-items:baseline;justify-content:space-between}.ib-h b{font-size:1.05rem}.ib-m{font-size:.9rem;color:var(--muted)}
+.ib details{margin:8px 0}.ib pre{white-space:pre-wrap;font-family:var(--f-body);font-size:.95rem;background:var(--bg);border-radius:8px;padding:10px 12px;margin:6px 0 0}
+.ib-a{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}.ib-a select{width:auto;min-height:44px}.ib-a input{flex:1;min-width:180px;min-height:44px}
+.brand svg{width:40px;height:40px}.brand svg .ac{color:var(--gold-bright);stroke:var(--gold-bright)}
+.foot{max-width:880px;margin:0 auto;padding:0 16px 40px;text-align:right;font-size:.82rem;color:var(--muted)}
+.otp{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.otp input{max-width:220px;font-size:1.5rem;letter-spacing:.3em;text-align:center}
+.shape{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.shape label{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 16px;border:2px solid var(--line);border-radius:10px;background:var(--surface);cursor:pointer;font-weight:700}
+.shape input{width:22px;height:22px}
+.blank{background:var(--pine-soft);color:var(--pine);border-radius:4px;padding:0 6px;font-family:var(--f-body);font-size:.9rem;font-weight:700}
+.cond{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;padding:16px;border:2px solid var(--line);border-radius:12px;background:var(--bg)}
+.cond .fld{margin:0}.fee{grid-column:1/-1;font-weight:700;color:var(--pine);font-size:1.1rem}
+.pre{display:grid;gap:10px}.pre .fld{margin:0}
+@media (max-width:640px){.items-row{grid-template-columns:1fr 1fr}.tbl table.list thead{display:none}.tbl table.list td{display:block;border:0;padding:4px 8px}.tbl table.list tr{display:block;border-bottom:1px solid var(--line);padding:8px 0}}
+</style></head><body>
+<div class="demo" id="demoBar" hidden>お試し表示です（メールは送られず、この端末の中だけで動きます）</div>
+<header class="top"><div class="in"><span class="brand"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 4h7v8.5H28v7h-8.5V28h-7v-8.5H4v-7h8.5z"/><path class="ac" d="M16 23.5s-4-2.4-4-5.2a2.2 2.2 0 0 1 4-1.3 2.2 2.2 0 0 1 4 1.3c0 2.8-4 5.2-4 5.2z"/></svg><span><b>医療介護総合支援会</b><small>管理画面（担当者用）</small></span></span></div></header>
+<main>
+<section class="card" id="gate" hidden style="max-width:520px;margin:20px auto">
+<h2>ログイン（管理者・担当者）</h2>
+<p class="hint">電子契約と受付の管理画面です。管理者・担当者とも、<b>自分のログインIDとパスワード</b>を入れてください。</p>
+<form id="lf" autocomplete="on">
+<div class="fld"><label for="lid">ID</label><input type="text" id="lid" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="60"></div>
+<div class="fld"><label for="lpw">パスワード</label><input type="password" id="lpw" autocomplete="current-password" maxlength="100"></div>
+<p class="err" id="errL" role="alert"></p>
+<button class="btn" type="submit" id="doLogin" style="width:100%">ログイン</button>
+</form>
+<p style="margin:14px 0 0"><button type="button" class="small-btn" id="fgOpen">ID・パスワードを忘れたとき</button></p>
+<div id="fg" hidden style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px">
+<h3 style="margin:0 0 6px">パスワードを決め直す（管理者）</h3>
+<p class="note" style="margin:0 0 10px">担当者の方は、管理者にパスワードの再設定を頼んでください（管理画面の「設定」から再設定できます）。</p>
+<p class="hint">① 下のボタンを押すと、支援会の登録メール（ikshienkai@gmail.com）に<b>IDと6けたの確認コード</b>が届きます（30分有効）。<br>② 届いたコードと新しいパスワードを入れて「変更する」を押してください。</p>
+<button class="btn o" type="button" id="fgSend" style="width:100%">登録メールに確認コードを送る</button>
+<p class="hint" id="fgMsg" role="status"></p>
+<div id="fg2" hidden>
+<div class="fld"><label for="fgCode">確認コード（6けた）</label><input type="text" id="fgCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6"></div>
+<div class="fld"><label for="fgP1">新しいパスワード（8文字以上）</label><input type="password" id="fgP1" autocomplete="new-password" maxlength="100"></div>
+<div class="fld"><label for="fgP2">新しいパスワード（確認のためもう一度）</label><input type="password" id="fgP2" autocomplete="new-password" maxlength="100"></div>
+<p class="err" id="errF" role="alert"></p>
+<button class="btn" type="button" id="fgDo" style="width:100%">変更する</button>
+</div>
+</div>
+<p class="hint" style="margin-top:16px">5回続けて間違えると、15分間ログインできなくなります（パスワードを決め直すと、すぐ入れます）。<br><a id="gateLink" href="#">支援会の Google アカウントで開く（別の方法）</a></p>
+</section>
+
+<div id="panel" hidden>
+<div class="adm-top"><label class="actor" id="actorW">操作する人 <select id="actorSel" aria-label="操作する人"></select></label><button type="button" class="small-btn" id="logout">ログアウト</button></div>
+<section class="card todo" id="todo"><div class="todo-h"><h2>今やること</h2><span class="hint" id="todoAt"></span><button type="button" class="small-btn" id="tourBtn">はじめての方へ：操作の案内</button></div><ol class="todo-l" id="todoList"><li class="hint">読み込み中…</li></ol></section>
+<nav class="tabs" role="tablist"><button type="button" role="tab" class="tab on adm-only" data-v="inbox">案件管理<span class="cnt" id="newCnt" hidden></span></button><button type="button" role="tab" class="tab" data-v="keiyaku">電子契約</button><button type="button" role="tab" class="tab adm-only" data-v="roster">会員・相談者の名簿</button><button type="button" role="tab" class="tab" data-v="route" id="tabRoute">設定（提携先・担当者）</button><button type="button" role="tab" class="tab adm-only" data-v="log">対応ログ</button><button type="button" class="small-btn adm-only" id="snd" aria-pressed="true" style="margin-left:auto">警告音：オン</button></nav>
+<div data-view="inbox">
+<details class="howto" id="howInbox"><summary>この画面の使い方（案件管理）</summary><div>
+<ol><li><b>赤い印の案件から</b>対応します。新しい受付ほど上に出ます。</li><li>案件の「受付の内容を見る」を押して、内容を読みます。</li><li>読んだら「状態」を進め、「振分け先」「担当」「次の対応予定日」を入れて<b>「保存」</b>を押します。</li><li>お客様に伝えることがあれば「お客様へ報告を作る」を押します。文面は自動で作られます。<b>送るかどうかは自分で決めます</b>（電話で伝えた・今回は送らない、も選べます）。</li><li>いちばん上の<b>種別</b>（企業・事業者／働く方／利用者・ご本人／ご家族／提携・協業の申込み／要望・ご意見／会員登録）を押すと、その種別だけを管理できます。状態・振分け先・対応の種類は種別ごとに変わります。</li><li>その下の数字のボタンを押すと、その状態の案件だけを表示します。</li></ol>
+<p class="hint" style="margin:10px 0 4px">状態の並びは種別（企業・働く方・提携の申込みなど）ごとに変わります。いま選んでいる種別の状態：</p><table class="list"><thead><tr><th>状態</th><th>この状態にするとき</th></tr></thead><tbody id="stepHelp"></tbody></table>
+<p class="hint">放っておくと警告が出ます：新規受付のまま24時間／動きがないまま3日（黄）・7日（赤）／予定日を過ぎた／お客様へ7日報告なし。</p></div></details>
+<div class="alertbar" id="alertBar" hidden></div>
+<div class="segbar" id="segBar" role="tablist" aria-label="種別"></div><p class="seg-note" id="segNote" hidden></p>
+<div class="sum" id="sum"></div>
+<section class="card">
+<div class="filters"><label>分類 <select id="fCt"><option value="">すべて</option></select></label><label>状態 <select id="fSt"></select></label><label id="fFacW">会員施設 <select id="fFac"><option value="">すべて</option><option>未確認</option><option>会員の病院・施設</option><option>会員ではない</option><option>通っている先がない</option></select></label><label id="fPtW">振分け先 <select id="fPt"><option value="">すべて</option></select></label><label>さがす <input type="text" id="fQ" placeholder="名前・会社・番号・内容"></label><button type="button" class="small-btn" id="reloadIn">最新にする</button><span class="vt-sw" role="group" aria-label="表示のしかた"><button type="button" class="small-btn on" data-vm="list">一覧表</button><button type="button" class="small-btn" data-vm="card">カード</button></span></div><p class="hint" id="inCount"></p>
+<div id="inbox"><p class="hint">読み込み中…</p></div><datalist id="memList"></datalist>
+<p class="err" id="errB" role="alert"></p>
+</section>
+</div>
+<div data-view="roster" hidden>
+<details class="howto"><summary>この画面の使い方（会員・相談者の名簿）</summary><div><ol><li>上で「会員名簿」か「相談者・申込者」を選びます。</li><li>左の分類を押すと、その分類の人だけが表に出ます（数字は人数）。</li><li>「さがす」で名前・会社・メールから探せます。</li><li>「表計算ソフト用に保存」で、いま表に出ている名簿をファイルに保存できます。</li><li>相談者の行の「案件を見る」を押すと、案件管理のその案件へ移ります。</li></ol></div></details>
+<section class="card">
+<div class="seg" role="tablist"><button type="button" class="seg-b on" data-rs="member">会員名簿</button><button type="button" class="seg-b" data-rs="people">相談者・申込者</button></div>
+<div class="roster"><aside class="r-tree" id="rTree"></aside><div class="r-main"><div class="filters"><label>さがす <input type="text" id="rQ" placeholder="名前・会社・メール"></label><button type="button" class="small-btn" id="rCsv">表計算ソフト用に保存</button></div><p class="hint" id="rCount"></p><div class="tbl"><table class="list"><thead id="rHead"></thead><tbody id="rBody"></tbody></table></div></div></div>
+</section>
+</div>
+<div data-view="log" hidden>
+<details class="howto"><summary>この画面の使い方（対応ログ）</summary><div><ol><li>管理画面でしたこと（案件の状態・メモ・報告・提携先への送付、契約書の送付・入金確認・退会、提携先や担当者の登録、ログイン）が、<b>いつ・だれが・何をしたか</b>で自動的に残ります。</li><li>サイトからの受付、毎月の請求書の自動送付、相手が契約書を承認したことも残ります。</li><li>「操作した人」は、画面右上の<b>「操作する人」</b>で選んだ名前です。操作の前に、自分の名前を選んでください。</li><li>番号を押すと、その案件へ移ります。「表計算ソフト用に保存」で、いま出ている記録をファイルに保存できます。</li><li>記録は消したり書き換えたりできません（Googleの台帳「対応履歴」に保存されます）。</li></ol></div></details>
+<section class="card">
+<div class="filters"><label>期間 <select id="lgP"><option value="1">今日（24時間）</option><option value="7" selected>7日</option><option value="30">30日</option><option value="">すべて</option></select></label><label>区分 <select id="lgA"><option value="">すべて</option><option>案件</option><option>受付</option><option>電子契約</option><option>設定</option><option>ログイン</option></select></label><label>操作した人 <select id="lgW"><option value="">すべて</option></select></label><label>さがす <input type="text" id="lgQ" placeholder="番号・名前・内容"></label><button type="button" class="small-btn" id="lgReload">最新にする</button><button type="button" class="small-btn" id="lgCsv">表計算ソフト用に保存</button></div>
+<p class="hint" id="lgCount"></p>
+<div class="tbl"><table class="list lgt"><thead><tr><th>日時</th><th>区分</th><th>番号</th><th>したこと</th><th>内容</th><th>操作した人</th></tr></thead><tbody id="logBody"><tr><td colspan="6">読み込み中…</td></tr></tbody></table></div>
+<p class="err" id="errLog" role="alert"></p>
+</section>
+</div>
+<div data-view="route" hidden>
+<details class="howto"><summary>この画面の使い方（設定）</summary><div><ol><li><b>担当者</b>：案件の「担当」で選べる名前を登録します。</li><li><b>提携先の登録</b>：振分け先にする提携企業・専門家を、大分類・中分類・小分類・連絡先とあわせて登録します。案件では、分類を選ぶと当てはまる提携先だけが一覧に出ます。<b>メールを登録した提携先には、案件の「提携先へ送る」で案件を送れます。</b>登録済みの提携先は、一覧の「直す」「削除」で変えられます（その場で保存されます）。</li><li>新しい受付は、相談の内容から分類を自動で決め、当てはまる提携先がいれば振分け先に自動で入ります。</li><li>担当者は「担当者を保存する」を押すと反映されます。</li></ol></div></details>
+<section class="card" id="meSec">
+<h2>あなたのアカウント</h2>
+<p id="meInfo"></p>
+<details><summary style="cursor:pointer;font-weight:700">パスワードを変える</summary><div class="pf-g" style="margin-top:10px"><div><label for="mpCur">いまのパスワード</label><input type="password" id="mpCur" autocomplete="current-password" maxlength="100"></div><div><label for="mpNew">新しいパスワード（8文字以上）</label><input type="password" id="mpNew" autocomplete="new-password" maxlength="100"></div><div><label for="mpNew2">新しいパスワード（もう一度）</label><input type="password" id="mpNew2" autocomplete="new-password" maxlength="100"></div></div><p class="err" id="errMp" role="alert"></p><button type="button" class="btn" id="mpSave">パスワードを変える</button></details>
+</section>
+<section class="card adm-only" id="accSec">
+<h2>担当者のログインID</h2>
+<p class="hint">担当者ごとにログインIDとパスワードを作ります。担当者は「電子契約」（自分が送った契約書）と「設定」（提携先の登録・登録フォームの送付）だけを使えます。案件管理・名簿・対応ログは見られません。</p>
+<div class="tbl"><table class="list"><thead><tr><th>名前</th><th>ログインID</th><th>状態</th><th>最後のログイン</th><th></th></tr></thead><tbody id="accRows"><tr><td colspan="5">読み込み中…</td></tr></tbody></table></div>
+<h3 style="margin:18px 0 8px">担当者を追加する</h3>
+<div class="pf-g"><div><label for="acName">名前 <span class="req">※必須</span></label><input type="text" id="acName" maxlength="30" placeholder="例：山田"></div><div><label for="acId">ログインID <span class="req">※必須</span></label><input type="text" id="acId" maxlength="30" autocapitalize="off" spellcheck="false" placeholder="例：yamada（半角英数字）"></div><div><label for="acPw">はじめのパスワード（8文字以上） <span class="req">※必須</span></label><input type="password" id="acPw" autocomplete="new-password" maxlength="100"></div></div>
+<p class="hint">はじめのパスワードは本人に伝え、ログイン後に「あなたのアカウント」で変えてもらってください。</p>
+<p class="err" id="errAc" role="alert"></p><button type="button" class="btn" id="acAdd">担当者を追加する</button>
+</section>
+<section class="card adm-only" id="staffSec">
+<h2>担当者</h2>
+<p class="hint">案件の「担当」で選べる名前です。</p>
+<div class="staff-l" id="staffList"></div>
+<div class="filters" style="margin-top:10px"><label>名前 <input type="text" id="staffNew" placeholder="例：中嶋" maxlength="30"></label><button type="button" class="small-btn" id="staffAdd">追加</button></div>
+<p class="err" id="errSt" role="alert"></p>
+<button class="btn" type="button" id="saveStaff">担当者を保存する</button>
+</section>
+<section class="card">
+<h2>提携先の登録</h2>
+<p class="hint">振分け先にする提携企業・専門家を登録します。<b>メールアドレスを登録すると、案件の「提携先へ送る」から、内容を確かめたうえで案件を送れます。</b></p>
+<div id="ptForm" class="pf"><div class="pf-g">
+<div><label for="pfName">提携先の名前 <span class="req">※必須</span></label><input id="pfName" type="text" maxlength="100" placeholder="例：〇〇株式会社、〇〇社会保険労務士事務所"></div>
+<div><label for="pfPerson">ご担当者</label><input id="pfPerson" type="text" maxlength="60" placeholder="例：山田 太郎"></div>
+<div><label for="pfA">大分類 <span class="req">※必須</span></label><select id="pfA"></select></div>
+<div><label for="pfB">中分類 <span class="req">※必須</span></label><select id="pfB" disabled></select></div>
+<div><label for="pfC">小分類（任意）</label><select id="pfC" disabled></select></div>
+<div><label for="pfEmail">メール（案件の送り先）</label><input id="pfEmail" type="email" maxlength="120" placeholder="例：info@example.jp"></div>
+<div><label for="pfTel">電話</label><input id="pfTel" type="tel" maxlength="30" placeholder="例：06-0000-0000"></div>
+<div class="wide"><label>対応できる地域（地方 → 都道府県 → 市区町村）</label><div id="pfZones"></div></div>
+<div class="wide"><label for="pfNote">メモ（条件・料金・注意など）</label><input id="pfNote" type="text" maxlength="300"></div>
+</div>
+<p class="err" id="errPt" role="alert"></p>
+<div class="btns"><button class="btn" type="button" id="pfSave">この内容で登録する</button><button class="small-btn" type="button" id="pfClear">入力を消す</button></div></div>
+<h3 style="margin:24px 0 8px">登録済みの提携先 <span class="hint" id="ptCount"></span></h3>
+<div class="filters"><label>大分類 <select id="ptFA"></select></label><label>さがす <input type="text" id="ptQ" placeholder="名前・地域・メモ"></label></div>
+<div class="tbl"><table class="list ptab"><thead><tr><th>提携先</th><th>分類</th><th>連絡先</th><th>対応できる地域・メモ</th><th>登録した人・状態</th><th></th></tr></thead><tbody id="ptRows"></tbody></table></div>
+</section>
+<section class="card" id="pinvSec">
+<h2>提携先登録フォームを送る</h2>
+<p class="hint">提携してほしい会社・専門家に、登録フォームをメールで送ります。相手が分野・連絡先・対応できる地域を自分で記入すると、提携先一覧に<b>「確認待ち」</b>で入ります（管理者が確かめてから振分けに使えるようになります）。送った人の名前で記録されます。</p>
+<div class="pf-g"><div><label for="piName">相手の会社名・お名前 <span class="req">※必須</span></label><input type="text" id="piName" maxlength="100" placeholder="例：〇〇株式会社 ご担当者様"></div><div><label for="piEmail">相手のメールアドレス <span class="req">※必須</span></label><input type="email" id="piEmail" maxlength="120" placeholder="例：info@example.jp"></div><div class="wide"><label for="piMsg">ひとこと（任意）</label><input type="text" id="piMsg" maxlength="500" placeholder="例：先日はお打ち合わせありがとうございました。"></div></div>
+<p class="err" id="errPi" role="alert"></p><button type="button" class="btn" id="piSend">登録フォームを送る</button>
+</section>
+<details class="card adm-only" id="routeSec"><summary style="font-weight:700;cursor:pointer">（予備）分野ごとの振分け</summary>
+<p class="hint">提携先一覧に当てはまる先がないときだけ使われます。</p>
+<div class="tbl"><table class="list"><thead><tr><th style="width:42%">分野（お客様が選ぶ項目）</th><th>振分け先</th><th style="width:70px">件数</th></tr></thead><tbody id="routeRows"></tbody></table></div>
+<p class="err" id="errRt" role="alert"></p>
+<button class="btn" type="button" id="saveRt">分野ごとの振分けを保存する</button>
+</details>
+</div>
+<div class="modal" id="rpt" hidden role="dialog" aria-modal="true" aria-labelledby="rptH"><div class="modal-in">
+<h2 id="rptH">お客様に進捗を報告しますか？</h2>
+<p class="hint" id="rptInfo"></p>
+<p class="note" id="rptWarn" hidden></p>
+<div class="fld"><label for="rptS">件名</label><input type="text" id="rptS"></div>
+<div class="fld"><label for="rptB">本文（直してから送れます）</label><textarea id="rptB" style="min-height:260px"></textarea></div>
+<p class="err" id="errRp" role="alert"></p>
+<div class="btns"><button class="btn" type="button" id="rpSend">メールで送る</button><button class="btn o" type="button" id="rpPhone">電話で伝えた（記録する）</button><button class="btn o" type="button" id="rpSkip">今回は送らない</button><button class="small-btn" type="button" id="rpAlt">別の言い回しで作り直す</button></div>
+</div></div>
+<div class="modal" id="fwd" hidden role="dialog" aria-modal="true" aria-labelledby="fwdH"><div class="modal-in">
+<h2 id="fwdH">提携先へ案件を送る</h2>
+<p class="hint" id="fwdTo"></p>
+<p class="note" id="fwdWarn" hidden></p>
+<fieldset class="fw-inc"><legend>提携先に伝えるお客様の情報（外すと本文から消えます）</legend><label><input type="checkbox" data-inc="name" checked> お名前・会社名</label><label><input type="checkbox" data-inc="email" checked> メール</label><label><input type="checkbox" data-inc="tel" checked> 電話</label><label id="fwIncFac"><input type="checkbox" data-inc="fac" checked> 通っている病院・施設</label></fieldset>
+<div class="fld"><label for="fwdS">件名</label><input type="text" id="fwdS"></div>
+<div class="fld"><label for="fwdB">本文（直してから送れます）</label><textarea id="fwdB" style="min-height:300px"></textarea></div>
+<label class="fw-ok"><input type="checkbox" id="fwdOk"><span><b>お客様から、この提携先へ情報を伝えることの同意をいただいています。</b>同意がないときは送れません。</span></label>
+<label class="fw-st"><input type="checkbox" id="fwdSt" checked><span id="fwdStL"></span></label>
+<p class="err" id="errFw" role="alert"></p>
+<div class="btns"><button class="btn" type="button" id="fwSend" disabled>確認して送る</button><button class="btn o" type="button" id="fwCancel">やめる</button></div>
+</div></div>
+<div data-view="keiyaku" hidden>
+<details class="howto"><summary>この画面の使い方（電子契約）</summary><div><ol><li>サイトの会員登録は、お客様が申し込むと<b>自動で契約書が作られます</b>。ここで送る必要はありません。</li><li>相手が承認すると「締結済み」になり、請求書つきの振込のご案内が自動で届きます（期限は承認日から7日。入会した月は無料）。</li><li><b>毎月1日の朝に、翌月分の請求書が自動で全員に届きます</b>（期限は10日）。送った内容は登録メールにも届きます。</li><li>会員が退会するときは、その行の「退会（請求を止める）」を押します。翌月から請求書が止まります。</li><li>通帳などで入金を確かめたら、その行の<b>「入金を確認した」</b>を押します。会員登録完了のメールが自動で届きます。</li><li>相手がまだ承認していないときは「もう一度送る」で案内を送り直せます。</li><li>協賛会員（審査あり）や、個別の契約書は、下の「契約書を送る」から作って送ります。</li></ol></div></details>
+<section class="card">
+<h2>送った契約書の一覧</h2>
+<div class="tbl"><table class="list"><thead><tr><th>契約番号・案件</th><th>種類</th><th>相手</th><th>状態</th><th>送った日</th><th>操作</th></tr></thead><tbody id="rows"><tr><td colspan="6">読み込み中…</td></tr></tbody></table></div>
+<p class="err" id="errR" role="alert"></p>
+</section>
+<section class="card">
+<h2>契約書を送る</h2>
+<p class="hint">サイトの「会員登録の申込み」の通知メールを見ながら入れてください。</p>
+<p class="note case-ln" id="caseLink" hidden></p>
+<div class="fld"><label for="tpl">契約書の種類</label><select id="tpl"></select></div>
+<div class="fld"><label for="pName">相手のお名前（ご担当者）<span class="req">※必須</span></label><input type="text" id="pName"></div>
+<div class="fld" id="pCompanyBox"><label for="pCompany">事業所名・法人名</label><input type="text" id="pCompany"></div>
+<div class="fld"><label for="pEmail">相手のメールアドレス<span class="req">※必須</span></label><input type="email" id="pEmail" autocomplete="off"></div>
+
+<div class="fld" id="condBox" hidden><label>契約の内容（会費は自動で計算します）</label>
+<div class="cond">
+<div class="fld" id="cTypeBox"><label for="cType">会員区分</label><select id="cType"><option value="jigyosho">事業所会員</option><option value="hojin">法人会員</option><option value="kyosan">協賛会員</option></select></div>
+<div class="fld"><label for="cPay">支払方法</label><select id="cPay"><option value="month">月払い</option><option value="year">年間払い（10か月分）</option></select></div>
+<div class="fld" id="cSitesBox"><label for="cSites">事業所数</label><input type="number" id="cSites" min="1" value="1" inputmode="numeric"></div>
+<div class="fld" id="cStaffBox"><label for="cStaff">職員数（合計）</label><input type="number" id="cStaff" min="0" value="5" inputmode="numeric"></div>
+<div class="fld"><label for="cStart">会費の発生月（1日から）</label><input type="month" id="cStart"></div>
+<div class="fld"><label for="cRef">紹介者</label><input type="text" id="cRef" placeholder="なければ空のまま"></div>
+<div class="fld"><label class="agree" for="cFounder" style="padding:10px"><input type="checkbox" id="cFounder" checked><span>創設会員（入会金免除）</span></label></div>
+<div class="fld" id="cEntryBox" hidden><label for="cEntry">入会金</label><input type="text" id="cEntry" placeholder="例：11,000円（税込）"></div>
+<p class="fee" id="cFee"></p>
+</div></div>
+
+<div class="fld"><label>相手に記入してもらう項目</label><div class="chk" id="fieldChk"></div></div>
+<div class="fld"><label>前もって入れておく内容（申込みの内容を写すと、相手の手間が減ります。相手は直せます）</label><div class="pre" id="preBox"></div></div>
+<div class="fld"><label class="agree" for="reqId" style="padding:12px"><input type="checkbox" id="reqId"><span>本人確認書類の写真の添付を求める</span></label></div>
+<div class="fld" id="noteBox"><label for="note" id="noteLabel">特記事項</label><textarea id="note" placeholder="なければ空のまま"></textarea></div>
+<div class="fld"><label class="agree" for="draft" style="padding:12px"><input type="checkbox" id="draft"><span>下書き（確認用）として送る　※相手は内容を見るだけで、締結はできません</span></label></div>
+<div class="btns" style="margin-top:0;margin-bottom:14px"><button class="btn o" type="button" id="doPrev">送る前に文面を確かめる</button></div>
+<div class="doc" id="prev" hidden tabindex="0"></div>
+<p class="err" id="errI" role="alert"></p>
+<button class="btn" id="doIssue">メールで送る</button>
+<p id="issued" class="note" hidden></p>
+</section>
+</div>
+</div>
+</main>
+<p class="foot">運営　株式会社グローブ</p>
+<script>window.IN_GAS=true;
+(function(){var CASE_SEGS = [{"key": "kigyo", "name": "企業・事業者", "match": ["企業・事業者"], "route": "partner", "word": "ご相談", "steps": ["新規受付", "内容確認中", "ヒアリング・面談", "振分け済み", "提携先対応中", "提案・見積り中", "契約・導入の準備中", "完了", "見送り"], "need": ["振分け済み", "提携先対応中", "提案・見積り中", "契約・導入の準備中"], "mk": ["電話した", "メールした", "訪問・面談した", "課題を聞き取った", "提携先へ紹介した", "提携先と打ち合わせた", "提案書・見積りを送った", "補助金・制度の情報を送った", "会員制度を案内した", "先方の返事待ち", "提携先の返事待ち", "完了の連絡をした", "その他"], "note": "提携先へ会社の情報を渡す前に、先方の了承を取ってください。", "done": ["完了", "見送り"]}, {"key": "hataraku", "name": "医療・介護で働く方", "match": ["医療・介護で働く方"], "route": "partner", "word": "ご相談", "steps": ["新規受付", "内容確認中", "お話を伺っている", "専門家・窓口へつないだ", "継続して相談中", "完了", "見送り"], "need": ["専門家・窓口へつないだ"], "mk": ["電話した", "メールした", "面談した（オンライン含む）", "悩み・状況を聞き取った", "公的な相談窓口を案内した", "専門家（社労士・弁護士など）へつないだ", "求人・資格・研修の情報を送った", "ご本人の返事待ち", "完了の連絡をした", "その他"], "note": "お名前を伏せた相談もあります。勤務先へは、ご本人の同意なく連絡しないでください。", "done": ["完了", "見送り"]}, {"key": "honnin", "name": "利用者・ご本人", "match": ["利用者・ご本人"], "route": "partner", "word": "ご相談", "steps": ["新規受付", "内容確認中", "会員施設の確認", "状況の聞き取り", "振分け済み", "提携先対応中", "利用・手続きの準備中", "完了", "見送り"], "need": ["振分け済み", "提携先対応中", "利用・手続きの準備中"], "mk": ["電話した", "メールした", "面談・訪問した", "状況を聞き取った", "通っている病院・施設に確認した", "施設へ会員制度を案内した", "会員の病院・施設を紹介した", "地域包括支援センターなど公的窓口を案内した", "提携先へ紹介した", "資料・見積りを送った", "ご本人の返事待ち", "提携先の返事待ち", "完了の連絡をした", "その他"], "note": "通っている病院・施設が会員かを必ず確かめてください（会員でなければ「会員施設の確認」に記録）。提携先へ情報を渡す前に、ご本人の同意を取ってください。", "done": ["完了", "見送り"]}, {"key": "kazoku", "name": "ご家族", "match": ["ご家族"], "route": "partner", "word": "ご相談", "steps": ["新規受付", "内容確認中", "会員施設の確認", "状況の聞き取り", "振分け済み", "提携先対応中", "利用・手続きの準備中", "完了", "見送り"], "need": ["振分け済み", "提携先対応中", "利用・手続きの準備中"], "mk": ["電話した", "メールした", "面談・訪問した", "ご家族から状況を聞き取った", "ご本人の意向を確かめた", "ケアマネジャーと連絡をとった", "通っている病院・施設に確認した", "施設へ会員制度を案内した", "会員の病院・施設を紹介した", "地域包括支援センターなど公的窓口を案内した", "提携先へ紹介した", "資料・見積りを送った", "ご家族の返事待ち", "提携先の返事待ち", "完了の連絡をした", "その他"], "note": "ご本人が通っている病院・施設が会員かを必ず確かめてください（会員でなければ「会員施設の確認」に記録）。ご本人の情報を提携先へ渡すときは、ご本人（または代理の方）の同意を確かめてください。", "done": ["完了", "見送り"]}, {"key": "none", "name": "立場の選択なし", "match": ["分からない・近いものがない"], "route": "partner", "word": "ご相談", "steps": ["新規受付", "内容確認中", "振分け済み", "提携先対応中", "提案・見積り中", "完了", "見送り"], "need": ["振分け済み", "提携先対応中", "提案・見積り中"], "mk": ["電話した", "メールした", "面談した", "状況を聞き取った", "公的な窓口を案内した", "提携先へ紹介した", "見積り・資料を送った", "お客様の返事待ち", "提携先の返事待ち", "完了の連絡をした", "その他"], "note": "まずお話を伺い、どの種別の相談か確かめてから進めてください。", "done": ["完了", "見送り"]}, {"key": "teikei", "name": "提携・協業の申込み", "match": ["提携・協業の申し込み"], "route": "self", "word": "お申し込み", "steps": ["新規受付", "内容確認中", "面談日の調整中", "面談済み", "社内で検討中", "契約の手続き中", "提携開始", "見送り"], "done": ["提携開始", "見送り"], "need": [], "mk": ["電話した", "メールした", "面談日を決めた", "事務所（大阪市北区）で面談した", "オンラインで面談した", "先方を訪問した", "会社案内・資料を受け取った", "社内で検討した", "提携の契約書を送った", "先方の返事待ち", "結果を連絡した", "その他"], "note": "提携・協業の申込みは、提携先へは振り分けず当会で対応します。提携開始になったら「提携先一覧に登録する」を押してください。"}, {"key": "youbou", "name": "要望・ご意見", "match": ["要望・ご意見"], "route": "self", "word": "ご意見", "steps": ["新規受付", "内容確認中", "社内で検討中", "対応を決めた", "対応済み", "見送り"], "done": ["対応済み", "見送り"], "need": [], "mk": ["内容を社内で共有した", "電話した", "メールした", "サービス・サイトに反映した", "お礼・結果を連絡した", "その他"], "note": "要望・ご意見は当会で対応します。お返事が要らない方もいるので、連絡は内容を見て判断してください。"}, {"key": "kaiin", "name": "会員登録の申込み", "match": ["会員登録"], "route": "self", "word": "お申し込み", "steps": ["新規受付", "内容確認中", "契約書を送った", "入金待ち", "登録完了", "見送り"], "done": ["登録完了", "見送り"], "need": [], "mk": ["電話した", "メールした", "契約書を送った", "入金を確認した", "登録完了を連絡した", "その他"], "note": "契約書の状況と入金は「電子契約」の画面で確かめられます。"}];
+var FIELD_LIST = ["経営・業務の改善", "採用・定着・研修", "補助金・助成金の情報", "共同購入・固定費の見直し", "専門家への相談", "事業承継・連携", "職場・働き方の相談", "資格・研修・キャリア", "福利厚生・暮らしの優待", "病院・施設・在宅サービスの相談先", "退院・入居前後の暮らしの準備", "医療費・介護費の制度", "家族の介護と仕事の両立", "お金の管理・成年後見", "買い物・移動などの生活支援", "引越し・住み替え・家財の整理", "終活・相続・遺品整理", "その他・まだ分からない", "提携・協業の申し込み", "要望・ご意見", "会員登録（事業所会員）", "会員登録（法人会員）", "会員登録（協賛会員）", "会員登録（個人会員（営業協力者））"];
+var ROUTE_AUTO = {"経営・業務の改善": ["経営・管理の支援", "経営コンサルティング"], "採用・定着・研修": ["人材・採用・教育", "採用・人材サービス"], "補助金・助成金の情報": ["経営・管理の支援", "補助金・資金"], "共同購入・固定費の見直し": ["固定費の見直し", "契約の見直し"], "専門家への相談": ["経営・管理の支援", "士業・専門家"], "事業承継・連携": ["経営・管理の支援", "経営コンサルティング"], "職場・働き方の相談": ["経営・管理の支援", "士業・専門家"], "資格・研修・キャリア": ["働く方の福利厚生・キャリア", "キャリア"], "福利厚生・暮らしの優待": ["働く方の福利厚生・キャリア", "福利厚生"], "病院・施設・在宅サービスの相談先": ["医療・介護サービスの連携", "介護"], "退院・入居前後の暮らしの準備": ["医療・介護サービスの連携", "医療"], "医療費・介護費の制度": ["医療・介護サービスの連携", "介護"], "家族の介護と仕事の両立": ["医療・介護サービスの連携", "介護"], "お金の管理・成年後見": ["暮らし・生活の支援（利用者・ご家族向け）", "お金・法律"], "買い物・移動などの生活支援": ["暮らし・生活の支援（利用者・ご家族向け）", "生活サービス"], "引越し・住み替え・家財の整理": ["暮らし・生活の支援（利用者・ご家族向け）", "住まい"], "終活・相続・遺品整理": ["暮らし・生活の支援（利用者・ご家族向け）", "お金・法律"]};
+var KIYAKU_TEXT = "医療介護総合支援会　会員規約（事業所・法人・協賛会員）\n\n第1条（目的と適用）\n1　この規約は、株式会社グローブ（以下「当社」）が運営する「医療介護総合支援会」（以下「本会」）の会員制サービスの利用条件を定めるものです。\n2　この規約は、事業所会員・法人会員・協賛会員（以下あわせて「会員」）に適用します。個人会員には「個人会員規約」を適用します。\n\n第2条（本会の性格）\n本会は、当社が提供する会員制のサービスです。中小企業等協同組合法その他の法令に基づく組合や社団ではなく、会員が本会の出資者や構成員となるものではありません。契約・会費・入退会・個人情報の管理は、当社が行います。\n\n第3条（会員の種類）\n1　事業所会員：病院・診療所・介護事業所・薬局など1つの事業所\n2　法人会員：複数の事業所を運営する法人\n3　協賛会員：医療・介護に関わる方へサービスを提供する企業で、当社の審査を通過したもの\n\n第4条（入会の申込みと契約の成立）\n1　入会を希望する方は、本会のウェブサイトから申し込み、当社が送る電子契約でこの規約を確認し、必要事項の記入と押印をして承認します。\n2　入会の契約は、申込者が電子契約で承認した時に成立します。\n3　当社は、申込者が次のいずれかに当たる場合、入会をお断りすることがあります。理由は開示しないことがあります。\n　(1) 申込内容に偽りや誤りがある\n　(2) 過去にこの規約に反して退会させられたことがある\n　(3) 反社会的勢力に当たる、または関わりがある\n　(4) その他、当社が会員とすることが適当でないと判断した\n\n第5条（会費）\n1　会費（税込）は次のとおりとします。年間払いは、いずれも月額の10か月分とします。\n　(1) 事業所会員：月額5,500円（職員5名まで）。職員が5名を超える場合は1名につき500円を加算\n　(2) 法人会員：1か所目5,500円、2か所目から1か所につき5,000円（いずれも職員5名まで）。5名を超える職員1名につき500円を加算\n　(3) 協賛会員：月額33,000円（年間払い330,000円）\n2　職員の数は、入会時と更新時に会員が申告した人数とします。契約期間中に事業所や職員が増えた場合は、会員は当社に速やかに知らせ、翌月分から変更後の会費とします。\n3　会費は、入会の翌月1日から発生します。入会した月の会費はかかりません。\n\n第6条（会費の支払い）\n1　会費は前払いとし、当社が指定する銀行口座への振込みで支払うものとします。振込手数料は会員の負担とします。\n2　当社は、毎月1日に翌月分の会費の請求書をメールで送ります。入会時は、入会の手続きが終わった時に請求書を送ります。\n3　月払いの会員は、毎月10日までに翌月分の会費を支払います。入会時は、入会日から7日以内に翌月分を支払います。\n4　年間払いの会員は、12か月分の会費を、入会時は入会日から7日以内に、更新時は新しい12か月が始まる月の前月10日までに支払います。\n5　支払日が金融機関の休業日の場合は、その前の営業日までに支払うものとします。\n\n第7条（入会金と創設会員）\n1　創設会員は、事業所会員・法人会員の数が合わせて100社に達するまでに入会した会員とします。\n2　創設会員の入会金は免除します。創設会員以外の入会金は、別に定めて公表します。\n\n第8条（紹介特典）\n創設会員の募集期間中に、会員の紹介で事業所会員または法人会員が3社入会した場合、その会員の会費を1年分免除します。免除は、3社目の入会を確認した月の翌月分から適用します。年間払いで支払済みの会費がある場合は、次の更新時から免除します。\n\n第9条（契約期間と更新）\n1　契約期間は、会費が発生する月の1日から1年間とします。月払いの会員も同じです。\n2　期間が終わる1か月前までに会員または当社から解約の申し出がない場合、契約は同じ条件で1年間更新され、以後も同様とします。\n3　当社は、更新の2か月前までに、会員に更新日と解約の申し出の期限をメールで知らせます。\n\n第10条（解約）\n1　会員は、契約期間が終わる1か月前までに当社所定の方法で申し出ることで、期間の終了をもって解約できます。\n2　月払いの会員が契約期間の途中で解約する場合、契約期間の残りの月数分の会費を、解約日の属する月の末日までに支払うものとします。\n3　年間払いの会員が契約期間の途中で解約する場合、支払済みの会費は返金しません。\n4　第2項と第3項は、次条の場合には適用しません。\n\n第11条（効果が出なかった場合の途中解約）\n1　入会後、当社が提案する経費の削減などを会員が実施したにもかかわらず、会費が発生してから3か月の時点で、その効果の額が同じ期間に支払った会費の額を下回る場合、会員は残りの月数分の会費を支払うことなく解約できます。\n2　会員が当社の提案に同意しなかった場合、または同意した提案を実施しなかった場合は、前項を適用しません。\n3　効果の額は、会員が提出する請求書などの資料をもとに、当社と会員が確認して決めます。\n\n第12条（サービスの内容と範囲）\n1　当社は、会員に対し、本会のウェブサイトに示す支援（情報の提供、相談内容の整理、専門家・提携先へのおつなぎ、経費の見直しの提案など）を提供します。\n2　当社は、診断・治療などの医療の判断、法律・税務・労務の専門的な判断、補助金などの申請書類の作成、職業紹介、事業の売買の仲介は行いません。これらは、資格や許可を持つ専門家・提携先が担当します。\n3　当社は、患者・利用者の個人情報を受け取りません。会員は、当社への相談に患者・利用者を特定できる情報を含めないものとします。\n4　提携先が提供するサービスの契約は、会員と提携先の間で結ばれ、当社はその当事者になりません。\n5　当社は、提案や情報によって経費の削減や売上などの特定の結果が生じることを保証しません（第11条の途中解約を除きます）。\n\n第13条（手数料と紹介料の開示）\n1　当社は、会員が提携先のサービスを利用した場合に、提携先から手数料を受け取ることがあります。その場合は、提案の時にその旨を知らせます。\n2　当社は、弁護士・税理士・社会保険労務士・行政書士などの専門家から紹介料を受け取りません。\n3　当社は、会員を紹介した個人会員に、その会員の会費・手数料の一部を紹介料として支払います。紹介料は当社の受け取る会費・手数料から支払うもので、会員の会費に上乗せするものではありません。\n\n第14条（協賛会員の特則）\n1　協賛会員の入会には、当社の審査が必要です。\n2　協賛会員の紹介・掲載は、広告であることを明示して行います。当社は、他の会員に協賛会員の商品・サービスの購入を強いません。\n\n第15条（禁止事項）\n会員は、次の行為をしてはなりません。\n　(1) 他の会員・提携先・当社の信用を傷つける行為\n　(2) 本会で知った他の会員の情報を、その会員の同意なく営業や第三者への提供に使う行為\n　(3) 本会の名称を、当社の承諾なく宣伝に使う行為\n　(4) 法令や公序良俗に反する行為\n\n第16条（会費の滞納と退会）\n1　会費の支払いが期日から1か月以上遅れた場合、当社はサービスの提供を止めることがあります。\n2　会員がこの規約に重大な違反をし、当社が求めても改めない場合、当社は契約を解除できます。この場合、支払済みの会費は返金せず、未払いの会費はただちに支払うものとします。\n\n第17条（個人情報）\n当社は、会員の個人情報を、本会のウェブサイトに示す「個人情報の取り扱い」に従って取り扱います。会員の同意なく、提携先や個人会員に会員の情報を渡しません。\n\n第18条（反社会的勢力の排除）\n会員と当社は、自らとその役員が暴力団などの反社会的勢力でないこと、反社会的勢力と関わりを持たないことを確約します。相手がこれに反した場合、催告なく契約を解除できます。\n\n第19条（責任の範囲）\n当社は、本会のサービスに関して会員に生じた損害について、当社の故意または重大な過失による場合を除き、損害が生じた月の会費の額を上限として責任を負います。\n\n第20条（規約の変更）\n1　当社は、会員の利益になる場合、または変更の必要性・内容の相当性などに照らして合理的な場合に、この規約を変更できます。\n2　変更するときは、効力が生じる日の1か月前までに、変更の内容と効力が生じる日を、本会のウェブサイトとメールで知らせます。\n3　会費の値上げは、次の更新時から適用します。\n\n第21条（準拠法と管轄）\nこの規約は日本の法律に従います。この規約に関する紛争は、大阪地方裁判所を第一審の専属的合意管轄裁判所とします。";
+var KOJIN_TEXT = "医療介護総合支援会　個人会員（営業協力者）規約\n\n第1条（目的）\nこの規約は、株式会社グローブ（以下「当社」）が運営する「医療介護総合支援会」（以下「本会」）に、事業所会員・法人会員を紹介する個人会員（営業協力者）と当社の間の条件を定めるものです。\n\n第2条（個人会員の位置づけ）\n1　個人会員の登録と継続に費用はかかりません。個人会員は、本会の支援サービスを利用できません。\n2　個人会員は、当社の従業員・代理人ではなく、当社に代わって契約を結ぶ権限もありません。\n3　個人会員に、紹介の件数・時間のノルマはありません。\n\n第3条（登録）\n1　登録を希望する方は、本会のウェブサイトから申し込み、当社が送る電子契約でこの規約を確認して承認します。\n2　紹介料の支払いを受けるには、本人確認書類の提出と、本人名義の振込口座の登録が必要です。\n3　18歳未満の方、反社会的勢力に当たる方、その他当社が不適当と判断した方は、登録できません。\n\n第4条（紹介の方法）\n1　個人会員は、紹介先の了解を得たうえで、当社所定の紹介コードまたは紹介の申込みで、紹介先を当社に知らせます。\n2　紹介先が入会の申込みで紹介者として個人会員を指定した場合に、その個人会員の紹介とします。同じ紹介先に複数の紹介があった場合は、紹介先が指定した方を優先します。\n3　個人会員は、本会のサービスの内容や費用を自分で説明して契約を結ばせてはならず、その説明は当社が行います。\n\n第5条（紹介料）\n1　当社は、個人会員の紹介で入会した事業所会員・法人会員（以下「紹介先」）について、次の紹介料を支払います。\n　(1) 会費の紹介料：紹介先から当社に入金された会費の20%\n　(2) 手数料の紹介料：紹介先が経費の削減などのサービスを利用して当社が受け取った手数料の20%。当社が紹介先へ還元した場合は、還元した額を差し引いた残りの20%\n2　紹介料は、紹介先からの入金を当社が確認したものだけを対象とします。\n3　紹介料は、毎月末日で締め、翌月15日までに計算して個人会員に知らせ、翌月末日に登録口座へ振り込みます。\n4　紹介先が会費の返金を受けた場合や、紹介が第7条に反していた場合は、その分の紹介料を支払いません。すでに支払った場合は、次回以降の紹介料から差し引くか、返していただきます。\n5　個人会員が別の個人会員を紹介しても、紹介料は支払いません。個人会員が紹介した個人会員の成果に応じた紹介料も支払いません。\n6　紹介料は、当社が受け取る会費・手数料の中から支払うもので、紹介先の会費に上乗せしません。当社は、紹介料の仕組みがあることを本会のウェブサイトと会員規約で紹介先に知らせます。\n7　紹介料に関する税金の申告は、個人会員が自分で行います。当社は、法令に従い支払の記録を作り、必要な場合は税務署に提出します。\n\n第6条（勤め先の紹介）\n個人会員が自分の勤め先や、自分が役員を務める法人を紹介する場合は、紹介料を受け取ることについて、その勤め先・法人の了解を得なければなりません。当社は、了解を得たことを確かめることがあります。\n\n第7条（禁止事項）\n個人会員は、紹介にあたり次の行為をしてはなりません。\n　(1) 「必ず得をする」「確実に経費が下がる」など、事実と違う説明や断定的な説明\n　(2) 断られた後の繰り返しの勧誘、威迫、心理的に追い込む勧誘\n　(3) 当社の従業員や代理人であるかのような名乗り、本会の名での契約や約束\n　(4) 紹介先に紹介料の一部を渡す約束や、金品の提供\n　(5) 紹介先の同意なく、その情報を当社や第三者に伝えること\n　(6) 患者・利用者の個人情報を扱うこと\n　(7) 本会の名称・画像を、当社の承諾なく広告に使うこと\n　(8) 法令や公序良俗に反する行為\n\n第8条（秘密の保持）\n個人会員は、紹介を通じて知った紹介先と当社の秘密を、登録を終えた後も第三者に漏らしてはなりません。\n\n第9条（登録の取消し）\n1　個人会員は、いつでも登録を取り消せます。取り消した月までに入金が確認された分の紹介料は支払います。\n2　当社は、個人会員がこの規約に反した場合、紹介料の支払いを止め、登録を取り消すことがあります。\n\n第10条（個人情報・反社会的勢力・規約の変更・管轄）\n個人情報の取り扱い、反社会的勢力の排除、規約の変更、準拠法と管轄は、会員規約の第17条・第18条・第20条・第21条と同じとします。";
+var NDA_TEXT = "株式会社グローブ（以下「甲」という。）と [[party]]（以下「乙」という。）は、甲が運営する医療介護総合支援会でのご相談に関し、次のとおり秘密保持契約を結ぶ。\n\n第1条（秘密情報）\n本契約で秘密情報とは、ご相談の内容、乙の事業・経営・人事・取引に関する情報など、相談を通じて甲が知った一切の情報をいう。ただし、すでに公知の情報、甲が正当に第三者から得た情報は除く。\n\n第2条（秘密の保持）\n甲は、秘密情報を厳重に管理し、乙の事前の同意なく第三者に開示・漏えいしない。\n\n第3条（目的外の使用の禁止）\n甲は、秘密情報を、乙のご相談への対応の目的以外に使わない。\n\n第4条（専門家・提携先への開示）\n甲は、乙の同意を得た場合に限り、ご相談に必要な範囲で、秘密情報を専門家・提携先に開示できる。この場合、甲は開示先に本契約と同じ義務を守らせる。\n\n第5条（患者・利用者の情報）\n乙は、ご相談に患者・利用者を特定できる情報を含めない。誤って受け取った場合、甲はただちに乙に知らせ、廃棄する。\n\n第6条（返還・廃棄）\n甲は、ご相談が終わった後、乙から求めがあれば、秘密情報を返還または廃棄する。\n\n第7条（有効期間）\n本契約は締結の日から効力を持ち、ご相談が終わった後も3年間有効とする。\n\n第8条（準拠法と管轄）\n本契約は日本の法律に従う。本契約に関する紛争は、大阪地方裁判所を第一審の専属的合意管轄裁判所とする。";
+var TEIKEI_TEXT = "株式会社グローブ（以下「甲」という。）と [[party]]（以下「乙」という。）は、甲が運営する医療介護総合支援会（以下「本会」）の会員に対し、乙がサービスを提供することに関し、次のとおり業務提携契約を結ぶ。\n\n第1条（目的）\n甲は、本会の会員の相談内容に応じて乙を紹介し、乙は会員に対して自らのサービスを提供する。\n\n第2条（契約の当事者）\n乙のサービスの契約は、乙と会員の間で結ばれ、甲はその当事者にならない。乙は、自らの責任でサービスを提供する。\n\n第3条（手数料）\n1　会員が乙のサービスを利用した場合、乙は甲に、別に定める手数料を支払う。手数料の条件は、末尾の「提携の条件」による。\n2　甲は、手数料を受け取ることを、提案の時に会員に知らせる。乙はこれに同意する。\n3　手数料を会員への請求額に上乗せしてはならない。\n\n第4条（適正な提供）\n乙は、法令・業界の規則を守り、会員に対し、事実と違う説明や断定的な説明、強引な勧誘をしない。\n\n第5条（秘密の保持と個人情報）\n1　甲と乙は、本契約を通じて知った相手方と会員の秘密を、第三者に漏らさない。本契約の終了後も同じとする。\n2　甲と乙は、会員の個人情報を、個人情報の保護に関する法律に従って取り扱い、紹介の目的以外に使わない。\n\n第6条（反社会的勢力の排除）\n甲と乙は、自らとその役員が反社会的勢力でないこと、反社会的勢力と関わりを持たないことを確約する。相手がこれに反した場合、催告なく本契約を解除できる。\n\n第7条（有効期間）\n本契約の有効期間は締結の日から1年間とし、期間が終わる1か月前までに申し出がなければ、同じ条件で1年間更新し、以後も同様とする。\n\n第8条（解除）\n甲または乙は、相手方が本契約に違反し、催告しても改めない場合、本契約を解除できる。\n\n第9条（準拠法と管轄）\n本契約は日本の法律に従う。本契約に関する紛争は、大阪地方裁判所を第一審の専属的合意管轄裁判所とする。";
+/* ---- 共通：項目・ひな形・会費の計算・文面の組み立て（サイトのお試し表示と Apps Script で同じものを使う） ---- */
+var ISSUER = { name: "株式会社グローブ", service: "医療介護総合支援会", rep: "代表取締役 藤原 重郎", addr: "〒544-0033 大阪府大阪市生野区勝山南2-2-7", tel: "0120-933-496", hours: "10:00〜19:00", invoice: "T1120001257469" };
+var FIELDS = {
+  company: { label: "事業所名・法人名", type: "text", ac: "organization" },
+  address: { label: "所在地・ご住所", type: "text", ac: "street-address" },
+  rep: { label: "代表者名", type: "text" },
+  name: { label: "お名前（ご担当者名）", type: "text", ac: "name" },
+  kana: { label: "ふりがな", type: "text" },
+  title: { label: "役職", type: "text", ac: "organization-title" },
+  phone: { label: "電話番号", type: "tel", ac: "tel" },
+  birth: { label: "生年月日", type: "date", ac: "bday" },
+  bank: { label: "紹介料の振込口座（銀行名・支店・種別・口座番号・名義）", type: "textarea" }
+};
+var TEMPLATES = [
+  { key: "kaiin", title: "会員申込書（事業所・法人・協賛会員）", cond: true, fields: ["company", "address", "rep", "name", "phone"], required: ["company", "address", "rep", "name", "phone"], requireId: false, seal: "square", note: "", labels: { name: "ご担当者名", address: "所在地", company: "事業所名・法人名" } },
+  { key: "kojin", title: "個人会員（営業協力者）登録書", cond: false, fields: ["name", "kana", "address", "phone", "birth", "bank"], required: ["name", "kana", "address", "phone", "birth", "bank"], requireId: true, adult: true, seal: "round", note: "特記事項", labels: { name: "お名前", address: "ご住所" } },
+  { key: "nda", title: "秘密保持契約書（ご相談）", cond: false, fields: ["company", "name", "address", "phone"], required: ["name", "address", "phone"], requireId: false, seal: "round", note: "特記事項" },
+  { key: "teikei", title: "業務提携契約書（提携先）", cond: false, fields: ["company", "rep", "name", "title", "address", "phone"], required: ["company", "rep", "address", "phone"], requireId: false, seal: "square", note: "提携の条件（業務分野・手数料の率・支払時期など）" }
+];
+var MEMBER_LABEL = { jigyosho: "事業所会員", hojin: "法人会員", kyosan: "協賛会員" };
+function memberTitle(type) { return (MEMBER_LABEL[type] || "会員") + " 申込書"; }
+/* 会員申込書は「事業所会員」「法人会員」「協賛会員」の3種類に分ける（保存するときは kaiin として扱い、会員区分は固定） */
+(function () { var b = TEMPLATES[0], add = ["jigyosho", "hojin", "kyosan"].map(function (m) { var o = {}; for (var k in b) o[k] = b[k]; o.key = "kaiin_" + m; o.base = "kaiin"; o.mtype = m; o.title = memberTitle(m); return o; }); b.hidden = true; TEMPLATES.splice.apply(TEMPLATES, [1, 0].concat(add)); })();
+function tplOf(key) { for (var i = 0; i < TEMPLATES.length; i++) if (TEMPLATES[i].key === key) return TEMPLATES[i]; return null; }
+function fieldLabel(t, k) { return (t && t.labels && t.labels[k]) || FIELDS[k].label; }
+/* 項目の並びをひな形の順にそろえ、必須の項目を必ず入れる */
+function orderFields(t, arr) {
+  arr = (arr || t.fields).filter(function (k) { return FIELDS[k]; });
+  t.required.forEach(function (k) { if (arr.indexOf(k) < 0) arr.push(k); });
+  var first = t.fields.filter(function (k) { return arr.indexOf(k) >= 0; });
+  return first.concat(Object.keys(FIELDS).filter(function (k) { return arr.indexOf(k) >= 0 && first.indexOf(k) < 0; }));
+}
+function yen(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "円"; }
+function monthlyFee(c) {
+  var s = Math.max(1, parseInt(c.sites, 10) || 1), n = Math.max(0, parseInt(c.staff, 10) || 0);
+  if (c.type === "jigyosho") return 5500 + Math.max(0, n - 5) * 500;
+  if (c.type === "hojin") return 5500 + (s - 1) * 5000 + Math.max(0, n - 5 * s) * 500;
+  if (c.type === "kyosan") return 33000;
+  return 0;
+}
+function ymd(d) { return d.getFullYear() + "年" + (d.getMonth() + 1) + "月" + d.getDate() + "日"; }
+function nextFirst(from) { var d = from ? new Date(from) : new Date(); return new Date(d.getFullYear(), d.getMonth() + 1, 1); }
+/* 契約の条件をそろえる（金額は必ずここで計算し直す） */
+function normCond(c) {
+  c = c || {};
+  var o = { type: MEMBER_LABEL[c.type] ? c.type : "jigyosho", pay: c.pay === "year" ? "year" : "month", sites: Math.max(1, parseInt(c.sites, 10) || 1), staff: Math.max(0, parseInt(c.staff, 10) || 0), founder: c.founder !== false && c.founder !== "false", referrer: String(c.referrer || "").slice(0, 60), entryFee: String(c.entryFee || "").slice(0, 40) };
+  if (o.type === "jigyosho") o.sites = 1;
+  var st = c.start && /^\d{4}-\d{2}/.test(c.start) ? new Date(+c.start.slice(0, 4), +c.start.slice(5, 7) - 1, 1) : nextFirst();
+  o.start = st.getFullYear() + "-" + ("0" + (st.getMonth() + 1)).slice(-2) + "-01";
+  o.monthly = monthlyFee(o);
+  o.first = o.pay === "year" ? o.monthly * 10 : o.monthly;
+  o.startText = ymd(st);
+  o.endText = ymd(new Date(st.getFullYear() + 1, st.getMonth(), 0));
+  o.dueText = "入会日（承認した日）から7日以内";
+  return o;
+}
+function condText(c) {
+  var o = normCond(c), L = [];
+  L.push("　会員区分：" + MEMBER_LABEL[o.type] + (o.type === "kyosan" ? "" : "（事業所数 " + o.sites + "か所、職員数 " + o.staff + "名）"));
+  L.push("　支払方法：" + (o.pay === "year" ? "年間払い（12か月分を10か月分の額で）" : "月払い") + "　銀行振込・前払い。振込手数料は申込者の負担");
+  L.push("　月額会費（税込）：" + yen(o.monthly) + (o.pay === "year" ? "　→　年間払いの額（税込）：" + yen(o.monthly * 10) : ""));
+  L.push("　初回のお振込み額（税込）：" + yen(o.first) + "（" + o.dueText + "。入会した月の会費は無料）");
+  L.push("　2回目以降：毎月1日に翌月分" + (o.pay === "year" ? "（年間払いは更新の前月1日に12か月分）" : "") + "の請求書をメールで送ります。お支払期限は毎月10日です");
+  L.push("　会費の発生日：" + o.startText);
+  L.push("　契約期間：" + o.startText + "〜" + o.endText + "（1年。期間が終わる1か月前までに申し出がなければ1年ごとに自動更新）");
+  L.push("　入会金：" + (o.founder ? "創設会員のため免除" : (o.entryFee || "別に定める額（担当者からご案内します）")));
+  L.push("　紹介者：" + (o.referrer || "なし"));
+  return L.join("\n");
+}
+/* 文面を組み立てる。[[項目]] は相手が記入する欄（画面では「記入欄」、PDFでは記入した内容になる） */
+function buildBody(key, cond, note, party) {
+  var t = tplOf(key), b = "";
+  var who = party || "[[name]]";
+  if (key === "kaiin" || /^kaiin_/.test(key)) {
+    if (t && t.mtype) cond = Object.assign({}, cond || {}, { type: t.mtype });
+    b = "医療介護総合支援会　" + memberTitle(normCond(cond).type) + "\n\n株式会社グローブ　御中\n\n申込者は、下に続く「医療介護総合支援会 会員規約」に同意し、次のとおり入会を申し込みます。\n\n1．申込者\n　事業所名・法人名：[[company]]\n　所在地：[[address]]\n　代表者名：[[rep]]\n　ご担当者名：[[name]]\n　電話番号：[[phone]]\n\n2．契約の内容\n" + condText(cond) +
+      "\n\n3．特にご確認いただく事項\n　・契約期間は1年で、月払いも同じです。終了日の1か月前までに解約の申し出がない場合は、1年ごとに自動で更新されます。\n　・月払いで途中解約する場合は、残りの月数分の会費をお支払いいただきます。年間払いの途中解約は返金しません。\n　・会費が発生してから3か月の時点で、当社の提案を実施しても効果が会費を下回った場合は、会員規約第11条により途中解約できます。\n　・当社は、本会を紹介した個人会員に会費・手数料の一部を紹介料として支払うことがあります（会費に上乗せはありません）。\n\n――――――――――――――――――――\n\n" + KIYAKU_TEXT;
+  } else if (key === "kojin") {
+    b = "医療介護総合支援会　個人会員（営業協力者）登録書\n\n株式会社グローブ　御中\n\n私は、下に続く「医療介護総合支援会 個人会員（営業協力者）規約」に同意し、個人会員として登録を申し込みます。\n\n1．登録者\n　お名前：[[name]]（[[kana]]）\n　ご住所：[[address]]\n　電話番号：[[phone]]\n　生年月日：[[birth]]\n　紹介料の振込口座：[[bank]]\n\n2．確認事項\n　・個人会員の登録と継続に費用はかかりません。本会の支援サービスは利用できません。\n　・紹介料は、紹介先の会費の20%と、手数料の20%（紹介先へ還元した額を差し引いた残り）です。毎月末日締め、翌月15日までに計算し、翌月末日に振り込みます。\n　・個人会員を紹介しても紹介料はありません。\n　・紹介料の税金の申告は、ご自身で行っていただきます。\n\n――――――――――――――――――――\n\n" + KOJIN_TEXT;
+  } else if (key === "nda") {
+    b = "秘密保持契約書\n\n" + NDA_TEXT.replace("[[party]]", who);
+  } else if (key === "teikei") {
+    b = "業務提携契約書\n\n" + TEIKEI_TEXT.replace("[[party]]", who);
+  }
+  if (note) b += "\n\n" + (t && t.note ? t.note : "特記事項") + "\n" + note;
+  return b;
+}
+window.KEIYAKU_CORE={TEMPLATES:TEMPLATES,FIELDS:FIELDS,normCond:normCond,buildBody:buildBody,yen:yen,MEMBER_LABEL:MEMBER_LABEL};})();
+window.keiyakuApi=function(a,d){return new Promise(function(res,rej){google.script.run.withSuccessHandler(function(r){r&&r.ok?res(r):rej(new Error(r&&r.error||'うまくいきませんでした'))}).withFailureHandler(function(e){rej(new Error(e&&e.message||String(e)))}).adminCall(a,d)})};</script>
+<script>window.CASE_SEGS=[{"key": "kigyo", "name": "企業・事業者", "match": ["企業・事業者"], "route": "partner", "word": "ご相談", "steps": ["新規受付", "内容確認中", "ヒアリング・面談", "振分け済み", "提携先対応中", "提案・見積り中", "契約・導入の準備中", "完了", "見送り"], "need": ["振分け済み", "提携先対応中", "提案・見積り中", "契約・導入の準備中"], "mk": ["電話した", "メールした", "訪問・面談した", "課題を聞き取った", "提携先へ紹介した", "提携先と打ち合わせた", "提案書・見積りを送った", "補助金・制度の情報を送った", "会員制度を案内した", "先方の返事待ち", "提携先の返事待ち", "完了の連絡をした", "その他"], "note": "提携先へ会社の情報を渡す前に、先方の了承を取ってください。", "done": ["完了", "見送り"]}, {"key": "hataraku", "name": "医療・介護で働く方", "match": ["医療・介護で働く方"], "route": "partner", "word": "ご相談", "steps": ["新規受付", "内容確認中", "お話を伺っている", "専門家・窓口へつないだ", "継続して相談中", "完了", "見送り"], "need": ["専門家・窓口へつないだ"], "mk": ["電話した", "メールした", "面談した（オンライン含む）", "悩み・状況を聞き取った", "公的な相談窓口を案内した", "専門家（社労士・弁護士など）へつないだ", "求人・資格・研修の情報を送った", "ご本人の返事待ち", "完了の連絡をした", "その他"], "note": "お名前を伏せた相談もあります。勤務先へは、ご本人の同意なく連絡しないでください。", "done": ["完了", "見送り"]}, {"key": "honnin", "name": "利用者・ご本人", "match": ["利用者・ご本人"], "route": "partner", "word": "ご相談", "steps": ["新規受付", "内容確認中", "会員施設の確認", "状況の聞き取り", "振分け済み", "提携先対応中", "利用・手続きの準備中", "完了", "見送り"], "need": ["振分け済み", "提携先対応中", "利用・手続きの準備中"], "mk": ["電話した", "メールした", "面談・訪問した", "状況を聞き取った", "通っている病院・施設に確認した", "施設へ会員制度を案内した", "会員の病院・施設を紹介した", "地域包括支援センターなど公的窓口を案内した", "提携先へ紹介した", "資料・見積りを送った", "ご本人の返事待ち", "提携先の返事待ち", "完了の連絡をした", "その他"], "note": "通っている病院・施設が会員かを必ず確かめてください（会員でなければ「会員施設の確認」に記録）。提携先へ情報を渡す前に、ご本人の同意を取ってください。", "done": ["完了", "見送り"]}, {"key": "kazoku", "name": "ご家族", "match": ["ご家族"], "route": "partner", "word": "ご相談", "steps": ["新規受付", "内容確認中", "会員施設の確認", "状況の聞き取り", "振分け済み", "提携先対応中", "利用・手続きの準備中", "完了", "見送り"], "need": ["振分け済み", "提携先対応中", "利用・手続きの準備中"], "mk": ["電話した", "メールした", "面談・訪問した", "ご家族から状況を聞き取った", "ご本人の意向を確かめた", "ケアマネジャーと連絡をとった", "通っている病院・施設に確認した", "施設へ会員制度を案内した", "会員の病院・施設を紹介した", "地域包括支援センターなど公的窓口を案内した", "提携先へ紹介した", "資料・見積りを送った", "ご家族の返事待ち", "提携先の返事待ち", "完了の連絡をした", "その他"], "note": "ご本人が通っている病院・施設が会員かを必ず確かめてください（会員でなければ「会員施設の確認」に記録）。ご本人の情報を提携先へ渡すときは、ご本人（または代理の方）の同意を確かめてください。", "done": ["完了", "見送り"]}, {"key": "none", "name": "立場の選択なし", "match": ["分からない・近いものがない"], "route": "partner", "word": "ご相談", "steps": ["新規受付", "内容確認中", "振分け済み", "提携先対応中", "提案・見積り中", "完了", "見送り"], "need": ["振分け済み", "提携先対応中", "提案・見積り中"], "mk": ["電話した", "メールした", "面談した", "状況を聞き取った", "公的な窓口を案内した", "提携先へ紹介した", "見積り・資料を送った", "お客様の返事待ち", "提携先の返事待ち", "完了の連絡をした", "その他"], "note": "まずお話を伺い、どの種別の相談か確かめてから進めてください。", "done": ["完了", "見送り"]}, {"key": "teikei", "name": "提携・協業の申込み", "match": ["提携・協業の申し込み"], "route": "self", "word": "お申し込み", "steps": ["新規受付", "内容確認中", "面談日の調整中", "面談済み", "社内で検討中", "契約の手続き中", "提携開始", "見送り"], "done": ["提携開始", "見送り"], "need": [], "mk": ["電話した", "メールした", "面談日を決めた", "事務所（大阪市北区）で面談した", "オンラインで面談した", "先方を訪問した", "会社案内・資料を受け取った", "社内で検討した", "提携の契約書を送った", "先方の返事待ち", "結果を連絡した", "その他"], "note": "提携・協業の申込みは、提携先へは振り分けず当会で対応します。提携開始になったら「提携先一覧に登録する」を押してください。"}, {"key": "youbou", "name": "要望・ご意見", "match": ["要望・ご意見"], "route": "self", "word": "ご意見", "steps": ["新規受付", "内容確認中", "社内で検討中", "対応を決めた", "対応済み", "見送り"], "done": ["対応済み", "見送り"], "need": [], "mk": ["内容を社内で共有した", "電話した", "メールした", "サービス・サイトに反映した", "お礼・結果を連絡した", "その他"], "note": "要望・ご意見は当会で対応します。お返事が要らない方もいるので、連絡は内容を見て判断してください。"}, {"key": "kaiin", "name": "会員登録の申込み", "match": ["会員登録"], "route": "self", "word": "お申し込み", "steps": ["新規受付", "内容確認中", "契約書を送った", "入金待ち", "登録完了", "見送り"], "done": ["登録完了", "見送り"], "need": [], "mk": ["電話した", "メールした", "契約書を送った", "入金を確認した", "登録完了を連絡した", "その他"], "note": "契約書の状況と入金は「電子契約」の画面で確かめられます。"}];window.PARTNER_TAX={"経営・管理の支援": {"経営コンサルティング": ["経営計画・事業計画", "収支改善・コスト削減", "加算の取得・報酬改定への対応", "開業・新規事業の立ち上げ", "事業承継・M&A", "その他"], "士業・専門家": ["弁護士", "税理士・公認会計士", "社会保険労務士", "行政書士", "司法書士", "中小企業診断士", "その他"], "補助金・資金": ["補助金・助成金の申請支援", "融資・資金調達", "リース・割賦", "その他"], "保険・リスク管理": ["損害保険・賠償責任保険", "生命保険・福利厚生の保険", "事故・苦情への対応支援", "BCP（災害時の事業継続）", "その他"]}, "人材・採用・教育": {"採用・人材サービス": ["有料職業紹介（人材紹介）", "労働者派遣（人材派遣）", "紹介予定派遣", "求人広告・求人サイト", "スポットワーク（短時間の仕事の仲介）", "採用代行（採用業務の委託）", "採用サイト・採用動画の制作", "合同説明会・就職イベント", "その他"], "職種別の人材": ["介護職員", "看護師・准看護師", "医師", "薬剤師", "リハビリ職（理学療法士・作業療法士・言語聴覚士）", "介護支援専門員（ケアマネジャー）", "生活相談員・社会福祉士", "管理栄養士・調理員", "医療事務・介護事務", "送迎ドライバー", "その他"], "外国人材": ["特定技能（登録支援機関）", "技能実習・育成就労（監理団体）", "EPA（経済連携協定）の介護福祉士・看護師候補者", "在留資格「介護」・留学生の就労支援", "外国人材の職業紹介", "在留資格の申請手続き（行政書士）", "日本語教育・生活支援", "その他"], "教育・研修": ["新人・階層別の研修", "介護・医療の技術研修", "資格取得の支援", "接遇・マナー研修", "ハラスメント・メンタルヘルス研修", "その他"], "定着・労務": ["評価・賃金制度", "勤怠・シフト管理", "職場環境の改善", "ストレスチェック・産業医", "その他"]}, "設備・物品・仕入れ": {"医療・介護用品": ["衛生用品・消耗品", "介護用品・福祉用具", "医療機器・医療材料", "医薬品・薬局関連", "その他"], "食事・給食": ["給食の委託・配食", "食材・介護食", "その他"], "施設・設備": ["建築・改修・リフォーム", "空調・設備の保守", "清掃・リネン", "警備・防犯", "車両・送迎車", "その他"], "事務用品・通信": ["事務用品・コピー機", "電話・インターネット回線", "携帯電話", "その他"]}, "固定費の見直し": {"エネルギー": ["電気", "ガス", "水道・節水", "太陽光・蓄電池・省エネ設備", "その他"], "契約の見直し": ["保険の見直し", "通信費", "リース契約", "キャッシュレス決済の手数料", "その他"]}, "IT・デジタル": {"業務システム": ["介護記録・請求ソフト", "電子カルテ・レセプト", "勤怠・給与システム", "会計システム", "その他"], "ICT機器": ["見守りセンサー・介護ロボット", "タブレット・パソコン", "インカム・ナースコール", "ネットワーク・セキュリティ", "その他"], "集客・広報": ["ホームページ制作", "広告・SNS運用", "パンフレット・印刷", "その他"]}, "暮らし・生活の支援（利用者・ご家族向け）": {"住まい": ["引越し・住み替え", "家財整理・不用品の買取", "住宅改修・バリアフリー", "高齢者住宅・施設の紹介", "その他"], "生活サービス": ["配食・買い物代行", "移動・外出の支援", "家事代行", "見守りサービス", "その他"], "お金・法律": ["成年後見・財産管理", "相続・遺言", "終活・葬儀・遺品整理", "身元保証", "その他"]}, "働く方の福利厚生・キャリア": {"福利厚生": ["優待・割引サービス", "保育・子育て支援", "住宅・寮", "健康・運動", "その他"], "キャリア": ["転職・キャリア相談", "資格スクール", "スキルアップ・学び直し", "その他"]}, "医療・介護サービスの連携": {"医療": ["病院・診療所", "訪問診療・在宅医療", "歯科・訪問歯科", "薬局・訪問薬剤管理", "その他"], "介護": ["居宅介護支援", "訪問介護・訪問看護", "通所・短期入所", "施設・居住系サービス", "その他"], "リハビリ・福祉": ["リハビリ・機能訓練", "福祉用具の貸与・販売", "障害福祉サービス", "その他"]}, "その他": {"その他": ["その他"]}};window.ROUTE_AUTO_N={"経営・業務の改善": ["経営・管理の支援", "経営コンサルティング"], "採用・定着・研修": ["人材・採用・教育", "採用・人材サービス"], "補助金・助成金の情報": ["経営・管理の支援", "補助金・資金"], "共同購入・固定費の見直し": ["固定費の見直し", "契約の見直し"], "専門家への相談": ["経営・管理の支援", "士業・専門家"], "事業承継・連携": ["経営・管理の支援", "経営コンサルティング"], "職場・働き方の相談": ["経営・管理の支援", "士業・専門家"], "資格・研修・キャリア": ["働く方の福利厚生・キャリア", "キャリア"], "福利厚生・暮らしの優待": ["働く方の福利厚生・キャリア", "福利厚生"], "病院・施設・在宅サービスの相談先": ["医療・介護サービスの連携", "介護"], "退院・入居前後の暮らしの準備": ["医療・介護サービスの連携", "医療"], "医療費・介護費の制度": ["医療・介護サービスの連携", "介護"], "家族の介護と仕事の両立": ["医療・介護サービスの連携", "介護"], "お金の管理・成年後見": ["暮らし・生活の支援（利用者・ご家族向け）", "お金・法律"], "買い物・移動などの生活支援": ["暮らし・生活の支援（利用者・ご家族向け）", "生活サービス"], "引越し・住み替え・家財の整理": ["暮らし・生活の支援（利用者・ご家族向け）", "住まい"], "終活・相続・遺品整理": ["暮らし・生活の支援（利用者・ご家族向け）", "お金・法律"]};</script>
+<script>window.ZONE_TREE={"近畿": {"大阪府": ["全域", "大阪市（全区）", "堺市（全区）", "大阪市都島区", "大阪市福島区", "大阪市此花区", "大阪市西区", "大阪市港区", "大阪市大正区", "大阪市天王寺区", "大阪市浪速区", "大阪市西淀川区", "大阪市東淀川区", "大阪市東成区", "大阪市生野区", "大阪市旭区", "大阪市城東区", "大阪市阿倍野区", "大阪市住吉区", "大阪市東住吉区", "大阪市西成区", "大阪市淀川区", "大阪市鶴見区", "大阪市住之江区", "大阪市平野区", "大阪市北区", "大阪市中央区", "堺市堺区", "堺市中区", "堺市東区", "堺市西区", "堺市南区", "堺市北区", "堺市美原区", "岸和田市", "豊中市", "池田市", "吹田市", "泉大津市", "高槻市", "貝塚市", "守口市", "枚方市", "茨木市", "八尾市", "泉佐野市", "富田林市", "寝屋川市", "河内長野市", "松原市", "大東市", "和泉市", "箕面市", "柏原市", "羽曳野市", "門真市", "摂津市", "高石市", "藤井寺市", "東大阪市", "泉南市", "四條畷市", "交野市", "大阪狭山市", "阪南市", "三島郡島本町", "豊能郡豊能町", "豊能郡能勢町", "泉北郡忠岡町", "泉南郡熊取町", "泉南郡田尻町", "泉南郡岬町", "南河内郡太子町", "南河内郡河南町", "南河内郡千早赤阪村"], "兵庫県": ["全域", "神戸市（全区）", "神戸市東灘区", "神戸市灘区", "神戸市兵庫区", "神戸市長田区", "神戸市須磨区", "神戸市垂水区", "神戸市北区", "神戸市中央区", "神戸市西区", "姫路市", "尼崎市", "明石市", "西宮市", "洲本市", "芦屋市", "伊丹市", "相生市", "豊岡市", "加古川市", "赤穂市", "西脇市", "宝塚市", "三木市", "高砂市", "川西市", "小野市", "三田市", "加西市", "丹波篠山市", "養父市", "丹波市", "南あわじ市", "朝来市", "淡路市", "宍粟市", "加東市", "たつの市", "川辺郡猪名川町", "多可郡多可町", "加古郡稲美町", "加古郡播磨町", "神崎郡市川町", "神崎郡福崎町", "神崎郡神河町", "揖保郡太子町", "赤穂郡上郡町", "佐用郡佐用町", "美方郡香美町", "美方郡新温泉町"], "京都府": ["全域", "京都市（全区）", "京都市北区", "京都市上京区", "京都市左京区", "京都市中京区", "京都市東山区", "京都市下京区", "京都市南区", "京都市右京区", "京都市伏見区", "京都市山科区", "京都市西京区", "福知山市", "舞鶴市", "綾部市", "宇治市", "宮津市", "亀岡市", "城陽市", "向日市", "長岡京市", "八幡市", "京田辺市", "京丹後市", "南丹市", "木津川市", "乙訓郡大山崎町", "久世郡久御山町", "綴喜郡井手町", "綴喜郡宇治田原町", "相楽郡笠置町", "相楽郡和束町", "相楽郡精華町", "相楽郡南山城村", "船井郡京丹波町", "与謝郡伊根町", "与謝郡与謝野町"], "奈良県": ["全域", "奈良市", "大和高田市", "大和郡山市", "天理市", "橿原市", "桜井市", "五條市", "御所市", "生駒市", "香芝市", "葛城市", "宇陀市", "山辺郡山添村", "生駒郡平群町", "生駒郡三郷町", "生駒郡斑鳩町", "生駒郡安堵町", "磯城郡川西町", "磯城郡三宅町", "磯城郡田原本町", "宇陀郡曽爾村", "宇陀郡御杖村", "高市郡高取町", "高市郡明日香村", "北葛城郡上牧町", "北葛城郡王寺町", "北葛城郡広陵町", "北葛城郡河合町", "吉野郡吉野町", "吉野郡大淀町", "吉野郡下市町", "吉野郡黒滝村", "吉野郡天川村", "吉野郡野迫川村", "吉野郡十津川村", "吉野郡下北山村", "吉野郡上北山村", "吉野郡川上村", "吉野郡東吉野村"], "滋賀県": ["全域", "大津市", "彦根市", "長浜市", "近江八幡市", "草津市", "守山市", "栗東市", "甲賀市", "野洲市", "湖南市", "高島市", "東近江市", "米原市", "蒲生郡日野町", "蒲生郡竜王町", "愛知郡愛荘町", "犬上郡豊郷町", "犬上郡甲良町", "犬上郡多賀町"], "和歌山県": ["全域", "和歌山市", "海南市", "橋本市", "有田市", "御坊市", "田辺市", "新宮市", "紀の川市", "岩出市", "海草郡紀美野町", "伊都郡かつらぎ町", "伊都郡九度山町", "伊都郡高野町", "有田郡湯浅町", "有田郡広川町", "有田郡有田川町", "日高郡美浜町", "日高郡日高町", "日高郡由良町", "日高郡印南町", "日高郡みなべ町", "日高郡日高川町", "西牟婁郡白浜町", "西牟婁郡上富田町", "西牟婁郡すさみ町", "東牟婁郡那智勝浦町", "東牟婁郡太地町", "東牟婁郡古座川町", "東牟婁郡北山村", "東牟婁郡串本町"], "三重県": ["全域", "津市", "四日市市", "伊勢市", "松阪市", "桑名市", "鈴鹿市", "名張市", "尾鷲市", "亀山市", "鳥羽市", "熊野市", "いなべ市", "志摩市", "伊賀市", "桑名郡木曽岬町", "員弁郡東員町", "三重郡菰野町", "三重郡朝日町", "三重郡川越町", "多気郡多気町", "多気郡明和町", "多気郡大台町", "度会郡玉城町", "度会郡度会町", "度会郡大紀町", "度会郡南伊勢町", "北牟婁郡紀北町", "南牟婁郡御浜町", "南牟婁郡紀宝町"]}, "北海道・東北": {"北海道": ["全域", "札幌市（全区）", "札幌市中央区", "札幌市北区", "札幌市東区", "札幌市白石区", "札幌市豊平区", "札幌市南区", "札幌市西区", "札幌市厚別区", "札幌市手稲区", "札幌市清田区", "函館市", "小樽市", "旭川市", "室蘭市", "釧路市", "帯広市", "北見市", "夕張市", "岩見沢市", "網走市", "留萌市", "苫小牧市", "稚内市", "美唄市", "芦別市", "江別市", "赤平市", "紋別市", "士別市", "名寄市", "三笠市", "根室市", "千歳市", "滝川市", "砂川市", "歌志内市", "深川市", "富良野市", "登別市", "恵庭市", "伊達市", "北広島市", "石狩市", "北斗市", "石狩郡当別町", "石狩郡新篠津村", "松前郡松前町", "松前郡福島町", "上磯郡知内町", "上磯郡木古内町", "亀田郡七飯町", "茅部郡鹿部町", "茅部郡森町", "二海郡八雲町", "山越郡長万部町", "檜山郡江差町", "檜山郡上ノ国町", "檜山郡厚沢部町", "爾志郡乙部町", "奥尻郡奥尻町", "瀬棚郡今金町", "久遠郡せたな町", "島牧郡島牧村", "寿都郡寿都町", "寿都郡黒松内町", "磯谷郡蘭越町", "虻田郡ニセコ町", "虻田郡真狩村", "虻田郡留寿都村", "虻田郡喜茂別町", "虻田郡京極町", "虻田郡倶知安町", "岩内郡共和町", "岩内郡岩内町", "古宇郡泊村", "古宇郡神恵内村", "積丹郡積丹町", "古平郡古平町", "余市郡仁木町", "余市郡余市町", "余市郡赤井川村", "空知郡南幌町", "空知郡奈井江町", "空知郡上砂川町", "夕張郡由仁町", "夕張郡長沼町", "夕張郡栗山町", "樺戸郡月形町", "樺戸郡浦臼町", "樺戸郡新十津川町", "雨竜郡妹背牛町", "雨竜郡秩父別町", "雨竜郡雨竜町", "雨竜郡北竜町", "雨竜郡沼田町", "上川郡鷹栖町", "上川郡東神楽町", "上川郡当麻町", "上川郡比布町", "上川郡愛別町", "上川郡上川町", "上川郡東川町", "上川郡美瑛町", "空知郡上富良野町", "空知郡中富良野町", "空知郡南富良野町", "勇払郡占冠村", "上川郡和寒町", "上川郡剣淵町", "上川郡下川町", "中川郡美深町", "中川郡音威子府村", "中川郡中川町", "雨竜郡幌加内町", "増毛郡増毛町", "留萌郡小平町", "苫前郡苫前町", "苫前郡羽幌町", "苫前郡初山別村", "天塩郡遠別町", "天塩郡天塩町", "宗谷郡猿払村", "枝幸郡浜頓別町", "枝幸郡中頓別町", "枝幸郡枝幸町", "天塩郡豊富町", "礼文郡礼文町", "利尻郡利尻町", "利尻郡利尻富士町", "天塩郡幌延町", "網走郡美幌町", "網走郡津別町", "斜里郡斜里町", "斜里郡清里町", "斜里郡小清水町", "常呂郡訓子府町", "常呂郡置戸町", "常呂郡佐呂間町", "紋別郡遠軽町", "紋別郡湧別町", "紋別郡滝上町", "紋別郡興部町", "紋別郡西興部村", "紋別郡雄武町", "網走郡大空町", "虻田郡豊浦町", "有珠郡壮瞥町", "白老郡白老町", "勇払郡厚真町", "虻田郡洞爺湖町", "勇払郡安平町", "勇払郡むかわ町", "沙流郡日高町", "沙流郡平取町", "新冠郡新冠町", "浦河郡浦河町", "様似郡様似町", "幌泉郡えりも町", "日高郡新ひだか町", "河東郡音更町", "河東郡士幌町", "河東郡上士幌町", "河東郡鹿追町", "上川郡新得町", "上川郡清水町", "河西郡芽室町", "河西郡中札内村", "河西郡更別村", "広尾郡大樹町", "広尾郡広尾町", "中川郡幕別町", "中川郡池田町", "中川郡豊頃町", "中川郡本別町", "足寄郡足寄町", "足寄郡陸別町", "十勝郡浦幌町", "釧路郡釧路町", "厚岸郡厚岸町", "厚岸郡浜中町", "川上郡標茶町", "川上郡弟子屈町", "阿寒郡鶴居村", "白糠郡白糠町", "野付郡別海町", "標津郡中標津町", "標津郡標津町", "目梨郡羅臼町"], "青森県": ["全域", "青森市", "弘前市", "八戸市", "黒石市", "五所川原市", "十和田市", "三沢市", "むつ市", "つがる市", "平川市", "東津軽郡平内町", "東津軽郡今別町", "東津軽郡蓬田村", "東津軽郡外ケ浜町", "西津軽郡鰺ヶ沢町", "西津軽郡深浦町", "中津軽郡西目屋村", "南津軽郡藤崎町", "南津軽郡大鰐町", "南津軽郡田舎館村", "北津軽郡板柳町", "北津軽郡鶴田町", "北津軽郡中泊町", "上北郡野辺地町", "上北郡七戸町", "上北郡六戸町", "上北郡横浜町", "上北郡東北町", "上北郡六ヶ所村", "上北郡おいらせ町", "下北郡大間町", "下北郡東通村", "下北郡風間浦村", "下北郡佐井村", "三戸郡三戸町", "三戸郡五戸町", "三戸郡田子町", "三戸郡南部町", "三戸郡階上町", "三戸郡新郷村"], "岩手県": ["全域", "盛岡市", "宮古市", "大船渡市", "花巻市", "北上市", "久慈市", "遠野市", "一関市", "陸前高田市", "釜石市", "二戸市", "八幡平市", "奥州市", "滝沢市", "岩手郡雫石町", "岩手郡葛巻町", "岩手郡岩手町", "紫波郡紫波町", "紫波郡矢巾町", "和賀郡西和賀町", "胆沢郡金ケ崎町", "西磐井郡平泉町", "気仙郡住田町", "上閉伊郡大槌町", "下閉伊郡山田町", "下閉伊郡岩泉町", "下閉伊郡田野畑村", "下閉伊郡普代村", "九戸郡軽米町", "九戸郡野田村", "九戸郡九戸村", "九戸郡洋野町", "二戸郡一戸町"], "宮城県": ["全域", "仙台市（全区）", "仙台市青葉区", "仙台市宮城野区", "仙台市若林区", "仙台市太白区", "仙台市泉区", "石巻市", "塩竈市", "気仙沼市", "白石市", "名取市", "角田市", "多賀城市", "岩沼市", "登米市", "栗原市", "東松島市", "大崎市", "富谷市", "刈田郡蔵王町", "刈田郡七ヶ宿町", "柴田郡大河原町", "柴田郡村田町", "柴田郡柴田町", "柴田郡川崎町", "伊具郡丸森町", "亘理郡亘理町", "亘理郡山元町", "宮城郡松島町", "宮城郡七ヶ浜町", "宮城郡利府町", "黒川郡大和町", "黒川郡大郷町", "黒川郡大衡村", "加美郡色麻町", "加美郡加美町", "遠田郡涌谷町", "遠田郡美里町", "牡鹿郡女川町", "本吉郡南三陸町"], "秋田県": ["全域", "秋田市", "能代市", "横手市", "大館市", "男鹿市", "湯沢市", "鹿角市", "由利本荘市", "潟上市", "大仙市", "北秋田市", "にかほ市", "仙北市", "鹿角郡小坂町", "北秋田郡上小阿仁村", "山本郡藤里町", "山本郡三種町", "山本郡八峰町", "南秋田郡五城目町", "南秋田郡八郎潟町", "南秋田郡井川町", "南秋田郡大潟村", "仙北郡美郷町", "雄勝郡羽後町", "雄勝郡東成瀬村"], "山形県": ["全域", "山形市", "米沢市", "鶴岡市", "酒田市", "新庄市", "寒河江市", "上山市", "村山市", "長井市", "天童市", "東根市", "尾花沢市", "南陽市", "東村山郡山辺町", "東村山郡中山町", "西村山郡河北町", "西村山郡西川町", "西村山郡朝日町", "西村山郡大江町", "北村山郡大石田町", "最上郡金山町", "最上郡最上町", "最上郡舟形町", "最上郡真室川町", "最上郡大蔵村", "最上郡鮭川村", "最上郡戸沢村", "東置賜郡高畠町", "東置賜郡川西町", "西置賜郡小国町", "西置賜郡白鷹町", "西置賜郡飯豊町", "東田川郡三川町", "東田川郡庄内町", "飽海郡遊佐町"], "福島県": ["全域", "福島市", "会津若松市", "郡山市", "いわき市", "白河市", "須賀川市", "喜多方市", "相馬市", "二本松市", "田村市", "南相馬市", "伊達市", "本宮市", "伊達郡桑折町", "伊達郡国見町", "伊達郡川俣町", "安達郡大玉村", "岩瀬郡鏡石町", "岩瀬郡天栄村", "南会津郡下郷町", "南会津郡檜枝岐村", "南会津郡只見町", "南会津郡南会津町", "耶麻郡北塩原村", "耶麻郡西会津町", "耶麻郡磐梯町", "耶麻郡猪苗代町", "河沼郡会津坂下町", "河沼郡湯川村", "河沼郡柳津町", "大沼郡三島町", "大沼郡金山町", "大沼郡昭和村", "大沼郡会津美里町", "西白河郡西郷村", "西白河郡泉崎村", "西白河郡中島村", "西白河郡矢吹町", "東白川郡棚倉町", "東白川郡矢祭町", "東白川郡塙町", "東白川郡鮫川村", "石川郡石川町", "石川郡玉川村", "石川郡平田村", "石川郡浅川町", "石川郡古殿町", "田村郡三春町", "田村郡小野町", "双葉郡広野町", "双葉郡楢葉町", "双葉郡富岡町", "双葉郡川内村", "双葉郡大熊町", "双葉郡双葉町", "双葉郡浪江町", "双葉郡葛尾村", "相馬郡新地町", "相馬郡飯舘村"]}, "関東": {"茨城県": ["全域", "水戸市", "日立市", "土浦市", "古河市", "石岡市", "結城市", "龍ヶ崎市", "下妻市", "常総市", "常陸太田市", "高萩市", "北茨城市", "笠間市", "取手市", "牛久市", "つくば市", "ひたちなか市", "鹿嶋市", "潮来市", "守谷市", "常陸大宮市", "那珂市", "筑西市", "坂東市", "稲敷市", "かすみがうら市", "桜川市", "神栖市", "行方市", "鉾田市", "つくばみらい市", "小美玉市", "東茨城郡茨城町", "東茨城郡大洗町", "東茨城郡城里町", "那珂郡東海村", "久慈郡大子町", "稲敷郡美浦村", "稲敷郡阿見町", "稲敷郡河内町", "結城郡八千代町", "猿島郡五霞町", "猿島郡境町", "北相馬郡利根町"], "栃木県": ["全域", "宇都宮市", "足利市", "栃木市", "佐野市", "鹿沼市", "日光市", "小山市", "真岡市", "大田原市", "矢板市", "那須塩原市", "さくら市", "那須烏山市", "下野市", "河内郡上三川町", "芳賀郡益子町", "芳賀郡茂木町", "芳賀郡市貝町", "芳賀郡芳賀町", "下都賀郡壬生町", "下都賀郡野木町", "塩谷郡塩谷町", "塩谷郡高根沢町", "那須郡那須町", "那須郡那珂川町"], "群馬県": ["全域", "前橋市", "高崎市", "桐生市", "伊勢崎市", "太田市", "沼田市", "館林市", "渋川市", "藤岡市", "富岡市", "安中市", "みどり市", "北群馬郡榛東村", "北群馬郡吉岡町", "多野郡上野村", "多野郡神流町", "甘楽郡下仁田町", "甘楽郡南牧村", "甘楽郡甘楽町", "吾妻郡中之条町", "吾妻郡長野原町", "吾妻郡嬬恋村", "吾妻郡草津町", "吾妻郡高山村", "吾妻郡東吾妻町", "利根郡片品村", "利根郡川場村", "利根郡昭和村", "利根郡みなかみ町", "佐波郡玉村町", "邑楽郡板倉町", "邑楽郡明和町", "邑楽郡千代田町", "邑楽郡大泉町", "邑楽郡邑楽町"], "埼玉県": ["全域", "さいたま市（全区）", "さいたま市西区", "さいたま市北区", "さいたま市大宮区", "さいたま市見沼区", "さいたま市中央区", "さいたま市桜区", "さいたま市浦和区", "さいたま市南区", "さいたま市緑区", "さいたま市岩槻区", "川越市", "熊谷市", "川口市", "行田市", "秩父市", "所沢市", "飯能市", "加須市", "本庄市", "東松山市", "春日部市", "狭山市", "羽生市", "鴻巣市", "深谷市", "上尾市", "草加市", "越谷市", "蕨市", "戸田市", "入間市", "朝霞市", "志木市", "和光市", "新座市", "桶川市", "久喜市", "北本市", "八潮市", "富士見市", "三郷市", "蓮田市", "坂戸市", "幸手市", "鶴ヶ島市", "日高市", "吉川市", "ふじみ野市", "白岡市", "北足立郡伊奈町", "入間郡三芳町", "入間郡毛呂山町", "入間郡越生町", "比企郡滑川町", "比企郡嵐山町", "比企郡小川町", "比企郡川島町", "比企郡吉見町", "比企郡鳩山町", "比企郡ときがわ町", "秩父郡横瀬町", "秩父郡皆野町", "秩父郡長瀞町", "秩父郡小鹿野町", "秩父郡東秩父村", "児玉郡美里町", "児玉郡神川町", "児玉郡上里町", "大里郡寄居町", "南埼玉郡宮代町", "北葛飾郡杉戸町", "北葛飾郡松伏町"], "千葉県": ["全域", "千葉市（全区）", "千葉市中央区", "千葉市花見川区", "千葉市稲毛区", "千葉市若葉区", "千葉市緑区", "千葉市美浜区", "銚子市", "市川市", "船橋市", "館山市", "木更津市", "松戸市", "野田市", "茂原市", "成田市", "佐倉市", "東金市", "旭市", "習志野市", "柏市", "勝浦市", "市原市", "流山市", "八千代市", "我孫子市", "鴨川市", "鎌ヶ谷市", "君津市", "富津市", "浦安市", "四街道市", "袖ヶ浦市", "八街市", "印西市", "白井市", "富里市", "南房総市", "匝瑳市", "香取市", "山武市", "いすみ市", "大網白里市", "印旛郡酒々井町", "印旛郡栄町", "香取郡神崎町", "香取郡多古町", "香取郡東庄町", "山武郡九十九里町", "山武郡芝山町", "山武郡横芝光町", "長生郡一宮町", "長生郡睦沢町", "長生郡長生村", "長生郡白子町", "長生郡長柄町", "長生郡長南町", "夷隅郡大多喜町", "夷隅郡御宿町", "安房郡鋸南町"], "東京都": ["全域", "千代田区", "中央区", "港区", "新宿区", "文京区", "台東区", "墨田区", "江東区", "品川区", "目黒区", "大田区", "世田谷区", "渋谷区", "中野区", "杉並区", "豊島区", "北区", "荒川区", "板橋区", "練馬区", "足立区", "葛飾区", "江戸川区", "八王子市", "立川市", "武蔵野市", "三鷹市", "青梅市", "府中市", "昭島市", "調布市", "町田市", "小金井市", "小平市", "日野市", "東村山市", "国分寺市", "国立市", "福生市", "狛江市", "東大和市", "清瀬市", "東久留米市", "武蔵村山市", "多摩市", "稲城市", "羽村市", "あきる野市", "西東京市", "西多摩郡瑞穂町", "西多摩郡日の出町", "西多摩郡檜原村", "西多摩郡奥多摩町", "大島町", "新島村", "神津島村", "三宅村", "御蔵島村", "八丈町", "青ヶ島村", "小笠原村"], "神奈川県": ["全域", "横浜市（全区）", "川崎市（全区）", "相模原市（全区）", "横浜市鶴見区", "横浜市神奈川区", "横浜市西区", "横浜市中区", "横浜市南区", "横浜市保土ケ谷区", "横浜市磯子区", "横浜市金沢区", "横浜市港北区", "横浜市戸塚区", "横浜市港南区", "横浜市旭区", "横浜市緑区", "横浜市瀬谷区", "横浜市栄区", "横浜市泉区", "横浜市青葉区", "横浜市都筑区", "川崎市川崎区", "川崎市幸区", "川崎市中原区", "川崎市高津区", "川崎市多摩区", "川崎市宮前区", "川崎市麻生区", "相模原市緑区", "相模原市中央区", "相模原市南区", "横須賀市", "平塚市", "鎌倉市", "藤沢市", "小田原市", "茅ヶ崎市", "逗子市", "三浦市", "秦野市", "厚木市", "大和市", "伊勢原市", "海老名市", "座間市", "南足柄市", "綾瀬市", "三浦郡葉山町", "高座郡寒川町", "中郡大磯町", "中郡二宮町", "足柄上郡中井町", "足柄上郡大井町", "足柄上郡松田町", "足柄上郡山北町", "足柄上郡開成町", "足柄下郡箱根町", "足柄下郡真鶴町", "足柄下郡湯河原町", "愛甲郡愛川町", "愛甲郡清川村"]}, "中部": {"新潟県": ["全域", "新潟市（全区）", "新潟市北区", "新潟市東区", "新潟市中央区", "新潟市江南区", "新潟市秋葉区", "新潟市南区", "新潟市西区", "新潟市西蒲区", "長岡市", "三条市", "柏崎市", "新発田市", "小千谷市", "加茂市", "十日町市", "見附市", "村上市", "燕市", "糸魚川市", "妙高市", "五泉市", "上越市", "阿賀野市", "佐渡市", "魚沼市", "南魚沼市", "胎内市", "北蒲原郡聖籠町", "西蒲原郡弥彦村", "南蒲原郡田上町", "東蒲原郡阿賀町", "三島郡出雲崎町", "南魚沼郡湯沢町", "中魚沼郡津南町", "刈羽郡刈羽村", "岩船郡関川村", "岩船郡粟島浦村"], "富山県": ["全域", "富山市", "高岡市", "魚津市", "氷見市", "滑川市", "黒部市", "砺波市", "小矢部市", "南砺市", "射水市", "中新川郡舟橋村", "中新川郡上市町", "中新川郡立山町", "下新川郡入善町", "下新川郡朝日町"], "石川県": ["全域", "金沢市", "七尾市", "小松市", "輪島市", "珠洲市", "加賀市", "羽咋市", "かほく市", "白山市", "能美市", "野々市市", "能美郡川北町", "河北郡津幡町", "河北郡内灘町", "羽咋郡志賀町", "羽咋郡宝達志水町", "鹿島郡中能登町", "鳳珠郡穴水町", "鳳珠郡能登町"], "福井県": ["全域", "福井市", "敦賀市", "小浜市", "大野市", "勝山市", "鯖江市", "あわら市", "越前市", "坂井市", "吉田郡永平寺町", "今立郡池田町", "南条郡南越前町", "丹生郡越前町", "三方郡美浜町", "大飯郡高浜町", "大飯郡おおい町", "三方上中郡若狭町"], "山梨県": ["全域", "甲府市", "富士吉田市", "都留市", "山梨市", "大月市", "韮崎市", "南アルプス市", "北杜市", "甲斐市", "笛吹市", "上野原市", "甲州市", "中央市", "西八代郡市川三郷町", "南巨摩郡早川町", "南巨摩郡身延町", "南巨摩郡南部町", "南巨摩郡富士川町", "中巨摩郡昭和町", "南都留郡道志村", "南都留郡西桂町", "南都留郡忍野村", "南都留郡山中湖村", "南都留郡鳴沢村", "南都留郡富士河口湖町", "北都留郡小菅村", "北都留郡丹波山村"], "長野県": ["全域", "長野市", "松本市", "上田市", "岡谷市", "飯田市", "諏訪市", "須坂市", "小諸市", "伊那市", "駒ヶ根市", "中野市", "大町市", "飯山市", "茅野市", "塩尻市", "佐久市", "千曲市", "東御市", "安曇野市", "南佐久郡小海町", "南佐久郡川上村", "南佐久郡南牧村", "南佐久郡南相木村", "南佐久郡北相木村", "南佐久郡佐久穂町", "北佐久郡軽井沢町", "北佐久郡御代田町", "北佐久郡立科町", "小県郡青木村", "小県郡長和町", "諏訪郡下諏訪町", "諏訪郡富士見町", "諏訪郡原村", "上伊那郡辰野町", "上伊那郡箕輪町", "上伊那郡飯島町", "上伊那郡南箕輪村", "上伊那郡中川村", "上伊那郡宮田村", "下伊那郡松川町", "下伊那郡高森町", "下伊那郡阿南町", "下伊那郡阿智村", "下伊那郡平谷村", "下伊那郡根羽村", "下伊那郡下條村", "下伊那郡売木村", "下伊那郡天龍村", "下伊那郡泰阜村", "下伊那郡喬木村", "下伊那郡豊丘村", "下伊那郡大鹿村", "木曽郡上松町", "木曽郡南木曽町", "木曽郡木祖村", "木曽郡王滝村", "木曽郡大桑村", "木曽郡木曽町", "東筑摩郡麻績村", "東筑摩郡生坂村", "東筑摩郡山形村", "東筑摩郡朝日村", "東筑摩郡筑北村", "北安曇郡池田町", "北安曇郡松川村", "北安曇郡白馬村", "北安曇郡小谷村", "埴科郡坂城町", "上高井郡小布施町", "上高井郡高山村", "下高井郡山ノ内町", "下高井郡木島平村", "下高井郡野沢温泉村", "上水内郡信濃町", "上水内郡小川村", "上水内郡飯綱町", "下水内郡栄村"], "岐阜県": ["全域", "岐阜市", "大垣市", "高山市", "多治見市", "関市", "中津川市", "美濃市", "瑞浪市", "羽島市", "恵那市", "美濃加茂市", "土岐市", "各務原市", "可児市", "山県市", "瑞穂市", "飛騨市", "本巣市", "郡上市", "下呂市", "海津市", "羽島郡岐南町", "羽島郡笠松町", "養老郡養老町", "不破郡垂井町", "不破郡関ケ原町", "安八郡神戸町", "安八郡輪之内町", "安八郡安八町", "揖斐郡揖斐川町", "揖斐郡大野町", "揖斐郡池田町", "本巣郡北方町", "加茂郡坂祝町", "加茂郡富加町", "加茂郡川辺町", "加茂郡七宗町", "加茂郡八百津町", "加茂郡白川町", "加茂郡東白川村", "可児郡御嵩町", "大野郡白川村"], "静岡県": ["全域", "静岡市（全区）", "浜松市（全区）", "静岡市葵区", "静岡市駿河区", "静岡市清水区", "浜松市中央区", "浜松市浜名区", "浜松市天竜区", "沼津市", "熱海市", "三島市", "富士宮市", "伊東市", "島田市", "富士市", "磐田市", "焼津市", "掛川市", "藤枝市", "御殿場市", "袋井市", "下田市", "裾野市", "湖西市", "伊豆市", "御前崎市", "菊川市", "伊豆の国市", "牧之原市", "賀茂郡東伊豆町", "賀茂郡河津町", "賀茂郡南伊豆町", "賀茂郡松崎町", "賀茂郡西伊豆町", "田方郡函南町", "駿東郡清水町", "駿東郡長泉町", "駿東郡小山町", "榛原郡吉田町", "榛原郡川根本町", "周智郡森町"], "愛知県": ["全域", "名古屋市（全区）", "名古屋市千種区", "名古屋市東区", "名古屋市北区", "名古屋市西区", "名古屋市中村区", "名古屋市中区", "名古屋市昭和区", "名古屋市瑞穂区", "名古屋市熱田区", "名古屋市中川区", "名古屋市港区", "名古屋市南区", "名古屋市守山区", "名古屋市緑区", "名古屋市名東区", "名古屋市天白区", "豊橋市", "岡崎市", "一宮市", "瀬戸市", "半田市", "春日井市", "豊川市", "津島市", "碧南市", "刈谷市", "豊田市", "安城市", "西尾市", "蒲郡市", "犬山市", "常滑市", "江南市", "小牧市", "稲沢市", "新城市", "東海市", "大府市", "知多市", "知立市", "尾張旭市", "高浜市", "岩倉市", "豊明市", "日進市", "田原市", "愛西市", "清須市", "北名古屋市", "弥富市", "みよし市", "あま市", "長久手市", "愛知郡東郷町", "西春日井郡豊山町", "丹羽郡大口町", "丹羽郡扶桑町", "海部郡大治町", "海部郡蟹江町", "海部郡飛島村", "知多郡阿久比町", "知多郡東浦町", "知多郡南知多町", "知多郡美浜町", "知多郡武豊町", "額田郡幸田町", "北設楽郡設楽町", "北設楽郡東栄町", "北設楽郡豊根村"]}, "中国": {"鳥取県": ["全域", "鳥取市", "米子市", "倉吉市", "境港市", "岩美郡岩美町", "八頭郡若桜町", "八頭郡智頭町", "八頭郡八頭町", "東伯郡三朝町", "東伯郡湯梨浜町", "東伯郡琴浦町", "東伯郡北栄町", "西伯郡日吉津村", "西伯郡大山町", "西伯郡南部町", "西伯郡伯耆町", "日野郡日南町", "日野郡日野町", "日野郡江府町"], "島根県": ["全域", "松江市", "浜田市", "出雲市", "益田市", "大田市", "安来市", "江津市", "雲南市", "仁多郡奥出雲町", "飯石郡飯南町", "邑智郡川本町", "邑智郡美郷町", "邑智郡邑南町", "鹿足郡津和野町", "鹿足郡吉賀町", "隠岐郡海士町", "隠岐郡西ノ島町", "隠岐郡知夫村", "隠岐郡隠岐の島町"], "岡山県": ["全域", "岡山市（全区）", "岡山市北区", "岡山市中区", "岡山市東区", "岡山市南区", "倉敷市", "津山市", "玉野市", "笠岡市", "井原市", "総社市", "高梁市", "新見市", "備前市", "瀬戸内市", "赤磐市", "真庭市", "美作市", "浅口市", "和気郡和気町", "都窪郡早島町", "浅口郡里庄町", "小田郡矢掛町", "真庭郡新庄村", "苫田郡鏡野町", "勝田郡勝央町", "勝田郡奈義町", "英田郡西粟倉村", "久米郡久米南町", "久米郡美咲町", "加賀郡吉備中央町"], "広島県": ["全域", "広島市（全区）", "広島市中区", "広島市東区", "広島市南区", "広島市西区", "広島市安佐南区", "広島市安佐北区", "広島市安芸区", "広島市佐伯区", "呉市", "竹原市", "三原市", "尾道市", "福山市", "府中市", "三次市", "庄原市", "大竹市", "東広島市", "廿日市市", "安芸高田市", "江田島市", "安芸郡府中町", "安芸郡海田町", "安芸郡熊野町", "安芸郡坂町", "山県郡安芸太田町", "山県郡北広島町", "豊田郡大崎上島町", "世羅郡世羅町", "神石郡神石高原町"], "山口県": ["全域", "下関市", "宇部市", "山口市", "萩市", "防府市", "下松市", "岩国市", "光市", "長門市", "柳井市", "美祢市", "周南市", "山陽小野田市", "大島郡周防大島町", "玖珂郡和木町", "熊毛郡上関町", "熊毛郡田布施町", "熊毛郡平生町", "阿武郡阿武町"]}, "四国": {"徳島県": ["全域", "徳島市", "鳴門市", "小松島市", "阿南市", "吉野川市", "阿波市", "美馬市", "三好市", "勝浦郡勝浦町", "勝浦郡上勝町", "名東郡佐那河内村", "名西郡石井町", "名西郡神山町", "那賀郡那賀町", "海部郡牟岐町", "海部郡美波町", "海部郡海陽町", "板野郡松茂町", "板野郡北島町", "板野郡藍住町", "板野郡板野町", "板野郡上板町", "美馬郡つるぎ町", "三好郡東みよし町"], "香川県": ["全域", "高松市", "丸亀市", "坂出市", "善通寺市", "観音寺市", "さぬき市", "東かがわ市", "三豊市", "小豆郡土庄町", "小豆郡小豆島町", "木田郡三木町", "香川郡直島町", "綾歌郡宇多津町", "綾歌郡綾川町", "仲多度郡琴平町", "仲多度郡多度津町", "仲多度郡まんのう町"], "愛媛県": ["全域", "松山市", "今治市", "宇和島市", "八幡浜市", "新居浜市", "西条市", "大洲市", "伊予市", "四国中央市", "西予市", "東温市", "越智郡上島町", "上浮穴郡久万高原町", "伊予郡松前町", "伊予郡砥部町", "喜多郡内子町", "西宇和郡伊方町", "北宇和郡松野町", "北宇和郡鬼北町", "南宇和郡愛南町"], "高知県": ["全域", "高知市", "室戸市", "安芸市", "南国市", "土佐市", "須崎市", "宿毛市", "土佐清水市", "四万十市", "香南市", "香美市", "安芸郡東洋町", "安芸郡奈半利町", "安芸郡田野町", "安芸郡安田町", "安芸郡北川村", "安芸郡馬路村", "安芸郡芸西村", "長岡郡本山町", "長岡郡大豊町", "土佐郡土佐町", "土佐郡大川村", "吾川郡いの町", "吾川郡仁淀川町", "高岡郡中土佐町", "高岡郡佐川町", "高岡郡越知町", "高岡郡檮原町", "高岡郡日高村", "高岡郡津野町", "高岡郡四万十町", "幡多郡大月町", "幡多郡三原村", "幡多郡黒潮町"]}, "九州・沖縄": {"福岡県": ["全域", "北九州市（全区）", "福岡市（全区）", "北九州市門司区", "北九州市若松区", "北九州市戸畑区", "北九州市小倉北区", "北九州市小倉南区", "北九州市八幡東区", "北九州市八幡西区", "福岡市東区", "福岡市博多区", "福岡市中央区", "福岡市南区", "福岡市西区", "福岡市城南区", "福岡市早良区", "大牟田市", "久留米市", "直方市", "飯塚市", "田川市", "柳川市", "八女市", "筑後市", "大川市", "行橋市", "豊前市", "中間市", "小郡市", "筑紫野市", "春日市", "大野城市", "宗像市", "太宰府市", "古賀市", "福津市", "うきは市", "宮若市", "嘉麻市", "朝倉市", "みやま市", "糸島市", "那珂川市", "糟屋郡宇美町", "糟屋郡篠栗町", "糟屋郡志免町", "糟屋郡須恵町", "糟屋郡新宮町", "糟屋郡久山町", "糟屋郡粕屋町", "遠賀郡芦屋町", "遠賀郡水巻町", "遠賀郡岡垣町", "遠賀郡遠賀町", "鞍手郡小竹町", "鞍手郡鞍手町", "嘉穂郡桂川町", "朝倉郡筑前町", "朝倉郡東峰村", "三井郡大刀洗町", "三潴郡大木町", "八女郡広川町", "田川郡香春町", "田川郡添田町", "田川郡糸田町", "田川郡川崎町", "田川郡大任町", "田川郡赤村", "田川郡福智町", "京都郡苅田町", "京都郡みやこ町", "築上郡吉富町", "築上郡上毛町", "築上郡築上町"], "佐賀県": ["全域", "佐賀市", "唐津市", "鳥栖市", "多久市", "伊万里市", "武雄市", "鹿島市", "小城市", "嬉野市", "神埼市", "神埼郡吉野ヶ里町", "三養基郡基山町", "三養基郡上峰町", "三養基郡みやき町", "東松浦郡玄海町", "西松浦郡有田町", "杵島郡大町町", "杵島郡江北町", "杵島郡白石町", "藤津郡太良町"], "長崎県": ["全域", "長崎市", "佐世保市", "島原市", "諫早市", "大村市", "平戸市", "松浦市", "対馬市", "壱岐市", "五島市", "西海市", "雲仙市", "南島原市", "西彼杵郡長与町", "西彼杵郡時津町", "東彼杵郡東彼杵町", "東彼杵郡川棚町", "東彼杵郡波佐見町", "北松浦郡小値賀町", "北松浦郡佐々町", "南松浦郡新上五島町"], "熊本県": ["全域", "熊本市（全区）", "熊本市中央区", "熊本市東区", "熊本市西区", "熊本市南区", "熊本市北区", "八代市", "人吉市", "荒尾市", "水俣市", "玉名市", "山鹿市", "菊池市", "宇土市", "上天草市", "宇城市", "阿蘇市", "天草市", "合志市", "下益城郡美里町", "玉名郡玉東町", "玉名郡南関町", "玉名郡長洲町", "玉名郡和水町", "菊池郡大津町", "菊池郡菊陽町", "阿蘇郡南小国町", "阿蘇郡小国町", "阿蘇郡産山村", "阿蘇郡高森町", "阿蘇郡西原村", "阿蘇郡南阿蘇村", "上益城郡御船町", "上益城郡嘉島町", "上益城郡益城町", "上益城郡甲佐町", "上益城郡山都町", "八代郡氷川町", "葦北郡芦北町", "葦北郡津奈木町", "球磨郡錦町", "球磨郡多良木町", "球磨郡水上村", "球磨郡相良村", "球磨郡五木村", "球磨郡山江村", "球磨郡球磨村", "球磨郡あさぎり町", "天草郡苓北町"], "大分県": ["全域", "大分市", "別府市", "中津市", "日田市", "佐伯市", "臼杵市", "津久見市", "竹田市", "豊後高田市", "杵築市", "宇佐市", "豊後大野市", "由布市", "国東市", "東国東郡姫島村", "速見郡日出町", "玖珠郡九重町", "玖珠郡玖珠町"], "宮崎県": ["全域", "宮崎市", "都城市", "延岡市", "日南市", "小林市", "日向市", "串間市", "西都市", "えびの市", "北諸県郡三股町", "西諸県郡高原町", "東諸県郡国富町", "東諸県郡綾町", "児湯郡高鍋町", "児湯郡新富町", "児湯郡西米良村", "児湯郡木城町", "児湯郡川南町", "児湯郡都農町", "東臼杵郡門川町", "東臼杵郡諸塚村", "東臼杵郡椎葉村", "東臼杵郡美郷町", "西臼杵郡高千穂町", "西臼杵郡日之影町", "西臼杵郡五ヶ瀬町"], "鹿児島県": ["全域", "鹿児島市", "鹿屋市", "枕崎市", "阿久根市", "出水市", "指宿市", "西之表市", "垂水市", "薩摩川内市", "日置市", "曽於市", "霧島市", "いちき串木野市", "南さつま市", "志布志市", "奄美市", "南九州市", "伊佐市", "姶良市", "鹿児島郡三島村", "鹿児島郡十島村", "薩摩郡さつま町", "出水郡長島町", "姶良郡湧水町", "曽於郡大崎町", "肝属郡東串良町", "肝属郡錦江町", "肝属郡南大隅町", "肝属郡肝付町", "熊毛郡中種子町", "熊毛郡南種子町", "熊毛郡屋久島町", "大島郡大和村", "大島郡宇検村", "大島郡瀬戸内町", "大島郡龍郷町", "大島郡喜界町", "大島郡徳之島町", "大島郡天城町", "大島郡伊仙町", "大島郡和泊町", "大島郡知名町", "大島郡与論町"], "沖縄県": ["全域", "那覇市", "宜野湾市", "石垣市", "浦添市", "名護市", "糸満市", "沖縄市", "豊見城市", "うるま市", "宮古島市", "南城市", "国頭郡国頭村", "国頭郡大宜味村", "国頭郡東村", "国頭郡今帰仁村", "国頭郡本部町", "国頭郡恩納村", "国頭郡宜野座村", "国頭郡金武町", "国頭郡伊江村", "中頭郡読谷村", "中頭郡嘉手納町", "中頭郡北谷町", "中頭郡北中城村", "中頭郡中城村", "中頭郡西原町", "島尻郡与那原町", "島尻郡南風原町", "島尻郡渡嘉敷村", "島尻郡座間味村", "島尻郡粟国村", "島尻郡渡名喜村", "島尻郡南大東村", "島尻郡北大東村", "島尻郡伊平屋村", "島尻郡伊是名村", "島尻郡久米島町", "島尻郡八重瀬町", "宮古郡多良間村", "八重山郡竹富町", "八重山郡与那国町"]}, "全国": {"全国": ["全国（訪問・来訪とも）", "全国（オンライン・電話のみ）"]}};</script>
+<script>
+/* 対応できる地域を「地方 → 都道府県 → 市区町村 → 詳細」で選ぶ（5つまで） */
+window.makeZones=function(box,max){var Z=window.ZONE_TREE||{},el=document.getElementById(box),rows=[];max=max||5;
+ function e(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+ function o(l,cur,ph){return'<option value="">'+ph+'</option>'+l.map(function(v){return'<option'+(v===cur?' selected':'')+'>'+e(v)+'</option>'}).join('')}
+ function draw(){el.innerHTML=rows.map(function(r,i){var ps=r.a&&Z[r.a]?Object.keys(Z[r.a]):[],cs=r.a&&r.b&&Z[r.a][r.b]?Z[r.a][r.b]:[];
+  return'<div class="zr" data-i="'+i+'"><span class="zn">地域 '+(i+1)+'</span><select data-z="a" aria-label="地方（大分類）">'+o(Object.keys(Z),r.a,'地方を選ぶ')+'</select><select data-z="b" aria-label="都道府県（中分類）"'+(r.a?'':' disabled')+'>'+o(ps,r.b,'都道府県')+'</select><select data-z="c" aria-label="市区町村（小分類）"'+(r.b?'':' disabled')+'>'+o(cs,r.c,'市区町村')+'</select><input type="text" data-z="d" value="'+e(r.d)+'" maxlength="80" placeholder="詳細（任意）例：北区・都島区のみ" aria-label="詳細">'+(rows.length>1?'<button type="button" class="small-btn" data-zdel>消す</button>':'')+'</div>'}).join('')+(rows.length<max?'<button type="button" class="small-btn" data-zadd>＋ 地域を追加</button>':'')}
+ el.addEventListener('change',function(ev){var r=ev.target.closest('.zr');if(!r)return;var x=rows[+r.dataset.i],k=ev.target.dataset.z;x[k]=ev.target.value;if(k==='a'){x.b='';x.c=''}if(k==='b')x.c='';if(k!=='d')draw()});
+ el.addEventListener('input',function(ev){var r=ev.target.closest('.zr');if(r&&ev.target.dataset.z==='d')rows[+r.dataset.i].d=ev.target.value});
+ el.addEventListener('click',function(ev){if(ev.target.closest('[data-zadd]')){rows.push({a:'',b:'',c:'',d:''});draw()}var d=ev.target.closest('[data-zdel]');if(d){rows.splice(+d.closest('.zr').dataset.i,1);draw()}});
+ var api={get:function(){return rows.filter(function(r){return r.b||r.d}).map(function(r){var t=r.b==='全国'?(r.c||'全国'):(r.b+(r.c&&r.c!=='全域'?' '+r.c:' 全域'));if(!r.b)t='';return(t+(r.d?(t?'（'+r.d+'）':r.d):'')).trim()}).filter(Boolean).join('、')},
+  ok:function(){return rows.every(function(r){return!r.a||r.b})},
+  set:function(str){rows=[];String(str||'').split('、').forEach(function(t){t=t.trim();if(!t)return;var m=t.match(/^(\S+?[都道府県])\s+(.+)$/),hit=null;if(m)Object.keys(Z).forEach(function(a){var cs=Z[a][m[1]];if(!cs)return;var c='';cs.forEach(function(x){if(m[2].indexOf(x)===0&&x.length>c.length)c=x});if(c)hit={a:a,b:m[1],c:c,d:m[2].slice(c.length).replace(/^（/,'').replace(/）$/,'')}});rows.push(hit||{a:'',b:'',c:'',d:t})});if(!rows.length)rows.push({a:'',b:'',c:'',d:''});draw()}};
+ api.set('');return api};
+</script>
+<script>
+(function(){
+var $=function(id){return document.getElementById(id)},TPL=[],FIELDS={},K=window.KEIYAKU_CORE;
+var IN_GAS=!!window.IN_GAS;
+if(window.KEIYAKU_DEMO&&!IN_GAS)$('demoBar').hidden=false;
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function day(s){if(!s)return'';var d=new Date(s);return isNaN(d)?esc(s):(d.getMonth()+1)+'/'+d.getDate()}
+var ACTOR='';try{ACTOR=localStorage.getItem('iryo-actor')||''}catch(e){}
+var ROLE='admin',MYNAME='';
+function isStaff(){return ROLE==='staff'}
+function applyRole(){document.body.classList.toggle('role-staff',isStaff());
+ $('meInfo').innerHTML='<span class="me-badge">'+(isStaff()?'担当者':'管理者')+'：'+esc(MYNAME)+'</span>　'+(isStaff()?'使える画面：電子契約（自分が送った契約書）・設定（提携先の登録と登録フォームの送付）':'すべての画面を使えます');
+ if(isStaff()){ACTOR=MYNAME;$('actorW').innerHTML='<span class="me-badge">担当：'+esc(MYNAME)+'</span>';$('tabRoute').textContent='設定（提携先）';goTab('keiyaku')}
+ else{if(!ACTOR&&MYNAME){ACTOR=MYNAME;try{localStorage.setItem('iryo-actor',ACTOR)}catch(e){}}}}
+function api(a,d){d=d||{};if(a.indexOf('admin.')===0&&a!=='admin.login'&&ACTOR&&d.actor==null)d.actor=ACTOR;return keiyakuApi(a,d)}
+var n=new Date(),nx=new Date(n.getFullYear(),n.getMonth()+1,1);$('cStart').value=nx.getFullYear()+'-'+('0'+(nx.getMonth()+1)).slice(-2);
+function start(){$('panel').hidden=false;
+ api('admin.templates').then(function(r){TPL=r.templates;FIELDS=r.fields;$('tpl').innerHTML=TPL.filter(function(t){return!t.hidden}).map(function(t){return'<option value="'+t.key+'">'+esc(t.title)+'</option>'}).join('');onTpl()}).catch(function(e){$('errI').textContent=e.message});list()}
+function cur(){var k=$('tpl').value;return TPL.filter(function(x){return x.key===k})[0]}
+function cond(){return{type:$('cType').value,pay:$('cPay').value,sites:$('cSites').value,staff:$('cStaff').value,start:$('cStart').value,referrer:$('cRef').value.trim(),founder:$('cFounder').checked,entryFee:$('cEntry').value.trim()}}
+function onCond(){var t=$('cType').value;$('cSitesBox').hidden=t!=='hojin';$('cStaffBox').hidden=t==='kyosan';$('cEntryBox').hidden=$('cFounder').checked;
+ var o=K.normCond(cond());$('cFee').textContent='月額 '+K.yen(o.monthly)+'　／　初回のお振込み '+K.yen(o.first)+'（'+o.dueText+'まで）　／　契約期間 '+o.startText+'〜'+o.endText;$('prev').hidden=true}
+['cType','cPay','cSites','cStaff','cStart','cRef','cFounder','cEntry'].forEach(function(id){$(id).addEventListener('input',onCond);$(id).addEventListener('change',onCond)});
+function preKeys(){return[].map.call($('fieldChk').querySelectorAll('input:checked'),function(i){return i.value}).filter(function(k){return k!=='birth'&&k!=='bank'})}
+function drawPre(){var old={};[].forEach.call($('preBox').querySelectorAll('input'),function(i){old[i.dataset.k]=i.value});
+ $('preBox').innerHTML=preKeys().map(function(k){return'<div class="fld"><label for="pre_'+k+'" style="font-weight:400">'+esc(FIELDS[k].label)+'</label><input type="text" id="pre_'+k+'" data-k="'+k+'" value="'+esc(old[k]||'')+'"></div>'}).join('')}
+function onTpl(){var t=cur();if(!t)return;
+ $('fieldChk').innerHTML=Object.keys(FIELDS).map(function(k){var req=t.required.indexOf(k)>=0;return'<label><input type="checkbox" value="'+k+'"'+(t.fields.indexOf(k)>=0||req?' checked':'')+(req?' disabled':'')+'>'+esc(FIELDS[k].label)+(req?'（※必須）':'')+'</label>'}).join('');
+ $('fieldChk').onchange=drawPre;drawPre();
+ if(t.mtype){$('cType').value=t.mtype}$('cTypeBox').hidden=!!t.mtype;
+ $('reqId').checked=!!t.requireId;$('condBox').hidden=!t.cond;$('noteBox').hidden=!t.note;$('noteLabel').textContent=t.note||'特記事項';$('prev').hidden=true;if(t.cond)onCond()}
+$('tpl').addEventListener('change',onTpl);
+function payload(){var t=cur(),pre={};[].forEach.call($('preBox').querySelectorAll('input'),function(i){if(i.value.trim())pre[i.dataset.k]=i.value.trim()});
+ return{template:t.key,party:{name:$('pName').value.trim(),company:$('pCompany').value.trim(),email:$('pEmail').value.trim()},fields:[].map.call($('fieldChk').querySelectorAll('input:checked'),function(i){return i.value}),requireId:$('reqId').checked,cond:t.cond?cond():null,note:t.note?$('note').value.trim():'',prefill:pre,draft:$('draft').checked,caseNo:CASE_LINK||(REPLACES&&ctOf(REPLACES)?ctOf(REPLACES).case_no:'')||'',replaces:REPLACES||''}}
+$('doPrev').addEventListener('click',function(){var p=payload();$('prev').textContent=K.buildBody(p.template,p.cond,p.note,p.party.company||p.party.name||'（相手のお名前）').replace(/\[\[(\w+)\]\]/g,function(_,k){return p.prefill[k]?p.prefill[k]+'（相手が直せます）':'＿＿＿（相手が記入）'});$('prev').hidden=false});
+$('doIssue').addEventListener('click',function(){var b=this,p=payload();
+ if(/^kaiin/.test(p.template)&&p.cond.type==='hojin'&&(+p.cond.sites||1)<2&&!confirm('法人会員で事業所数が1か所です。このまま送りますか？'))return;
+ if(/^kaiin/.test(p.template)&&p.cond.type==='kyosan'&&!confirm('協賛会員は審査が必要です。審査は済んでいますか？'))return;
+ b.disabled=true;$('errI').textContent='';$('issued').hidden=true;
+ api('admin.issue',p).then(function(r){$('issued').hidden=false;$('issued').innerHTML='送りました（契約番号 '+esc(r.id)+'）。<br>相手の画面：<a href="'+esc(r.url)+'" target="_blank" rel="noopener">'+esc(r.url)+'</a>';['pName','pCompany','pEmail','note','cRef','cEntry'].forEach(function(id){$(id).value=''});if(CASE_LINK)$('issued').innerHTML+='<br>案件 '+esc(CASE_LINK)+' に結びつけました。';if(REPLACES)$('issued').innerHTML+='<br>元の書面 '+esc(REPLACES)+' は取り消しました。';REPLACES=null;setCaseLink(null);$('preBox').innerHTML='';onTpl();list()})
+ .catch(function(e){$('errI').textContent=e.message}).then(function(){b.disabled=false})});
+function list(){api('admin.list').then(function(r){KL=r.rows||[];var mm={};KL.forEach(function(o){if(o.template==='kaiin'&&o.status==='締結済み'&&!o.stopped&&o.party_company)mm[o.party_company]=1});var dl=$('memList');if(dl)dl.innerHTML=Object.keys(mm).sort().map(function(n){return'<option value="'+esc(n)+'">'}).join('');todo();drawRoster();if(IN.length&&!document.querySelector('#inbox .ib input:focus,#inbox .ib textarea:focus'))drawIn();if(!r.rows.length){$('rows').innerHTML='<tr><td colspan="6">まだありません</td></tr>';return}
+ $('rows').innerHTML=r.rows.map(function(x){var cls=x.status==='締結済み'?'done':x.status==='取り消し'?'cancel':'';var st=x.paid?'入金済み':x.status==='送付済み'&&x.viewed?'確認中':x.status;
+  var cn=isStaff()?'':caseOfCt(x);return'<tr data-id="'+esc(x.id)+'"><td>'+esc(x.id)+(cn?'<br><button type="button" class="lnk" data-gocase="'+esc(cn)+'">案件 '+esc(cn)+'</button>'+(x.case_no?'':'<small>（同じメール）</small>'):'')+'</td><td>'+esc(x.title)+(x.draft==='yes'?'<br><span class="tag">下書き</span>':'')+'</td><td>'+esc(x.party_company?x.party_company+' ':'')+esc(x.party_name)+'<br><small>'+esc(x.party_email)+'</small>'+(x.refcode?'<br><span class="tag">紹介コード '+esc(x.refcode)+'</span>':'')+(x.billed?'<br><span class="tag">請求済み：'+esc(x.billed.replace('-','年'))+'月分まで</span>':'')+(x.stopped?'<br><span class="tag cancel">退会（請求停止）</span>':'')+'</td><td><span class="tag '+cls+'">'+esc(x.draft==='yes'?ctSt(x):st)+'</span>'+fbLine(x)+(x.prev?'<br><small>'+esc(x.prev)+' の差し替え</small>':'')+(!isStaff()&&x.issuer?'<br><small>送った人：'+esc(x.issuer)+'</small>':'')+'</td><td>'+day(x.created)+'</td><td>'+draftBtns(x)+
+  (x.status==='締結済み'?'<button class="small-btn" data-pdf="'+esc(x.id)+'">PDFを保存</button>'+(!isStaff()&&x.template==='kaiin'&&!x.paid?'<button class="small-btn" data-paid="'+esc(x.id)+'">入金を確認した</button>':'')+(!isStaff()&&x.template==='kaiin'&&!x.stopped?'<button class="small-btn" data-stop="'+esc(x.id)+'">退会（請求を止める）</button>':''):x.status==='取り消し'?'':'<button class="small-btn" data-resend="'+esc(x.id)+'">もう一度送る</button><button class="small-btn" data-cancel="'+esc(x.id)+'">取り消す</button>')+'</td></tr>'}).join('')}).catch(function(e){$('errR').textContent=e.message})}
+$('rows').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;$('errR').textContent='';
+ if(b.dataset.final){ctFinal(b.dataset.final,b);return}
+ if(b.dataset.redo){ctRedo(b.dataset.redo);return}
+ if(b.dataset.gocase){goTab('inbox');SEG='all';['fCt','fPt'].forEach(function(i){$(i).value=''});drawIn();$('fSt').value='all';$('fQ').value=b.dataset.gocase;OPEN[b.dataset.gocase]=true;drawIn();window.scrollTo(0,$('inbox').getBoundingClientRect().top+scrollY-120);return}
+ if(b.dataset.paid&&confirm('入金を確認しましたか？相手に「会員登録完了」のメールを送ります。'))api('admin.paid',{id:b.dataset.paid}).then(list).catch(function(x){$('errR').textContent=x.message});
+ if(b.dataset.stop&&confirm('この会員を退会扱いにして、毎月の請求書を止めますか？（元に戻すときは担当者に連絡してください）'))api('admin.stop',{id:b.dataset.stop}).then(list).catch(function(x){$('errR').textContent=x.message});
+ if(b.dataset.resend)api('admin.resend',{id:b.dataset.resend}).then(function(){$('errR').textContent='もう一度送りました。'}).catch(function(x){$('errR').textContent=x.message});
+ if(b.dataset.cancel&&confirm('この契約書を取り消しますか？相手はもう開けなくなります。'))api('admin.cancel',{id:b.dataset.cancel}).then(list).catch(function(x){$('errR').textContent=x.message});
+ if(b.dataset.pdf)api('admin.pdf',{id:b.dataset.pdf}).then(function(r){var bin=atob(r.pdf),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);var u=URL.createObjectURL(new Blob([a],{type:'application/pdf'}));var l=document.createElement('a');l.href=u;l.download=r.filename;document.body.appendChild(l);l.click();setTimeout(function(){URL.revokeObjectURL(u);l.remove()},2000)}).catch(function(x){$('errR').textContent=x.message})});
+
+/* ---- 振分け先（提携先一覧から分類で選ぶ）と担当者 ---- */
+var PARTNERS=[],STAFF=[];
+function ctSt(c){if(c.draft==='yes'&&c.status!=='取り消し'&&c.feedback)return c.feedback.res==='ok'?'下書き・相手が「この内容でよい」':'下書き・修正の希望あり';var st=c.paid?'入金済み':c.status==='送付済み'&&c.viewed?'相手が確認中':c.status==='送付済み'?'送付済み（未開封）':c.status;return(c.draft==='yes'?'下書き・':'')+st}
+function ctCls(c){return c.status==='取り消し'?'no':c.draft==='yes'?(c.feedback&&c.feedback.res==='ok'?'ok':'dr'):c.status==='締結済み'?'ok':''}
+function isLiveDraft(c){return c.draft==='yes'&&c.status!=='取り消し'&&c.status!=='締結済み'}
+function draftBtns(c){return isLiveDraft(c)?'<button type="button" class="small-btn fw-b" data-final="'+esc(c.id)+'">この内容で本契約として送る</button><button type="button" class="small-btn" data-redo="'+esc(c.id)+'">内容を直して送り直す</button>':''}
+function fbLine(c){var f=c.feedback;return f&&c.draft==='yes'?'<div class="fb-l '+(f.res==='ok'?'ok':'fix')+'">相手の返事（'+dt(f.ts)+'）：'+(f.res==='ok'?'この内容で進めてよい':'修正の希望')+(f.comment?'<br>'+esc(f.comment):'')+'</div>':''}
+function ctsOf(x){if(!KL)return[];var em=String(x.email||'').toLowerCase();return KL.filter(function(c){return c.case_no?c.case_no===x.no:(em&&String(c.party_email||'').toLowerCase()===em)})}
+function caseOfCt(c){if(c.case_no)return c.case_no;var em=String(c.party_email||'').toLowerCase();if(!em)return'';var m=IN.filter(function(x){return String(x.email||'').toLowerCase()===em});return m.length?m[0].no:''}
+function ctHtml(x){var l=ctsOf(x);return'<div class="ct-box"><b>電子契約</b>'+(l.length?'<ul class="ct-l">'+l.map(function(c){return'<li><span class="ct-st '+ctCls(c)+'">'+esc(ctSt(c))+'</span><span>'+esc(c.title)+'</span><small>'+esc(c.id)+'　'+day(c.created)+' 送付'+(c.prev?'（'+esc(c.prev)+' の差し替え）':'')+(c.case_no?'':'（同じメールアドレスの契約）')+'</small><button type="button" class="small-btn" data-ctgo="'+esc(c.id)+'">電子契約で見る</button>'+draftBtns(c)+fbLine(c)+'</li>'}).join('')+'</ul>':'<p class="hint" style="margin:0">この案件の契約書はまだ送っていません。</p>')+'<button type="button" class="small-btn" data-ctnew style="margin-top:8px">この案件の契約書を作る（下書きも送れます）</button></div>'}
+var CASE_LINK=null;
+function setCaseLink(x){CASE_LINK=x?x.no:null;var el=$('caseLink');el.hidden=!x&&!REPLACES;el.innerHTML='';if(x)el.innerHTML='<span>この契約書は <b>案件 '+esc(x.no)+'</b>（'+esc((x.company?x.company+' ':'')+(x.name||''))+'）に結びつけて送ります。案件の画面に「下書きを送った」などが表示されます。</span><button type="button" class="small-btn" id="caseUnlink">結びつけない</button>';if(x)$('caseUnlink').onclick=function(){setCaseLink(null)}}
+function newCt(x){var g=segOf(x),c=cls(x);goTab('keiyaku');setCaseLink(x);
+ var tk=g.key==='teikei'?'teikei':g.key==='kaiin'?({'事業所会員':'kaiin_jigyosho','法人会員':'kaiin_hojin','協賛会員':'kaiin_kyosan','個人会員（営業協力者）':'kojin'}[c.sub]||'kaiin_jigyosho'):'';
+ if(tk&&[].some.call($('tpl').options,function(o){return o.value===tk})){$('tpl').value=tk;onTpl()}
+ $('pName').value=x.name&&x.name.indexOf('伏せ')<0&&x.name.indexOf('名前なし')<0?x.name:'';$('pCompany').value=x.company||'';$('pEmail').value=x.email||'';$('draft').checked=true;
+ window.scrollTo(0,$('caseLink').getBoundingClientRect().top+scrollY-130);flash($('caseLink'))}
+function ctOf(id){return(KL||[]).filter(function(c){return c.id===id})[0]}
+function ctFinal(id,b){var c=ctOf(id);if(!c)return;var w=c.feedback?(c.feedback.res==='ok'?'相手から「この内容で進めてよい」と返事が届いています。':'注意：相手から「修正の希望」が届いています。直さずに送ってよいですか？'):'まだ相手から返事が届いていません。';
+ if(!confirm(w+'\n\n「'+c.title+'」（'+id+'）を、下書きと同じ内容のまま正式な契約書として '+c.party_email+' へ送ります。相手は同じリンクから記入・押印・承認できるようになります。よろしいですか？'))return;
+ if(b)b.disabled=true;api('admin.finalize',{id:id}).then(function(){$('errR').textContent='「'+c.title+'」（'+id+'）を本契約として送りました。';$('errB').textContent='「'+c.title+'」を本契約として送りました。';list()}).catch(function(er){$('errR').textContent=er.message;$('errB').textContent=er.message;if(b)b.disabled=false})}
+var REPLACES=null;
+function ctRedo(id){api('admin.get',{id:id}).then(function(r){var c=r.contract;goTab('keiyaku');
+ var tk=c.template==='kaiin'?'kaiin_'+((c.cond&&c.cond.type)||'jigyosho'):c.template;if([].some.call($('tpl').options,function(o){return o.value===tk}))$('tpl').value=tk;onTpl();
+ $('pName').value=c.party.name||'';$('pCompany').value=c.party.company||'';$('pEmail').value=c.party.email||'';
+ [].forEach.call($('fieldChk').querySelectorAll('input'),function(i){if(!i.disabled)i.checked=c.fields.indexOf(i.value)>=0});drawPre();
+ [].forEach.call($('preBox').querySelectorAll('input'),function(i){i.value=(c.prefill||{})[i.dataset.k]||''});
+ if(c.cond){$('cPay').value=c.cond.pay||'month';$('cSites').value=c.cond.sites||1;$('cStaff').value=c.cond.staff==null?5:c.cond.staff;$('cStart').value=String(c.cond.start||'').slice(0,7);$('cRef').value=c.cond.referrer||'';$('cFounder').checked=c.cond.founder!==false;$('cEntry').value=c.cond.entryFee||'';onCond()}
+ $('note').value=c.note||'';$('reqId').checked=!!c.requireId;$('draft').checked=!!c.draft;
+ var x=c.case_no?caseOf(c.case_no):null;setCaseLink(x||null);REPLACES=c.id;
+ var el=$('caseLink');el.hidden=false;el.insertAdjacentHTML('afterbegin','<span style="flex-basis:100%"><b>'+esc(c.id)+' を直して送り直します。</b>元の書面は取り消され、直した書面だけが相手に届きます（'+(c.draft?'下書きのまま送るか、下の「下書き（確認用）として送る」を外して本契約として送るかを選べます':'')+'）。'+(c.feedback&&c.feedback.comment?'<br>相手の修正の希望：'+esc(c.feedback.comment):'')+'</span>');
+ if(!x&&c.case_no)el.insertAdjacentHTML('beforeend','<span>案件 '+esc(c.case_no)+' に結びつけます。</span>');
+ var cu=$('caseUnlink');if(cu)cu.remove();
+ if(!el.querySelector('#redoCancel'))el.insertAdjacentHTML('beforeend','<button type="button" class="small-btn" id="redoCancel">差し替えをやめる</button>');$('redoCancel').onclick=function(){REPLACES=null;setCaseLink(null)};
+ window.scrollTo(0,el.getBoundingClientRect().top+scrollY-130);flash(el)}).catch(function(er){$('errR').textContent=er.message;$('errB').textContent=er.message})}
+function goCt(id){goTab('keiyaku');var tr=[].filter.call($('rows').querySelectorAll('tr'),function(t){return t.dataset.id===id})[0];if(tr)flash(tr)}
+function staffOpts(cur){var l=STAFF.slice();if(cur&&l.indexOf(cur)<0)l.unshift(cur);return'<option value="">（担当者を選ぶ）</option>'+l.map(function(n){return'<option'+(n===cur?' selected':'')+'>'+esc(n)+'</option>'}).join('')}
+function autoCat(x){var fs=String(x.fields||'').split('、');for(var i=0;i<fs.length;i++){var m=ROUTE_AUTO_N[fs[i]];if(m)return m}var c=cls(x);if(c.kind==='提携・協業'&&c.path[0]){var p=c.path[0].split(' ＞ ');return[p[0],p[1]||'']}return null}
+function opt(list,cur,ph){return'<option value="">'+ph+'</option>'+list.map(function(v){return'<option'+(v===cur?' selected':'')+'>'+esc(v)+'</option>'}).join('')}
+function ptList(a,b,c){return PARTNERS.filter(function(p){return p.state!=='確認待ち'&&(!a||p.a===a)&&(!b||p.b===b)&&(!c||!p.c||p.c===c)})}
+function ptNames(a,b,c,cur){var l=ptList(a,b,c).map(function(p){return p.name});if(cur&&cur!=='自社'&&l.indexOf(cur)<0)l.unshift(cur);
+ return'<option value="">'+(l.length?'（提携先を選ぶ）':'（当てはまる提携先がまだ登録されていません）')+'</option>'+l.map(function(n){return'<option'+(n===cur?' selected':'')+'>'+esc(n)+'</option>'}).join('')+'<option value="自社"'+(cur==='自社'?' selected':'')+'>自社（当会）で対応する</option><option value="__free">その他（直接入力する）</option>'}
+function ptHtml(x){var a='',b='',c='';var reg=PARTNERS.filter(function(p){return p.name===x.partner})[0];if(reg){a=reg.a;b=reg.b;c=reg.c}else{var m=autoCat(x);if(m){a=m[0];b=m[1]}}
+ var T=window.PARTNER_TAX||{},bs=a&&T[a]?Object.keys(T[a]):[],cs=a&&b&&T[a]&&T[a][b]?T[a][b]:[];
+ return'<div class="pt-box"><label>振分け先'+(autoCat(x)&&!x.partner?' <span class="hint">（相談の内容から大分類・中分類を自動で選んでいます。提携先を選んでください）</span>':'')+'</label><div class="pt-g"><select data-pa aria-label="大分類">'+opt(Object.keys(T),a,'大分類')+'</select><select data-pb aria-label="中分類"'+(a?'':' disabled')+'>'+opt(bs,b,'中分類')+'</select><select data-pc aria-label="小分類"'+(b?'':' disabled')+'>'+opt(cs,c,'小分類（任意）')+'</select><select data-pn aria-label="提携先">'+ptNames(a,b,c,x.partner)+'</select></div>'+
+ '<input type="text" data-k="partner" value="'+esc(x.partner)+'" placeholder="提携先の名前を入力" hidden></div>'}
+$('inbox').addEventListener('change',function(e){if(e.target.dataset&&e.target.dataset.fc==='m'){e.target.closest('.fac-box').dataset.m=e.target.value;return}var box=e.target.closest('.pt-box');if(!box)return;var T=window.PARTNER_TAX||{},A=box.querySelector('[data-pa]'),B=box.querySelector('[data-pb]'),C=box.querySelector('[data-pc]'),N=box.querySelector('[data-pn]'),I=box.querySelector('[data-k="partner"]');
+ if(e.target===A){B.innerHTML=opt(A.value&&T[A.value]?Object.keys(T[A.value]):[],'','中分類');B.disabled=!A.value;C.innerHTML=opt([],'','小分類（任意）');C.disabled=true}
+ if(e.target===B){C.innerHTML=opt(A.value&&B.value&&T[A.value][B.value]?T[A.value][B.value]:[],'','小分類（任意）');C.disabled=!B.value}
+ if(e.target===A||e.target===B||e.target===C){N.innerHTML=ptNames(A.value,B.value,C.value,'');I.hidden=true;I.value=''}
+ if(e.target===N){if(N.value==='__free'){I.hidden=false;I.value='';I.focus()}else{I.hidden=true;I.value=N.value}}});
+/* ---- 設定：担当者 ---- */
+function drawActor(){if(isStaff())return;var l=STAFF.slice();if(ACTOR&&l.indexOf(ACTOR)<0)l.unshift(ACTOR);$('actorSel').innerHTML='<option value="">'+(l.length?'（名前を選ぶ）':'（設定で担当者を登録）')+'</option>'+l.map(function(n){return'<option'+(n===ACTOR?' selected':'')+'>'+esc(n)+'</option>'}).join('');$('actorW').classList.toggle('need',!!STAFF.length&&!ACTOR)}
+$('actorSel').addEventListener('change',function(){ACTOR=this.value;try{localStorage.setItem('iryo-actor',ACTOR)}catch(e){}drawActor();todo()});
+function drawStaff(){drawActor();$('staffList').innerHTML=STAFF.length?STAFF.map(function(n,i){return'<span class="chip">'+esc(n)+'<button type="button" data-rm="'+i+'" aria-label="'+esc(n)+'を消す">×</button></span>'}).join(''):'<p class="hint">まだ登録されていません。</p>'}
+$('staffAdd').addEventListener('click',function(){var v=$('staffNew').value.trim();if(!v)return;if(STAFF.indexOf(v)<0)STAFF.push(v);$('staffNew').value='';drawStaff()});
+$('staffNew').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('staffAdd').click()}});
+$('staffList').addEventListener('click',function(e){var b=e.target.closest('[data-rm]');if(!b)return;STAFF.splice(+b.dataset.rm,1);drawStaff()});
+$('saveStaff').addEventListener('click',function(){var b=this;b.disabled=true;$('errSt').textContent='';api('admin.staffSet',{list:STAFF}).then(function(r){STAFF=r.staff||STAFF;drawStaff();$('errSt').textContent='保存しました。';drawIn();todo()}).catch(function(er){$('errSt').textContent=er.message}).then(function(){b.disabled=false})});
+/* ---- 設定：提携先一覧 ---- */
+var PF_EDIT=-1,PFK={name:'pfName',person:'pfPerson',email:'pfEmail',tel:'pfTel',note:'pfNote'},PZN=makeZones('pfZones',5);
+function pfFill(a,b,c){var T=window.PARTNER_TAX||{};$('pfA').innerHTML=opt(Object.keys(T),a||'','選ぶ');$('pfB').innerHTML=opt(a&&T[a]?Object.keys(T[a]):[],b||'','選ぶ');$('pfB').disabled=!a;$('pfC').innerHTML=opt(a&&b&&T[a]&&T[a][b]?T[a][b]:[],c||'','（任意）');$('pfC').disabled=!b}
+function pfSet(p,idx){p=p||{};PF_EDIT=idx==null?-1:idx;Object.keys(PFK).forEach(function(k){$(PFK[k]).value=p[k]||''});PZN.set(p.area||'');pfFill(p.a,p.b,p.c);$('pfSave').textContent=PF_EDIT>=0?'この内容で更新する':'この内容で登録する';$('errPt').textContent=''}
+$('pfA').addEventListener('change',function(){pfFill(this.value,'','')});$('pfB').addEventListener('change',function(){pfFill($('pfA').value,this.value,'')});
+$('pfClear').addEventListener('click',function(){pfSet({})});
+function savePartners(list,msg){$('pfSave').disabled=true;return api('admin.partnerSet',{rows:list}).then(function(r){PARTNERS=r.partners||list;$('pfSave').disabled=false;drawPt();$('errPt').textContent=msg;drawIn();todo()},function(er){$('pfSave').disabled=false;$('errPt').textContent=er.message;throw er})}
+$('pfSave').addEventListener('click',function(){var p={};Object.keys(PFK).forEach(function(k){p[k]=$(PFK[k]).value.trim()});p.area=PZN.get();if(!PZN.ok()){$('errPt').textContent='対応できる地域は、地方を選んだら都道府県も選んでください。';return}p.a=$('pfA').value;p.b=$('pfB').value;p.c=$('pfC').value;
+ if(!p.name){$('errPt').textContent='提携先の名前を入れてください。';$('pfName').focus();return}
+ if(!p.a||!p.b){$('errPt').textContent='大分類と中分類を選んでください。';(p.a?$('pfB'):$('pfA')).focus();return}
+ if(p.email&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email)){$('errPt').textContent='メールアドレスの形を確かめてください（例：info@example.jp）。';$('pfEmail').focus();return}
+ if(isStaff()){$('pfSave').disabled=true;api('admin.partnerAdd',{row:p}).then(function(r){PARTNERS=r.partners||PARTNERS;drawPt();pfSet({});$('errPt').textContent='登録しました：'+p.name+'（直す・消すときは管理者に頼んでください）'}).catch(function(er){$('errPt').textContent=er.message}).then(function(){$('pfSave').disabled=false});return}
+ var list=PARTNERS.slice(),dup=-1;list.forEach(function(x,j){if(x.name===p.name)dup=j});
+ if(PF_EDIT>=0){if(dup>=0&&dup!==PF_EDIT){$('errPt').textContent='「'+p.name+'」は別に登録されています。';return}p.since=list[PF_EDIT].since;p.by=list[PF_EDIT].by;p.state=list[PF_EDIT].state;list[PF_EDIT]=p}
+ else{if(dup>=0){$('errPt').textContent='「'+p.name+'」はもう登録されています。下の一覧の「直す」から直してください。';return}p.by=ACTOR||MYNAME;p.state='登録済み';list.push(p)}
+ var ed=PF_EDIT>=0;savePartners(list,(ed?'更新しました：':'登録しました：')+p.name+(p.email?'':'（メールが未登録のため、このままでは案件を送れません）')).then(function(){var m=$('errPt').textContent;pfSet({});$('errPt').textContent=m},function(){})});
+function drawPt(){var fa=$('ptFA').value,q=$('ptQ').value.trim().toLowerCase(),T=window.PARTNER_TAX||{},cnt={};PARTNERS.forEach(function(p){cnt[p.a]=(cnt[p.a]||0)+1});
+ $('ptFA').innerHTML='<option value="">すべて（'+PARTNERS.length+'）</option>'+Object.keys(T).map(function(a){return'<option value="'+esc(a)+'"'+(a===fa?' selected':'')+'>'+esc(a)+'（'+(cnt[a]||0)+'）</option>'}).join('');
+ var rows=PARTNERS.map(function(p,i){return[p,i]}).filter(function(z){var p=z[0];return(!fa||p.a===fa)&&(!q||[p.name,p.person,p.area,p.note,p.email].join(' ').toLowerCase().indexOf(q)>=0)});
+ $('ptCount').textContent=(isStaff()?'（あなたが登録した ':'（')+PARTNERS.length+'件・メール登録済み '+PARTNERS.filter(function(p){return p.email}).length+'件）';
+ $('ptRows').innerHTML=rows.length?rows.map(function(z){var p=z[0];return'<tr><td><b>'+esc(p.name)+'</b>'+(p.person?'<br><small>'+esc(p.person)+'</small>':'')+'</td><td>'+esc(p.a)+'<br><small>'+esc(p.b)+(p.c?' ＞ '+esc(p.c):'')+'</small></td><td>'+(p.email?esc(p.email):'<span class="tg yel">メール未登録</span>')+(p.tel?'<br><small>'+esc(p.tel)+'</small>':'')+'</td><td><small>'+esc(p.area||'')+(p.area&&p.note?'<br>':'')+esc(p.note||'')+'</small></td><td><small>'+esc(p.by||'―')+(p.since?'<br>'+esc(p.since):'')+'</small>'+(p.by&&p.by===MYNAME?' <span class="st-mine">あなたが登録</span>':'')+(p.state==='確認待ち'?'<br><span class="st-wait">確認待ち（相手が記入）</span>':'')+'</td><td style="white-space:nowrap">'+(isStaff()?'':(p.state==='確認待ち'?'<button type="button" class="small-btn fw-b" data-ap="'+z[1]+'">確認して使えるようにする</button> ':'')+'<button type="button" class="small-btn" data-ed="'+z[1]+'">直す</button> <button type="button" class="small-btn" data-dl="'+z[1]+'">削除</button>')+'</td></tr>'}).join(''):'<tr><td colspan="6">'+(PARTNERS.length?'条件に合う提携先はありません':(isStaff()?'あなたが登録した提携先は、まだありません。':'まだ登録されていません。上のフォームから登録してください。'))+'</td></tr>'}
+$('ptFA').addEventListener('change',drawPt);$('ptQ').addEventListener('input',drawPt);
+$('ptRows').addEventListener('click',function(e){var b=e.target.closest('[data-ed],[data-dl],[data-ap]');if(!b||isStaff())return;
+ if(b.dataset.ap!=null){var ai=+b.dataset.ap,ap=PARTNERS[ai];if(!confirm('「'+ap.name+'」の内容を確かめましたか？　確認すると、振分け先として選べるようになります。'))return;var al=PARTNERS.slice();al[ai]=Object.assign({},ap,{state:'登録済み'});savePartners(al,'使えるようにしました：'+ap.name).catch(function(){});return}if(b.dataset.ed!=null){pfSet(PARTNERS[+b.dataset.ed],+b.dataset.ed);flash($('ptForm'));$('pfName').focus();return}
+ var i=+b.dataset.dl,p=PARTNERS[i];if(!confirm('「'+p.name+'」を提携先一覧から消しますか？（これまでの案件の記録は残ります）'))return;var list=PARTNERS.slice();list.splice(i,1);savePartners(list,'削除しました：'+p.name).catch(function(){})});
+pfFill('','','');
+/* ---- 提携先へ案件を送る（担当者が確かめ、同意を確認してから送る） ---- */
+var FW=null;
+function fwdLog(x){try{var l=JSON.parse(x.fwd||'[]');return Array.isArray(l)?l:[]}catch(e){return[]}}
+function fwBody(x,p){var g=segOf(x),inc={};document.querySelectorAll('#fwd [data-inc]').forEach(function(c){inc[c.dataset.inc]=c.checked});
+ var skip=/^(【|お名前|事業所名|メール|電話|通っている病院・施設)/,lines=String(x.body||'').split('\n').filter(function(l){return l.trim()&&!skip.test(l)}),info=[];
+ if(inc.name){if(x.name)info.push('お名前：'+x.name);if(x.company)info.push('会社・事業所：'+x.company)}if(inc.email&&x.email)info.push('メール：'+x.email);if(inc.tel&&x.tel&&x.tel!=='（未入力）')info.push('電話：'+x.tel);
+ if(inc.fac&&isFacSeg(x)){var f=facOf(x);if(f.member||f.name)info.push('通っている病院・施設：'+(f.member||f.name)+(f.addr?'（'+f.addr+'）':''))}
+ return p.name+'\n'+(p.person?p.person.replace(/\s*様$/,'')+' 様':'ご担当者様')+'\n\nいつもお世話になっております。医療介護総合支援会です。\n下記のご相談について、ご対応をお願いできますでしょうか。\n'+(info.length?'お客様からは、貴社へ情報をお伝えすることのご了承をいただいております。\n':'')+
+ '\n■受付番号：'+x.no+'\n■種別：'+g.name+'\n\n■ご相談の内容\n'+(lines.join('\n')||'（内容の記入なし）')+'\n\n■お客様の情報\n'+(info.length?info.join('\n'):'（ご連絡先はお伝えしていません。当会が間に入ってご連絡します）')+
+ '\n\nご対応の可否と今後の進め方を、このメールへのご返信でお知らせください。\nお伝えした個人情報は、このご相談への対応のためだけにお使いください。\n\n――――――――――――――――\n医療介護総合支援会（運営 株式会社グローブ）\n'+(x.staff?'担当：'+x.staff+'\n':'')+'電話 0120-933-496（受付 10:00〜19:00）\nメール ikshienkai@gmail.com\n――――――――――――――――'}
+function openFwd(x,name){$('errB').textContent='';
+ if(!name||name==='自社'){$('errB').textContent='先に「振分け先」で提携先を選んでください。';return}
+ var p=PARTNERS.filter(function(z){return z.name===name&&z.state!=='確認待ち'})[0];if(!p){$('errB').textContent='「'+name+'」は提携先一覧に登録されていない（または確認待ちの）ため送れません。設定の「提携先の登録」で登録すると送れます。';return}
+ var SS=stepsOf(x),tg=SS.indexOf('提携先対応中')>=0?'提携先対応中':SS.indexOf('専門家・窓口へつないだ')>=0?'専門家・窓口へつないだ':'';FW={x:x,p:p,st:(tg&&SS.indexOf(x.status)<SS.indexOf(tg))?tg:''};
+ $('fwdTo').innerHTML='送り先：<b>'+esc(p.name)+'</b>'+(p.person?'（'+esc(p.person)+' 様）':'')+'　'+(p.email?esc(p.email):'<span class="tg red">メール未登録</span>')+'<br>送ったメールの写しは、当会のメールにも届きます。返信は当会のメールに届きます。';
+ var w=[];if(!p.email)w.push('この提携先はメールアドレスが登録されていません。設定の「提携先の登録」で「直す」から登録してください。');
+ if(isFacSeg(x)&&facOf(x).m!=='会員の病院・施設')w.push('会員施設の確認が「'+facOf(x).m+'」です。会員施設かを確かめてから送ってください。');
+ var fl=fwdLog(x);if(fl.length)w.push('この案件は、'+fl.map(function(z){return dt(z.ts)+' '+z.name}).join('、')+' に送ったことがあります。');
+ $('fwdWarn').hidden=!w.length;$('fwdWarn').innerHTML=w.map(esc).join('<br>');$('fwIncFac').hidden=!isFacSeg(x);
+ document.querySelectorAll('#fwd [data-inc]').forEach(function(c){c.checked=true});
+ $('fwdS').value='【医療介護総合支援会】ご相談のご依頼（受付番号 '+x.no+'）';$('fwdB').value=fwBody(x,p);
+ $('fwdOk').checked=false;$('fwSend').disabled=true;$('fwdSt').checked=!!FW.st;$('fwdSt').parentNode.hidden=!FW.st;$('fwdStL').textContent='送ったら、状態を「'+FW.st+'」にする';$('errFw').textContent='';$('fwd').hidden=false;$('fwdB').scrollTop=0;$('fwdOk').focus()}
+document.querySelectorAll('#fwd [data-inc]').forEach(function(c){c.addEventListener('change',function(){if(FW)$('fwdB').value=fwBody(FW.x,FW.p)})});
+$('fwdOk').addEventListener('change',function(){$('fwSend').disabled=!this.checked||!FW||!FW.p.email});
+$('fwCancel').addEventListener('click',function(){$('fwd').hidden=true});
+$('fwSend').addEventListener('click',function(){var b=this,x=FW.x,p=FW.p;if(!$('fwdOk').checked||!p.email)return;if(!confirm('「'+p.name+'」（'+p.email+'）へ、この内容を送ります。よろしいですか？'))return;b.disabled=true;b.textContent='送っています…';
+ api('admin.forward',{no:x.no,partner:p.name,subject:$('fwdS').value,body:$('fwdB').value,consent:true,status:$('fwdSt').checked?FW.st:'',staff:x.staff}).then(function(r){x.fwd=r.fwd||x.fwd;x.partner=p.name;if($('fwdSt').checked&&FW.st)x.status=FW.st;x.updated=new Date().toISOString();$('fwd').hidden=true;drawIn();todo();$('errB').textContent='「'+p.name+'」へ送りました（対応の履歴に記録しました）。'})
+ .catch(function(er){$('errFw').textContent=er.message}).then(function(){b.textContent='確認して送る';b.disabled=!$('fwdOk').checked})});
+/* ---- 担当者のログインID（管理者） ---- */
+var ACCS=[];
+function loadAcc(){api('admin.accList').then(function(r){ACCS=r.accounts||[];drawAcc()}).catch(function(e){$('errAc').textContent=e.message})}
+function drawAcc(){$('accRows').innerHTML=ACCS.length?ACCS.map(function(a){return'<tr><td><b>'+esc(a.name)+'</b></td><td>'+esc(a.id)+'</td><td>'+(a.active?'使用中':'<span class="st-wait">停止中</span>')+'</td><td>'+(a.last?dt(a.last):'―')+'</td><td style="white-space:nowrap"><button type="button" class="small-btn" data-acpw="'+esc(a.id)+'">パスワードを再設定</button> <button type="button" class="small-btn" data-acon="'+esc(a.id)+'" data-v="'+(a.active?'0':'1')+'">'+(a.active?'止める':'使えるようにする')+'</button><div class="acpw" hidden style="margin-top:8px"><input type="password" autocomplete="new-password" maxlength="100" placeholder="新しいパスワード（8文字以上）" data-acnew="'+esc(a.id)+'"> <button type="button" class="small-btn fw-b" data-acdo="'+esc(a.id)+'">再設定する</button></div></td></tr>'}).join(''):'<tr><td colspan="5">まだ担当者のIDはありません。下から追加してください。</td></tr>'}
+$('acAdd').addEventListener('click',function(){var b=this,n=$('acName').value.trim(),id=$('acId').value.trim(),pw=$('acPw').value;$('errAc').textContent='';
+ if(!n||!id||!pw){$('errAc').textContent='名前・ログインID・はじめのパスワードを入れてください。';return}if(!/^[A-Za-z0-9._-]{3,30}$/.test(id)){$('errAc').textContent='ログインIDは、半角の英字・数字（3〜30文字）で決めてください。';return}if(pw.length<8){$('errAc').textContent='パスワードは8文字以上にしてください。';return}
+ b.disabled=true;api('admin.accSet',{op:'add',name:n,id:id,pass:pw}).then(function(r){ACCS=r.accounts||[];drawAcc();$('acName').value=$('acId').value=$('acPw').value='';$('errAc').textContent='追加しました：'+n+'（ID：'+id+'）。はじめのパスワードを本人に伝えてください。';if(STAFF.indexOf(n)<0){STAFF.push(n);drawStaff()}}).catch(function(er){$('errAc').textContent=er.message}).then(function(){b.disabled=false})});
+$('accRows').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;$('errAc').textContent='';
+ if(b.dataset.acpw){var box=b.parentNode.querySelector('.acpw');box.hidden=!box.hidden;if(!box.hidden)box.querySelector('input').focus();return}
+ if(b.dataset.acdo){var inp=b.parentNode.querySelector('input'),pw=inp.value;if(pw.length<8){$('errAc').textContent='パスワードは8文字以上にしてください。';return}api('admin.accSet',{op:'reset',id:b.dataset.acdo,pass:pw}).then(function(r){ACCS=r.accounts||[];drawAcc();$('errAc').textContent='パスワードを再設定しました。新しいパスワードを本人に伝えてください。'}).catch(function(er){$('errAc').textContent=er.message});return}
+ if(b.dataset.acon){var on=b.dataset.v==='1';if(!on&&!confirm('このIDを止めますか？　止めると、その担当者はログインできなくなります。'))return;api('admin.accSet',{op:'active',id:b.dataset.acon,active:on}).then(function(r){ACCS=r.accounts||[];drawAcc()}).catch(function(er){$('errAc').textContent=er.message})}});
+$('mpSave').addEventListener('click',function(){var b=this,c=$('mpCur').value,n1=$('mpNew').value,n2=$('mpNew2').value;$('errMp').textContent='';
+ if(!c){$('errMp').textContent='いまのパスワードを入れてください。';return}if(n1.length<8){$('errMp').textContent='新しいパスワードは8文字以上にしてください。';return}if(n1!==n2){$('errMp').textContent='2つの新しいパスワードが合っていません。';return}
+ b.disabled=true;api('admin.passwd',{cur:c,pass:n1}).then(function(){$('mpCur').value=$('mpNew').value=$('mpNew2').value='';$('errMp').textContent='パスワードを変えました。次のログインから新しいパスワードを使ってください。'}).catch(function(er){$('errMp').textContent=er.message}).then(function(){b.disabled=false})});
+$('piSend').addEventListener('click',function(){var b=this,n=$('piName').value.trim(),em=$('piEmail').value.trim();$('errPi').textContent='';
+ if(!n){$('errPi').textContent='相手の会社名・お名前を入れてください。';return}if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){$('errPi').textContent='相手のメールアドレスを正しく入れてください。';return}
+ if(!confirm('「'+n+'」（'+em+'）へ、提携先の登録フォームをメールで送ります。よろしいですか？'))return;
+ b.disabled=true;api('admin.partnerInvite',{name:n,email:em,message:$('piMsg').value.trim()}).then(function(){$('errPi').textContent='送りました：'+n+'（'+em+'）。相手が記入すると、提携先一覧に「確認待ち」で入ります。';$('piName').value=$('piEmail').value=$('piMsg').value=''}).catch(function(er){$('errPi').textContent=er.message}).then(function(){b.disabled=false})});
+/* ---- 対応ログ ---- */
+var LOGS=[],LROWS=[],LOADED=false;
+function loadLog(){$('errLog').textContent='';$('logBody').innerHTML='<tr><td colspan="6">読み込み中…</td></tr>';api('admin.log').then(function(r){LOGS=r.rows||[];LOADED=true;drawLog()}).catch(function(e){$('errLog').textContent=e.message})}
+function drawLog(){var pd=+$('lgP').value||0,ar=$('lgA').value,q=$('lgQ').value.trim().toLowerCase(),now=Date.now(),ws={},cw=$('lgW').value;
+ LOGS.forEach(function(x){var w=x.actor||'（記録なし）';ws[w]=(ws[w]||0)+1});
+ $('lgW').innerHTML='<option value="">すべて</option>'+Object.keys(ws).sort().map(function(w){return'<option'+(w===cw?' selected':'')+'>'+esc(w)+'</option>'}).join('');var ac=$('lgW').value;
+ LROWS=LOGS.filter(function(x){if(pd&&now-new Date(x.ts)>pd*864e5)return false;if(ar&&x.area!==ar)return false;if(ac&&(x.actor||'（記録なし）')!==ac)return false;return!q||[x.no,x.kind,x.text,x.staff,x.actor].join(' ').toLowerCase().indexOf(q)>=0});
+ $('lgCount').textContent='表示中 '+LROWS.length+' 件'+(LROWS.length>500?'（画面には新しい500件まで。すべてはファイルに保存できます）':'');
+ var AC={'案件':'','受付':'k4','電子契約':'k2','設定':'k3','ログイン':'k5'};
+ $('logBody').innerHTML=LROWS.slice(0,500).map(function(x){var t=String(x.text||''),f=t.split('\n')[0];
+  return'<tr><td style="white-space:nowrap">'+dt(x.ts)+'</td><td><span class="kd '+(AC[x.area]||'')+'">'+esc(x.area||'')+'</span></td><td style="white-space:nowrap">'+(x.no?(/^IKK-/.test(x.no)?esc(x.no):'<button type="button" class="lnk" data-go="'+esc(x.no)+'">'+esc(x.no)+'</button>'):'―')+'</td><td><b>'+esc(x.kind)+'</b></td><td>'+(t.indexOf('\n')>=0||t.length>70?'<details><summary>'+esc(f.slice(0,70))+(f.length>70?'…':'')+'</summary><pre class="lg-pre">'+esc(t)+'</pre></details>':esc(t))+'</td><td>'+esc(x.actor||'―')+(x.staff&&x.staff!==x.actor?'<span class="sm">担当 '+esc(x.staff)+'</span>':'')+'</td></tr>'}).join('')||'<tr><td colspan="6">'+(LOGS.length?'条件に合う記録はありません':'まだ記録はありません')+'</td></tr>'}
+['lgP','lgA','lgW'].forEach(function(id){$(id).addEventListener('change',drawLog)});$('lgQ').addEventListener('input',drawLog);$('lgReload').addEventListener('click',loadLog);
+document.querySelector('.tab[data-v="log"]').addEventListener('click',function(){if(!LOADED)loadLog();else drawLog()});
+$('logBody').addEventListener('click',function(e){var b=e.target.closest('[data-go]');if(!b)return;goTab('inbox');SEG='all';['fCt','fPt'].forEach(function(i){$(i).value=''});drawIn();$('fSt').value='all';$('fQ').value=b.dataset.go;OPEN[b.dataset.go]=true;drawIn();window.scrollTo(0,$('inbox').getBoundingClientRect().top+scrollY-120)});
+$('lgCsv').addEventListener('click',function(){var H=['日時','区分','番号','したこと','内容','操作した人','担当'],R=LROWS.map(function(x){var d=new Date(x.ts);return[d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2),x.area,x.no,x.kind,x.text,x.actor,x.staff]});
+ var csv='\ufeff'+[H].concat(R).map(function(r){return r.map(function(v){v=String(v==null?'':v);return/[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(',')}).join('\r\n');
+ var u=URL.createObjectURL(new Blob([csv],{type:'text/csv'})),l=document.createElement('a');l.href=u;l.download='対応ログ_'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(l);l.click();setTimeout(function(){URL.revokeObjectURL(u);l.remove()},1500)});
+/* ---- 会員・相談者の名簿 ---- */
+var RS='member',RF={};
+function members(){return(KL||[]).filter(function(x){return(x.template==='kaiin'||x.template==='kojin')&&x.status!=='取り消し'&&x.draft!=='yes'}).map(function(x){var t=x.template==='kojin'?'個人会員（営業協力者）':(x.typeLabel||'会員');
+ var st=x.stopped?'退会':x.template==='kaiin'?(x.paid?'登録済み':x.status==='締結済み'?'入金待ち':'手続き中'):(x.status==='締結済み'?'登録済み':'手続き中');
+ return{name:x.party_name,company:x.party_company,email:x.party_email,tel:x.phone||'',type:t,pay:x.template==='kojin'?'―':(x.pay==='year'?'年間払い':'月払い'),status:st,date:x.signed||x.created,ref:x.refcode||'',id:x.id}})}
+function people(){var m={};IN.slice().sort(function(a,b){return new Date(a.ts)-new Date(b.ts)}).forEach(function(x){var c=cls(x),key=(x.email||'').toLowerCase()||(x.name+'|'+x.tel+'|'+x.no);
+ var p=m[key]||(m[key]={name:'',company:'',email:x.email,tel:'',cases:[]});p.name=x.name||p.name;p.company=x.company||p.company;p.tel=x.tel||p.tel;p.cases.push(x);p.last=x;p.c=c});
+ return Object.keys(m).map(function(k){return m[k]}).sort(function(a,b){return new Date(b.last.ts)-new Date(a.last.ts)})}
+function pMatch(p){if(RF.kind&&!p.cases.some(function(x){var c=cls(x);return c.kind===RF.kind&&(!RF.role||c.role===RF.role)&&(!RF.cat||catOf(c)===RF.cat)}))return false;return true}
+function mMatch(m){return(!RF.type||m.type===RF.type)&&(!RF.status||m.status===RF.status)&&(!RF.pay||m.pay===RF.pay)}
+function tb(lv,label,n,f){var on=JSON.stringify(f)===JSON.stringify(RF);return'<button type="button" class="l'+lv+(on?' on':'')+'" data-f=\''+esc(JSON.stringify(f))+'\'><span>'+esc(label)+'</span><b>'+n+'</b></button>'}
+var RROWS=[];
+function drawRoster(){if(!$('rBody'))return;var q=$('rQ').value.trim().toLowerCase(),T='';
+ if(RS==='member'){var M=members(),by=function(k){var o={};M.forEach(function(m){o[m[k]]=(o[m[k]]||0)+1});return o};
+  T=tb(1,'すべての会員',M.length,{});[['type','会員の種類'],['status','状態'],['pay','支払い方法']].forEach(function(g){var o=by(g[0]);T+='<h4>'+g[1]+'</h4>'+Object.keys(o).sort().map(function(k){var f={};f[g[0]]=k;return tb(2,k,o[k],f)}).join('')});
+  RROWS=M.filter(mMatch).filter(function(m){return!q||[m.name,m.company,m.email,m.tel,m.ref].join(' ').toLowerCase().indexOf(q)>=0});
+  $('rHead').innerHTML='<tr><th>お名前・会社</th><th>会員の種類</th><th>支払い</th><th>状態</th><th>登録日</th><th>連絡先</th><th>紹介コード</th></tr>';
+  $('rBody').innerHTML=RROWS.map(function(m){return'<tr><td>'+esc(m.name)+(m.company?'<br><small>'+esc(m.company)+'</small>':'')+'</td><td>'+esc(m.type)+'</td><td>'+esc(m.pay)+'</td><td><span class="st'+(m.status==='退会'?' s6':m.status==='入金待ち'?' s0':'')+'">'+esc(m.status)+'</span></td><td>'+day(m.date)+'</td><td><a href="mailto:'+esc(m.email)+'">'+esc(m.email)+'</a>'+(m.tel?'<br>'+esc(m.tel):'')+'</td><td>'+esc(m.ref||'―')+'</td></tr>'}).join('')||'<tr><td colspan="7">該当する会員はいません</td></tr>'}
+ else{var P=people(),tr={};P.forEach(function(p){var seen={};p.cases.forEach(function(x){var c=cls(x),k=c.kind+'|'+c.role+'|'+catOf(c);if(seen[k])return;seen[k]=1;var a=tr[c.kind]||(tr[c.kind]={n:0,r:{}});a.n++;var rk=c.role||'';var b=a.r[rk]||(a.r[rk]={n:0,c:{}});b.n++;var ck=catOf(c)||'（分類なし）';b.c[ck]=(b.c[ck]||0)+1})});
+  T=tb(1,'すべての相談者・申込者',P.length,{});['相談','会員登録','提携・協業','要望'].forEach(function(k){var a=tr[k];if(!a)return;T+='<h4>'+k+'</h4>'+tb(1,k+'（すべて）',a.n,{kind:k});Object.keys(a.r).sort().forEach(function(rk){var b=a.r[rk];if(rk)T+=tb(2,rk,b.n,{kind:k,role:rk});Object.keys(b.c).sort().forEach(function(ck){var f={kind:k};if(rk)f.role=rk;f.cat=ck==='（分類なし）'?'':ck;T+=tb(rk?3:2,ck,b.c[ck],f)})})});
+  RROWS=P.filter(pMatch).filter(function(p){return!q||[p.name,p.company,p.email,p.tel].join(' ').toLowerCase().indexOf(q)>=0});
+  $('rHead').innerHTML='<tr><th>お名前・会社</th><th>連絡先</th><th>種類</th><th>立場・分類</th><th>件数</th><th>最終受付</th><th>最新の状態</th><th></th></tr>';
+  $('rBody').innerHTML=RROWS.map(function(p){var c=cls(p.last);return'<tr><td>'+esc(p.name||'（お名前なし）')+(p.company?'<br><small>'+esc(p.company)+'</small>':'')+'</td><td>'+(p.email?'<a href="mailto:'+esc(p.email)+'">'+esc(p.email)+'</a>':'')+(p.tel&&p.tel!=='（未入力）'?'<br>'+esc(p.tel):'')+'</td><td><span class="kd '+(KCLS[c.kind]||'')+'">'+esc(c.kind)+'</span></td><td>'+esc(c.role)+(catOf(c)?'<br><small>'+esc(catOf(c))+'</small>':'')+'</td><td>'+p.cases.length+'</td><td>'+day(p.last.ts)+'</td><td><span class="st '+stCls(p.last)+'">'+esc(p.last.status)+'</span></td><td><button type="button" class="small-btn" data-go="'+esc(p.last.no)+'">案件を見る</button></td></tr>'}).join('')||'<tr><td colspan="8">該当する人はいません</td></tr>'}
+ $('rTree').innerHTML=T;$('rCount').textContent='表示中 '+RROWS.length+' 人'}
+document.querySelectorAll('[data-rs]').forEach(function(b){b.addEventListener('click',function(){RS=b.dataset.rs;RF={};document.querySelectorAll('[data-rs]').forEach(function(z){z.classList.toggle('on',z===b)});drawRoster()})});
+$('rTree').addEventListener('click',function(e){var b=e.target.closest('[data-f]');if(!b)return;RF=JSON.parse(b.dataset.f);drawRoster()});
+$('rQ').addEventListener('input',drawRoster);
+$('rBody').addEventListener('click',function(e){var b=e.target.closest('[data-go]');if(!b)return;goTab('inbox');SEG='all';['fCt','fPt'].forEach(function(i){$(i).value=''});drawIn();$('fSt').value='all';$('fQ').value=b.dataset.go;OPEN[b.dataset.go]=true;drawIn();window.scrollTo(0,$('inbox').getBoundingClientRect().top+scrollY-120)});
+$('rCsv').addEventListener('click',function(){var H,R;if(RS==='member'){H=['お名前','会社','会員の種類','支払い','状態','登録日','メール','電話','紹介コード','契約番号'];R=RROWS.map(function(m){return[m.name,m.company,m.type,m.pay,m.status,day(m.date),m.email,m.tel,m.ref,m.id]})}else{H=['お名前','会社','メール','電話','種類','立場','分類','件数','最終受付','最新の状態','最新の受付番号'];R=RROWS.map(function(p){var c=cls(p.last);return[p.name,p.company,p.email,p.tel,c.kind,c.role,catOf(c),p.cases.length,day(p.last.ts),p.last.status,p.last.no]})}
+ var csv='﻿'+[H].concat(R).map(function(r){return r.map(function(v){v=String(v==null?'':v);return/[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(',')}).join('\r\n');
+ var u=URL.createObjectURL(new Blob([csv],{type:'text/csv'})),l=document.createElement('a');l.href=u;l.download=(RS==='member'?'会員名簿':'相談者名簿')+'_'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(l);l.click();setTimeout(function(){URL.revokeObjectURL(u);l.remove()},1500)});
+function loadMine(){api('admin.partnersMine').then(function(r){PARTNERS=r.partners||[];drawPt();todo()}).catch(function(e){$('errPt').textContent=e.message})}
+var started=false;function go(){if(started){list();if(isStaff())loadMine();else{inbox();loadAcc()}return}started=true;
+ api('admin.me').then(function(r){ROLE=r.role||'admin';MYNAME=r.name||'';applyRole();start();if(isStaff())loadMine();else{inbox();loadAcc()}go2()}).catch(function(e){$('panel').hidden=false;$('errB').textContent=e.message})}
+function go2(){var seen='';try{seen=localStorage.getItem('iryo-adm-tour')||''}catch(x){}if(!seen){var nb=document.createElement('p');nb.className='note';nb.id='tourNote';nb.innerHTML='はじめての方は、右上の<b>「はじめての方へ：操作の案内」</b>を押してください。画面の見方を順番にご案内します（約1分）。';$('todo').insertBefore(nb,$('todoList'));$('tourBtn').classList.add('flash')}}
+document.querySelectorAll('.tab').forEach(function(t){t.addEventListener('click',function(){document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x===t)});document.querySelectorAll('[data-view]').forEach(function(v){v.hidden=v.dataset.view!==t.dataset.v})})});
+var IN=[],STEPS=['新規受付','内容確認中','振分け済み','提携先対応中','提案・見積り中','完了','見送り'],ROUTES={},H=36e5,SND=true,lastRed=-1;
+var SEGS=window.CASE_SEGS||[],SEG='all';try{SEG=localStorage.getItem('iryo-seg')||'all'}catch(e){}
+var SEGC={kigyo:'',hataraku:'k6',honnin:'k2',kazoku:'k7',none:'',teikei:'k3',youbou:'k4',kaiin:'k5'};
+function segOf(x){if(x._s)return x._s;var lb=String(x.label||''),i=lb.indexOf('：'),t=(i>=0?lb.slice(i+1):lb).split('／')[0];var s=SEGS.filter(function(g){return g.match.indexOf(t)>=0})[0]||SEGS.filter(function(g){return g.key==='none'})[0];x._s=s;return s}
+function segBy(k){return SEGS.filter(function(g){return g.key===k})[0]}
+function stepsOf(x){var l=segOf(x).steps.slice();if(x.status&&l.indexOf(x.status)<0)l.splice(1,0,x.status);return l}
+function isEnd(x){var g=segOf(x);return g.done.indexOf(x.status)>=0||x.status==='完了'||x.status==='見送り'}
+function stCls(x){return x.status==='新規受付'?'s0':isEnd(x)?'s5':''}
+function isFacSeg(x){var k=segOf(x).key;return k==='honnin'||k==='kazoku'}
+function facOf(x){if(x._f)return x._f;var f=null;try{f=x.fac?JSON.parse(x.fac):null}catch(e){}if(!f){f={m:'未確認',kind:'',name:'',addr:'',member:''};var m=String(x.body||'').match(/通っている病院・施設：([^\n]*)/);if(m){var t=m[1],a=t.match(/（([^）]*)）$/);if(a){f.addr=a[1];t=t.slice(0,a.index)}var p=t.split('／');f.kind=(p[0]||'').trim();f.name=p.slice(1).join('／').trim();if(/まだどこにも/.test(f.kind))f.m='通っている先がない'}}x._f=f;return f}
+var FAC_M=['未確認','会員の病院・施設','会員ではない','通っている先がない'],FAC_S={'未確認':'未確認','会員の病院・施設':'会員','会員ではない':'会員外','通っている先がない':'通院先なし'},FAC_K=['病院','クリニック・診療所','介護施設（入所・入居）','デイサービス・訪問介護などの事業所','訪問看護・在宅医療','薬局','居宅介護支援事業所（ケアマネジャー）','まだどこにも通っていない・決まっていない'],FAC_P=['施設へ会員制度を案内する','近くの会員の病院・施設を紹介する','当会で直接対応する','対応を見送る'],FAC_H=['会員名簿で確かめた','施設に電話で確かめた','ご本人・ご家族に確かめた','ケアマネジャーに確かめた'];
+function facHtml(x){if(!isFacSeg(x))return'';var f=facOf(x);
+ var sel=function(k,l,cur,ph){return'<select data-fc="'+k+'">'+(ph?'<option value="">'+ph+'</option>':'')+l.map(function(v){return'<option'+(v===cur?' selected':'')+'>'+esc(v)+'</option>'}).join('')+'</select>'},inp=function(k,cur,ph,ls){return'<input type="text" data-fc="'+k+'" value="'+esc(cur||'')+'" placeholder="'+ph+'"'+(ls?' list="'+ls+'"':'')+' maxlength="100">'};
+ return'<div class="fac-box" data-m="'+esc(f.m)+'"><label>会員施設の確認 <span class="req">※必須</span>'+(f.auto?' <span class="hint">（会員名簿と名前が一致したので「会員」にしています。念のため確かめてください）</span>':'')+'</label><p class="hint" style="margin:2px 0 0">利用者・ご本人とご家族の相談は、通っている病院・クリニック・施設が会員であることが前提です。</p>'+
+ '<div class="fac-g"><div><small>確認の結果</small>'+sel('m',FAC_M,f.m,'')+'</div><div><small>確認の方法</small>'+sel('how',FAC_H,f.how||'','（選ぶ）')+'</div><div class="fc-mem"><small>会員の名前（会員名簿から選ぶ）</small>'+inp('member',f.member,'会員の病院・施設名','memList')+'</div></div>'+
+ '<div class="fac-g"><div><small>通っている先の種類</small>'+sel('kind',FAC_K,f.kind,'（選ぶ）')+'</div><div><small>病院・施設の名前</small>'+inp('name',f.name,'例：〇〇クリニック')+'</div><div><small>所在地</small>'+inp('addr',f.addr,'例：大阪市北区')+'</div><div><small>先方の担当者（ケアマネなど）</small>'+inp('person',f.person,'例：〇〇様（ケアマネジャー）')+'</div><div><small>先方の電話</small>'+inp('tel',f.tel,'例：06-0000-0000')+'</div></div>'+
+ '<div class="fac-g fc-non"><div><small>会員ではない場合の対応 <span class="req">※必須</span></small>'+sel('plan',FAC_P,f.plan||'','（選ぶ）')+'</div><div><small>確認のメモ</small>'+inp('memo',f.memo,'例：施設長に会員制度を案内、来週お返事')+'</div></div>'+
+ '<p class="err fac-err" role="alert"></p><input type="hidden" data-k="fac" value="'+esc(x.fac||'')+'"></div>'}
+function needPt(x){var g=segOf(x);return g.route==='partner'&&!x.partner&&g.need.indexOf(x.status)>=0}
+var STEP_DESC={'新規受付':'サイトから届いたまま（まだ読んでいない）','内容確認中':'内容を読んだ。相手に確認している','ヒアリング・面談':'課題を詳しく聞くため、面談や電話をしている','振分け済み':'どの提携先に任せるか決めた','提携先対応中':'提携先が相手とやりとりしている','提案・見積り中':'相手が提案や見積りを検討している','契約・導入の準備中':'契約・導入に向けて準備している','会員施設の確認':'通っている病院・施設が会員かを確かめている','お話を伺っている':'悩みや状況を聞いている','専門家・窓口へつないだ':'社労士・弁護士や公的な窓口などを案内した','継続して相談中':'引き続き相談にのっている','状況の聞き取り':'体の状態・暮らし・希望などを聞いている','利用・手続きの準備中':'サービスの利用や手続きの準備をしている','面談日の調整中':'面談の日時を決めている','面談済み':'面談を終えた','社内で検討中':'当会の中で検討している','契約の手続き中':'提携の契約書を送り、手続きをしている','提携開始':'提携が決まった（提携先一覧へ登録する）','対応を決めた':'要望への対応を決めた','対応済み':'要望への対応が終わった','契約書を送った':'電子契約で契約書を送った','入金待ち':'契約が済み、入金を待っている','登録完了':'入金を確かめ、会員登録が済んだ','完了':'対応が終わった','見送り':'相手の都合などで進めない'};
+function setSeg(k){SEG=k;try{localStorage.setItem('iryo-seg',k)}catch(e){}$('fSt').value='';$('fCt').value='';$('fFac').value='';$('fPt').value='';drawIn()}
+try{SND=localStorage.getItem('iryo-snd')!=='off'}catch(x){}
+function sndBtn(){$('snd').textContent='警告音：'+(SND?'オン':'オフ');$('snd').setAttribute('aria-pressed',SND)}sndBtn();
+$('snd').addEventListener('click',function(){SND=!SND;try{localStorage.setItem('iryo-snd',SND?'on':'off')}catch(x){}sndBtn();if(SND)beep()});
+function beep(){try{var A=window.AudioContext||window.webkitAudioContext,c=new A();[0,.35,.7].forEach(function(t){var o=c.createOscillator(),g=c.createGain();o.frequency.value=880;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.18,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.3);o.start(c.currentTime+t);o.stop(c.currentTime+t+.32)})}catch(x){}}
+function dt(s){var d=new Date(s);return isNaN(d)?'':(d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)}
+function span(ms){var d=Math.floor(ms/864e5),h=Math.floor(ms%864e5/H);return d?d+'日'+h+'時間':h+'時間'}
+function open_(x){return!isEnd(x)}
+function alerts(x){var a=[],now=Date.now();if(!open_(x))return a;
+ if(x.status==='新規受付'){var g=now-new Date(x.ts);a.push({lv:g>24*H?'red':'yel',t:g>24*H?'未対応 '+span(g):'未対応'})}
+ var idle=(now-new Date(x.updated||x.ts))/864e5;if(x.status!=='新規受付'&&idle>=7)a.push({lv:'red',t:'放置 '+Math.floor(idle)+'日'});else if(x.status!=='新規受付'&&idle>=3)a.push({lv:'yel',t:'進捗の記録なし '+Math.floor(idle)+'日'});
+ if(x.next&&new Date(x.next+'T23:59:59')<new Date())a.push({lv:'red',t:'予定日を過ぎた（'+x.next.slice(5).replace('-','/')+'）'});
+ if(x.status!=='新規受付'&&x.email){var lc=x.contacted?(now-new Date(x.contacted))/864e5:(now-new Date(x.ts))/864e5;if(lc>=7)a.push({lv:'yel',t:'お客様へ'+Math.floor(lc)+'日報告なし'})}
+ if(needPt(x))a.push({lv:'yel',t:'振分け先が未設定'});
+ if(isFacSeg(x)){var fc=facOf(x);if(fc.m==='未確認'&&x.status!=='新規受付')a.push({lv:'yel',t:'会員施設が未確認'});if((fc.m==='会員ではない'||fc.m==='通っている先がない')&&!fc.plan)a.push({lv:'yel',t:'会員外：対応を決める'})}
+ return a}
+var KCLS={'相談':'','会員登録':'k2','提携・協業':'k3','要望':'k4'},OPEN={},VM='list';try{VM=localStorage.getItem('iryo-vm')||'list'}catch(e){}
+function cls(x){if(x._c)return x._c;var lb=String(x.label||''),i=lb.indexOf('：'),t=i>=0?lb.slice(i+1):lb,p=t.split('／'),a=p[0]||'',b=p[1]||'',c={kind:'相談',role:'',big:'',path:[],sub:''};
+ if(a==='提携・協業の申し込み'){c.kind='提携・協業';c.sub=b}else if(a==='要望・ご意見'){c.kind='要望';c.sub=b}else if(a==='会員登録'){c.kind='会員登録';c.sub=b}else{c.role=a;c.big=(b&&b!=='相談')?b:''}
+ String(x.body||'').split('\n').forEach(function(l){var m=l.match(/^(相談の内容|分野) \d+：(.+)$/);if(m)c.path.push(m[2].trim())});
+ if(!c.big&&c.path[0])c.big=c.path[0].split(' ＞ ')[0];x._c=c;return c}
+function catOf(c){return c.kind==='相談'?c.big:(c.big||c.sub)}
+function tableHtml(rows){var now=Date.now();return'<div class="tbl"><table class="ctbl"><thead><tr><th>受付</th><th>種別</th><th>内容・分類</th><th>お名前・会社</th><th>状態</th><th>振分け先</th><th>注意</th></tr></thead><tbody>'+rows.map(function(x,ri){var c=cls(x),g=segOf(x),op=OPEN[x.no];
+ return'<tr class="cr'+(ri%2?' z':'')+(x.status==='新規受付'?' new':'')+(op?' open':'')+'" data-row="'+esc(x.no)+'" title="押すと詳しい内容と操作が開きます"><td>'+dt(x.ts)+'<span class="sm">'+span(now-new Date(x.ts))+'前</span></td><td><span class="kd '+(SEGC[g.key]||'')+'">'+esc(g.name)+'</span>'+(c.sub&&g.key!=='kaiin'?'':(c.sub?'<span class="sm">'+esc(c.sub)+'</span>':''))+'</td><td>'+(c.path.length?esc(c.path[0])+(c.path.length>1?'<span class="sm">ほか'+(c.path.length-1)+'件</span>':''):esc(c.big||c.sub||'―'))+(isFacSeg(x)?'<span class="sm">通院先：'+esc(facOf(x).member||facOf(x).name||'―')+'（<b style="color:'+(facOf(x).m==='会員の病院・施設'?'#1e5b34':'#8a1c1c')+'">'+FAC_S[facOf(x).m]+'</b>）</span>':'')+'</td><td>'+esc(x.name||'（お名前なし）')+(x.company?'<span class="sm">'+esc(x.company)+'</span>':'')+'</td><td><span class="st '+stCls(x)+'">'+esc(x.status)+'</span>'+(function(){var l=ctsOf(x);if(!l.length)return'';var c=l[0];return'<span class="sm"><span class="ct-st '+ctCls(c)+'">契約：'+esc(ctSt(c))+'</span>'+(l.length>1?' ほか'+(l.length-1)+'件':'')+'</span>'})()+'</td><td>'+esc(x.partner==='自社'?'自社（当会）':(x.partner||'―'))+(fwdLog(x).length?'<span class="sm">送付済み '+dt(fwdLog(x).slice(-1)[0].ts)+'</span>':'')+'</td><td>'+x._a.map(function(y){return'<span class="tg '+(y.lv==='red'?'red':'yel')+'">'+esc(y.t)+'</span>'}).join(' ')+'</td></tr>'+(op?'<tr class="cd"><td colspan="7">'+cardHtml(x)+'</td></tr>':'')}).join('')+'</tbody></table></div>'}
+function fillSel(id,o){var cur=$(id).value;$(id).innerHTML='<option value="">すべて</option>'+Object.keys(o).sort().map(function(k){return'<option value="'+esc(k)+'"'+(k===cur?' selected':'')+'>'+esc(k)+'（'+o[k]+'）</option>'}).join('')}
+function inbox(){api('admin.cases').then(function(r){IN=r.rows||[];ROUTES=r.routes||{};PARTNERS=r.partners||[];STAFF=r.staff||[];drawRoute();drawStaff();drawPt();drawIn();todo();drawRoster()}).catch(function(e){$('errB').textContent=e.message})}
+function drawIn(){var pt=$('fPt').value,q=$('fQ').value.trim().toLowerCase();
+ var red=0,nw=0;IN.forEach(function(x){x._a=alerts(x);if(x._a.some(function(y){return y.lv==='red'}))red++;if(x.status==='新規受付')nw++});
+ $('newCnt').hidden=!nw;$('newCnt').textContent=nw;
+ $('alertBar').hidden=!red;$('alertBar').textContent='対応が遅れている案件が '+red+' 件あります。赤い印の案件から対応してください。';
+ if(red&&SND&&red!==lastRed)beep();lastRed=red;
+ var base=SEG==='all'?IN:IN.filter(function(x){return segOf(x).key===SEG});if(SEG!=='all'&&!segBy(SEG)){SEG='all';base=IN}
+ var sc={};IN.forEach(function(x){var k=segOf(x).key,o=sc[k]||(sc[k]={n:0,o:0,nw:0});o.n++;if(open_(x))o.o++;if(x.status==='新規受付')o.nw++});
+ var allNw=IN.filter(function(x){return x.status==='新規受付'}).length,allO=IN.filter(open_).length;
+ $('segBar').innerHTML='<button type="button" data-sg="all"'+(SEG==='all'?' class="on"':'')+'>すべて<b>進行中 '+allO+'</b>'+(allNw?'<i>新 '+allNw+'</i>':'')+'</button>'+SEGS.map(function(g,ix){var o=sc[g.key]||{n:0,o:0,nw:0};return(g.key==='teikei'?'<span class="gap"></span>':'')+'<button type="button" data-sg="'+g.key+'" class="'+(SEG===g.key?'on':'')+(o.n?'':' zero')+'">'+esc(g.name)+'<b>進行中 '+o.o+'</b>'+(o.nw?'<i>新 '+o.nw+'</i>':'')+'</button>'}).join('');
+ var G=segBy(SEG);$('segNote').hidden=!G;if(G)$('segNote').innerHTML='<b>'+esc(G.name)+'</b>：'+(G.route==='self'?'振分け先は自社（当会）のみです。':'相談の内容から振分け先の分類を自動で選びます。')+esc(G.note);
+ var ST=G?G.steps:['新規受付','__doing','__end'],STN={'__doing':'対応中','__end':'完了・終了'};
+ var cnt={};ST.forEach(function(k){cnt[k]=0});base.forEach(function(x){if(G)cnt[x.status]=(cnt[x.status]||0)+1;else{var k=x.status==='新規受付'?'新規受付':isEnd(x)?'__end':'__doing';cnt[k]++}});
+ $('sum').innerHTML=ST.map(function(k){return'<button type="button" data-st="'+k+'"'+(k==='新規受付'&&cnt[k]?' class="red"':'')+'>'+(STN[k]||k)+'<b>'+(cnt[k]||0)+'</b></button>'}).join('');
+ $('stepHelp').innerHTML=(G?G.steps:STEPS).map(function(k){return'<tr><td>'+esc(k)+'</td><td>'+esc(STEP_DESC[k]||'')+'</td></tr>'}).join('');
+ var sv=$('fSt').value;$('fSt').innerHTML='<option value="">進行中のもの（終了以外）</option><option value="all">すべて</option><option value="alert">警告・注意があるもの</option>'+ST.map(function(k){return'<option value="'+k+'">'+(STN[k]||k)+'</option>'}).join('');$('fSt').value=sv;if($('fSt').value!==sv)$('fSt').value='';
+ var st=$('fSt').value;
+ $('fPtW').hidden=!!(G&&G.route==='self');if($('fPtW').hidden)$('fPt').value='';
+ var pts={};base.forEach(function(x){if(x.partner)pts[x.partner]=1});var cur=$('fPt').value;$('fPt').innerHTML='<option value="">すべて</option><option value="-"'+(cur==='-'?' selected':'')+'>振分け先なし</option>'+Object.keys(pts).sort().map(function(p){return'<option value="'+esc(p)+'"'+(p===cur?' selected':'')+'>'+esc(p==='自社'?'自社（当会）':p)+'</option>'}).join('');
+ var cats={};base.forEach(function(x){var k=catOf(cls(x));if(k)cats[k]=(cats[k]||0)+1});fillSel('fCt',cats);
+ var ct=$('fCt').value,fa=$('fFac').value;$('fFacW').hidden=!(SEG==='all'||SEG==='honnin'||SEG==='kazoku');if($('fFacW').hidden)fa='';
+ var rows=base.filter(function(x){var c=cls(x);if(ct&&catOf(c)!==ct)return false;if(fa&&(!isFacSeg(x)||facOf(x).m!==fa))return false;if(st===''&&!open_(x))return false;if(st==='alert'&&!x._a.length)return false;if(st==='__doing'&&(isEnd(x)||x.status==='新規受付'))return false;if(st==='__end'&&!isEnd(x))return false;if(st&&st!=='all'&&st!=='alert'&&st.indexOf('__')&&x.status!==st)return false;if(pt==='-'&&x.partner)return false;if(pt&&pt!=='-'&&x.partner!==pt)return false;return!q||[x.no,x.name,x.company,x.email,x.body,x.label,x.fields,x.partner].join(' ').toLowerCase().indexOf(q)>=0});
+ if(!rows.length){$('inbox').innerHTML='<p class="hint">'+(IN.length?'条件に合う案件はありません':'まだ受付はありません')+'</p>';return}
+ $('inCount').textContent='表示中 '+rows.length+' 件（'+(G?G.name+' ':'')+'全 '+base.length+' 件）';
+ $('inbox').innerHTML=VM==='card'?rows.map(cardHtml).join(''):tableHtml(rows)}
+function cardHtml(x){var g=segOf(x),SS=stepsOf(x),si=SS.indexOf(x.status),stop=x.status==='見送り',now=Date.now(),idle=now-new Date(x.updated||x.ts),id=Math.floor(idle/864e5);
+  var cls=x._a.some(function(y){return y.lv==='red'})||x.status==='新規受付'?'new':open_(x)?'doing':'done';
+  var sug=[];(x.fields||'').split('、').forEach(function(f){(ROUTES[f]||'').split(/[、,]/).forEach(function(p){p=p.trim();if(p&&sug.indexOf(p)<0)sug.push(p)})});
+  return'<div class="ib '+cls+'" data-no="'+esc(x.no)+'"><div class="ib-h"><b>'+(x.status==='新規受付'?'<span class="tg red">未対応</span> ':'')+esc(x.company?x.company+'　':'')+esc(x.name||'（お名前なし）')+'</b><span class="ib-m">'+esc(x.no)+'　受付 '+dt(x.ts)+'</span></div>'+
+  '<div class="bar'+(stop?' stop':'')+'" title="'+esc(x.status)+'">'+SS.filter(function(k){return k!=='見送り'}).map(function(s,k){return'<i class="'+(k<=si||stop?'on':'')+'"></i>'}).join('')+'</div>'+
+  '<div class="ib-m"><b style="color:var(--ink)">'+esc(x.status)+'</b>　受付から '+span(now-new Date(x.ts))+'　<span class="age '+(open_(x)?(id>=7?'r':id>=3?'y':''):'')+'">最後の対応から '+span(idle)+'</span>'+(x.contacted?'　お客様へ最終連絡 '+dt(x.contacted):'')+'</div>'+
+  '<div class="tags">'+x._a.map(function(y){return'<span class="tg '+(y.lv==='red'?'red':'yel')+'">'+esc(y.t)+'</span>'}).join('')+(x.fields?x.fields.split('、').map(function(f){return'<span class="tg">'+esc(f)+'</span>'}).join(''):'<span class="tg">'+esc(x.label)+'</span>')+fwdLog(x).map(function(z){return'<span class="tg pt">送付済み：'+esc(z.name)+' '+dt(z.ts)+'</span>'}).join('')+(g.route==='self'?'':x.partner?'<span class="tg pt">振分け先：'+esc(x.partner==='自社'?'自社（当会）':x.partner)+'</span>':(sug.length?'':'<span class="tg yel">振分け先の候補なし</span>'))+'</div>'+
+  '<div class="ib-m">'+(x.email?'<a href="mailto:'+esc(x.email)+'">'+esc(x.email)+'</a>':'')+(x.tel?'　<a href="tel:'+esc(String(x.tel).replace(/[^0-9+]/g,''))+'">'+esc(x.tel)+'</a>':'')+'</div>'+
+  '<div class="ib-m"><span class="kd '+(SEGC[g.key]||'')+'">'+esc(g.name)+'</span> '+esc(g.note)+'</div>'+
+  '<details><summary>受付の内容を見る</summary><pre>'+esc(x.body)+'</pre></details>'+ctHtml(x)+
+  facHtml(x)+(g.route==='self'?'<div class="pt-box"><label>振分け先</label><p class="self-pt">自社（医療介護総合支援会）で対応します（'+esc(g.name)+'は提携先へ振り分けません）</p><input type="hidden" data-k="partner" value="自社"></div>':ptHtml(x))+'<div class="grid2"><div><label>状態</label><select data-k="status">'+SS.map(function(s){return'<option'+(s===x.status?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div>'+
+  '<div><label>担当</label><select data-k="staff">'+staffOpts(x.staff)+'</select></div><div><label>次の対応予定日</label><input type="date" data-k="next" value="'+esc(x.next)+'"></div></div>'+
+  (x.memo?'<div class="ib-m" style="margin-top:8px">前回のメモ：'+esc(x.memo)+'</div>':'')+'<div class="ib-a"><span class="memo2"><select data-mk aria-label="対応の種類"><option value="">対応の種類を選ぶ</option>'+g.mk.map(function(k){return'<option>'+k+'</option>'}).join('')+'</select><input type="text" data-mt placeholder="対応メモ（何をしたか・次に何をするか）"></span><input type="hidden" data-k="memo" value="'+esc(x.memo)+'"><button type="button" class="small-btn" data-save>保存</button><button type="button" class="small-btn" data-rep>お客様へ報告を作る</button><button type="button" class="small-btn" data-his>対応の履歴</button>'+(g.route==='partner'?'<button type="button" class="small-btn fw-b" data-fw>提携先へ送る</button>':'')+(g.key==='teikei'?'<button type="button" class="small-btn" data-reg>提携先一覧に登録する</button>':'')+'</div><div class="hist-box"></div></div>'}
+$('sum').addEventListener('click',function(e){var b=e.target.closest('[data-st]');if(!b)return;var o=$('fSt');if(![].some.call(o.options,function(op){return op.value===b.dataset.st}))o.insertAdjacentHTML('beforeend','<option>'+b.dataset.st+'</option>');o.value=b.dataset.st;drawIn()});
+['fSt','fPt','fCt','fFac'].forEach(function(id){$(id).addEventListener('change',drawIn)});
+$('segBar').addEventListener('click',function(e){var b=e.target.closest('[data-sg]');if(b)setSeg(b.dataset.sg)});
+document.querySelectorAll('[data-vm]').forEach(function(b){b.classList.toggle('on',b.dataset.vm===VM);b.addEventListener('click',function(){VM=b.dataset.vm;try{localStorage.setItem('iryo-vm',VM)}catch(e){}document.querySelectorAll('[data-vm]').forEach(function(z){z.classList.toggle('on',z===b)});drawIn()})});
+$('inbox').addEventListener('click',function(e){if(e.target.closest('.ib'))return;var tr=e.target.closest('tr.cr');if(!tr)return;OPEN[tr.dataset.row]=!OPEN[tr.dataset.row];drawIn()});$('fQ').addEventListener('input',drawIn);$('reloadIn').addEventListener('click',inbox);
+setInterval(function(){if(!$('panel').hidden)inbox()},300000);setInterval(function(){if(!$('panel').hidden&&IN.length)drawIn()},60000);
+function caseOf(no){return IN.filter(function(x){return x.no===no})[0]}
+document.body.classList.add('adm');
+/* ---- 今やること（データから自動で並べる） ---- */
+var KL=null;
+function goTab(v){var t=document.querySelector('.tab[data-v="'+v+'"]');if(t)t.click()}
+function flash(el){if(!el)return;el.scrollIntoView({block:'center',behavior:'smooth'});el.classList.add('flash');setTimeout(function(){el.classList.remove('flash')},3000)}
+function todo(){var L=[],now=Date.now();
+ var nw=IN.filter(function(x){return x.status==='新規受付'}),red=IN.filter(function(x){return(x._a||alerts(x)).some(function(y){return y.lv==='red'})&&x.status!=='新規受付'}),
+  past=IN.filter(function(x){return open_(x)&&x.next&&new Date(x.next+'T23:59:59')<new Date()}),
+  rep=IN.filter(function(x){return(x._a||[]).some(function(y){return/報告なし/.test(y.t)})}),
+  nopt=IN.filter(needPt),nofac=IN.filter(function(x){return open_(x)&&isFacSeg(x)&&(facOf(x).m==='未確認'||((facOf(x).m==='会員ではない'||facOf(x).m==='通っている先がない')&&!facOf(x).plan))}),
+  emptyRt=Object.keys(ROUTES).filter(function(f){return!ROUTES[f]&&!/^会員登録/.test(f)}).length;
+ var nwBy={};nw.forEach(function(x){var n=segOf(x).name;nwBy[n]=(nwBy[n]||0)+1});
+ if(nw.length)L.push({c:'red',t:'新しい受付が <b>'+nw.length+'件</b> あります（'+Object.keys(nwBy).map(function(k){return esc(k)+' '+nwBy[k]+'件'}).join('・')+'）',s:'いちばん上の案件の「受付の内容を見る」で読み、状態を「内容確認中」にして保存します。',b:'新しい受付を表示',f:function(){goTab('inbox');SEG='all';drawIn();var b=document.querySelector('#sum [data-st="新規受付"]');if(b)b.click();flash($('inbox').querySelector('tr.cr,.ib'))}});
+ if(red.length)L.push({c:'red',t:'対応が止まっている案件が <b>'+red.length+'件</b> あります',s:'赤い印の案件です。次の一手を決め、対応メモを書いて保存します。',b:'その案件を表示',f:function(){goTab('inbox');$('fSt').value='alert';drawIn();flash($('inbox').querySelector('.ib'))}});
+ if(past.length)L.push({c:'red',t:'対応予定日を過ぎた案件が <b>'+past.length+'件</b>',s:'予定していた対応をして、次の予定日を入れ直します。',b:'表示する',f:function(){goTab('inbox');$('fSt').value='alert';drawIn();flash($('inbox').querySelector('.ib'))}});
+ if(KL){var unpaid=isStaff()?[]:KL.filter(function(x){return x.status==='締結済み'&&x.template==='kaiin'&&!x.paid}),wait=KL.filter(function(x){return(x.status==='送付済み'||x.status==='確認中')&&x.draft!=='yes'&&now-new Date(x.created)>3*864e5});
+  if(unpaid.length)L.push({c:'',t:'会費の入金確認待ちが <b>'+unpaid.length+'件</b>',s:'通帳やネットバンキングで入金を確かめたら、その行の「入金を確認した」を押します（登録完了のメールが自動で届きます）。',b:'電子契約を開く',f:function(){goTab('keiyaku');flash($('rows').querySelector('[data-paid]'))}});
+  var dok=KL.filter(function(x){return isLiveDraft(x)&&x.feedback&&x.feedback.res==='ok'}),dfix=KL.filter(function(x){return isLiveDraft(x)&&x.feedback&&x.feedback.res==='fix'});
+  if(dok.length)L.push({c:'red',t:'相手が下書きを確認し「この内容でよい」と返事をした契約書が <b>'+dok.length+'件</b>',s:'電子契約の一覧で「この内容で本契約として送る」を押すと、同じ内容の正式な契約書が届きます。',b:'電子契約を開く',f:function(){goTab('keiyaku');flash($('rows').querySelector('[data-final]'))}});
+  if(dfix.length)L.push({c:'red',t:'下書きに修正の希望が届いた契約書が <b>'+dfix.length+'件</b>',s:'電子契約の一覧で希望を読み、「内容を直して送り直す」を押します。元の書面は自動で取り消されます。',b:'電子契約を開く',f:function(){goTab('keiyaku');flash($('rows').querySelector('[data-redo]'))}});
+  if(wait.length)L.push({c:'',t:'3日以上、相手の承認待ちの契約が <b>'+wait.length+'件</b>',s:'相手に届いているか確かめ、必要なら「もう一度送る」を押します。',b:'電子契約を開く',f:function(){goTab('keiyaku');flash($('rows').querySelector('[data-resend]'))}})}
+ if(rep.length)L.push({c:'',t:'お客様へ7日以上報告していない案件が <b>'+rep.length+'件</b>',s:'「お客様へ報告を作る」で文面を作り、送るか（または電話で伝えたか）を選びます。',b:'表示する',f:function(){goTab('inbox');$('fSt').value='alert';drawIn();flash($('inbox').querySelector('[data-rep]'))}});
+ if(nofac.length)L.push({c:'',t:'通っている病院・施設が会員か、まだ確かめていない相談が <b>'+nofac.length+'件</b>',s:'利用者・ご本人とご家族の相談は、会員の病院・施設に通っていることが前提です。「会員施設の確認」で結果を選び、会員でなければ対応を決めて保存します。',b:'表示する',f:function(){goTab('inbox');SEG='all';drawIn();$('fFac').value='未確認';drawIn();flash($('inbox').querySelector('tr.cr,.ib'))}});
+ if(nopt.length)L.push({c:'',t:'振分け先が決まっていない案件が <b>'+nopt.length+'件</b>',s:'案件の「振分け先」で分類を選び、提携先（または自社）を選んで保存します。',b:'表示する',f:function(){goTab('inbox');SEG='all';$('fPt').value='-';drawIn();flash($('inbox').querySelector('[data-k="partner"]'))}});
+ var nofw=IN.filter(function(x){return open_(x)&&segOf(x).route==='partner'&&x.partner&&x.partner!=='自社'&&!fwdLog(x).length&&segOf(x).need.indexOf(x.status)>=0});
+ if(nofw.length)L.push({c:'',t:'振分け先は決まったが、まだ提携先へ送っていない案件が <b>'+nofw.length+'件</b>',s:'案件の「提携先へ送る」を押すと、内容とお客様の情報をまとめたメールが作られます。確かめて、お客様の同意に印を付けてから送ります。',b:'表示する',f:function(){goTab('inbox');SEG='all';$('fQ').value=nofw[0].no;OPEN[nofw[0].no]=true;drawIn();flash($('inbox').querySelector('[data-fw]'))}});
+ var pwait=PARTNERS.filter(function(p){return p.state==='確認待ち'});if(!isStaff()&&pwait.length)L.push({c:'red',t:'相手が記入した提携先の登録が <b>'+pwait.length+'件</b> 確認待ちです',s:'設定の提携先一覧で内容を確かめ、「確認して使えるようにする」を押します。',b:'設定を開く',f:function(){goTab('route');flash($('ptRows').querySelector('[data-ap]'))}});
+ if(!isStaff()&&!PARTNERS.length)L.push({c:'',t:'提携先がまだ登録されていません',s:'設定の「提携先の登録」で登録すると、案件の振分け先を一覧から選べ、メールを登録すれば案件をそのまま送れます。',b:'提携先を登録する',f:function(){goTab('route');flash($('ptForm'));$('pfName').focus()}});
+ if(!isStaff()&&STAFF.length&&!ACTOR)L.unshift({c:'red',t:'画面右上の「操作する人」で、自分の名前を選んでください',s:'選んだ名前が、対応ログに「だれがしたか」として残ります。',b:'名前を選ぶ',f:function(){window.scrollTo(0,0);flash($('actorW'));$('actorSel').focus()}});
+ if(!isStaff()&&!STAFF.length)L.push({c:'',t:'担当者がまだ登録されていません',s:'設定で担当者の名前を登録すると、案件の「担当」を選べるようになります。',b:'担当者を登録する',f:function(){goTab('route');flash($('staffNew'))}});
+ if(!L.length)L.push({c:'ok',t:'いま、急いでやることはありません',s:isStaff()?'自分が送った契約書の返事や進み具合は「電子契約」で確かめられます。':'新しい受付が届くと、ここに表示され、警告音でもお知らせします（5分ごとに自動で最新にします）。',b:'',f:null});
+ $('todoList').innerHTML=L.map(function(x,i){return'<li class="'+x.c+'"><span>'+x.t+'<small>'+esc(x.s)+'</small></span>'+(x.b?'<button type="button" class="small-btn" data-td="'+i+'">'+esc(x.b)+' ›</button>':'')+'</li>'}).join('');
+ $('todoList').querySelectorAll('[data-td]').forEach(function(b){b.onclick=L[+b.dataset.td].f});
+ var d=new Date();$('todoAt').textContent=d.getHours()+'時'+('0'+d.getMinutes()).slice(-2)+'分の時点'}
+/* ---- 操作の案内（はじめての方） ---- */
+var TOUR=[
+ ['#todo','今やること','ログインしたら、まずここを見ます。やることが上から順に並び、右のボタンを押すとその場所へ移ります。'],
+ ['#actorW','操作する人','最初に自分の名前を選びます。したことは「対応ログ」に、いつ・だれが・何をしたかで残ります。'],
+ ['.tabs','画面の切り替え','「案件管理」「電子契約」「会員・相談者の名簿」「設定」「対応ログ」の5つの画面があります。数字は新しい受付の件数です。'],
+ ['#segBar','種別ごとの管理','企業・事業者／働く方／利用者・ご本人／ご家族／提携・協業の申込み／要望・ご意見／会員登録で分けて管理します。種別ごとに、状態の並び・振分け先・対応の種類が変わります。'],
+ ['#sum','状態ごとの件数','押すと、その状態の案件だけを表示します。赤い枠は未対応があるしるしです。'],
+ ['#inbox .ib','案件のカード','1件ずつの受付です。帯の色で進み具合が、印で急ぎかどうかが分かります。'],
+ ['#inbox .ib .grid2','状態と担当を入れる','状態・担当・次の対応予定日を入れます。振分け先は、相談の内容から分類が自動で選ばれます（提携・要望・会員登録は自社のみ）。'],
+ ['#inbox .ib .ib-a','保存と報告','「保存」で記録します。「お客様へ報告を作る」で文面が作られ、送るかどうかを選べます。'],
+ ['#snd','警告音','遅れている案件があると音で知らせます。ここでオン・オフを切り替えます。'],
+ ['#howInbox','困ったときは','各画面の上の「この画面の使い方」を押すと、手順と状態の意味が読めます。']];
+function tour(i){i=i||0;var old=document.querySelector('.tour-ov');if(old)old.remove();
+ while(i<TOUR.length&&!document.querySelector(TOUR[i][0]))i++;
+ if(i>=TOUR.length){try{localStorage.setItem('iryo-adm-tour','1')}catch(x){}return}
+ var t=TOUR[i],el=document.querySelector(t[0]);goTab('inbox');el.scrollIntoView({block:'center'});
+ var ov=document.createElement('div');ov.className='tour-ov';ov.innerHTML='<div class="tour-hl"></div><div class="tour-tx" role="dialog" aria-label="操作の案内"><span class="tn">操作の案内　'+(i+1)+' / '+TOUR.length+'</span><b>'+esc(t[1])+'</b>'+esc(t[2])+'<div class="bt">'+(i?'<button type="button" class="small-btn" data-t="p">‹ 戻る</button>':'')+'<button type="button" class="btn" data-t="n" style="min-height:44px;padding:0 18px">'+(i<TOUR.length-1?'次へ ›':'終わる')+'</button><button type="button" class="small-btn" data-t="x">案内を閉じる</button></div></div>';
+ document.body.appendChild(ov);
+ setTimeout(function(){var r=el.getBoundingClientRect(),hl=ov.querySelector('.tour-hl'),tx=ov.querySelector('.tour-tx');hl.style.left=(r.left-6)+'px';hl.style.top=(r.top-6)+'px';hl.style.width=(r.width+12)+'px';hl.style.height=Math.min(r.height+12,innerHeight-40)+'px';
+  var below=r.bottom+tx.offsetHeight+24<innerHeight;tx.style.left=Math.max(12,Math.min(r.left,innerWidth-tx.offsetWidth-12))+'px';tx.style.top=(below?r.bottom+16:Math.max(12,r.top-tx.offsetHeight-16))+'px';tx.querySelector('[data-t=n]').focus()},80);
+ ov.addEventListener('click',function(e){var b=e.target.closest('[data-t]');if(!b)return;var k=b.dataset.t;ov.remove();if(k==='n')tour(i+1);else if(k==='p')tour(i-1);else{try{localStorage.setItem('iryo-adm-tour','1')}catch(x){}}})}
+$('tourBtn').addEventListener('click',function(){var n=$('tourNote');if(n)n.remove();this.classList.remove('flash');tour(0)});
+$('inbox').addEventListener('click',function(e){var card=e.target.closest('.ib');if(!card)return;var no=card.dataset.no,x=caseOf(no),b;
+ if((b=e.target.closest('[data-save]'))){var mk=card.querySelector('[data-mk]'),mt=card.querySelector('[data-mt]');if(mk&&(mk.value||mt.value.trim()))card.querySelector('[data-k="memo"]').value=(mk.value?'【'+mk.value+'】':'')+mt.value.trim();
+  var fb=card.querySelector('.fac-box');if(fb){var fo={},of=facOf(x);fb.querySelectorAll('[data-fc]').forEach(function(el){var t=String(el.value).trim();if(t)fo[el.dataset.fc]=t});if(fo.m!=='会員の病院・施設')delete fo.member;else delete fo.plan;if(of.auto&&fo.m===of.m&&fo.member===of.member)fo.auto=1;
+   var fe=fb.querySelector('.fac-err');fe.textContent='';if(fo.m==='会員の病院・施設'&&!fo.member){fe.textContent='会員の名前を入れてください（会員名簿から選べます）。';fb.querySelector('[data-fc=member]').focus();return}
+   if((fo.m==='会員ではない'||fo.m==='通っている先がない')&&!fo.plan){fe.textContent='会員ではない場合の対応を選んでください。';fb.querySelector('[data-fc=plan]').focus();return}
+   var js=JSON.stringify(fo),old=x.fac?JSON.stringify(of):'';fb.querySelector('[data-k="fac"]').value=(js===old)?(x.fac||''):js}
+  var v={no:no};card.querySelectorAll('[data-k]').forEach(function(el){v[el.dataset.k]=String(el.value).trim()});
+  var changedSt=v.status!==x.status;b.disabled=true;b.textContent='保存中…';
+  api('admin.caseSet',v).then(function(){Object.keys(v).forEach(function(k){x[k]=v[k]});delete x._f;x.updated=new Date().toISOString();b.textContent='保存しました';setTimeout(drawIn,600);if(changedSt&&v.status!=='新規受付')openRpt(x,v.status)})
+  .catch(function(er){$('errB').textContent=er.message;b.disabled=false;b.textContent='保存'})}
+ if(e.target.closest('[data-rep]'))openRpt(x,x.status==='新規受付'?'受付':x.status);
+ if(e.target.closest('[data-ctnew]')){newCt(x);return}
+ if((b=e.target.closest('[data-ctgo]'))){goCt(b.dataset.ctgo);return}
+ if((b=e.target.closest('[data-final]'))){ctFinal(b.dataset.final,b);return}
+ if((b=e.target.closest('[data-redo]'))){ctRedo(b.dataset.redo);return}
+ if(e.target.closest('[data-fw]')){var pi=card.querySelector('[data-k="partner"]');openFwd(x,pi?pi.value.trim():x.partner)}
+ if(e.target.closest('[data-reg]')){var c=cls(x),pp=(c.path[0]||'').split(' ＞ '),nm=x.company||x.name,ar=String(x.body||'').split('\n').filter(function(l){return/^地域 \d+：/.test(l)}).map(function(l){return l.replace(/^地域 \d+：/,'').split(' ＞ ').slice(1).join(' ')}).join('、');
+  if(PARTNERS.some(function(p){return p.name===nm})){$('errB').textContent='「'+nm+'」はもう提携先一覧に登録されています。';return}
+  goTab('route');pfSet({name:nm,person:x.company?x.name:'',email:x.email,tel:x.tel==='（未入力）'?'':x.tel,a:pp[0]||'',b:pp[1]||'',c:pp[2]||'',area:ar,note:'提携申込み '+x.no});flash($('ptForm'));$('errPt').textContent='申込みの内容を入れました。確かめて「この内容で登録する」を押してください。'}
+ if(e.target.closest('[data-his]')){var hb=card.querySelector('.hist-box');hb.innerHTML='<p class="hint">読み込み中…</p>';api('admin.history',{no:no}).then(function(r){hb.innerHTML=r.rows.length?'<ul class="hist">'+r.rows.map(function(h){var t=String(h.text||''),f=t.split('\n')[0].slice(0,120),who=h.actor||h.staff;return'<li>'+dt(h.ts)+'　<b>'+esc(h.kind)+'</b>'+(who?'（'+esc(who)+'）':'')+'　'+(t.indexOf('\n')>=0||t.length>120?'<details style="display:inline"><summary>'+esc(f)+'</summary><pre class="lg-pre">'+esc(t)+'</pre></details>':esc(t))+'</li>'}).join('')+'</ul>':'<p class="hint">履歴はまだありません</p>'}).catch(function(er){hb.textContent=er.message})}});
+/* 進捗報告の文章を作る（担当者が直して、送るかどうかを決める） */
+var RP=null,ALT=0;
+var TX={'受付':['このたびは、医療介護総合支援会にご相談いただき、ありがとうございます。ご相談を受け付けました。\n担当者が内容を確認し、あらためてご連絡いたします。','ご相談をお寄せいただき、ありがとうございます。内容を拝見し、担当者から追ってご連絡いたします。今しばらくお待ちください。'],
+'内容確認中':['いただいたご相談の内容を、担当者が確認しております。\n確認のためにお伺いしたいことがある場合は、こちらからご連絡いたします。','ご相談の内容を確認しているところです。進め方の見通しが立ちましたら、あらためてご報告いたします。'],
+'振分け済み':['ご相談の内容に合わせて、対応できる提携先・専門家を選びました。\nお客様の情報を提携先へお伝えする前に、あらためてご了承の確認をさせていただきます。','ご相談に対応できる提携先・専門家の候補が決まりました。今後の進め方について、追ってご案内いたします。'],
+'提携先対応中':['現在、提携先・専門家とともに、具体的な進め方を検討しております。\n進み具合に応じて、あらためてご報告いたします。','提携先・専門家との間で、ご相談への対応を進めております。次の段階に進みましたら、ご報告いたします。'],
+'提案・見積り中':['ご提案の内容（必要に応じてお見積り）をまとめております。\nまとまりしだいお送りいたしますので、ご確認をお願いいたします。','ご提案とお見積りの準備を進めております。整いしだいお届けいたしますので、もうしばらくお待ちください。'],
+'完了':['このたびのご相談につきまして、対応が完了いたしましたのでご報告いたします。\nご相談いただき、ありがとうございました。今後もお困りのことがあれば、いつでもご相談ください。','ご相談への対応が完了いたしました。ご協力いただき、ありがとうございました。また何かございましたら、お気軽にお声がけください。'],
+'見送り':['ご相談の内容を検討いたしましたが、誠に恐れ入りますが、今回は当会および提携先でのお手伝いが難しいとの結論になりました。\nご期待に沿えず申し訳ございません。状況が変わった際は、あらためてご相談ください。','慎重に検討いたしましたが、今回のご相談は、当会と提携先での対応が難しい状況です。申し訳ございません。別のご相談がございましたら、いつでもお声がけください。']};
+var RTX={_:{'会員施設の確認':['ご確認のお願い','ご相談にお応えするため、いま通っている（ご利用中の）病院・クリニック・介護施設などを確認させていただいております。\n確認のため、こちらからお電話・メールでお伺いすることがあります。'],'ヒアリング・面談':['ヒアリングのお願い','ご相談の内容について、詳しくお話を伺いたく存じます。\nお電話・オンライン・ご訪問のいずれかで、ご都合のよい日時をお知らせいただけますでしょうか。'],'契約・導入の準備中':['導入準備のご報告','ご契約・導入に向けて、提携先とともに準備を進めております。\n日程などが決まりしだい、あらためてご案内いたします。'],'お話を伺っている':['ご相談についてのご連絡','ご相談の内容を、引き続き伺っております。\nお話しいただいた内容を、ご本人の同意なく勤務先などへお伝えすることはありません。'],'専門家・窓口へつないだ':['ご相談先のご案内','ご相談の内容に合わせて、対応できる専門家・窓口をご案内いたします。\n詳しい内容は、このあと担当者からお伝えします。'],'継続して相談中':['進捗のご報告','引き続き、ご相談に対応しております。気になることがあれば、いつでもお知らせください。'],'状況の聞き取り':['お話を伺うお願い','ご相談にお応えするため、いまの状況を詳しく伺いたく存じます。\nご都合のよい日時をお知らせいただけますでしょうか。'],'利用・手続きの準備中':['お手続き準備のご報告','サービスのご利用・お手続きに向けて、準備を進めております。\n必要な書類や日程が決まりしだい、ご案内いたします。']},
+self:{'受付':['受付のお知らせ','このたびは、医療介護総合支援会にご連絡いただき、ありがとうございます。受け付けました。\n担当者が内容を確認し、あらためてご連絡いたします。'],'内容確認中':['内容確認のご報告','いただいた内容を、担当者が確認しております。\n確認のためにお伺いしたいことがある場合は、こちらからご連絡いたします。']},
+teikei:{'受付':['お申し込み受付のお知らせ','このたびは、医療介護総合支援会へ提携・協業のお申し込みをいただき、ありがとうございます。お申し込みを受け付けました。\n担当者が内容を確認し、面談の日程についてあらためてご連絡いたします。'],'内容確認中':['内容確認のご報告','いただいた提携・協業のお申し込み内容を、担当者が確認しております。\n確認のためにお伺いしたいことがある場合は、こちらからご連絡いたします。'],'面談日の調整中':['面談日程のご相談','提携・協業について、面談の機会をいただきたく存じます。\n面談は、当会の打ち合わせ専用事務所（大阪市北区）またはオンラインで行います。ご都合のよい日時をいくつかお知らせください。'],'面談済み':['面談のお礼','先日はお時間をいただき、ありがとうございました。\nお伺いした内容をもとに、当会で検討いたします。結果は、あらためてご連絡いたします。'],'社内で検討中':['検討状況のご報告','提携・協業のお申し込みについて、現在、当会で検討しております。\n結果がまとまりしだい、ご連絡いたします。'],'契約の手続き中':['ご契約手続きのご案内','提携・協業について、ぜひ進めさせていただきたく存じます。\n提携の契約書をお送りしますので、内容のご確認をお願いいたします。'],'提携開始':['提携開始のお知らせ','このたびは、医療介護総合支援会との提携をお引き受けいただき、ありがとうございます。\n今後、ご相談の内容に合わせてご紹介させていただきます。どうぞよろしくお願いいたします。'],'見送り':['お申し込みへのご回答','提携・協業のお申し込みについて慎重に検討いたしましたが、誠に恐れ入りますが、今回は見送らせていただくこととなりました。\nご期待に沿えず申し訳ございません。状況が変わりましたら、あらためてご相談させてください。']},
+youbou:{'受付':['ご意見受付のお知らせ','このたびは、医療介護総合支援会へご要望・ご意見をお寄せいただき、ありがとうございます。\nいただいた内容は担当者が確認し、今後の運営に役立ててまいります。'],'内容確認中':['内容確認のご報告','いただいたご要望・ご意見を、担当者が確認しております。'],'社内で検討中':['検討状況のご報告','いただいたご要望について、当会で対応を検討しております。\n方針が決まりましたら、あらためてお知らせいたします。'],'対応を決めた':['対応のご報告','いただいたご要望をもとに、対応を進めることにいたしました。\n実施しましたら、あらためてお知らせいたします。'],'対応済み':['対応完了のご報告','いただいたご要望をもとに、対応いたしました。\n貴重なご意見をお寄せいただき、ありがとうございました。'],'見送り':['ご意見へのご回答','いただいたご要望について検討いたしましたが、誠に恐れ入りますが、現時点では対応が難しいとの結論になりました。\n今後の参考にさせていただきます。貴重なご意見をありがとうございました。']},
+kaiin:{'受付':['お申し込み受付のお知らせ','このたびは、医療介護総合支援会の会員登録にお申し込みいただき、ありがとうございます。お申し込みを受け付けました。'],'内容確認中':['内容確認のご報告','会員登録のお申し込み内容を、担当者が確認しております。'],'契約書を送った':['契約書送付のお知らせ','会員規約（契約書）を電子契約でお送りしました。\n届いたメールのご案内に沿って、内容のご確認と承認をお願いいたします。'],'入金待ち':['お振込みのお願い','ご契約ありがとうございます。お送りした請求書の内容で、お支払い期日までにお振込みをお願いいたします。'],'登録完了':['会員登録完了のお知らせ','ご入金を確認し、会員登録が完了いたしました。今後ともどうぞよろしくお願いいたします。'],'見送り':['お申し込みへのご回答','会員登録のお申し込みについて、誠に恐れ入りますが、今回はお受けすることが難しい状況です。\nご期待に沿えず申し訳ございません。']}};
+var TT={'受付':'受付のお知らせ','内容確認中':'内容確認のご報告','振分け済み':'今後の進め方のご報告','提携先対応中':'進捗のご報告','提案・見積り中':'ご提案準備のご報告','完了':'対応完了のご報告','見送り':'ご相談へのご回答'};
+var RG=['いつもお世話になっております。医療介護総合支援会です。','お世話になっております。医療介護総合支援会でございます。','医療介護総合支援会です。このたびはありがとうございます。'],RC=['ご不明な点は、このメールにご返信いただくか、お電話でお問い合わせください。','ご質問などがございましたら、このメールへのご返信、またはお電話でお気軽にお知らせください。','気になることがございましたら、どうぞ遠慮なくこのメールにご返信ください。お電話でも承ります。'];
+function makeRpt(x,kind){var g=segOf(x),who=(x.company?x.company+'\n':'')+(x.name&&x.name.indexOf('伏せ')<0?x.name+' 様':(g.route==='self'?'ご担当者様':'ご相談者様'));var r=(RTX[g.key]||{})[kind]||(g.route==='partner'?RTX._[kind]:null),t,tt;
+ if(r){t=[r[1]];tt=r[0]}else if(g.route==='self'&&RTX.self[kind]){t=[RTX.self[kind][1]];tt=RTX.self[kind][0]}else{t=TX[kind]||[g.route==='self'?'いただいた'+g.word+'について、引き続き対応を進めております。進み具合に応じて、あらためてご報告いたします。':'ご相談について、引き続き対応を進めております。進み具合に応じて、あらためてご報告いたします。'];tt=TT[kind]}
+ return{s:'【医療介護総合支援会】'+(tt||'進捗のご報告')+'（受付番号 '+x.no+'）',b:who+'\n\n'+RG[ALT%RG.length]+'\n\n'+t[ALT%t.length]+'\n\n受付番号：'+x.no+(x.staff?'\n担当：'+x.staff:'')+'\n\n'+RC[ALT%RC.length]+'\n\n――――――――――――――――\n医療介護総合支援会（運営 株式会社グローブ）\n電話 0120-933-496（受付 10:00〜19:00）\nメール ikshienkai@gmail.com\n――――――――――――――――'}}
+function openRpt(x,kind){RP={x:x,kind:kind};ALT=0;var r=makeRpt(x,kind);$('rptS').value=r.s;$('rptB').value=r.b;$('errRp').textContent='';
+ $('rptInfo').textContent=(x.company?x.company+'　':'')+x.name+'（'+x.no+'）への報告です。送るかどうかは、担当者が判断してください。';
+ var w='';if(!x.email)w='この案件にはメールアドレスがありません。電話で伝えた場合は「電話で伝えた」で記録してください。';else if(x.contacted&&Date.now()-new Date(x.contacted)<48*H)w='前回の連絡（'+dt(x.contacted)+'）から48時間たっていません。連絡が多すぎないか、確かめてから送ってください。';
+ $('rptWarn').hidden=!w;$('rptWarn').textContent=w;$('rpSend').disabled=!x.email;$('rpt').hidden=false;var tb=$('rptB');tb.focus();try{tb.setSelectionRange(0,0)}catch(x){}tb.scrollTop=0}
+$('rpAlt').addEventListener('click',function(){if(!RP)return;ALT++;var r=makeRpt(RP.x,RP.kind),tb=$('rptB');tb.value=r.b;tb.scrollTop=0;tb.classList.remove('flash');void tb.offsetWidth;tb.classList.add('flash');setTimeout(function(){tb.classList.remove('flash')},1200);$('errRp').textContent='別の言い回しにしました（'+(ALT%3+1)+' / 3）。';});
+function sendRpt(mode){var x=RP.x,b=mode==='send'?$('rpSend'):mode==='phone'?$('rpPhone'):$('rpSkip');b.disabled=true;
+ api('admin.report',{no:x.no,subject:$('rptS').value,body:$('rptB').value,send:mode==='send',phone:mode==='phone',staff:x.staff}).then(function(){if(mode!=='skip'){x.contacted=new Date().toISOString();x.updated=x.contacted}$('rpt').hidden=true;drawIn()}).catch(function(er){$('errRp').textContent=er.message}).then(function(){b.disabled=false})}
+$('rpSend').addEventListener('click',function(){if(confirm('この内容でお客様にメールを送りますか？'))sendRpt('send')});$('rpPhone').addEventListener('click',function(){sendRpt('phone')});$('rpSkip').addEventListener('click',function(){sendRpt('skip')});
+/* 振分け設定 */
+function drawRoute(){var used={};IN.forEach(function(x){if(open_(x))(x.fields||'').split('、').forEach(function(f){if(f)used[f]=(used[f]||0)+1})});
+ $('routeRows').innerHTML=Object.keys(ROUTES).map(function(f){return'<tr><td>'+esc(f)+'</td><td><input type="text" data-f="'+esc(f)+'" value="'+esc(ROUTES[f])+'" placeholder="例：〇〇株式会社、△△社労士事務所"></td><td>'+(used[f]||0)+'件</td></tr>'}).join('')}
+$('saveRt').addEventListener('click',function(){var b=this,rows=[].map.call($('routeRows').querySelectorAll('input'),function(i){return{field:i.dataset.f,partners:i.value.trim()}});b.disabled=true;$('errRt').textContent='';
+ api('admin.routeSet',{rows:rows}).then(function(r){if(r.routes)ROUTES=r.routes;$('errRt').textContent='保存しました。';drawIn()}).catch(function(er){$('errRt').textContent=er.message}).then(function(){b.disabled=false})});
+
+function showLogin(m){$('panel').hidden=true;$('gate').hidden=false;$('gateLink').href=window.KEIYAKU_ADMIN_URL||'#';if(m)$('errL').textContent=m;try{$('lid').focus()}catch(x){}}
+window.onNeedLogin=function(){try{sessionStorage.removeItem('iryo-adm')}catch(x){}started=false;showLogin('ログインの有効期限が切れました。もう一度ログインしてください。')};
+$('lf').addEventListener('submit',function(e){e.preventDefault();var b=$('doLogin');if(!$('lid').value.trim()||!$('lpw').value){$('errL').textContent='IDとパスワードを入れてください。';return}
+ b.disabled=true;b.textContent='確認しています…';$('errL').textContent='';
+ api('admin.login',{id:$('lid').value.trim(),pass:$('lpw').value}).then(function(r){try{sessionStorage.setItem('iryo-adm',r.adminToken)}catch(x){}started=false;$('lpw').value='';$('gate').hidden=true;go()})
+ .catch(function(x){$('errL').textContent=x.message}).then(function(){b.disabled=false;b.textContent='ログイン'})});
+$('fgOpen').addEventListener('click',function(){$('fg').hidden=!$('fg').hidden});
+$('fgSend').addEventListener('click',function(){var b=this;b.disabled=true;$('fgMsg').textContent='送っています…';
+ api('admin.forgot',{}).then(function(){$('fgMsg').textContent='登録メールに送りました。届かないときは迷惑メールも見てください。';$('fg2').hidden=false;try{$('fgCode').focus()}catch(x){}})
+ .catch(function(x){$('fgMsg').textContent=x.message}).then(function(){setTimeout(function(){b.disabled=false},30000)})});
+$('fgDo').addEventListener('click',function(){var b=this,c=$('fgCode').value.replace(/\D/g,''),p1=$('fgP1').value,p2=$('fgP2').value;$('errF').textContent='';
+ if(c.length!==6){$('errF').textContent='6けたの確認コードを入れてください。';return}
+ if(p1.length<8){$('errF').textContent='パスワードは8文字以上にしてください。';return}
+ if(p1!==p2){$('errF').textContent='2つのパスワードが合っていません。';return}
+ b.disabled=true;b.textContent='変更しています…';
+ api('admin.reset',{code:c,pass:p1}).then(function(r){$('fgP1').value=$('fgP2').value=$('fgCode').value='';$('fg').hidden=true;$('fg2').hidden=true;$('fgMsg').textContent='';if(r.id)$('lid').value=r.id;$('errL').textContent='パスワードを変えました。新しいパスワードでログインしてください。';try{$('lpw').focus()}catch(x){}})
+ .catch(function(x){$('errF').textContent=x.message}).then(function(){b.disabled=false;b.textContent='変更する'})});
+$('logout').addEventListener('click',function(){api('admin.logout',{}).catch(function(){});try{sessionStorage.removeItem('iryo-adm');sessionStorage.removeItem('iryo-demo-me')}catch(x){}location.reload()});
+var tok='';try{tok=sessionStorage.getItem('iryo-adm')||''}catch(x){}
+if(IN_GAS){$('logout').hidden=true;go()}else if(tok){go()}else{showLogin()}
+})();
+</script>
+</body></html>
