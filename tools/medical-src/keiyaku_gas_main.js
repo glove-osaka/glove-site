@@ -191,9 +191,9 @@ function sendMail_(o) {
   if (P("MAIL_RELAY_OFF") !== "1") {
     try {
       var rt = o.replyTo && o.replyTo !== P("NOTIFY_TO") ? o.replyTo : fromAddr_();
-      var pl = { to: o.to, cc: o.cc || "", bcc: o.bcc || "", replyTo: rt, subject: o.subject, body: o.body || "", htmlBody: o.htmlBody || "", name: o.name,
+      var tok = ScriptApp.getIdentityToken(), pl = { idToken: tok, to: o.to, cc: o.cc || "", bcc: o.bcc || "", replyTo: rt, subject: o.subject, body: o.body || "", htmlBody: o.htmlBody || "", name: o.name,
         attachments: (o.attachments || []).map(function (b) { return { name: b.getName(), type: b.getContentType(), data: Utilities.base64Encode(b.getBytes()) }; }) };
-      var res = UrlFetchApp.fetch(relayUrl_(), { method: "post", contentType: "application/json", payload: JSON.stringify(pl), headers: { Authorization: "Bearer " + ScriptApp.getIdentityToken() }, muteHttpExceptions: true });
+      var res = UrlFetchApp.fetch(relayUrl_(), { method: "post", contentType: "application/json", payload: JSON.stringify(pl), headers: { Authorization: "Bearer " + tok }, muteHttpExceptions: true });
       var j = parse_(res.getContentText(), {});
       if (res.getResponseCode() === 200 && j.ok) return "info";
       Logger.log("info@ から送れませんでした（" + res.getResponseCode() + "）：" + res.getContentText().slice(0, 200));

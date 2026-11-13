@@ -37,12 +37,14 @@ $cacheFile = dataDir() . '/google_certs.json';
 $certs = null;
 if (is_file($cacheFile) && time() - filemtime($cacheFile) < 3600) $certs = json_decode((string)file_get_contents($cacheFile), true);
 if (!is_array($certs) || empty($certs[$head['kid']])) {
-  $ctx = stream_context_create(['http' => ['timeout' => 8]]);
-  $txt = @file_get_contents(CERT_URL, false, $ctx);
+  $txt = false;
+  if (function_exists('curl_init')) { $ch = curl_init(CERT_URL); curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 8]); $txt = curl_exec($ch); curl_close($ch); }
+  if (!$txt) { $ctx = stream_context_create(['http' => ['timeout' => 8]]); $txt = @file_get_contents(CERT_URL, false, $ctx); }
   $certs = $txt ? json_decode($txt, true) : null;
   if (is_array($certs)) @file_put_contents($cacheFile, $txt, LOCK_EX);
 }
-if (!is_array($certs) || empty($certs[$head['kid']])) out(503, ['ok' => false, 'error' => 'cert unavailable']);
+if (!is_array($certs)) out(503, ['ok' => false, 'error' => 'cert fetch failed']);
+if (empty($certs[$head['kid']])) out(401, ['ok' => false, 'error' => 'unknown key']);
 $pub = openssl_pkey_get_public($certs[$head['kid']]);
 if (!$pub || openssl_verify($parts[0] . '.' . $parts[1], b64url($parts[2]), $pub, OPENSSL_ALGO_SHA256) !== 1) out(401, ['ok' => false, 'error' => 'signature']);
 $now = time();
