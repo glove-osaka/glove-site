@@ -9,7 +9,7 @@
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDPMincho:wght@700&display=swap">
-<link rel="stylesheet" href="keiyaku.css?v=dae962f6">
+<link rel="stylesheet" href="keiyaku.css?v=815e2205">
 </head>
 <body>
 <div class="demo" id="demoBar" hidden>お試し表示です（メールは送られず、この端末の中だけで動きます）</div>
@@ -207,19 +207,21 @@ function onTpl(){var t=cur();if(!t)return;
  $('reqId').checked=!!t.requireId;$('condBox').hidden=!t.cond;$('noteBox').hidden=!t.note;$('noteLabel').textContent=t.note||'特記事項';$('prev').hidden=true;if(t.cond)onCond()}
 $('tpl').addEventListener('change',onTpl);
 function payload(){var t=cur(),pre={};[].forEach.call($('preBox').querySelectorAll('input'),function(i){if(i.value.trim())pre[i.dataset.k]=i.value.trim()});
- return{template:t.key,party:{name:$('pName').value.trim(),company:$('pCompany').value.trim(),email:$('pEmail').value.trim()},fields:[].map.call($('fieldChk').querySelectorAll('input:checked'),function(i){return i.value}),requireId:$('reqId').checked,cond:t.cond?cond():null,note:t.note?$('note').value.trim():'',prefill:pre,draft:$('draft').checked,caseNo:CASE_LINK||''}}
+ return{template:t.key,party:{name:$('pName').value.trim(),company:$('pCompany').value.trim(),email:$('pEmail').value.trim()},fields:[].map.call($('fieldChk').querySelectorAll('input:checked'),function(i){return i.value}),requireId:$('reqId').checked,cond:t.cond?cond():null,note:t.note?$('note').value.trim():'',prefill:pre,draft:$('draft').checked,caseNo:CASE_LINK||(REPLACES&&ctOf(REPLACES)?ctOf(REPLACES).case_no:'')||'',replaces:REPLACES||''}}
 $('doPrev').addEventListener('click',function(){var p=payload();$('prev').textContent=K.buildBody(p.template,p.cond,p.note,p.party.company||p.party.name||'（相手のお名前）').replace(/\[\[(\w+)\]\]/g,function(_,k){return p.prefill[k]?p.prefill[k]+'（相手が直せます）':'＿＿＿（相手が記入）'});$('prev').hidden=false});
 $('doIssue').addEventListener('click',function(){var b=this,p=payload();
  if(/^kaiin/.test(p.template)&&p.cond.type==='hojin'&&(+p.cond.sites||1)<2&&!confirm('法人会員で事業所数が1か所です。このまま送りますか？'))return;
  if(/^kaiin/.test(p.template)&&p.cond.type==='kyosan'&&!confirm('協賛会員は審査が必要です。審査は済んでいますか？'))return;
  b.disabled=true;$('errI').textContent='';$('issued').hidden=true;
- api('admin.issue',p).then(function(r){$('issued').hidden=false;$('issued').innerHTML='送りました（契約番号 '+esc(r.id)+'）。<br>相手の画面：<a href="'+esc(r.url)+'" target="_blank" rel="noopener">'+esc(r.url)+'</a>';['pName','pCompany','pEmail','note','cRef','cEntry'].forEach(function(id){$(id).value=''});if(CASE_LINK)$('issued').innerHTML+='<br>案件 '+esc(CASE_LINK)+' に結びつけました。';setCaseLink(null);$('preBox').innerHTML='';onTpl();list()})
+ api('admin.issue',p).then(function(r){$('issued').hidden=false;$('issued').innerHTML='送りました（契約番号 '+esc(r.id)+'）。<br>相手の画面：<a href="'+esc(r.url)+'" target="_blank" rel="noopener">'+esc(r.url)+'</a>';['pName','pCompany','pEmail','note','cRef','cEntry'].forEach(function(id){$(id).value=''});if(CASE_LINK)$('issued').innerHTML+='<br>案件 '+esc(CASE_LINK)+' に結びつけました。';if(REPLACES)$('issued').innerHTML+='<br>元の書面 '+esc(REPLACES)+' は取り消しました。';REPLACES=null;setCaseLink(null);$('preBox').innerHTML='';onTpl();list()})
  .catch(function(e){$('errI').textContent=e.message}).then(function(){b.disabled=false})});
 function list(){api('admin.list').then(function(r){KL=r.rows||[];var mm={};KL.forEach(function(o){if(o.template==='kaiin'&&o.status==='締結済み'&&!o.stopped&&o.party_company)mm[o.party_company]=1});var dl=$('memList');if(dl)dl.innerHTML=Object.keys(mm).sort().map(function(n){return'<option value="'+esc(n)+'">'}).join('');todo();drawRoster();if(IN.length&&!document.querySelector('#inbox .ib input:focus,#inbox .ib textarea:focus'))drawIn();if(!r.rows.length){$('rows').innerHTML='<tr><td colspan="6">まだありません</td></tr>';return}
  $('rows').innerHTML=r.rows.map(function(x){var cls=x.status==='締結済み'?'done':x.status==='取り消し'?'cancel':'';var st=x.paid?'入金済み':x.status==='送付済み'&&x.viewed?'確認中':x.status;
-  var cn=caseOfCt(x);return'<tr data-id="'+esc(x.id)+'"><td>'+esc(x.id)+(cn?'<br><button type="button" class="lnk" data-gocase="'+esc(cn)+'">案件 '+esc(cn)+'</button>'+(x.case_no?'':'<small>（同じメール）</small>'):'')+'</td><td>'+esc(x.title)+(x.draft==='yes'?'<br><span class="tag">下書き</span>':'')+'</td><td>'+esc(x.party_company?x.party_company+' ':'')+esc(x.party_name)+'<br><small>'+esc(x.party_email)+'</small>'+(x.refcode?'<br><span class="tag">紹介コード '+esc(x.refcode)+'</span>':'')+(x.billed?'<br><span class="tag">請求済み：'+esc(x.billed.replace('-','年'))+'月分まで</span>':'')+(x.stopped?'<br><span class="tag cancel">退会（請求停止）</span>':'')+'</td><td><span class="tag '+cls+'">'+esc(st)+'</span></td><td>'+day(x.created)+'</td><td>'+
+  var cn=caseOfCt(x);return'<tr data-id="'+esc(x.id)+'"><td>'+esc(x.id)+(cn?'<br><button type="button" class="lnk" data-gocase="'+esc(cn)+'">案件 '+esc(cn)+'</button>'+(x.case_no?'':'<small>（同じメール）</small>'):'')+'</td><td>'+esc(x.title)+(x.draft==='yes'?'<br><span class="tag">下書き</span>':'')+'</td><td>'+esc(x.party_company?x.party_company+' ':'')+esc(x.party_name)+'<br><small>'+esc(x.party_email)+'</small>'+(x.refcode?'<br><span class="tag">紹介コード '+esc(x.refcode)+'</span>':'')+(x.billed?'<br><span class="tag">請求済み：'+esc(x.billed.replace('-','年'))+'月分まで</span>':'')+(x.stopped?'<br><span class="tag cancel">退会（請求停止）</span>':'')+'</td><td><span class="tag '+cls+'">'+esc(x.draft==='yes'?ctSt(x):st)+'</span>'+fbLine(x)+(x.prev?'<br><small>'+esc(x.prev)+' の差し替え</small>':'')+'</td><td>'+day(x.created)+'</td><td>'+draftBtns(x)+
   (x.status==='締結済み'?'<button class="small-btn" data-pdf="'+esc(x.id)+'">PDFを保存</button>'+(x.template==='kaiin'&&!x.paid?'<button class="small-btn" data-paid="'+esc(x.id)+'">入金を確認した</button>':'')+(x.template==='kaiin'&&!x.stopped?'<button class="small-btn" data-stop="'+esc(x.id)+'">退会（請求を止める）</button>':''):x.status==='取り消し'?'':'<button class="small-btn" data-resend="'+esc(x.id)+'">もう一度送る</button><button class="small-btn" data-cancel="'+esc(x.id)+'">取り消す</button>')+'</td></tr>'}).join('')}).catch(function(e){$('errR').textContent=e.message})}
 $('rows').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;$('errR').textContent='';
+ if(b.dataset.final){ctFinal(b.dataset.final,b);return}
+ if(b.dataset.redo){ctRedo(b.dataset.redo);return}
  if(b.dataset.gocase){goTab('inbox');SEG='all';['fCt','fPt'].forEach(function(i){$(i).value=''});drawIn();$('fSt').value='all';$('fQ').value=b.dataset.gocase;OPEN[b.dataset.gocase]=true;drawIn();window.scrollTo(0,$('inbox').getBoundingClientRect().top+scrollY-120);return}
  if(b.dataset.paid&&confirm('入金を確認しましたか？相手に「会員登録完了」のメールを送ります。'))api('admin.paid',{id:b.dataset.paid}).then(list).catch(function(x){$('errR').textContent=x.message});
  if(b.dataset.stop&&confirm('この会員を退会扱いにして、毎月の請求書を止めますか？（元に戻すときは担当者に連絡してください）'))api('admin.stop',{id:b.dataset.stop}).then(list).catch(function(x){$('errR').textContent=x.message});
@@ -229,18 +231,39 @@ $('rows').addEventListener('click',function(e){var b=e.target.closest('button');
 
 /* ---- 振分け先（提携先一覧から分類で選ぶ）と担当者 ---- */
 var PARTNERS=[],STAFF=[];
-function ctSt(c){var st=c.paid?'入金済み':c.status==='送付済み'&&c.viewed?'相手が確認中':c.status==='送付済み'?'送付済み（未開封）':c.status;return(c.draft==='yes'?'下書き・':'')+st}
-function ctCls(c){return c.status==='取り消し'?'no':c.draft==='yes'?'dr':c.status==='締結済み'?'ok':''}
+function ctSt(c){if(c.draft==='yes'&&c.status!=='取り消し'&&c.feedback)return c.feedback.res==='ok'?'下書き・相手が「この内容でよい」':'下書き・修正の希望あり';var st=c.paid?'入金済み':c.status==='送付済み'&&c.viewed?'相手が確認中':c.status==='送付済み'?'送付済み（未開封）':c.status;return(c.draft==='yes'?'下書き・':'')+st}
+function ctCls(c){return c.status==='取り消し'?'no':c.draft==='yes'?(c.feedback&&c.feedback.res==='ok'?'ok':'dr'):c.status==='締結済み'?'ok':''}
+function isLiveDraft(c){return c.draft==='yes'&&c.status!=='取り消し'&&c.status!=='締結済み'}
+function draftBtns(c){return isLiveDraft(c)?'<button type="button" class="small-btn fw-b" data-final="'+esc(c.id)+'">この内容で本契約として送る</button><button type="button" class="small-btn" data-redo="'+esc(c.id)+'">内容を直して送り直す</button>':''}
+function fbLine(c){var f=c.feedback;return f&&c.draft==='yes'?'<div class="fb-l '+(f.res==='ok'?'ok':'fix')+'">相手の返事（'+dt(f.ts)+'）：'+(f.res==='ok'?'この内容で進めてよい':'修正の希望')+(f.comment?'<br>'+esc(f.comment):'')+'</div>':''}
 function ctsOf(x){if(!KL)return[];var em=String(x.email||'').toLowerCase();return KL.filter(function(c){return c.case_no?c.case_no===x.no:(em&&String(c.party_email||'').toLowerCase()===em)})}
 function caseOfCt(c){if(c.case_no)return c.case_no;var em=String(c.party_email||'').toLowerCase();if(!em)return'';var m=IN.filter(function(x){return String(x.email||'').toLowerCase()===em});return m.length?m[0].no:''}
-function ctHtml(x){var l=ctsOf(x);return'<div class="ct-box"><b>電子契約</b>'+(l.length?'<ul class="ct-l">'+l.map(function(c){return'<li><span class="ct-st '+ctCls(c)+'">'+esc(ctSt(c))+'</span><span>'+esc(c.title)+'</span><small>'+esc(c.id)+'　'+day(c.created)+' 送付'+(c.case_no?'':'（同じメールアドレスの契約）')+'</small><button type="button" class="small-btn" data-ctgo="'+esc(c.id)+'">電子契約で見る</button></li>'}).join('')+'</ul>':'<p class="hint" style="margin:0">この案件の契約書はまだ送っていません。</p>')+'<button type="button" class="small-btn" data-ctnew style="margin-top:8px">この案件の契約書を作る（下書きも送れます）</button></div>'}
+function ctHtml(x){var l=ctsOf(x);return'<div class="ct-box"><b>電子契約</b>'+(l.length?'<ul class="ct-l">'+l.map(function(c){return'<li><span class="ct-st '+ctCls(c)+'">'+esc(ctSt(c))+'</span><span>'+esc(c.title)+'</span><small>'+esc(c.id)+'　'+day(c.created)+' 送付'+(c.prev?'（'+esc(c.prev)+' の差し替え）':'')+(c.case_no?'':'（同じメールアドレスの契約）')+'</small><button type="button" class="small-btn" data-ctgo="'+esc(c.id)+'">電子契約で見る</button>'+draftBtns(c)+fbLine(c)+'</li>'}).join('')+'</ul>':'<p class="hint" style="margin:0">この案件の契約書はまだ送っていません。</p>')+'<button type="button" class="small-btn" data-ctnew style="margin-top:8px">この案件の契約書を作る（下書きも送れます）</button></div>'}
 var CASE_LINK=null;
-function setCaseLink(x){CASE_LINK=x?x.no:null;var el=$('caseLink');el.hidden=!x;if(x)el.innerHTML='<span>この契約書は <b>案件 '+esc(x.no)+'</b>（'+esc((x.company?x.company+' ':'')+(x.name||''))+'）に結びつけて送ります。案件の画面に「下書きを送った」などが表示されます。</span><button type="button" class="small-btn" id="caseUnlink">結びつけない</button>';if(x)$('caseUnlink').onclick=function(){setCaseLink(null)}}
+function setCaseLink(x){CASE_LINK=x?x.no:null;var el=$('caseLink');el.hidden=!x&&!REPLACES;el.innerHTML='';if(x)el.innerHTML='<span>この契約書は <b>案件 '+esc(x.no)+'</b>（'+esc((x.company?x.company+' ':'')+(x.name||''))+'）に結びつけて送ります。案件の画面に「下書きを送った」などが表示されます。</span><button type="button" class="small-btn" id="caseUnlink">結びつけない</button>';if(x)$('caseUnlink').onclick=function(){setCaseLink(null)}}
 function newCt(x){var g=segOf(x),c=cls(x);goTab('keiyaku');setCaseLink(x);
  var tk=g.key==='teikei'?'teikei':g.key==='kaiin'?({'事業所会員':'kaiin_jigyosho','法人会員':'kaiin_hojin','協賛会員':'kaiin_kyosan','個人会員（営業協力者）':'kojin'}[c.sub]||'kaiin_jigyosho'):'';
  if(tk&&[].some.call($('tpl').options,function(o){return o.value===tk})){$('tpl').value=tk;onTpl()}
  $('pName').value=x.name&&x.name.indexOf('伏せ')<0&&x.name.indexOf('名前なし')<0?x.name:'';$('pCompany').value=x.company||'';$('pEmail').value=x.email||'';$('draft').checked=true;
  window.scrollTo(0,$('caseLink').getBoundingClientRect().top+scrollY-130);flash($('caseLink'))}
+function ctOf(id){return(KL||[]).filter(function(c){return c.id===id})[0]}
+function ctFinal(id,b){var c=ctOf(id);if(!c)return;var w=c.feedback?(c.feedback.res==='ok'?'相手から「この内容で進めてよい」と返事が届いています。':'注意：相手から「修正の希望」が届いています。直さずに送ってよいですか？'):'まだ相手から返事が届いていません。';
+ if(!confirm(w+'\n\n「'+c.title+'」（'+id+'）を、下書きと同じ内容のまま正式な契約書として '+c.party_email+' へ送ります。相手は同じリンクから記入・押印・承認できるようになります。よろしいですか？'))return;
+ if(b)b.disabled=true;api('admin.finalize',{id:id}).then(function(){$('errR').textContent='「'+c.title+'」（'+id+'）を本契約として送りました。';$('errB').textContent='「'+c.title+'」を本契約として送りました。';list()}).catch(function(er){$('errR').textContent=er.message;$('errB').textContent=er.message;if(b)b.disabled=false})}
+var REPLACES=null;
+function ctRedo(id){api('admin.get',{id:id}).then(function(r){var c=r.contract;goTab('keiyaku');
+ var tk=c.template==='kaiin'?'kaiin_'+((c.cond&&c.cond.type)||'jigyosho'):c.template;if([].some.call($('tpl').options,function(o){return o.value===tk}))$('tpl').value=tk;onTpl();
+ $('pName').value=c.party.name||'';$('pCompany').value=c.party.company||'';$('pEmail').value=c.party.email||'';
+ [].forEach.call($('fieldChk').querySelectorAll('input'),function(i){if(!i.disabled)i.checked=c.fields.indexOf(i.value)>=0});drawPre();
+ [].forEach.call($('preBox').querySelectorAll('input'),function(i){i.value=(c.prefill||{})[i.dataset.k]||''});
+ if(c.cond){$('cPay').value=c.cond.pay||'month';$('cSites').value=c.cond.sites||1;$('cStaff').value=c.cond.staff==null?5:c.cond.staff;$('cStart').value=String(c.cond.start||'').slice(0,7);$('cRef').value=c.cond.referrer||'';$('cFounder').checked=c.cond.founder!==false;$('cEntry').value=c.cond.entryFee||'';onCond()}
+ $('note').value=c.note||'';$('reqId').checked=!!c.requireId;$('draft').checked=!!c.draft;
+ var x=c.case_no?caseOf(c.case_no):null;setCaseLink(x||null);REPLACES=c.id;
+ var el=$('caseLink');el.hidden=false;el.insertAdjacentHTML('afterbegin','<span style="flex-basis:100%"><b>'+esc(c.id)+' を直して送り直します。</b>元の書面は取り消され、直した書面だけが相手に届きます（'+(c.draft?'下書きのまま送るか、下の「下書き（確認用）として送る」を外して本契約として送るかを選べます':'')+'）。'+(c.feedback&&c.feedback.comment?'<br>相手の修正の希望：'+esc(c.feedback.comment):'')+'</span>');
+ if(!x&&c.case_no)el.insertAdjacentHTML('beforeend','<span>案件 '+esc(c.case_no)+' に結びつけます。</span>');
+ var cu=$('caseUnlink');if(cu)cu.remove();
+ if(!el.querySelector('#redoCancel'))el.insertAdjacentHTML('beforeend','<button type="button" class="small-btn" id="redoCancel">差し替えをやめる</button>');$('redoCancel').onclick=function(){REPLACES=null;setCaseLink(null)};
+ window.scrollTo(0,el.getBoundingClientRect().top+scrollY-130);flash(el)}).catch(function(er){$('errR').textContent=er.message;$('errB').textContent=er.message})}
 function goCt(id){goTab('keiyaku');var tr=[].filter.call($('rows').querySelectorAll('tr'),function(t){return t.dataset.id===id})[0];if(tr)flash(tr)}
 function staffOpts(cur){var l=STAFF.slice();if(cur&&l.indexOf(cur)<0)l.unshift(cur);return'<option value="">（担当者を選ぶ）</option>'+l.map(function(n){return'<option'+(n===cur?' selected':'')+'>'+esc(n)+'</option>'}).join('')}
 function autoCat(x){var fs=String(x.fields||'').split('、');for(var i=0;i<fs.length;i++){var m=ROUTE_AUTO_N[fs[i]];if(m)return m}var c=cls(x);if(c.kind==='提携・協業'&&c.path[0]){var p=c.path[0].split(' ＞ ');return[p[0],p[1]||'']}return null}
@@ -474,6 +497,9 @@ function todo(){var L=[],now=Date.now();
  if(past.length)L.push({c:'red',t:'対応予定日を過ぎた案件が <b>'+past.length+'件</b>',s:'予定していた対応をして、次の予定日を入れ直します。',b:'表示する',f:function(){goTab('inbox');$('fSt').value='alert';drawIn();flash($('inbox').querySelector('.ib'))}});
  if(KL){var unpaid=KL.filter(function(x){return x.status==='締結済み'&&x.template==='kaiin'&&!x.paid}),wait=KL.filter(function(x){return(x.status==='送付済み'||x.status==='確認中')&&x.draft!=='yes'&&now-new Date(x.created)>3*864e5});
   if(unpaid.length)L.push({c:'',t:'会費の入金確認待ちが <b>'+unpaid.length+'件</b>',s:'通帳やネットバンキングで入金を確かめたら、その行の「入金を確認した」を押します（登録完了のメールが自動で届きます）。',b:'電子契約を開く',f:function(){goTab('keiyaku');flash($('rows').querySelector('[data-paid]'))}});
+  var dok=KL.filter(function(x){return isLiveDraft(x)&&x.feedback&&x.feedback.res==='ok'}),dfix=KL.filter(function(x){return isLiveDraft(x)&&x.feedback&&x.feedback.res==='fix'});
+  if(dok.length)L.push({c:'red',t:'相手が下書きを確認し「この内容でよい」と返事をした契約書が <b>'+dok.length+'件</b>',s:'電子契約の一覧で「この内容で本契約として送る」を押すと、同じ内容の正式な契約書が届きます。',b:'電子契約を開く',f:function(){goTab('keiyaku');flash($('rows').querySelector('[data-final]'))}});
+  if(dfix.length)L.push({c:'red',t:'下書きに修正の希望が届いた契約書が <b>'+dfix.length+'件</b>',s:'電子契約の一覧で希望を読み、「内容を直して送り直す」を押します。元の書面は自動で取り消されます。',b:'電子契約を開く',f:function(){goTab('keiyaku');flash($('rows').querySelector('[data-redo]'))}});
   if(wait.length)L.push({c:'',t:'3日以上、相手の承認待ちの契約が <b>'+wait.length+'件</b>',s:'相手に届いているか確かめ、必要なら「もう一度送る」を押します。',b:'電子契約を開く',f:function(){goTab('keiyaku');flash($('rows').querySelector('[data-resend]'))}})}
  if(rep.length)L.push({c:'',t:'お客様へ7日以上報告していない案件が <b>'+rep.length+'件</b>',s:'「お客様へ報告を作る」で文面を作り、送るか（または電話で伝えたか）を選びます。',b:'表示する',f:function(){goTab('inbox');$('fSt').value='alert';drawIn();flash($('inbox').querySelector('[data-rep]'))}});
  if(nofac.length)L.push({c:'',t:'通っている病院・施設が会員か、まだ確かめていない相談が <b>'+nofac.length+'件</b>',s:'利用者・ご本人とご家族の相談は、会員の病院・施設に通っていることが前提です。「会員施設の確認」で結果を選び、会員でなければ対応を決めて保存します。',b:'表示する',f:function(){goTab('inbox');SEG='all';drawIn();$('fFac').value='未確認';drawIn();flash($('inbox').querySelector('tr.cr,.ib'))}});
@@ -522,6 +548,8 @@ $('inbox').addEventListener('click',function(e){var card=e.target.closest('.ib')
  if(e.target.closest('[data-rep]'))openRpt(x,x.status==='新規受付'?'受付':x.status);
  if(e.target.closest('[data-ctnew]')){newCt(x);return}
  if((b=e.target.closest('[data-ctgo]'))){goCt(b.dataset.ctgo);return}
+ if((b=e.target.closest('[data-final]'))){ctFinal(b.dataset.final,b);return}
+ if((b=e.target.closest('[data-redo]'))){ctRedo(b.dataset.redo);return}
  if(e.target.closest('[data-fw]')){var pi=card.querySelector('[data-k="partner"]');openFwd(x,pi?pi.value.trim():x.partner)}
  if(e.target.closest('[data-reg]')){var c=cls(x),pp=(c.path[0]||'').split(' ＞ '),nm=x.company||x.name,ar=String(x.body||'').split('\n').filter(function(l){return/^地域 \d+：/.test(l)}).map(function(l){return l.replace(/^地域 \d+：/,'').split(' ＞ ').slice(1).join(' ')}).join('、');
   if(PARTNERS.some(function(p){return p.name===nm})){$('errB').textContent='「'+nm+'」はもう提携先一覧に登録されています。';return}

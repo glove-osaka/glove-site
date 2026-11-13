@@ -125,7 +125,8 @@ function buildBody(key, cond, note, party) {
       var t = tplOf(d.template), p = d.party || {}; if (t.base) d.cond = Object.assign({}, d.cond || {}, { type: t.mtype });
       if (!p.name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email || "")) return Promise.reject(new Error("相手のお名前と、正しいメールアドレスを入れてください"));
       var f = orderFields(t, d.fields);
-      var o = { id: "IKK-DEMO-" + (1001 + list.length), token: "demo" + Date.now(), case_no: d.caseNo || "", template: t.base || t.key, title: t.base ? memberTitle(t.mtype) : t.title, party_name: p.name, party_company: p.company || "", party_email: p.email, status: "送付済み", created: new Date().toISOString(), draft: d.draft ? "yes" : "", fields: f, required: t.required, requireId: !!(d.requireId || t.requireId), prefill: d.prefill || {}, body: buildBody(t.key, d.cond, d.note, p.company || p.name) };
+      var o = { id: "IKK-DEMO-" + (1001 + list.length), token: "demo" + Date.now(), case_no: d.caseNo || "", template: t.base || t.key, title: t.base ? memberTitle(t.mtype) : t.title, party_name: p.name, party_company: p.company || "", party_email: p.email, status: "送付済み", created: new Date().toISOString(), draft: d.draft ? "yes" : "", fields: f, required: t.required, requireId: !!(d.requireId || t.requireId), prefill: d.prefill || {}, body: buildBody(t.key, d.cond, d.note, p.company || p.name), cond: t.cond ? normCond(d.cond) : null, note: d.note || "" };
+      if (d.replaces) list.forEach(function (x) { if (x.id === d.replaces) { x.status = "取り消し"; o.prev = x.id; if (!o.case_no) o.case_no = x.case_no || ""; } });
       list.unshift(o); store(list);
       return wait({ ok: true, id: o.id, url: location.href.replace(/admin\.html.*$/, "index.html") + "?t=" + o.token + "&demo=1" });
     }
@@ -159,6 +160,8 @@ function buildBody(key, cond, note, party) {
     if (action === "admin.resend") return wait({ ok: true });
     if (action === "admin.stop") { list.forEach(function (x) { if (x.id === d.id) x.stopped = new Date().toISOString(); }); store(list); return wait({ ok: true }); }
     if (action === "admin.paid") { list.forEach(function (x) { if (x.id === d.id) x.paid = new Date().toISOString(); }); store(list); return wait({ ok: true }); }
+    if (action === "admin.get") { var g0 = list.filter(function (x) { return x.id === d.id; })[0]; if (!g0) return Promise.reject(new Error("見つかりません")); return wait({ ok: true, contract: { id: g0.id, template: g0.template, title: g0.title, draft: g0.draft === "yes", status: g0.status, party: { name: g0.party_name, company: g0.party_company, email: g0.party_email }, cond: g0.cond || null, note: g0.note || "", fields: g0.fields || [], prefill: g0.prefill || {}, requireId: !!g0.requireId, case_no: g0.case_no || "", feedback: g0.feedback || null } }); }
+    if (action === "admin.finalize") { list.forEach(function (x) { if (x.id === d.id) { x.draft = ""; x.viewed = ""; x.status = "送付済み"; } }); store(list); return wait({ ok: true }); }
     if (action === "admin.cancel") { list.forEach(function (x) { if (x.id === d.id) x.status = "取り消し"; }); store(list); return wait({ ok: true }); }
     if (action === "admin.pdf" || action === "client.pdf") return Promise.reject(new Error("お試し表示では、契約書のPDFは作られません"));
     var c = list.filter(function (x) { return x.token === d.token; })[0] || sample();
@@ -168,8 +171,9 @@ function buildBody(key, cond, note, party) {
     if (action === "client.get") {
       var t2 = tplOf(c.template) || tplOf("kaiin");
       if (d.sess !== "demo") return wait({ ok: true, needOtp: true, contract: { id: c.id, title: c.title, party_name: c.party_name, party_company: c.party_company, email: c.party_email.split("@")[0].slice(0, 2) + "***@" + c.party_email.split("@")[1], issuer: ISSUER } });
-      return wait({ ok: true, contract: { id: c.id, title: c.title, status: c.status, draft: c.draft === "yes", party_name: c.party_name, party_company: c.party_company, body: c.body, fields: c.fields.map(function (k) { return { key: k, label: fieldLabel(t2, k), type: FIELDS[k].type, ac: FIELDS[k].ac || "", required: c.required.indexOf(k) >= 0, value: (c.prefill || {})[k] || "" }; }), requireId: !!c.requireId, adult: !!t2.adult, seal: t2.seal, issuer: ISSUER, signed: c.status === "締結済み" } });
+      return wait({ ok: true, contract: { id: c.id, title: c.title, status: c.status, draft: c.draft === "yes", feedback: c.feedback || null, party_name: c.party_name, party_company: c.party_company, body: c.body, fields: c.fields.map(function (k) { return { key: k, label: fieldLabel(t2, k), type: FIELDS[k].type, ac: FIELDS[k].ac || "", required: c.required.indexOf(k) >= 0, value: (c.prefill || {})[k] || "" }; }), requireId: !!c.requireId, adult: !!t2.adult, seal: t2.seal, issuer: ISSUER, signed: c.status === "締結済み" } });
     }
+    if (action === "client.feedback") { if (d.res === "fix" && !String(d.comment || "").trim()) return Promise.reject(new Error("直してほしいところを書いてください")); var fb = { res: d.res, comment: d.comment || "", ts: new Date().toISOString() }; list.forEach(function (x) { if (x.token === d.token) { x.feedback = fb; x.viewed = x.viewed || fb.ts; } }); store(list); return wait({ ok: true, feedback: fb }); }
     if (action === "client.sign") { list.forEach(function (x) { if (x.token === d.token) { x.status = "締結済み"; x.signed = new Date().toISOString(); } }); store(list); return wait({ ok: true, demo: true }); }
     return Promise.reject(new Error("不明な操作です"));
   }

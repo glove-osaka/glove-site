@@ -5,7 +5,7 @@
    使い方は「設定のしかた.txt」を見てください。
    ===================================================================== */
 var SHEET = "契約";
-var COLS = ["id", "token", "template", "title", "party_name", "party_company", "party_email", "fields", "required", "require_id", "cond", "note", "prefill", "body", "status", "created", "expires", "viewed", "signed", "values", "seal_file", "id_file", "pdf_id", "hash", "ua", "log", "draft", "paid", "refcode", "billed", "stopped", "case_no"];
+var COLS = ["id", "token", "template", "title", "party_name", "party_company", "party_email", "fields", "required", "require_id", "cond", "note", "prefill", "body", "status", "created", "expires", "viewed", "signed", "values", "seal_file", "id_file", "pdf_id", "hash", "ua", "log", "draft", "paid", "refcode", "billed", "stopped", "case_no", "feedback", "prev"];
 var VALID_DAYS = 30;
 
 function P(k) { return PropertiesService.getScriptProperties().getProperty(k) || ""; }
@@ -301,10 +301,11 @@ function client_(a, d) {
     if (!authed) return { ok: true, needOtp: true, contract: { id: o.id, title: o.title, party_name: o.party_name, party_company: o.party_company, email: maskMail_(o.party_email), issuer: ISSUER } };
     if (!o.viewed) { o.viewed = new Date(); log_(o, "内容を表示"); save_(o); }
     var fields = parse_(o.fields, []), req = parse_(o.required, []), pre = parse_(o.prefill, {});
-    return { ok: true, contract: { id: o.id, title: o.title, status: o.status, draft: o.draft === "yes", party_name: o.party_name, party_company: o.party_company, body: o.body, fields: fields.map(function (k) { return { key: k, label: fieldLabel(t, k), type: FIELDS[k].type, ac: FIELDS[k].ac || "", required: req.indexOf(k) >= 0, value: pre[k] || "" }; }), requireId: o.require_id === "yes" || o.require_id === true, adult: !!(t && t.adult), seal: t ? t.seal : "round", issuer: ISSUER, signed: signed } };
+    return { ok: true, contract: { id: o.id, title: o.title, status: o.status, draft: o.draft === "yes", feedback: parse_(o.feedback, null), party_name: o.party_name, party_company: o.party_company, body: o.body, fields: fields.map(function (k) { return { key: k, label: fieldLabel(t, k), type: FIELDS[k].type, ac: FIELDS[k].ac || "", required: req.indexOf(k) >= 0, value: pre[k] || "" }; }), requireId: o.require_id === "yes" || o.require_id === true, adult: !!(t && t.adult), seal: t ? t.seal : "round", issuer: ISSUER, signed: signed } };
   }
   if (!authed) throw new Error("確認の時間が過ぎました。画面を開き直して、認証コードを入れてください。");
   if (a === "client.sign") return sign_(o, d);
+  if (a === "client.feedback") return feedback_(o, d);
   if (a === "client.pdf") {
     if (!signed || !o.pdf_id) throw new Error("契約書はまだできていません。");
     var f = DriveApp.getFileById(o.pdf_id);
@@ -586,9 +587,10 @@ function adminDo_(a, d) {
     if (a === "admin.staffSet") { var sb = staff_(), r2 = staffSet_(d), ch2 = []; r2.staff.forEach(function (n) { if (sb.indexOf(n) < 0) ch2.push("追加：" + n); }); sb.forEach(function (n) { if (r2.staff.indexOf(n) < 0) ch2.push("削除：" + n); }); if (ch2.length) hist_("", "担当者の登録・変更", ch2.join("\n")); return r2; }
     if (a === "admin.preview") return { ok: true, cond: normCond(d.cond), body: buildBody(d.template, d.cond, d.note, d.party) };
     if (a === "admin.issue") { var ri = issue_(d), ti = tplOf(d.template), pp = d.party || {}; hist_(ri.id, d.draft ? "契約書の下書きを送った" : "契約書を送った", (ti && ti.base ? memberTitle(ti.mtype) : ti ? ti.title : "") + "\n" + (pp.company ? pp.company + " " : "") + (pp.name || "") + "（" + (pp.email || "") + "）", "", null, "電子契約"); return ri; }
-    if (a === "admin.list") return { ok: true, rows: rows_().reverse().slice(0, 300).map(function (r) { return { id: r.id, title: r.title, party_name: r.party_name, party_company: r.party_company, party_email: r.party_email, status: r.status, template: r.template, paid: r.paid ? new Date(r.paid).toISOString() : "", created: r.created ? new Date(r.created).toISOString() : "", viewed: r.viewed ? new Date(r.viewed).toISOString() : "", signed: r.signed ? new Date(r.signed).toISOString() : "", draft: r.draft, refcode: r.refcode || "", typeLabel: (function () { var c = parse_(r.cond, null); return c && MEMBER_LABEL[c.type] || ""; })(), pay: (function () { var c = parse_(r.cond, null); return c ? c.pay : ""; })(), phone: (parse_(r.values, {}) || {}).phone || "", billed: parse_(r.billed, []).slice(-1)[0] || "", stopped: r.stopped ? new Date(r.stopped).toISOString() : "", case_no: String(r.case_no || "") }; }) };
+    if (a === "admin.list") return { ok: true, rows: rows_().reverse().slice(0, 300).map(function (r) { return { id: r.id, title: r.title, party_name: r.party_name, party_company: r.party_company, party_email: r.party_email, status: r.status, template: r.template, paid: r.paid ? new Date(r.paid).toISOString() : "", created: r.created ? new Date(r.created).toISOString() : "", viewed: r.viewed ? new Date(r.viewed).toISOString() : "", signed: r.signed ? new Date(r.signed).toISOString() : "", draft: r.draft, refcode: r.refcode || "", typeLabel: (function () { var c = parse_(r.cond, null); return c && MEMBER_LABEL[c.type] || ""; })(), pay: (function () { var c = parse_(r.cond, null); return c ? c.pay : ""; })(), phone: (parse_(r.values, {}) || {}).phone || "", billed: parse_(r.billed, []).slice(-1)[0] || "", stopped: r.stopped ? new Date(r.stopped).toISOString() : "", case_no: String(r.case_no || ""), feedback: parse_(r.feedback, null), prev: String(r.prev || "") }; }) };
     var o = find_("id", d.id); if (!o) throw new Error("見つかりません");
-    var who_ = o.title + "\n" + (o.party_company ? o.party_company + " " : "") + o.party_name, LG = { "admin.resend": "契約書を送り直した", "admin.paid": "入金を確認した（登録完了のメールを送信）", "admin.stop": "退会にした（請求を停止）", "admin.cancel": "契約書を取り消した", "admin.pdf": "契約書のPDFを保存した" };
+    if (a === "admin.get") return getForEdit_(o);
+    var who_ = o.title + "\n" + (o.party_company ? o.party_company + " " : "") + o.party_name, LG = { "admin.resend": "契約書を送り直した", "admin.paid": "入金を確認した（登録完了のメールを送信）", "admin.stop": "退会にした（請求を停止）", "admin.cancel": "契約書を取り消した", "admin.pdf": "契約書のPDFを保存した", "admin.finalize": "下書きを本契約として送った（同じ内容）" };
     if (LG[a]) { var res_ = adminOne_(a, d, o); hist_(o.id, LG[a], who_, "", null, "電子契約"); return res_; }
     throw new Error("不明な操作です");
   } catch (err) { return { ok: false, error: String(err && err.message || err) }; }
@@ -596,6 +598,7 @@ function adminDo_(a, d) {
 function adminOne_(a, d, o) {
     if (a === "admin.resend") { if (o.status === "締結済み" || o.status === "取り消し") throw new Error("送り直せない状態です"); o.expires = new Date(Date.now() + VALID_DAYS * 864e5); sendInvite_(o); log_(o, "送り直し"); save_(o); return { ok: true }; }
     if (a === "admin.paid") return paid_(o);
+    if (a === "admin.finalize") return finalize_(o);
     if (a === "admin.stop") { if (o.stopped) throw new Error("すでに請求を止めています"); o.stopped = new Date(); log_(o, "退会・請求を停止"); save_(o); return { ok: true }; }
     if (a === "admin.cancel") { if (o.status === "締結済み") throw new Error("締結済みの契約は取り消せません"); o.status = "取り消し"; log_(o, "取り消し"); save_(o); return { ok: true }; }
     if (a === "admin.pdf") { if (!o.pdf_id) throw new Error("まだ締結されていません"); var f = DriveApp.getFileById(o.pdf_id); return { ok: true, pdf: Utilities.base64Encode(f.getBlob().getBytes()), filename: f.getName() }; }
@@ -610,12 +613,46 @@ function issue_(d) {
   var cond = t.cond ? normCond(d.cond) : "";
   var o = { id: newId_(), token: newToken_(), template: bt.key, title: t.base ? memberTitle(t.mtype) : t.title, party_name: p.name, party_company: p.company || "", party_email: p.email, fields: fields, required: t.required, require_id: (d.requireId || t.requireId) ? "yes" : "", cond: cond, note: d.note || "", prefill: d.prefill || {}, status: "送付済み", created: new Date(), expires: new Date(Date.now() + VALID_DAYS * 864e5), draft: d.draft ? "yes" : "", case_no: String(d.caseNo || "").slice(0, 40) };
   o.body = buildBody(t.key, cond, o.note, p.company || p.name);
-  log_(o, "作成・送付" + (o.case_no ? "（案件 " + o.case_no + "）" : "")); save_(o); sendInvite_(o);
+  if (d.replaces) {
+    var old = find_("id", d.replaces); if (!old) throw new Error("差し替える元の契約書が見つかりません");
+    if (old.status === "締結済み") throw new Error("元の契約書はすでに締結されているため、差し替えられません");
+    if (old.status !== "取り消し") { old.status = "取り消し"; log_(old, "差し替えのため取り消し（新しい契約書 " + o.id + "）"); save_(old); }
+    o.prev = old.id; if (!o.case_no) o.case_no = String(old.case_no || "");
+    hist_(old.id, "内容を直して差し替えた", "新しい契約書 " + o.id, "", null, "電子契約");
+  }
+  log_(o, "作成・送付" + (o.case_no ? "（案件 " + o.case_no + "）" : "") + (o.prev ? "（" + o.prev + " の差し替え）" : "")); save_(o); sendInvite_(o);
   if (o.case_no) { hist_(o.case_no, d.draft ? "電子契約の下書きを送った" : "電子契約を送った", o.id + "　" + o.title, "", null, "案件"); try { var cc = findCase_(o.case_no); inboxSheet_().getRange(cc.row, 14).setValue(new Date()); } catch (e) { } }
   return { ok: true, id: o.id, url: P("SIGN_URL") + "?t=" + o.token };
 }
-function sendInvite_(o) {
+/* 下書きを見た相手からの返事（この内容でよい／修正をお願いしたい） */
+function feedback_(o, d) {
+  if (o.draft !== "yes" || o.status === "取り消し" || o.status === "締結済み") throw new Error("この書面には、お返事をいただけません。");
+  var res = d.res === "ok" ? "ok" : d.res === "fix" ? "fix" : ""; if (!res) throw new Error("お返事を選んでください");
+  var comment = String(d.comment || "").trim().slice(0, 2000); if (res === "fix" && !comment) throw new Error("直してほしいところを書いてください");
+  o.feedback = JSON.stringify({ res: res, comment: comment, ts: new Date().toISOString() });
+  var kind = res === "ok" ? "下書きの確認：この内容でよい" : "下書きの確認：修正の希望", who = (o.party_company ? o.party_company + " " : "") + o.party_name;
+  log_(o, kind + (comment ? "（" + comment.slice(0, 100) + "）" : "")); save_(o);
+  hist_(o.id, kind, o.title + "\n" + who + (comment ? "\n" + comment : ""), "", "相手", "電子契約");
+  if (o.case_no) hist_(o.case_no, kind, o.id + "　" + o.title + (comment ? "\n" + comment : ""), "", "相手", "案件");
+  MailApp.sendEmail({ to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［電子契約］" + kind + "：" + o.id + "　" + who, body: o.title + "\n" + o.id + "\n" + who + "\n\n" + (res === "ok" ? "相手が下書きを確認し、「この内容で進めてよい」と返事をしました。\n管理画面の電子契約で「この内容で本契約として送る」を押すと、同じ内容の契約書が正式に届きます。" : "相手から修正の希望が届きました。\n\n" + comment + "\n\n管理画面の電子契約で「内容を直して送り直す」を押すと、直した下書きまたは本契約を送れます。") + "\n\n管理画面：https://119cm.net/keiyaku/admin.html" });
+  return { ok: true, feedback: parse_(o.feedback, null) };
+}
+/* 下書き（確認してもらった内容）を、そのまま本契約に切り替えて送る。文面は変えない */
+function finalize_(o) {
+  if (o.draft !== "yes") throw new Error("下書きではありません");
+  if (o.status === "取り消し" || o.status === "締結済み") throw new Error("この契約書は切り替えられません");
+  o.draft = ""; o.viewed = ""; o.status = "送付済み"; o.expires = new Date(Date.now() + VALID_DAYS * 864e5);
+  log_(o, "下書きから本契約に切り替え（同じ内容）"); save_(o); sendInvite_(o, true);
+  if (o.case_no) hist_(o.case_no, "下書きを本契約として送った", o.id + "　" + o.title, "", null, "案件");
+  return { ok: true };
+}
+/* 内容を直すために、元の契約書の条件を返す */
+function getForEdit_(o) {
+  var c = parse_(o.cond, null);
+  return { ok: true, contract: { id: o.id, template: o.template, title: o.title, draft: o.draft === "yes", status: o.status, party: { name: o.party_name, company: o.party_company, email: o.party_email }, cond: c, note: o.note || "", fields: parse_(o.fields, []), prefill: parse_(o.prefill, {}), requireId: o.require_id === "yes", case_no: o.case_no || "", feedback: parse_(o.feedback, null) } };
+}
+function sendInvite_(o, fin) {
   var url = P("SIGN_URL") + "?t=" + o.token, draft = o.draft === "yes";
-  var html = "<div style='font-family:sans-serif;font-size:16px;line-height:1.8;color:#14211F'><p>" + esc_(o.party_company ? o.party_company + "　" : "") + esc_(o.party_name) + " 様</p><p>" + esc_(ISSUER.service) + "です。" + (draft ? "「" + esc_(o.title) + "」の下書き（確認用）をお送りします。" : "「" + esc_(o.title) + "」をお送りします。下のボタンから内容をご確認のうえ、記入・押印・承認をお願いします。") + "</p><p><a href='" + url + "' style='display:inline-block;background:#0E5A63;color:#fff;padding:14px 26px;border-radius:10px;text-decoration:none;font-weight:bold'>契約書を開く</a></p><p style='font-size:14px;color:#3A4A48'>開くと、このメールアドレスに6けたの認証コードが届きます。リンクの有効期限は" + VALID_DAYS + "日です。<br>契約番号：" + esc_(o.id) + "</p><p style='font-size:14px'>" + esc_(ISSUER.service) + "（運営 " + esc_(ISSUER.name) + "）<br>" + ISSUER.tel + "（受付 " + ISSUER.hours + "）</p></div>";
-  MailApp.sendEmail({ to: o.party_email, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】" + o.title + (draft ? "（下書き）" : "") + "のご案内", htmlBody: html, body: "契約書を開く：" + url });
+  var html = "<div style='font-family:sans-serif;font-size:16px;line-height:1.8;color:#14211F'><p>" + esc_(o.party_company ? o.party_company + "　" : "") + esc_(o.party_name) + " 様</p><p>" + esc_(ISSUER.service) + "です。" + (draft ? "「" + esc_(o.title) + "」の下書き（確認用）をお送りします。内容をご確認のうえ、画面のボタンからお返事をお願いします。" : (fin ? "先日ご確認いただいた内容のまま、" : "") + "「" + esc_(o.title) + "」をお送りします。下のボタンから内容をご確認のうえ、記入・押印・承認をお願いします。") + "</p><p><a href='" + url + "' style='display:inline-block;background:#0E5A63;color:#fff;padding:14px 26px;border-radius:10px;text-decoration:none;font-weight:bold'>契約書を開く</a></p><p style='font-size:14px;color:#3A4A48'>開くと、このメールアドレスに6けたの認証コードが届きます。リンクの有効期限は" + VALID_DAYS + "日です。<br>契約番号：" + esc_(o.id) + "</p><p style='font-size:14px'>" + esc_(ISSUER.service) + "（運営 " + esc_(ISSUER.name) + "）<br>" + ISSUER.tel + "（受付 " + ISSUER.hours + "）</p></div>";
+  MailApp.sendEmail({ to: o.party_email, name: ISSUER.service, replyTo: P("NOTIFY_TO"), subject: "【" + ISSUER.service + "】" + o.title + (draft ? "（下書き）" : fin ? "（正式な契約書）" : "") + "のご案内", htmlBody: html, body: "契約書を開く：" + url });
 }

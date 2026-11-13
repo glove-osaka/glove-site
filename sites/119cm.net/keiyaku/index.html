@@ -9,7 +9,7 @@
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDPMincho:wght@700&display=swap">
-<link rel="stylesheet" href="keiyaku.css?v=dae962f6">
+<link rel="stylesheet" href="keiyaku.css?v=815e2205">
 </head>
 <body>
 <div class="demo" id="demoBar" hidden>お試し表示です（入力した内容は送信されません。認証コードは 123456）</div>
@@ -44,7 +44,11 @@
 <h2>契約書の内容をご確認ください</h2>
 <p class="hint">枠の中を、最後までお読みください。枠の中は上下に動かせます。<span id="blankHint"><span class="blank">記入欄</span>は、次の画面でご記入いただきます。</span></p>
 <div class="doc" id="doc" tabindex="0"></div>
-<p class="note" id="draftNote" hidden>この書面は「下書き（確認用）」です。内容をご確認いただくためのもので、締結はできません。気になる点はお電話でお知らせください。</p>
+<p class="note" id="draftNote" hidden>この書面は「下書き（確認用）」です。まだ締結はできません。内容をご確認のうえ、下のボタンからお返事ください。「この内容で進めてよい」とお返事いただくと、<b>同じ内容の正式な契約書</b>を、このメールアドレスにお送りします。</p>
+<div id="fbBox" class="fb-box" hidden><h3 style="margin:0 0 6px">内容はいかがでしたか？</h3><p class="hint" style="margin:0 0 12px">お返事は担当者に届きます。お電話（0120-933-496）でも承ります。</p>
+<div class="btns"><button class="btn" type="button" id="fbOk">この内容で進めてよい</button><button class="btn o" type="button" id="fbFixB">直してほしいところがある</button></div>
+<div id="fbFix" hidden style="margin-top:14px"><div class="fld"><label for="fbC">直してほしいところ <span class="req">※必須</span></label><textarea id="fbC" maxlength="2000" placeholder="例：第3条の支払日を15日にしてほしい"></textarea></div><button class="btn" type="button" id="fbSend">この内容で伝える</button></div>
+<p class="note" id="fbDone" hidden style="margin-top:14px"></p><p class="err" id="errFb" role="alert"></p></div>
 <div class="btns"><button class="btn" type="button" id="toFill">内容を確認しました。次へ</button></div>
 </section>
 
@@ -121,12 +125,17 @@ function get(){keiyakuApi('client.get',{token:token,sess:sess}).then(function(r)
  skipFill=!missing().length&&!C.requireId;
  if(skipFill){document.querySelector('#steps li:nth-child(2)').hidden=true;document.querySelectorAll('#steps li b')[2].textContent='2';document.querySelectorAll('#steps li b')[3].textContent='3'}
  renderDoc();
- if(C.draft){$('draftNote').hidden=false;$('toFill').hidden=true}
+ if(C.draft){$('draftNote').hidden=false;$('toFill').hidden=true;$('fbBox').hidden=false;fbShow(C.feedback)}
  if(C.requireId)$('idBox').hidden=false;
  if(C.seal==='square')document.querySelector('input[name=shape][value=square]').checked=true;
- $('nextPay').hidden=!/会員申込書/.test(C.title);
+ $('nextPay').hidden=!/会員.*申込書/.test(C.title);
  if(C.signed){show(3)}else show(0);
 }).catch(function(e){fail(e.message)})}
+function fbShow(f){if(!f)return;$('fbDone').hidden=false;$('fbDone').textContent=(f.res==='ok'?'「この内容で進めてよい」とお返事いただきました。担当者から、同じ内容の正式な契約書をお送りします。':'直してほしいところをお伝えいただきました。担当者が内容を直して、あらためてお送りします。')+'（'+new Date(f.ts).toLocaleString('ja-JP')+'。お返事は送り直せます）'}
+function fbSend(res){var c=$('fbC').value.trim();$('errFb').textContent='';if(res==='fix'&&!c){$('errFb').textContent='直してほしいところを書いてください。';$('fbC').focus();return}
+ var b=res==='ok'?$('fbOk'):$('fbSend');b.disabled=true;
+ keiyakuApi('client.feedback',{token:token,sess:sess,res:res,comment:res==='fix'?c:''}).then(function(r){fbShow(r.feedback);$('fbFix').hidden=true;$('fbDone').scrollIntoView({block:'center'})}).catch(function(e){$('errFb').textContent=e.message}).then(function(){b.disabled=false})}
+$('fbOk').addEventListener('click',function(){fbSend('ok')});$('fbFixB').addEventListener('click',function(){$('fbFix').hidden=false;$('fbC').focus()});$('fbSend').addEventListener('click',function(){fbSend('fix')});
 get();
 function sendOtp(){$('errO').textContent='';$('sendOtp').disabled=true;$('resend').disabled=true;
  keiyakuApi('client.otp',{token:token}).then(function(r){$('otpIn').hidden=false;$('sendRow').hidden=true;$('code').focus();$('errO').textContent=r.demoCode?'お試し表示のため、認証コードは '+r.demoCode+' です。':'認証コードを送りました。'})
