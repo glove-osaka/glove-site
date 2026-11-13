@@ -70,7 +70,22 @@ function routes_() {
   if (add.length) { sh.getRange(sh.getLastRow() + 1, 1, add.length, 3).setValues(add.map(function (f) { o[f] = ""; return [f, "", ""]; })); }
   return o;
 }
-function routeFor_(fields) { var r = routes_(); for (var i = 0; i < fields.length; i++) if (r[fields[i]]) return r[fields[i]].split(/[、,]/)[0].trim(); return ""; }
+var PSHEET = "提携先一覧", PHEAD = ["提携先の名前", "大分類", "中分類", "小分類", "メモ"];
+function partners_() { var v = sheetOf_(PSHEET, PHEAD).getDataRange().getValues(), out = []; for (var i = 1; i < v.length; i++) if (v[i][0]) out.push({ name: String(v[i][0]), a: String(v[i][1] || ""), b: String(v[i][2] || ""), c: String(v[i][3] || ""), note: String(v[i][4] || "") }); return out; }
+function partnerSet_(d) {
+  var rows = (d.rows || []).filter(function (r) { return r && r.name; }).slice(0, 500).map(function (r) { return [String(r.name).slice(0, 100), String(r.a || "").slice(0, 60), String(r.b || "").slice(0, 60), String(r.c || "").slice(0, 80), String(r.note || "").slice(0, 300)]; });
+  var sh = sheetOf_(PSHEET, PHEAD), last = sh.getLastRow(); if (last > 1) sh.getRange(2, 1, last - 1, 5).clearContent(); if (rows.length) sh.getRange(2, 1, rows.length, 5).setValues(rows);
+  return { ok: true, partners: partners_() };
+}
+function staff_() { return parse_(P("STAFF"), []); }
+function staffSet_(d) { var l = (d.list || []).map(function (x) { return String(x).trim().slice(0, 30); }).filter(function (x, i, a) { return x && a.indexOf(x) === i; }).slice(0, 50); PropertiesService.getScriptProperties().setProperty("STAFF", JSON.stringify(l)); return { ok: true, staff: l }; }
+// 新しい受付の振分け先：相談の分野から分類を決め、提携先一覧で当てはまる先を選ぶ（なければ予備の分野ごとの振分け）
+function routeFor_(fields) {
+  var ps = partners_();
+  for (var i = 0; i < fields.length; i++) { var m = ROUTE_AUTO[fields[i]]; if (!m) continue;
+    var hit = ps.filter(function (p) { return p.a === m[0] && p.b === m[1]; })[0] || ps.filter(function (p) { return p.a === m[0]; })[0]; if (hit) return hit.name; }
+  var r = routes_(); for (var j = 0; j < fields.length; j++) if (r[fields[j]]) return r[fields[j]].split(/[、,]/)[0].trim(); return "";
+}
 function routeSet_(d) {
   var sh = sheetOf_(ROUTE, ["分野", "振分け先（提携企業・専門家）", "備考"]), v = sh.getDataRange().getValues(), idx = {};
   for (var i = 1; i < v.length; i++) idx[String(v[i][0])] = i + 1;
@@ -99,7 +114,7 @@ function caseRows_() {
 function cases_() {
   var rows = caseRows_().sort(function (a, b) { return a.ts < b.ts ? 1 : -1; }).slice(0, 800);
   rows.forEach(function (x) { delete x.row; });
-  return { ok: true, rows: rows, steps: STEPS, routes: routes_() };
+  return { ok: true, rows: rows, steps: STEPS, routes: routes_(), partners: partners_(), staff: staff_() };
 }
 function findCase_(no) { var r = caseRows_(); for (var i = 0; i < r.length; i++) if (r[i].no === String(no)) return r[i]; throw new Error("受付が見つかりません"); }
 function caseSet_(d) {
@@ -502,6 +517,8 @@ function adminDo_(a, d) {
     if (a === "admin.report") return report_(d);
     if (a === "admin.history") return { ok: true, rows: histOf_(d.no) };
     if (a === "admin.routeSet") return routeSet_(d);
+    if (a === "admin.partnerSet") return partnerSet_(d);
+    if (a === "admin.staffSet") return staffSet_(d);
     if (a === "admin.preview") return { ok: true, cond: normCond(d.cond), body: buildBody(d.template, d.cond, d.note, d.party) };
     if (a === "admin.issue") return issue_(d);
     if (a === "admin.list") return { ok: true, rows: rows_().reverse().slice(0, 300).map(function (r) { return { id: r.id, title: r.title, party_name: r.party_name, party_company: r.party_company, party_email: r.party_email, status: r.status, template: r.template, paid: r.paid ? new Date(r.paid).toISOString() : "", created: r.created ? new Date(r.created).toISOString() : "", viewed: r.viewed ? new Date(r.viewed).toISOString() : "", signed: r.signed ? new Date(r.signed).toISOString() : "", draft: r.draft, refcode: r.refcode || "", typeLabel: (function () { var c = parse_(r.cond, null); return c && MEMBER_LABEL[c.type] || ""; })(), pay: (function () { var c = parse_(r.cond, null); return c ? c.pay : ""; })(), phone: (parse_(r.values, {}) || {}).phone || "", billed: parse_(r.billed, []).slice(-1)[0] || "", stopped: r.stopped ? new Date(r.stopped).toISOString() : "" }; }) };

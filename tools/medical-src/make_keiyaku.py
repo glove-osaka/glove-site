@@ -9,7 +9,7 @@ os.makedirs(OUT, exist_ok=True); os.makedirs(GAS, exist_ok=True)
 CORE = open(os.path.join(HERE, "keiyaku_core.js"), encoding="utf-8").read()
 from data import SUP as _SUP
 FIELD_LIST = [v["name"] for v in _SUP.values()] + ["その他・まだ分からない", "提携・協業の申し込み", "要望・ご意見", "会員登録（事業所会員）", "会員登録（法人会員）", "会員登録（協賛会員）", "会員登録（個人会員（営業協力者））"]
-TEXTS = "var FIELD_LIST = " + json.dumps(FIELD_LIST, ensure_ascii=False) + ";\n" + "var KIYAKU_TEXT = %s;\nvar KOJIN_TEXT = %s;\nvar NDA_TEXT = %s;\nvar TEIKEI_TEXT = %s;\n" % tuple(json.dumps(x, ensure_ascii=False) for x in (KIYAKU, KOJIN_KIYAKU, NDA, TEIKEI))
+TEXTS = "var FIELD_LIST = " + json.dumps(FIELD_LIST, ensure_ascii=False) + ";\n" + "var ROUTE_AUTO = " + json.dumps({v["name"]: list(__import__("data").ROUTE_AUTO[k]) for k, v in _SUP.items()}, ensure_ascii=False) + ";\n" + "var KIYAKU_TEXT = %s;\nvar KOJIN_TEXT = %s;\nvar NDA_TEXT = %s;\nvar TEIKEI_TEXT = %s;\n" % tuple(json.dumps(x, ensure_ascii=False) for x in (KIYAKU, KOJIN_KIYAKU, NDA, TEIKEI))
 TEL, TELR, HRS = "0120-933-496", "0120933496", "10:00〜19:00"
 
 # ---------- CSS（家じまいの電子契約と同じ作り。色だけ支援会の深い青緑へ） ----------
@@ -41,6 +41,10 @@ body.adm main{max-width:1280px}.ctbl td:nth-child(1),.ctbl td:nth-child(2){white
 .seg{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}.seg-b{min-height:48px;padding:0 18px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
 .roster{display:grid;grid-template-columns:260px 1fr;gap:16px}@media (max-width:860px){.roster{grid-template-columns:1fr}}
 .r-tree{border:1px solid var(--line);border-radius:12px;padding:10px;max-height:70vh;overflow:auto;background:var(--surface)}.r-tree h4{margin:10px 6px 4px;font-size:.85rem;color:var(--muted)}.r-tree button{display:flex;justify-content:space-between;gap:8px;width:100%;text-align:left;min-height:38px;padding:6px 10px;border:0;border-radius:8px;background:none;color:var(--ink);font:inherit;cursor:pointer}.r-tree button:hover{background:var(--pine-soft)}.r-tree button.on{background:var(--pine);color:#fff}.r-tree button b{font-weight:700}.r-tree .l2{padding-left:22px;font-size:.92rem}.r-tree .l3{padding-left:36px;font-size:.88rem}
+.pt-box{margin-top:10px}.pt-box>label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:4px}.pt-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.pt-g select{min-height:44px;font-size:.95rem}.pt-box input{margin-top:8px;min-height:44px}
+@media (max-width:760px){.pt-g{grid-template-columns:1fr 1fr}}
+.chip{display:inline-flex;align-items:center;gap:6px;margin:0 8px 8px 0;padding:6px 6px 6px 12px;border-radius:999px;background:var(--pine-soft);color:var(--pine);font-weight:700}.chip button{width:28px;height:28px;border-radius:50%;border:0;background:#fff;color:var(--ink);cursor:pointer;font-weight:700}
+.ptab input,.ptab select{min-height:42px;width:100%;font-size:.95rem}.ptab td{padding:6px}.ptab td:first-child{min-width:200px}.ptab .small-btn{white-space:nowrap}
 .memo2{display:flex;gap:8px;flex:1;min-width:260px}.memo2 select{min-height:44px;width:auto}.memo2 input{flex:1;min-width:140px;min-height:44px}
 .alertbar{background:#FBEBEB;color:#7a1712;border:2px solid #B3261E;border-radius:12px;padding:12px 16px;margin-bottom:14px;font-weight:700}
 .sum{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.sum button{min-height:56px;padding:6px 14px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;text-align:left}.sum button b{display:block;font-size:1.3rem}.sum button.red{border-color:#B3261E;color:#B3261E}
@@ -126,12 +130,14 @@ API = "/* 電子契約：通信と、設定前のお試し表示（この端末�
     }
     if (action === "admin.list") return wait({ ok: true, rows: list });
     if (action === "admin.cases") { var now = Date.now(), dd = function (h) { return new Date(now - h * 36e5).toISOString(); }; var rt = {}; FIELD_LIST.forEach(function (f) { rt[f] = ""; }); rt["経営・業務の改善"] = "見本コンサルティング株式会社"; rt["採用・定着・研修"] = "見本人材サービス、見本社労士事務所";
-      return wait({ ok: true, routes: rt, rows: [
+      return wait({ ok: true, routes: rt, staff: ["中嶋", "見本 担当"], partners: [{ name: "見本コンサルティング株式会社", a: "経営・管理の支援", b: "経営コンサルティング", c: "収支改善・コスト削減", note: "" }, { name: "見本社労士事務所", a: "経営・管理の支援", b: "士業・専門家", c: "社会保険労務士", note: "" }, { name: "見本人材サービス", a: "人材・採用・教育", b: "採用・人材サービス", c: "有料職業紹介（人材紹介）", note: "" }], rows: [
         { no: "IKT-261101-1000TKY", ts: dd(5), label: "医療介護総合支援会：提携・協業の申し込み／提携企業として、会員へサービスを提供したい", name: "見本 三郎", company: "見本エネルギー株式会社", email: "saburo@example.jp", tel: "06-2222-3333", body: "【医療介護総合支援会 提携・協業の申し込み】\n分野 1：固定費の見直し ＞ エネルギー ＞ 電気\n地域 1：近畿 ＞ 大阪府 ＞ 全域", status: "新規受付", memo: "", fields: "提携・協業の申し込み、提携：固定費の見直し", partner: "", staff: "", updated: dd(5), contacted: "", next: "" },
         { no: "IKY-261101-1100YBO", ts: dd(8), label: "医療介護総合支援会：要望・ご意見／ほしい支援・サービスがある", name: "（名前なしの要望）", company: "", email: "", tel: "", body: "【医療介護総合支援会 要望・ご意見】\n内容：夜も受付してほしい", status: "新規受付", memo: "", fields: "要望・ご意見", partner: "", staff: "", updated: dd(8), contacted: "", next: "" },
         { no: "IK-261030-0912ABC", ts: dd(30), label: "医療介護総合支援会：企業・事業者／経営・運営のこと", name: "見本 一郎", company: "見本クリニック", email: "sample@example.jp", tel: "06-0000-0000", body: "【医療介護総合支援会 受付内容】\n立場：企業・事業者\n相談の内容 1：経営・運営のこと ＞ 経営・業務の改善 ＞ 収支を改善したい", status: "新規受付", memo: "", fields: "経営・業務の改善", partner: "見本コンサルティング株式会社", staff: "", updated: dd(30), contacted: "", next: "" },
         { no: "IKM-261029-1530XYZ", ts: dd(50), label: "医療介護総合支援会：会員登録／事業所会員", name: "見本 花子", company: "見本デイサービス", email: "hanako@example.jp", tel: "06-1111-2222", body: "【会員登録の申込み】\n会員の種類：事業所会員", status: "提携先対応中", memo: "電子契約 締結済み", fields: "会員登録（事業所会員）", partner: "", staff: "中嶋", updated: dd(200), contacted: dd(200), next: "" },
         { no: "IK-261020-1010QWE", ts: dd(240), label: "医療介護総合支援会：医療・介護で働く方／採用・定着・研修", name: "見本 次郎", company: "見本訪問看護", email: "jiro@example.jp", tel: "", body: "【受付内容】\n内容：採用・定着・研修", status: "完了", memo: "紹介済み", fields: "採用・定着・研修", partner: "見本人材サービス", staff: "中嶋", updated: dd(100), contacted: dd(100), next: "" }] }); }
+    if (action === "admin.partnerSet") return wait({ ok: true, partners: d.rows });
+    if (action === "admin.staffSet") return wait({ ok: true, staff: d.list });
     if (action === "admin.caseSet" || action === "admin.report" || action === "admin.routeSet") return wait({ ok: true, routes: d.rows ? (function () { var o = {}; d.rows.forEach(function (r) { o[r.field] = r.partners; }); return o; })() : null });
     if (action === "admin.history") return wait({ ok: true, rows: [{ ts: new Date().toISOString(), kind: "受付", text: "サイトから受付", staff: "" }] });
     if (action === "client.apply") {
@@ -362,7 +368,7 @@ ADMIN_BODY = f'''
 <div id="panel" hidden>
 <p style="text-align:right;margin:0 0 10px"><button type="button" class="small-btn" id="logout">ログアウト</button></p>
 <section class="card todo" id="todo"><div class="todo-h"><h2>今やること</h2><span class="hint" id="todoAt"></span><button type="button" class="small-btn" id="tourBtn">はじめての方へ：操作の案内</button></div><ol class="todo-l" id="todoList"><li class="hint">読み込み中…</li></ol></section>
-<nav class="tabs" role="tablist"><button type="button" role="tab" class="tab on" data-v="inbox">案件管理<span class="cnt" id="newCnt" hidden></span></button><button type="button" role="tab" class="tab" data-v="keiyaku">電子契約</button><button type="button" role="tab" class="tab" data-v="roster">会員・相談者の名簿</button><button type="button" role="tab" class="tab" data-v="route">振分け設定</button><button type="button" class="small-btn" id="snd" aria-pressed="true" style="margin-left:auto">警告音：オン</button></nav>
+<nav class="tabs" role="tablist"><button type="button" role="tab" class="tab on" data-v="inbox">案件管理<span class="cnt" id="newCnt" hidden></span></button><button type="button" role="tab" class="tab" data-v="keiyaku">電子契約</button><button type="button" role="tab" class="tab" data-v="roster">会員・相談者の名簿</button><button type="button" role="tab" class="tab" data-v="route">設定（提携先・担当者）</button><button type="button" class="small-btn" id="snd" aria-pressed="true" style="margin-left:auto">警告音：オン</button></nav>
 <div data-view="inbox">
 <details class="howto" id="howInbox"><summary>この画面の使い方（案件管理）</summary><div>
 <ol><li><b>赤い印の案件から</b>対応します。新しい受付ほど上に出ます。</li><li>案件の「受付の内容を見る」を押して、内容を読みます。</li><li>読んだら「状態」を進め、「振分け先」「担当」「次の対応予定日」を入れて<b>「保存」</b>を押します。</li><li>お客様に伝えることがあれば「お客様へ報告を作る」を押します。文面は自動で作られます。<b>送るかどうかは自分で決めます</b>（電話で伝えた・今回は送らない、も選べます）。</li><li>上の数字のボタンを押すと、その状態の案件だけを表示します。</li></ol>
@@ -385,14 +391,29 @@ ADMIN_BODY = f'''
 </section>
 </div>
 <div data-view="route" hidden>
-<details class="howto"><summary>この画面の使い方（振分け設定）</summary><div><ol><li>左の「分野」は、お客様がサイトで選ぶ項目です。</li><li>右の欄に、その分野を任せる提携企業・専門家の名前を入れます。複数のときは「、」で区切ります。</li><li>いちばん下の「振分け設定を保存する」を押します。</li><li>以後の新しい受付には、ここで決めた先が自動で入ります。</li></ol></div></details>
+<details class="howto"><summary>この画面の使い方（設定）</summary><div><ol><li><b>担当者</b>：案件の「担当」で選べる名前を登録します。</li><li><b>提携先一覧</b>：振分け先にする提携企業・専門家を、大分類・中分類・小分類とあわせて登録します。案件では、分類を選ぶと当てはまる提携先だけが一覧に出ます。</li><li>新しい受付は、相談の内容から分類を自動で決め、当てはまる提携先がいれば振分け先に自動で入ります。</li><li>それぞれ「保存する」を押すと反映されます。</li></ol></div></details>
 <section class="card">
-<h2>振分け設定</h2>
-<p class="hint">お客様がサイトで選んだ分野ごとに、どの提携企業・専門家へ振り分けるかを決めます。新しい受付には、ここで決めた先（複数のときは最初の先）が自動で入ります。案件ごとに変えることもできます。複数の先は「、」で区切ってください。</p>
+<h2>担当者</h2>
+<p class="hint">案件の「担当」で選べる名前です。</p>
+<div class="staff-l" id="staffList"></div>
+<div class="filters" style="margin-top:10px"><label>名前 <input type="text" id="staffNew" placeholder="例：中嶋" maxlength="30"></label><button type="button" class="small-btn" id="staffAdd">追加</button></div>
+<p class="err" id="errSt" role="alert"></p>
+<button class="btn" type="button" id="saveStaff">担当者を保存する</button>
+</section>
+<section class="card">
+<h2>提携先一覧</h2>
+<p class="hint">振分け先にする提携企業・専門家を登録します。分類は、提携・協業の申し込みと同じ大分類・中分類・小分類です（小分類は空でもかまいません）。</p>
+<div class="tbl"><table class="list ptab"><thead><tr><th>提携先の名前</th><th>大分類</th><th>中分類</th><th>小分類</th><th>メモ（連絡先・条件など）</th><th></th></tr></thead><tbody id="ptRows"></tbody></table></div>
+<button type="button" class="small-btn" id="ptAdd" style="margin-top:8px">＋ 提携先を追加</button>
+<p class="err" id="errPt" role="alert"></p>
+<button class="btn" type="button" id="savePt">提携先一覧を保存する</button>
+</section>
+<details class="card"><summary style="font-weight:700;cursor:pointer">（予備）分野ごとの振分け</summary>
+<p class="hint">提携先一覧に当てはまる先がないときだけ使われます。</p>
 <div class="tbl"><table class="list"><thead><tr><th style="width:42%">分野（お客様が選ぶ項目）</th><th>振分け先</th><th style="width:70px">件数</th></tr></thead><tbody id="routeRows"></tbody></table></div>
 <p class="err" id="errRt" role="alert"></p>
-<button class="btn" type="button" id="saveRt">振分け設定を保存する</button>
-</section>
+<button class="btn" type="button" id="saveRt">分野ごとの振分けを保存する</button>
+</details>
 </div>
 <div class="modal" id="rpt" hidden role="dialog" aria-modal="true" aria-labelledby="rptH"><div class="modal-in">
 <h2 id="rptH">お客様に進捗を報告しますか？</h2>
@@ -490,6 +511,42 @@ $('rows').addEventListener('click',function(e){var b=e.target.closest('button');
  if(b.dataset.resend)api('admin.resend',{id:b.dataset.resend}).then(function(){$('errR').textContent='もう一度送りました。'}).catch(function(x){$('errR').textContent=x.message});
  if(b.dataset.cancel&&confirm('この契約書を取り消しますか？相手はもう開けなくなります。'))api('admin.cancel',{id:b.dataset.cancel}).then(list).catch(function(x){$('errR').textContent=x.message});
  if(b.dataset.pdf)api('admin.pdf',{id:b.dataset.pdf}).then(function(r){var bin=atob(r.pdf),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);var u=URL.createObjectURL(new Blob([a],{type:'application/pdf'}));var l=document.createElement('a');l.href=u;l.download=r.filename;document.body.appendChild(l);l.click();setTimeout(function(){URL.revokeObjectURL(u);l.remove()},2000)}).catch(function(x){$('errR').textContent=x.message})});
+
+/* ---- 振分け先（提携先一覧から分類で選ぶ）と担当者 ---- */
+var PARTNERS=[],STAFF=[];
+function staffOpts(cur){var l=STAFF.slice();if(cur&&l.indexOf(cur)<0)l.unshift(cur);return'<option value="">（担当者を選ぶ）</option>'+l.map(function(n){return'<option'+(n===cur?' selected':'')+'>'+esc(n)+'</option>'}).join('')}
+function autoCat(x){var fs=String(x.fields||'').split('、');for(var i=0;i<fs.length;i++){var m=ROUTE_AUTO_N[fs[i]];if(m)return m}var c=cls(x);if(c.kind==='提携・協業'&&c.path[0]){var p=c.path[0].split(' ＞ ');return[p[0],p[1]||'']}return null}
+function opt(list,cur,ph){return'<option value="">'+ph+'</option>'+list.map(function(v){return'<option'+(v===cur?' selected':'')+'>'+esc(v)+'</option>'}).join('')}
+function ptList(a,b,c){return PARTNERS.filter(function(p){return(!a||p.a===a)&&(!b||p.b===b)&&(!c||!p.c||p.c===c)})}
+function ptNames(a,b,c,cur){var l=ptList(a,b,c).map(function(p){return p.name});if(cur&&l.indexOf(cur)<0)l.unshift(cur);
+ return'<option value="">'+(l.length?'（提携先を選ぶ）':'（当てはまる提携先がまだ登録されていません）')+'</option>'+l.map(function(n){return'<option'+(n===cur?' selected':'')+'>'+esc(n)+'</option>'}).join('')+'<option value="__free">その他（直接入力する）</option>'}
+function ptHtml(x){var a='',b='',c='';var reg=PARTNERS.filter(function(p){return p.name===x.partner})[0];if(reg){a=reg.a;b=reg.b;c=reg.c}else{var m=autoCat(x);if(m){a=m[0];b=m[1]}}
+ var T=window.PARTNER_TAX||{},bs=a&&T[a]?Object.keys(T[a]):[],cs=a&&b&&T[a]&&T[a][b]?T[a][b]:[];
+ return'<div class="pt-box"><label>振分け先'+(autoCat(x)&&!x.partner?' <span class="hint">（相談の内容から分類を自動で選んでいます）</span>':'')+'</label><div class="pt-g"><select data-pa aria-label="大分類">'+opt(Object.keys(T),a,'大分類')+'</select><select data-pb aria-label="中分類"'+(a?'':' disabled')+'>'+opt(bs,b,'中分類')+'</select><select data-pc aria-label="小分類"'+(b?'':' disabled')+'>'+opt(cs,c,'小分類（任意）')+'</select><select data-pn aria-label="提携先">'+ptNames(a,b,c,x.partner)+'</select></div>'+
+ '<input type="text" data-k="partner" value="'+esc(x.partner)+'" placeholder="提携先の名前を入力" hidden></div>'}
+$('inbox').addEventListener('change',function(e){var box=e.target.closest('.pt-box');if(!box)return;var T=window.PARTNER_TAX||{},A=box.querySelector('[data-pa]'),B=box.querySelector('[data-pb]'),C=box.querySelector('[data-pc]'),N=box.querySelector('[data-pn]'),I=box.querySelector('[data-k="partner"]');
+ if(e.target===A){B.innerHTML=opt(A.value&&T[A.value]?Object.keys(T[A.value]):[],'','中分類');B.disabled=!A.value;C.innerHTML=opt([],'','小分類（任意）');C.disabled=true}
+ if(e.target===B){C.innerHTML=opt(A.value&&B.value&&T[A.value][B.value]?T[A.value][B.value]:[],'','小分類（任意）');C.disabled=!B.value}
+ if(e.target===A||e.target===B||e.target===C){N.innerHTML=ptNames(A.value,B.value,C.value,'');I.hidden=true;I.value=''}
+ if(e.target===N){if(N.value==='__free'){I.hidden=false;I.value='';I.focus()}else{I.hidden=true;I.value=N.value}}});
+/* ---- 設定：担当者 ---- */
+function drawStaff(){$('staffList').innerHTML=STAFF.length?STAFF.map(function(n,i){return'<span class="chip">'+esc(n)+'<button type="button" data-rm="'+i+'" aria-label="'+esc(n)+'を消す">×</button></span>'}).join(''):'<p class="hint">まだ登録されていません。</p>'}
+$('staffAdd').addEventListener('click',function(){var v=$('staffNew').value.trim();if(!v)return;if(STAFF.indexOf(v)<0)STAFF.push(v);$('staffNew').value='';drawStaff()});
+$('staffNew').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('staffAdd').click()}});
+$('staffList').addEventListener('click',function(e){var b=e.target.closest('[data-rm]');if(!b)return;STAFF.splice(+b.dataset.rm,1);drawStaff()});
+$('saveStaff').addEventListener('click',function(){var b=this;b.disabled=true;$('errSt').textContent='';api('admin.staffSet',{list:STAFF}).then(function(r){STAFF=r.staff||STAFF;drawStaff();$('errSt').textContent='保存しました。';drawIn();todo()}).catch(function(er){$('errSt').textContent=er.message}).then(function(){b.disabled=false})});
+/* ---- 設定：提携先一覧 ---- */
+function ptRow(p){var T=window.PARTNER_TAX||{},bs=p.a&&T[p.a]?Object.keys(T[p.a]):[],cs=p.a&&p.b&&T[p.a]&&T[p.a][p.b]?T[p.a][p.b]:[];
+ return'<tr><td><input type="text" data-f="name" value="'+esc(p.name||'')+'" placeholder="例：〇〇株式会社" maxlength="100"></td><td><select data-f="a">'+opt(Object.keys(T),p.a||'','選ぶ')+'</select></td><td><select data-f="b">'+opt(bs,p.b||'','選ぶ')+'</select></td><td><select data-f="c">'+opt(cs,p.c||'','（任意）')+'</select></td><td><input type="text" data-f="note" value="'+esc(p.note||'')+'" maxlength="300"></td><td><button type="button" class="small-btn" data-del>削除</button></td></tr>'}
+function drawPt(){$('ptRows').innerHTML=PARTNERS.length?PARTNERS.map(ptRow).join(''):ptRow({})}
+$('ptAdd').addEventListener('click',function(){$('ptRows').insertAdjacentHTML('beforeend',ptRow({}));var r=$('ptRows').lastElementChild;r.querySelector('input').focus()});
+$('ptRows').addEventListener('click',function(e){var b=e.target.closest('[data-del]');if(b)b.closest('tr').remove()});
+$('ptRows').addEventListener('change',function(e){var tr=e.target.closest('tr'),T=window.PARTNER_TAX||{},A=tr.querySelector('[data-f=a]'),B=tr.querySelector('[data-f=b]'),C=tr.querySelector('[data-f=c]');
+ if(e.target===A){B.innerHTML=opt(A.value&&T[A.value]?Object.keys(T[A.value]):[],'','選ぶ');C.innerHTML=opt([],'','（任意）')}
+ if(e.target===B){C.innerHTML=opt(A.value&&B.value&&T[A.value][B.value]?T[A.value][B.value]:[],'','（任意）')}});
+$('savePt').addEventListener('click',function(){var b=this,rows=[].map.call($('ptRows').querySelectorAll('tr'),function(tr){var o={};tr.querySelectorAll('[data-f]').forEach(function(el){o[el.dataset.f]=String(el.value).trim()});return o}).filter(function(o){return o.name});
+ var bad=rows.filter(function(o){return!o.a||!o.b})[0];if(bad){$('errPt').textContent='「'+bad.name+'」の大分類と中分類を選んでください。';return}
+ b.disabled=true;$('errPt').textContent='';api('admin.partnerSet',{rows:rows}).then(function(r){PARTNERS=r.partners||rows;drawPt();$('errPt').textContent='保存しました（'+PARTNERS.length+'件）。';drawIn();todo()}).catch(function(er){$('errPt').textContent=er.message}).then(function(){b.disabled=false})});
 /* ---- 会員・相談者の名簿 ---- */
 var RS='member',RF={};
 function members(){return(KL||[]).filter(function(x){return(x.template==='kaiin'||x.template==='kojin')&&x.status!=='取り消し'&&x.draft!=='yes'}).map(function(x){var t=x.template==='kojin'?'個人会員（営業協力者）':(x.typeLabel||'会員');
@@ -548,7 +605,7 @@ function catOf(c){return c.kind==='相談'?c.big:(c.big||c.sub)}
 function tableHtml(rows){var now=Date.now();return'<div class="tbl"><table class="ctbl"><thead><tr><th>受付</th><th>種類</th><th>立場・分類</th><th>お名前・会社</th><th>状態</th><th>振分け先</th><th>注意</th></tr></thead><tbody>'+rows.map(function(x,ri){var c=cls(x),si=STEPS.indexOf(x.status),op=OPEN[x.no];
  return'<tr class="cr'+(ri%2?' z':'')+(x.status==='新規受付'?' new':'')+(op?' open':'')+'" data-row="'+esc(x.no)+'" title="押すと詳しい内容と操作が開きます"><td>'+dt(x.ts)+'<span class="sm">'+span(now-new Date(x.ts))+'前</span></td><td><span class="kd '+(KCLS[c.kind]||'')+'">'+esc(c.kind)+'</span>'+(c.sub?'<span class="sm">'+esc(c.sub)+'</span>':'')+'</td><td>'+esc(c.role)+(c.path.length?'<span class="sm">'+esc(c.path[0])+(c.path.length>1?'（ほか'+(c.path.length-1)+'件）':'')+'</span>':(c.big?'<span class="sm">'+esc(c.big)+'</span>':''))+'</td><td>'+esc(x.name||'（お名前なし）')+(x.company?'<span class="sm">'+esc(x.company)+'</span>':'')+'</td><td><span class="st s'+si+'">'+esc(x.status)+'</span></td><td>'+esc(x.partner||'―')+'</td><td>'+x._a.map(function(y){return'<span class="tg '+(y.lv==='red'?'red':'yel')+'">'+esc(y.t)+'</span>'}).join(' ')+'</td></tr>'+(op?'<tr class="cd"><td colspan="7">'+cardHtml(x)+'</td></tr>':'')}).join('')+'</tbody></table></div>'}
 function fillSel(id,o){var cur=$(id).value;$(id).innerHTML='<option value="">すべて</option>'+Object.keys(o).sort().map(function(k){return'<option value="'+esc(k)+'"'+(k===cur?' selected':'')+'>'+esc(k)+'（'+o[k]+'）</option>'}).join('')}
-function inbox(){api('admin.cases').then(function(r){IN=r.rows||[];ROUTES=r.routes||{};drawRoute();drawIn();todo();drawRoster()}).catch(function(e){$('errB').textContent=e.message})}
+function inbox(){api('admin.cases').then(function(r){IN=r.rows||[];ROUTES=r.routes||{};PARTNERS=r.partners||[];STAFF=r.staff||[];drawRoute();drawStaff();drawPt();drawIn();todo();drawRoster()}).catch(function(e){$('errB').textContent=e.message})}
 function drawIn(){var st=$('fSt').value,pt=$('fPt').value,q=$('fQ').value.trim().toLowerCase();
  var red=0,nw=0;IN.forEach(function(x){x._a=alerts(x);if(x._a.some(function(y){return y.lv==='red'}))red++;if(x.status==='新規受付')nw++});
  $('newCnt').hidden=!nw;$('newCnt').textContent=nw;
@@ -572,9 +629,8 @@ function cardHtml(x){var si=STEPS.indexOf(x.status),stop=x.status==='見送り',
   '<div class="tags">'+x._a.map(function(y){return'<span class="tg '+(y.lv==='red'?'red':'yel')+'">'+esc(y.t)+'</span>'}).join('')+(x.fields?x.fields.split('、').map(function(f){return'<span class="tg">'+esc(f)+'</span>'}).join(''):'<span class="tg">'+esc(x.label)+'</span>')+(x.partner?'<span class="tg pt">振分け先：'+esc(x.partner)+'</span>':(sug.length?'':'<span class="tg yel">振分け先の候補なし</span>'))+'</div>'+
   '<div class="ib-m">'+(x.email?'<a href="mailto:'+esc(x.email)+'">'+esc(x.email)+'</a>':'')+(x.tel?'　<a href="tel:'+esc(String(x.tel).replace(/[^0-9+]/g,''))+'">'+esc(x.tel)+'</a>':'')+'</div>'+
   '<details><summary>受付の内容を見る</summary><pre>'+esc(x.body)+'</pre></details>'+
-  '<div class="grid2"><div><label>状態</label><select data-k="status">'+STEPS.map(function(s){return'<option'+(s===x.status?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div>'+
-  '<div><label>振分け先'+(sug.length?'（候補：'+esc(sug.join('、'))+'）':'')+'</label><input type="text" data-k="partner" list="pl_'+esc(x.no)+'" value="'+esc(x.partner)+'" placeholder="提携企業・専門家"><datalist id="pl_'+esc(x.no)+'">'+sug.map(function(p){return'<option value="'+esc(p)+'">'}).join('')+'</datalist></div>'+
-  '<div><label>担当</label><input type="text" data-k="staff" value="'+esc(x.staff)+'" placeholder="例：中嶋"></div><div><label>次の対応予定日</label><input type="date" data-k="next" value="'+esc(x.next)+'"></div></div>'+
+  ptHtml(x)+'<div class="grid2"><div><label>状態</label><select data-k="status">'+STEPS.map(function(s){return'<option'+(s===x.status?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div>'+
+  '<div><label>担当</label><select data-k="staff">'+staffOpts(x.staff)+'</select></div><div><label>次の対応予定日</label><input type="date" data-k="next" value="'+esc(x.next)+'"></div></div>'+
   (x.memo?'<div class="ib-m" style="margin-top:8px">前回のメモ：'+esc(x.memo)+'</div>':'')+'<div class="ib-a"><span class="memo2"><select data-mk aria-label="対応の種類"><option value="">対応の種類を選ぶ</option>'+MK.map(function(k){return'<option>'+k+'</option>'}).join('')+'</select><input type="text" data-mt placeholder="対応メモ（何をしたか・次に何をするか）"></span><input type="hidden" data-k="memo" value="'+esc(x.memo)+'"><button type="button" class="small-btn" data-save>保存</button><button type="button" class="small-btn" data-rep>お客様へ報告を作る</button><button type="button" class="small-btn" data-his>対応の履歴</button></div><div class="hist-box"></div></div>'}
 $('sum').addEventListener('click',function(e){var b=e.target.closest('[data-st]');if(!b)return;var o=$('fSt');if(![].some.call(o.options,function(op){return op.value===b.dataset.st}))o.insertAdjacentHTML('beforeend','<option>'+b.dataset.st+'</option>');o.value=b.dataset.st;drawIn()});
 ['fSt','fPt','fKd','fRl','fCt'].forEach(function(id){$(id).addEventListener('change',drawIn)});
@@ -601,7 +657,8 @@ function todo(){var L=[],now=Date.now();
   if(wait.length)L.push({c:'',t:'3日以上、相手の承認待ちの契約が <b>'+wait.length+'件</b>',s:'相手に届いているか確かめ、必要なら「もう一度送る」を押します。',b:'電子契約を開く',f:function(){goTab('keiyaku');flash($('rows').querySelector('[data-resend]'))}})}
  if(rep.length)L.push({c:'',t:'お客様へ7日以上報告していない案件が <b>'+rep.length+'件</b>',s:'「お客様へ報告を作る」で文面を作り、送るか（または電話で伝えたか）を選びます。',b:'表示する',f:function(){goTab('inbox');$('fSt').value='alert';drawIn();flash($('inbox').querySelector('[data-rep]'))}});
  if(nopt.length)L.push({c:'',t:'振分け先が決まっていない案件が <b>'+nopt.length+'件</b>',s:'案件の「振分け先」に提携先の名前を入れて保存します。',b:'表示する',f:function(){goTab('inbox');$('fPt').value='-';drawIn();flash($('inbox').querySelector('[data-k="partner"]'))}});
- if(emptyRt)L.push({c:'',t:'振分け設定が未登録の分野が <b>'+emptyRt+'分野</b> あります',s:'分野ごとに提携企業を登録しておくと、新しい受付に振分け先が自動で入ります。',b:'振分け設定を開く',f:function(){goTab('route');flash(document.querySelector('#routeRows input[value=""]'))}});
+ if(!PARTNERS.length)L.push({c:'',t:'提携先がまだ登録されていません',s:'設定で提携先を分類とあわせて登録すると、案件の振分け先を一覧から選べ、新しい受付にも自動で入ります。',b:'提携先を登録する',f:function(){goTab('route');flash($('ptRows'))}});
+ if(!STAFF.length)L.push({c:'',t:'担当者がまだ登録されていません',s:'設定で担当者の名前を登録すると、案件の「担当」を選べるようになります。',b:'担当者を登録する',f:function(){goTab('route');flash($('staffNew'))}});
  if(!L.length)L.push({c:'ok',t:'いま、急いでやることはありません',s:'新しい受付が届くと、ここに表示され、警告音でもお知らせします（5分ごとに自動で最新にします）。',b:'',f:null});
  $('todoList').innerHTML=L.map(function(x,i){return'<li class="'+x.c+'"><span>'+x.t+'<small>'+esc(x.s)+'</small></span>'+(x.b?'<button type="button" class="small-btn" data-td="'+i+'">'+esc(x.b)+' ›</button>':'')+'</li>'}).join('');
  $('todoList').querySelectorAll('[data-td]').forEach(function(b){b.onclick=L[+b.dataset.td].f});
@@ -682,8 +739,10 @@ if(IN_GAS){$('logout').hidden=true;go()}else if(tok){go()}else{showLogin()}
 })();
 </script>
 '''
+from data import PARTNER_TAX as _PT, ROUTE_AUTO as _RA
+ADM_DATA = "<script>window.PARTNER_TAX=" + json.dumps(_PT, ensure_ascii=False) + ";window.ROUTE_AUTO_N=" + json.dumps({_SUP[k]["name"]: list(v) for k, v in _RA.items()}, ensure_ascii=False) + ";</script>\n"
 ADM_HELP = '<script>window.FORM_NOBAR=true;window.FORM_HELP={"lid":{"t":"担当者のIDを入れます。","ex":"英字の小文字で入れます。分からないときは「ID・パスワードを忘れたとき」を押すと、登録メールに届きます","req":true},"lpw":{"t":"パスワードを入れます。","ex":"大文字・小文字、全角・半角の違いにご注意ください。5回続けて間違えると15分止まります","req":true},"fgCode":{"t":"登録メールに届いた6けたの数字を入れます。","req":true},"fgP1":{"t":"新しいパスワードを8文字以上で決めます。","ex":"英字と数字をまぜると安全です","req":true},"fgP2":{"t":"確認のため、同じパスワードをもう一度入れます。","req":true},"pName":{"t":"契約の相手のお名前（ご担当者）です。","req":true},"pEmail":{"t":"契約書の案内を送る相手のメールアドレスです。","req":true}};</script>\n<script src="../assets/guide.js" data-mode="admin"></script>\n'
-open(os.path.join(OUT, "admin.html"), "w", encoding="utf-8").write(HEAD("管理画面") + ADMIN_BODY + '<script src="config.js"></script>\n<script src="api.js"></script>\n' + ADMIN_JS + ADM_HELP + "</body>\n</html>\n")
+open(os.path.join(OUT, "admin.html"), "w", encoding="utf-8").write(HEAD("管理画面") + ADMIN_BODY + '<script src="config.js"></script>\n<script src="api.js"></script>\n' + ADM_DATA + ADMIN_JS + ADM_HELP + "</body>\n</html>\n")
 
 # ---------- Apps Script 一式 ----------
 gs = "/* このファイルは make_keiyaku.py が作りました。直すときは元のファイルを直してください */\n" + TEXTS + CORE + "\n" + open(os.path.join(HERE, "keiyaku_gas_main.js"), encoding="utf-8").read()
@@ -692,6 +751,6 @@ shim = ("<script>window.IN_GAS=true;\n(function(){" + TEXTS + CORE +
         "window.KEIYAKU_CORE={TEMPLATES:TEMPLATES,FIELDS:FIELDS,normCond:normCond,buildBody:buildBody,yen:yen,MEMBER_LABEL:MEMBER_LABEL};})();\n"
         "window.keiyakuApi=function(a,d){return new Promise(function(res,rej){google.script.run.withSuccessHandler(function(r){r&&r.ok?res(r):rej(new Error(r&&r.error||'うまくいきませんでした'))}).withFailureHandler(function(e){rej(new Error(e&&e.message||String(e)))}).adminCall(a,d)})};</script>\n")
 gas_admin = ('<!doctype html><html lang="ja"><head><base target="_top"><meta charset="utf-8"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDPMincho:wght@700&display=swap"><style>'
-             + css + '</style></head><body>' + ADMIN_BODY.replace('href="../index.html"', 'href="https://119cm.net/"') + shim + ADMIN_JS + "</body></html>\n")
+             + css + '</style></head><body>' + ADMIN_BODY.replace('href="../index.html"', 'href="https://119cm.net/"') + shim + ADM_DATA + ADMIN_JS + "</body></html>\n")
 open(os.path.join(GAS, "admin.html"), "w", encoding="utf-8").write(gas_admin)
 print("ok", OUT, GAS)
