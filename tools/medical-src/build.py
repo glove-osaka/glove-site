@@ -488,6 +488,7 @@ def build_top():
 {sec_h("支援メニュー", f"3つの分類、{NSUP}の支援", "支援メニューのページでは、それぞれが受付中か、相談後に確認するものか、準備中かを表示しています。")}
 <div class="acc-group">{cats_acc}</div>
 <p style="margin-top:26px"><a class="btn btn-o" href="{{p}}support/index.html">支援メニューと提供状況を見る</a></p>
+<a class="voice-cta" href="{{p}}kyoryoku/teikei.html" style="margin-top:22px">{emb("hands", True)}<span><b>提携・協業の申し込み</b><small>これらの支援を一緒に提供していただける事業者・専門家（士業・医師など）・協賛企業を募集しています。分野を選んでお申し込みください。</small></span><span class="go">申し込む ›</span></a>
 </div></section>
 
 <section class="sec"><div class="wrap">
