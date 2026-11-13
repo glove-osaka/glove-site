@@ -389,7 +389,7 @@ function fwBody(x,p){var g=segOf(x),inc={};document.querySelectorAll('#fwd [data
  if(inc.fac&&isFacSeg(x)){var f=facOf(x);if(f.member||f.name)info.push('通っている病院・施設：'+(f.member||f.name)+(f.addr?'（'+f.addr+'）':''))}
  return p.name+'\n'+(p.person?p.person.replace(/\s*様$/,'')+' 様':'ご担当者様')+'\n\nいつもお世話になっております。医療介護総合支援会です。\n下記のご相談について、ご対応をお願いできますでしょうか。\n'+(info.length?'お客様からは、貴社へ情報をお伝えすることのご了承をいただいております。\n':'')+
  '\n■受付番号：'+x.no+'\n■種別：'+g.name+'\n\n■ご相談の内容\n'+(lines.join('\n')||'（内容の記入なし）')+'\n\n■お客様の情報\n'+(info.length?info.join('\n'):'（ご連絡先はお伝えしていません。当会が間に入ってご連絡します）')+
- '\n\nご対応の可否と今後の進め方を、このメールへのご返信でお知らせください。\nお伝えした個人情報は、このご相談への対応のためだけにお使いください。\n\n――――――――――――――――\n医療介護総合支援会（運営 株式会社グローブ）\n'+(x.staff?'担当：'+x.staff+'\n':'')+'電話 0120-933-496（受付 10:00〜19:00）\nメール ikshienkai@gmail.com\n――――――――――――――――'}
+ '\n\nご対応の可否と今後の進め方を、このメールへのご返信でお知らせください。\nお伝えした個人情報は、このご相談への対応のためだけにお使いください。\n\n――――――――――――――――\n医療介護総合支援会（運営 株式会社グローブ）\n'+(x.staff?'担当：'+x.staff+'\n':'')+'電話 0120-933-496（受付 10:00〜19:00）\nメール info@119cm.net\n――――――――――――――――'}
 function openFwd(x,name){$('errB').textContent='';
  if(!name||name==='自社'){$('errB').textContent='先に「振分け先」で提携先を選んでください。';return}
  var p=PARTNERS.filter(function(z){return z.name===name&&z.state!=='確認待ち'})[0];if(!p){$('errB').textContent='「'+name+'」は提携先一覧に登録されていない（または確認待ちの）ため送れません。設定の「提携先の登録」で登録すると送れます。';return}
@@ -663,7 +663,7 @@ var TT={'受付':'受付のお知らせ','内容確認中':'内容確認のご�
 var RG=['いつもお世話になっております。医療介護総合支援会です。','お世話になっております。医療介護総合支援会でございます。','医療介護総合支援会です。このたびはありがとうございます。'],RC=['ご不明な点は、このメールにご返信いただくか、お電話でお問い合わせください。','ご質問などがございましたら、このメールへのご返信、またはお電話でお気軽にお知らせください。','気になることがございましたら、どうぞ遠慮なくこのメールにご返信ください。お電話でも承ります。'];
 function makeRpt(x,kind){var g=segOf(x),who=(x.company?x.company+'\n':'')+(x.name&&x.name.indexOf('伏せ')<0?x.name+' 様':(g.route==='self'?'ご担当者様':'ご相談者様'));var r=(RTX[g.key]||{})[kind]||(g.route==='partner'?RTX._[kind]:null),t,tt;
  if(r){t=[r[1]];tt=r[0]}else if(g.route==='self'&&RTX.self[kind]){t=[RTX.self[kind][1]];tt=RTX.self[kind][0]}else{t=TX[kind]||[g.route==='self'?'いただいた'+g.word+'について、引き続き対応を進めております。進み具合に応じて、あらためてご報告いたします。':'ご相談について、引き続き対応を進めております。進み具合に応じて、あらためてご報告いたします。'];tt=TT[kind]}
- return{s:'【医療介護総合支援会】'+(tt||'進捗のご報告')+'（受付番号 '+x.no+'）',b:who+'\n\n'+RG[ALT%RG.length]+'\n\n'+t[ALT%t.length]+'\n\n受付番号：'+x.no+(x.staff?'\n担当：'+x.staff:'')+'\n\n'+RC[ALT%RC.length]+'\n\n――――――――――――――――\n医療介護総合支援会（運営 株式会社グローブ）\n電話 0120-933-496（受付 10:00〜19:00）\nメール ikshienkai@gmail.com\n――――――――――――――――'}}
+ return{s:'【医療介護総合支援会】'+(tt||'進捗のご報告')+'（受付番号 '+x.no+'）',b:who+'\n\n'+RG[ALT%RG.length]+'\n\n'+t[ALT%t.length]+'\n\n受付番号：'+x.no+(x.staff?'\n担当：'+x.staff:'')+'\n\n'+RC[ALT%RC.length]+'\n\n――――――――――――――――\n医療介護総合支援会（運営 株式会社グローブ）\n電話 0120-933-496（受付 10:00〜19:00）\nメール info@119cm.net\n――――――――――――――――'}}
 function openRpt(x,kind){RP={x:x,kind:kind};ALT=0;var r=makeRpt(x,kind);$('rptS').value=r.s;$('rptB').value=r.b;$('errRp').textContent='';
  $('rptInfo').textContent=(x.company?x.company+'　':'')+x.name+'（'+x.no+'）への報告です。送るかどうかは、担当者が判断してください。';
  var w='';if(!x.email)w='この案件にはメールアドレスがありません。電話で伝えた場合は「電話で伝えた」で記録してください。';else if(x.contacted&&Date.now()-new Date(x.contacted)<48*H)w='前回の連絡（'+dt(x.contacted)+'）から48時間たっていません。連絡が多すぎないか、確かめてから送ってください。';
@@ -701,6 +701,6 @@ if(IN_GAS){$('logout').hidden=true;go()}else if(tok){go()}else{showLogin()}
 })();
 </script>
 <script>window.FORM_NOBAR=true;window.FORM_HELP={"lid":{"t":"担当者のIDを入れます。","ex":"英字の小文字で入れます。分からないときは「ID・パスワードを忘れたとき」を押すと、登録メールに届きます","req":true},"lpw":{"t":"パスワードを入れます。","ex":"大文字・小文字、全角・半角の違いにご注意ください。5回続けて間違えると15分止まります","req":true},"fgCode":{"t":"登録メールに届いた6けたの数字を入れます。","req":true},"fgP1":{"t":"新しいパスワードを8文字以上で決めます。","ex":"英字と数字をまぜると安全です","req":true},"fgP2":{"t":"確認のため、同じパスワードをもう一度入れます。","req":true},"pName":{"t":"契約の相手のお名前（ご担当者）です。","req":true},"pEmail":{"t":"契約書の案内を送る相手のメールアドレスです。","req":true}};</script>
-<script src="../assets/guide.js" data-mode="admin"></script>
+<script src="../assets/guide.js?v=bab7790d" data-mode="admin"></script>
 </body>
 </html>
