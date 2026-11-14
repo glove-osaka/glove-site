@@ -163,7 +163,7 @@ main{padding-block:22px 60px;display:flex;flex-direction:column;gap:18px}
 </style>
 </head>
 <body>
-<style>.kg-back{display:block;background:#0D1A33;color:#fff;text-decoration:none;font-size:14px;padding:9px 16px;padding-top:calc(9px + env(safe-area-inset-top,0px))}.kg-back:hover{text-decoration:underline}.kg-back + header.top{padding-top:0}</style>
+<style>.kg-back{display:block;background:#0D1A33;color:#fff;text-decoration:none;font-size:14px;padding:9px 16px;padding-top:calc(9px + env(safe-area-inset-top,0px))}.kg-back:hover{text-decoration:underline}.kg-foot{border-top:1px solid #d9dee8;margin-top:40px;padding:22px 16px 34px;font-size:13px;line-height:1.9;color:#4a5468;background:#f6f7fa}.kg-foot .in{max-width:1080px;margin:0 auto}.kg-foot a{color:#1E3460}.kg-foot b{color:#0D1A33}.kg-foot ul{margin:6px 0 0;padding-left:1.2em}.consent a{color:inherit;text-decoration:underline}</style>
 <a class="kg-back" href="../">‹ 企業支援 総合相談窓口へ戻る</a>
 <header class="top"><div class="wrap">
   <div class="brand"><b>公的支援マッチ</b><span>補助金・助成金の対象可能性を判定</span></div>
@@ -190,9 +190,11 @@ main{padding-block:22px 60px;display:flex;flex-direction:column;gap:18px}
       <div class="status" id="st-login" role="status"></div>
     </div>
     <ul class="policy">
-      <li>登録した企業の情報は、登録した本人と運営管理者だけが見られます。</li>
-      <li>第三者への提供や、営業目的の連絡はしません。</li>
+      <li>登録した企業の情報は、登録した本人と運営会社（株式会社グローブ）の担当者だけが見られます。</li>
+      <li>ご本人の同意なく第三者へ提供することはありません。営業目的のご連絡もしません。</li>
+      <li>判定には、同意をいただいた企業に限りAI（Anthropic社の「Claude」・アメリカ合衆国）を使います。詳しくは<a href="../#privacy" target="_blank" rel="noopener">個人情報の取り扱い</a>をご覧ください。</li>
       <li>判定は「対象となる可能性」です。受給や採択を保証するものではありません。</li>
+      <li>申請書類の作成・提出は、行政書士（雇用関係の助成金は社会保険労務士）が行います。</li>
     </ul>
   </section>
 
@@ -225,7 +227,7 @@ main{padding-block:22px 60px;display:flex;flex-direction:column;gap:18px}
         <h3>① ホームページ・名刺から入力（おすすめ）</h3>
         <p style="margin:0;font-size:14px">ホームページの住所を入れて「読み取る」を押すと、10〜30秒で会社情報の候補が出ます。名刺の写真は1時間以内に読み取ります。</p>
         <div class="row"><input id="in-url" type="url" inputmode="url" placeholder="https://example.co.jp/" aria-label="ホームページの住所"><button class="btn primary" type="button" id="b-hp">読み取る</button></div>
-        <div class="row"><label class="btn" for="in-card" tabindex="0" id="lb-card">名刺の写真を送る</label><input type="file" id="in-card" accept="image/*" capture="environment" hidden><span style="font-size:12.5px;color:var(--sub)">写真は会社情報の読み取りにだけ使います。</span></div>
+        <div class="row"><label class="btn" for="in-card" tabindex="0" id="lb-card">名刺の写真を送る</label><input type="file" id="in-card" accept="image/*" capture="environment" hidden><span style="font-size:12.5px;color:var(--sub)">写真は会社情報の読み取りにだけ使い、読み取り後に削除します。名刺に書かれた個人の氏名・電話番号などは記録しません。</span></div>
         <div id="req-st" style="font-size:13.5px"></div>
       </section>
       <div id="draft" class="draft"></div>
@@ -273,13 +275,14 @@ main{padding-block:22px 60px;display:flex;flex-direction:column;gap:18px}
         <div class="fld"><label for="f-pastsel">過去3年の補助金・助成金の採択</label><select id="f-pastsel"><option value="">未回答</option><option>なし</option><option>あり</option><option>わからない</option></select>
           <div class="sub-in" id="w-past" hidden><input id="f-past" placeholder="制度名と年（例：2025年 ものづくり補助金）"></div></div>
 
-        <div class="fld wide"><label class="consent" for="f-consent"><input type="checkbox" id="f-consent" style="margin-top:4px"><span>判定のため、このカルテの内容を判定担当（運営者が契約するAI）に渡すことに同意します。第三者への提供はしません。同意がない企業は判定できません。</span></label></div>
+        <div class="fld wide"><label class="consent" for="f-consent"><input type="checkbox" id="f-consent" style="margin-top:4px"><span>判定と会社情報の読み取りのため、このカルテの内容（ホームページ・名刺から読み取った内容を含む）を、株式会社グローブが利用する Anthropic, PBC（アメリカ合衆国）のAI「Claude」に送ることに同意します。アメリカ合衆国の個人情報保護の制度と、移転先が講じる措置は<a href="../#privacy" target="_blank" rel="noopener">個人情報の取り扱い</a>の6に記載しています。同意がない企業は判定できません（カルテの保存はできます）。</span></label></div>
         <div class="wide row"><button class="btn primary" type="submit" id="b-save">保存して判定を依頼</button><button class="btn" type="button" id="b-del" hidden>この企業を削除</button></div>
         <div class="wide notice warn" id="del-confirm" hidden>この企業を削除します。よろしいですか？ <button class="btn sm" type="button" id="b-del-yes">削除する</button> <button class="btn sm" type="button" id="b-del-no">やめる</button></div>
       </form>
     </div>
   </section>
 </main>
+<footer class="kg-foot"><div class="in"><b>公的支援マッチ</b>は、企業支援 総合相談窓口の機能です。運営：株式会社グローブ（大阪府大阪市生野区勝山南2-2-7）<ul><li>判定は、公開されている公式情報をもとにした「対象となる可能性」の目安です。受給や採択を保証するものではありません。最終的な要件は各制度の公募要領でご確認ください。</li><li>申請書類の作成・提出は、提携する行政書士（雇用関係の助成金は社会保険労務士）が行います。窓口では制度のご案内と事業内容の整理をお手伝いします。</li></ul><div style="margin-top:10px"><a href="../#contact">窓口に相談する（初回無料）</a>　｜　<a href="../#privacy">個人情報の取り扱い</a>　｜　<a href="../#company">運営会社</a>　｜　電話 <a href="tel:0663550779">06-6355-0779</a>（平日10:00〜18:00）　｜　<a href="mailto:kigyosoudan@gmail.com">kigyosoudan@gmail.com</a></div></div></footer>
 
 <script>
 /* ===== 設定 ===== */
