@@ -11,7 +11,7 @@ for d in ('images', 'videos', 'audio'): shutil.copytree(os.path.join(os.path.dir
 open(os.path.join(OUT, '.nojekyll'), 'w').close()
 nf = shell.replace('<meta name="theme-color"', '<meta name="robots" content="noindex">\n<meta name="theme-color"', 1)
 # 医療介護総合支援会（/medical/）の存在しないURLは、支援会の案内ページへ（MEDICAL_404）
-nf = nf.replace('<meta name="robots" content="noindex">', '<meta name="robots" content="noindex">\n'+"<script>if(/^\\/glove-site\\/medical\\//.test(location.pathname)&&!/404\\.html$/.test(location.pathname))location.replace('/glove-site/medical/404.html')</script>", 1)
+if BASE_PATH == '/glove-site/': nf = nf.replace('<meta name="robots" content="noindex">', '<meta name="robots" content="noindex">\n'+"<script>if(/^\\/glove-site\\/medical\\//.test(location.pathname)&&!/404\\.html$/.test(location.pathname))location.replace('/glove-site/medical/404.html')</script>", 1)
 open(os.path.join(OUT, '404.html'), 'w', encoding='utf8').write(nf)
 open(os.path.join(OUT, 'index.html'), 'w', encoding='utf8').write(shell)
 BIZ = re.findall(r'\{ id:"([a-z]+)", no:"(\d\d)", en:"[^"]*", ja:"([^"]+)"', app)
@@ -20,6 +20,20 @@ ROUTES = [('home','ホーム'),('philosophy','企業理念'),('business','事業
 # 2) 各ページを実際に表示して中身を写し取る
 srv = subprocess.Popen([sys.executable, os.path.join(os.path.dirname(__file__), 'serve.py'), OUT, '8765'])
 time.sleep(1)
+_NODE = dict(os.environ, NODE_PATH=subprocess.run(['npm','root','-g'],capture_output=True,text=True).stdout.strip())
+_list_js = r'''
+const { chromium } = require('playwright');
+(async () => { const b = await chromium.launch(); const p = await b.newPage();
+  await p.goto('http://127.0.0.1:8765' + process.argv[2] + 'business/', { waitUntil: 'load' }); await p.waitForTimeout(500);
+  const r = await p.evaluate(() => ({ svc: pubServices().map(s => [s.id, s.name, s.big]), biz: BUSINESSES.map(b => [b.id, b.ja]) }));
+  console.log(JSON.stringify(r)); await b.close(); })();
+'''
+open('/home/claude/build/list.js', 'w').write(_list_js)
+_ls = json.loads(subprocess.run(['node', '/home/claude/build/list.js', BASE_PATH], capture_output=True, text=True, env=_NODE).stdout.strip().splitlines()[-1])
+BIZNAME = dict(_ls['biz'])
+SVC = {f'service-{i}': (n, big) for i, n, big in _ls['svc']}
+CONTACT = {f'contact-service-{i}': ja for i, ja in _ls['biz']}
+ROUTES += [(r, n) for r, (n, _) in SVC.items()] + [(r, f'{ja}のご相談') for r, ja in CONTACT.items()]
 js = r'''
 const { chromium } = require('playwright');
 (async () => {
@@ -48,8 +62,8 @@ if data['errs']: print('page errors:', data['errs'])
 # 3) 書き出し
 ORG = {"@type":"Organization","@id":SITE+"#org","name":"株式会社グローブ","alternateName":["GLOVE","株式会社GLOVE"],"url":SITE,"logo":SITE+"images/logo.png",
        "telephone":"+81-6-6355-0779","foundingDate":"2023-08-10",
-       "address":{"@type":"PostalAddress","postalCode":"544-0033","addressRegion":"大阪府","addressLocality":"大阪市生野区","streetAddress":"勝山南2-2-7","addressCountry":"JP"},
-       "email":"info@kaitori-d.com","faxNumber":"+81-6-6355-0800","contactPoint":[{"@type":"ContactPoint","telephone":"+81-120-933-496","contactType":"customer service","areaServed":"JP","availableLanguage":"ja"}],"department":[{"@type":"Store","name":"買取大吉 大阪勝山南店","url":"https://www.kaitori-daikichi.jp/store/katsuyamaminami/","telephone":"+81-120-933-496","address":{"@type":"PostalAddress","postalCode":"544-0033","addressRegion":"大阪府","addressLocality":"大阪市生野区","streetAddress":"勝山南2-2-7","addressCountry":"JP"},"geo":{"@type":"GeoCoordinates","latitude":34.65416,"longitude":135.53221},"openingHours":"Mo-Su 10:00-19:00","hasMap":"https://www.google.com/maps/search/?api=1&query=%E8%B2%B7%E5%8F%96%E5%A4%A7%E5%90%89+%E5%A4%A7%E9%98%AA%E5%8B%9D%E5%B1%B1%E5%8D%97%E5%BA%97"}]}
+       "address":{"@type":"PostalAddress","postalCode":"544-0021","addressRegion":"大阪府","addressLocality":"大阪市生野区","streetAddress":"勝山南2-2-7","addressCountry":"JP"},
+       "email":"info@kaitori-d.com","faxNumber":"+81-6-6355-0800","contactPoint":[{"@type":"ContactPoint","telephone":"+81-120-933-496","contactType":"customer service","areaServed":"JP","availableLanguage":"ja"}],"department":[{"@type":"Store","name":"買取大吉 大阪勝山南店","url":"https://www.kaitori-daikichi.jp/store/katsuyamaminami/","telephone":"+81-120-933-496","address":{"@type":"PostalAddress","postalCode":"544-0021","addressRegion":"大阪府","addressLocality":"大阪市生野区","streetAddress":"勝山南2-2-7","addressCountry":"JP"},"geo":{"@type":"GeoCoordinates","latitude":34.65416,"longitude":135.53221},"openingHours":"Mo-Su 10:00-19:00","hasMap":"https://www.google.com/maps/search/?api=1&query=%E8%B2%B7%E5%8F%96%E5%A4%A7%E5%90%89+%E5%A4%A7%E9%98%AA%E5%8B%9D%E5%B1%B1%E5%8D%97%E5%BA%97"}]}
 today = datetime.date.today().isoformat()
 def url_of(r): return SITE + ('' if r == 'home' else r + '/')
 for r, name in ROUTES:
@@ -65,10 +79,15 @@ for r, name in ROUTES:
     graph = [ORG]
     if r == 'home': graph.append({"@type":"WebSite","@id":SITE+"#site","url":SITE,"name":"株式会社グローブ 公式サイト","inLanguage":"ja","publisher":{"@id":SITE+"#org"}})
     else:
-        crumbs = [("ホーム", SITE)] + ([("事業領域", url_of('business'))] if r.startswith('business-') else []) + [(name, u)]
+        crumbs = [("ホーム", SITE)] + ([("事業領域", url_of('business'))] if r.startswith('business-') else []) + \
+                 ([("事業領域", url_of('business')), (BIZNAME[SVC[r][1]], url_of('business-' + SVC[r][1]))] if r in SVC else []) + \
+                 ([("お問い合わせ", url_of('contact'))] if r in CONTACT else []) + [(name, u)]
         graph.append({"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":i+1,"name":n,"item":x} for i,(n,x) in enumerate(crumbs)]})
     ld = '<script type="application/ld+json">' + json.dumps({"@context":"https://schema.org","@graph":graph}, ensure_ascii=False) + '</script>\n'
     page = page.replace('<script type="application/ld+json" id="ld">', ld + '<script type="application/ld+json" id="ld">', 1)
+    if r in CONTACT:  # フォームの入口（中身は お問い合わせ と同じ）なので、検索結果には出さない
+        page = page.replace('<meta name="theme-color"', '<meta name="robots" content="noindex, follow">\n<meta name="theme-color"', 1)
+        page = re.sub(r'<link rel="canonical" href="[^"]*">', f'<link rel="canonical" href="{url_of("contact")}">', page, count=1)
     page = page.replace('<main id="view" tabindex="-1"></main>', '<main id="view" tabindex="-1">' + snap['view'] + '</main>', 1)
     assert snap['view'] and 'id="view" tabindex="-1">' + snap['view'][:20] in page
     dest = OUT if r == 'home' else os.path.join(OUT, r); os.makedirs(dest, exist_ok=True)
@@ -77,13 +96,13 @@ for r, name in ROUTES:
 # 同じ公開場所にある専用サイト（作り直しても検索用の一覧から消さない）。
 # 4番目の引数に今の sitemap.xml を渡すと、そこにある他サイトの行もそのまま残す。
 _ours = {url_of(r) for r, _ in ROUTES}
-_extra = [SITE + d for d in ('medical/', 'iejimai/', 'kigyo/')]
-if len(sys.argv) > 4 and os.path.exists(sys.argv[4]):
+_extra = [SITE + d for d in ('medical/', 'iejimai/', 'kigyo/')] if BASE_PATH == '/glove-site/' else []
+if BASE_PATH == '/glove-site/' and len(sys.argv) > 4 and os.path.exists(sys.argv[4]):
     for u in re.findall(r'<loc>([^<]+)</loc>', open(sys.argv[4], encoding='utf8').read()):
         if u not in _ours and u not in _extra: _extra.append(u)
 SUBSITES = ''.join(f'  <url><loc>{u}</loc><lastmod>{today}</lastmod><priority>0.7</priority></url>\n' for u in _extra)
 pri = {'home':'1.0','business':'0.9','philosophy':'0.8','company':'0.8','contact':'0.7','partnership':'0.7','finder':'0.6'}
 sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(
-    f'  <url><loc>{url_of(r)}</loc><lastmod>{today}</lastmod><priority>{pri.get(r, "0.8" if r.startswith("business-") else "0.3")}</priority></url>\n' for r,_ in ROUTES) + SUBSITES + '</urlset>\n'
+    f'  <url><loc>{url_of(r)}</loc><lastmod>{today}</lastmod><priority>{pri.get(r, "0.8" if r.startswith("business-") else "0.5" if r in SVC else "0.3")}</priority></url>\n' for r,_ in ROUTES if r not in CONTACT) + SUBSITES + '</urlset>\n'
 open(os.path.join(OUT, 'sitemap.xml'), 'w').write(sm)
 print('pages', len(ROUTES))
