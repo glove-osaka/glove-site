@@ -34,6 +34,7 @@ ICONS = {
  "fs": '<path d="M4 25 10 8l6 17M6.2 19h7.6"/><path class="ac" d="M18 25l4.5-12L27 25M19.6 21h5.8"/>',
  "copy": '<rect x="10" y="10" width="16" height="17" rx="2"/><path d="M6 21V7a2 2 0 0 1 2-2h12"/>',
 }
+ICONS.setdefault("phone", '<path d="M10 5h3.5l2 6-2.8 1.9a14 14 0 0 0 6.4 6.4L21 16.5l6 2V22a3 3 0 0 1-3 3C14.6 25 7 17.4 7 8a3 3 0 0 1 3-3z"/>')
 def ic(n): return P + ICONS[n] + '</svg>'
 def emb(n, cls=""): return f'<span class="emb {cls}">{ic(n)}</span>'
 def tag(t): return f'<span class="tag t-{t}">{TAGS[t][0]}</span>'
@@ -201,7 +202,7 @@ def about():
 <section class="sec band"><div class="wrap">
 <div class="sec-h"><span class="eyebrow">担当の範囲</span><h2>窓口が行うこと、行わないこと</h2></div>
 <div class="folds">
-{fold("窓口が行うこと", """<ul><li>ご相談の受付と、必要な分野の整理（手続きの名前が分からなくても大丈夫です）</li><li>期限から逆算した、進める順番の組み立て</li><li>制度・公募情報のご案内</li><li>事業計画・資金繰り表の作成支援</li><li>専門家・提携先の選定とおつなぎ</li><li>集客・業務改善・採用広報の支援</li><li>複数の専門家・提携先の進行の調整</li></ul>""", "check", "6項目")}
+{fold("窓口が行うこと", """<ul><li>ご相談の受付と、必要な分野の整理（手続きの名前が分からなくても大丈夫です）</li><li>期限から逆算した、進める順番の組み立て</li><li>制度・公募情報のご案内</li><li>社内用・金融機関向けの資金繰り表・収支計画の作成支援（官公署に出す書類は行政書士が担当）</li><li>専門家・提携先の選定とおつなぎ</li><li>集客・業務改善・採用広報の支援</li><li>複数の専門家・提携先の進行の調整</li></ul>""", "check", "6項目")}
 {fold("窓口が行わないこと", """<ul><li>官公署へ出す書類の作成・提出代行（行政書士が担当）</li><li>雇用関係助成金・労務手続きの代行（社会保険労務士が担当）</li><li>法律相談・示談交渉（弁護士が担当）</li><li>税務代理・登記（税理士・司法書士が担当）</li><li>職業紹介・労働者派遣・融資の媒介</li><li>専門家からの紹介料の受け取り</li></ul>""", "lock", "6項目・担当する専門家")}
 </div></div></section>{CTA}'''
     return page("about", f'窓口について｜{SITE["name"]}', body)
@@ -214,7 +215,7 @@ def services():
         cards = ''.join(f'<a class="svc-card" href="#svc-{c}"><div class="top">{emb(CAT[c]["icon"])}<h3>{E(CAT[c]["name"])}</h3></div><p>{E(CAT[c]["lead"])}</p><div class="mini">{"".join(tag(t) for t in sorted(set(i[0] for i in CAT[c]["items"]), key=list(TAGS).index))}</div></a>' for c in g["cats"])
         blocks += fold(g["name"], f'<div class="grid g3">{cards}</div>', g["icon"], f'{g["lead"]}（{len(g["cats"])}分野）', "grpf", open_=(g is GROUPS[0]))
     body = ph("サービス一覧", "5つの領域、13の分野で、会社の困りごとを受け付けます。", "list", [("サービス一覧", None)])
-    body += f'<section class="sec"><div class="wrap">{fold("分野の名前から選ぶ（13分野）", f'<nav class="toc" aria-label="分野">{toc}</nav>', "list", cls="tocf")}<ul class="legend inline">{"".join(f"<li>{tag(t)}<span>{E(TAGS[t][1])}</span></li>" for t in TAGS)}</ul><div class="folds" style="margin-top:26px">{blocks}</div></div></section>{CTA}'
+    body += f'<section class="sec"><div class="wrap">{fold("分野の名前から選ぶ（13分野）", f'<nav class="toc" aria-label="分野">{toc}</nav>', "list", cls="tocf")}<ul class="legend inline">{"".join(f"<li>{tag(t)}<span>{E(TAGS[t][1])}</span></li>" for t in TAGS if any(i[0] == t for c in CATS for i in c["items"]))}</ul><div class="folds" style="margin-top:26px">{blocks}</div></div></section>{CTA}'
     return page("services", f'サービス一覧｜{SITE["name"]}', body)
 
 def svc(i, c):
@@ -290,13 +291,13 @@ def flowp():
 <section class="sec band"><div class="wrap"><div class="sec-h"><span class="eyebrow">費用</span><h2>費用は、だれに払うかで3つに分かれます</h2><p>費用がかかる場合は、ご依頼の前に必ず内容と金額をご説明します。</p></div>
 <div class="grid g3">
 <div class="card fee">{emb("chat")}<h3>窓口でのご相談</h3><p>状況をうかがい、分野と順番を整理する段階です。</p><p class="fee-v">初回のご相談は無料です</p></div>
-<div class="card fee">{emb("doc")}<h3>窓口の支援業務</h3><p>事業計画・資金繰り表の作成支援、制作、業務改善などです。</p><p class="fee-v">作業の範囲を決め、事前にお見積り</p></div>
+<div class="card fee">{emb("doc")}<h3>窓口の支援業務</h3><p>社内用・金融機関向けの資金繰り表づくり、制作、業務改善などです。官公署に出す書類は扱いません。</p><p class="fee-v">作業の範囲を決め、事前にお見積り</p></div>
 <div class="card fee">{emb("seal")}<h3>専門家・提携先へのご依頼</h3><p>書類作成・申請、税務、登記、工事、導入などです。</p><p class="fee-v">各専門家・提携先から直接お見積り・ご請求</p></div>
 </div>
 <ul class="pledges two">
 <li>{emb("doc")}<div><b>事前にお見積り</b><span>何をどこまで行うかを決めてから始めます。</span></div></li>
 <li>{emb("cut")}<div><b>不要な作業を増やさない</b><span>自社でできる作業は整理してお伝えし、必要な費用だけにします。</span></div></li>
-<li>{emb("hand")}<div><b>紹介料を上乗せしない</b><span>当社は専門家から紹介料を受け取りません。</span></div></li>
+<li>{emb("hand")}<div><b>紹介料の扱いを明らかに</b><span>士業の専門家からは紹介料を受け取りません。士業以外の提携事業者から手数料を受け取る場合は、ご依頼の前にお伝えし、窓口がお見積りに上乗せすることはありません。</span></div></li>
 <li>{emb("seal")}<div><b>契約は電子契約で</b><span>契約書の確認から押印・締結まで画面上で済みます。来社や郵送は要りません。</span></div></li>
 <li>{emb("clock")}<div><b>範囲が変わるときは先に確認</b><span>当初の範囲を超える作業は、実施の前に内容と費用を確認します。</span></div></li>
 </ul></div></section>{CTA}'''
@@ -309,10 +310,9 @@ def faqp():
     return page("faq", f'よくある質問｜{SITE["name"]}', body)
 
 def company():
-    rows = [("窓口の名称", SITE["name"]), ("運営会社", f'{SITE["company"]}（GLOVE）'), ("代表取締役", SITE["rep"]), ("設立", SITE["founded"]),
+    rows = [("窓口の名称", SITE["name"]), ("英語表記", f'{SITE["en"]}（BSD）'), ("運営会社", f'{SITE["company"]}（GLOVE）'), ("代表取締役", SITE["rep"]), ("設立", SITE["founded"]),
             ("所在地", SITE["addr"]), ("電話", SITE["tel"]), ("FAX", SITE["fax"]), ("メール", SITE["mail"]),
             ("許認可", SITE["kobutsu"]),
-            ("提携行政書士", "提携が確定した事務所の名称・行政書士登録番号・所属する行政書士会を掲載します"),
             ("受付時間", SITE["hours"]), ("対応地域", "全国（遠方の方はZoomによるWeb相談）"), ("相談料", "初回のご相談は無料")]
     def cell(k, v):
         if k == "電話": return f'<a href="tel:{v.replace("-","")}">{E(v)}</a>'
@@ -322,7 +322,7 @@ def company():
     body = ph("運営会社", f'{SITE["name"]}は、{SITE["company"]}が運営しています。', "building", [("運営会社", None)])
     body += f'''<section class="sec"><div class="wrap narrow"><div class="tbl-wrap"><table class="info"><tbody>{tbl}</tbody></table></div>
 <h2 class="h2s">グループの相談窓口</h2><div class="rel">
-<a href="https://glove-osaka.github.io/glove-site/" target="_blank" rel="noopener">{ic("building")}<b>{E(SITE["company"])}</b><span class="fine">会社の公式サイト（別の画面で開きます）</span></a>
+<a href="https://glove-japan.com/" target="_blank" rel="noopener">{ic("building")}<b>{E(SITE["company"])}</b><span class="fine">会社の公式サイト（別の画面で開きます）</span></a>
 <a href="https://iejimai123.jp/" target="_blank" rel="noopener">{ic("hand")}<b>家じまい相談窓口</b><span class="fine">家財・住まい・相続・身元保証の相談（別の画面で開きます）</span></a>
 <a href="https://119cm.net/" target="_blank" rel="noopener">{ic("people")}<b>医療介護総合支援会</b><span class="fine">大阪・関西の医療・介護の総合窓口（別の画面で開きます）</span></a>
 </div></div></section>{CTA}'''
@@ -337,6 +337,7 @@ def partner():
 <ul class="pledges two">
 <li>{emb("hand")}<div><b>お客様と直接ご契約</b><span>窓口は契約の間に入らず、費用は専門家・事業者から直接ご請求いただきます。</span></div></li>
 <li>{emb("lock")}<div><b>紹介料の授受なし（専門家）</b><span>士業の方との間で、紹介の対価のやり取りは行いません。</span></div></li>
+<li>{emb("doc")}<div><b>手数料は書面で取り決め（事業者）</b><span>士業以外の事業者の方とは、紹介の手数料を事前に書面で取り決め、お客様にもお伝えします。</span></div></li>
 <li>{emb("shield")}<div><b>資格・許可の範囲で対応</b><span>資格・許可が必要な業務は、それを持つ方が担当してください。</span></div></li>
 <li>{emb("clock")}<div><b>早めのご連絡</b><span>おつなぎしたお客様へ、担当の方から直接ご連絡をお願いします。</span></div></li>
 </ul>
@@ -373,7 +374,7 @@ def contact():
 <dl class="sum" id="cSum"></dl>
 <div class="send-on" id="cSendOn" hidden><button type="button" class="btn btn-g" id="cSubmit">{ic("mail")}この内容で相談を送る</button><p class="fine">送信後、受付番号が表示されます。メールアドレスをご入力の方には、受付のお知らせをお送りします。</p></div>
 <div class="send-done" id="cDone" hidden role="status"><b>ご相談を受け付けました。</b><p>受付番号 <span class="sel" id="cNo"></span><br>内容を確認し、窓口の担当者からご連絡します。</p></div>
-<div class="prep" id="cSend">{ic("mail")}<p id="cSendMsg">受付フォームの送信の仕組みは準備中です。下の「内容を写し取る」でコピーし、メール（<b class="sel">{E(SITE["mail"])}</b>）に貼り付けてお送りください。</p></div>
+<div class="prep" id="cSend">{ic("mail")}<p id="cSendMsg">送信がうまくいかないときは、下の「内容を写し取る」でコピーし、メール（<b class="sel">{E(SITE["mail"])}</b>）に貼り付けてお送りください。</p></div>
 <button type="button" class="btn btn-o" id="cCopy">{ic("copy")}内容を写し取る（コピー）</button><p class="fine" id="cCopied" role="status"></p>
 <input type="text" id="cHp" name="company_url" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp">
 <textarea id="cOut" class="cout" readonly aria-label="まとめた相談内容" hidden></textarea></div>
@@ -387,8 +388,8 @@ def privacy():
     PPC = "https://www.ppc.go.jp/enforcement/infoprovision/laws/offshore_report_america/"
     arts = [
      ("1. 事業者", f'{S["company"]}（所在地：{S["addr"]}　代表取締役：{S["rep"]}）は、{S["name"]}（以下「本窓口」）と、本窓口の機能「公的支援マッチ」（補助金・助成金の対象可能性の判定。以下「判定機能」）で取得する個人情報を、個人情報の保護に関する法律その他の法令に従い、以下のとおり取り扱います。'),
-     ("2. 取得する情報", "【ご相談】お名前、会社名・屋号、電話番号、メールアドレス、所在地（市区町村）、業種、従業員数、ご相談の内容、ご希望の連絡方法・時間帯。<br>【判定機能】ログインに使うメールアドレス、企業カルテに入力された会社の情報（所在地・業種・従業員数・資本金・事業内容・今後の取組など）、読み取りを依頼されたホームページの住所、送信された名刺の写真。"),
-     ("3. 利用の目的", "ご相談内容の確認と整理、ご相談への回答と連絡、専門家・提携事業者の選定とおつなぎ、ご依頼後の進行の管理、判定機能でのログイン用の確認番号の送信、補助金・助成金の対象可能性の判定と結果の表示、ホームページ・名刺の写真からの会社情報の読み取り、サービスの改善（個人を特定しない形での集計を含む）、本窓口からのご案内（ご希望の方のみ）。判定機能の情報を、営業目的のご連絡に使うことはありません。"),
+     ("2. 取得する情報", "【ご相談】お名前、会社名・屋号、電話番号、メールアドレス、所在地（市区町村）、業種、従業員数、ご相談の内容、ご希望の連絡方法・時間帯。<br>【判定機能】ログインに使うメールアドレス、企業カルテに入力された会社の情報（所在地・業種・従業員数・資本金・事業内容・今後の取組など）、読み取りを依頼されたホームページの住所、送信された名刺の写真。<br>【協力企業のご登録】事業者名、種別、ご担当者のお名前、電話番号、メールアドレス、対応分野・対応地域、得意なこと、費用の扱い。"),
+     ("3. 利用の目的", "ご相談内容の確認と整理、ご相談への回答と連絡、専門家・提携事業者の選定とおつなぎ、ご依頼後の進行の管理、判定機能でのログイン用の確認番号の送信、補助金・助成金の対象可能性の判定と結果の表示、ホームページ・名刺の写真からの会社情報の読み取り、サービスの改善（個人を特定しない形での集計を含む）、本窓口からのご案内（ご希望の方のみ）。判定機能の情報を、営業目的のご連絡に使うことはありません。協力企業のご登録の情報は、登録の審査、ご相談のおつなぎ、提携に関するご連絡に使います。"),
      ("4. 専門家・提携事業者への提供", "ご相談の解決に必要な場合に限り、提供する相手と範囲をご本人に確認し、同意をいただいたうえで、行政書士・税理士・社会保険労務士・司法書士・弁護士・弁理士・中小企業診断士その他の専門家、または提携事業者へ提供します。法令に基づく場合を除き、同意なく第三者へ提供することはありません。"),
      ("5. 業務の委託と利用している外部のサービス", "業務の一部を外部へ委託する場合は、委託先を適切に選び、必要な監督を行います。現在、相談・判定機能の受付とデータの保管、メールの送信には Google LLC（アメリカ合衆国）のサービスを、本サイトの公開にはエックスサーバー株式会社（日本）のサービスを利用しています。"),
      ("6. 判定機能でのAIの利用（外国にある第三者への提供）", f'判定機能では、判定への同意をいただいた企業に限り、企業カルテの内容（ホームページ・名刺の写真から読み取った内容を含みます）を、当社が利用する Anthropic, PBC（アメリカ合衆国）のAI「Claude」に送り、判定と会社情報の読み取りを行います。これは外国にある第三者への個人データの提供にあたる場合があるため、同意の前に次の情報をお知らせします。<br>（1）移転先の国：アメリカ合衆国<br>（2）その国の個人情報の保護に関する制度：連邦全体に適用される包括的な個人情報保護法はなく、分野ごとの法律や州法によって保護されています。詳しくは個人情報保護委員会の<a href="{PPC}" target="_blank" rel="noopener">「外国における個人情報の保護に関する制度等の調査（アメリカ合衆国）」</a>をご覧ください。<br>（3）移転先が講じる措置：Anthropic, PBC のプライバシーポリシー等に基づいて取り扱われます。当社は、名刺の写真は読み取りが終わりしだい削除し、名刺に書かれた個人の氏名・役職・携帯電話番号・個人のメールアドレスは記録しません。<br>同意しない場合も企業カルテの保存はできますが、判定は行いません。同意はカルテのチェックを外すことで、いつでも取りやめられます。'),
@@ -400,7 +401,7 @@ def privacy():
      ("12. 改定", "法令やサービスの変更に応じて本方針を改定することがあります。改定した場合はこのページでお知らせします。"),
     ]
     body = ph("個人情報の取り扱い", "ご相談と、補助金・助成金の判定機能でお預かりする情報を、必要な範囲で適切に取り扱います。", "lock", [("個人情報の取り扱い", None)])
-    body += '<section class="sec"><div class="wrap narrow"><p class="fine" style="margin-bottom:18px">項目をタップすると内容が表示されます。</p><div class="folds policy">' + ''.join(fold(h, f'<p>{t}</p>', cls="polf") for h, t in arts) + f'</div><p class="fine" style="margin-top:28px">制定日：2026年10月16日<br>改定日：2026年11月14日（判定機能・外部サービスの記載を追加）<br>{E(S["company"])}</p></div></section>'
+    body += '<section class="sec"><div class="wrap narrow"><p class="fine" style="margin-bottom:18px">項目をタップすると内容が表示されます。</p><div class="folds policy">' + ''.join(fold(h, f'<p>{t}</p>', cls="polf") for h, t in arts) + f'</div><p class="fine" style="margin-top:28px">制定日：2026年10月16日<br>改定日：2026年11月14日（判定機能・外部サービス・協力企業のご登録の記載を追加）<br>{E(S["company"])}</p></div></section>'
     return page("privacy", f'個人情報の取り扱い｜{SITE["name"]}', body)
 
 # ---------- 共通部品 ----------
@@ -408,7 +409,7 @@ def header():
     dd = ''.join(f'<div><h4><a href="#svc-{g["cats"][0]}">{ic(g["icon"])}{E(g["name"])}</a></h4><ul>' + ''.join(f'<li><a href="#svc-{c}">{E(CAT[c]["name"])}</a></li>' for c in g["cats"]) + '</ul></div>' for g in GROUPS)
     return OPENING + f'''<a class="skip" href="#main">本文へ移動</a>
 <div class="util"><div class="wrap"><span class="op">運営：<b>{E(SITE["company"])}</b>　資格が必要な業務は提携の専門家が担当します</span>
-<div class="util-r"><a class="op-btn adm-btn" href="kanri/" rel="nofollow" data-admin>{ic("lock")}管理者ログイン</a><button type="button" class="op-btn" data-replay><i aria-hidden="true"></i>オープニングを見る</button><div class="fs" role="group" aria-label="文字の大きさ">{ic("fs")}<span>文字の大きさ</span><button type="button" data-fs="" aria-pressed="true">標準</button><button type="button" data-fs="l" aria-pressed="false">大</button><button type="button" data-fs="xl" aria-pressed="false">特大</button></div></div></div></div>
+<div class="util-r"><a class="op-btn adm-btn" href="/kanri/" rel="nofollow" data-admin>{ic("lock")}管理者ログイン</a><button type="button" class="op-btn" data-replay><i aria-hidden="true"></i>オープニングを見る</button><div class="fs" role="group" aria-label="文字の大きさ">{ic("fs")}<span>文字の大きさ</span><button type="button" data-fs="" aria-pressed="true">標準</button><button type="button" data-fs="l" aria-pressed="false">大</button><button type="button" data-fs="xl" aria-pressed="false">特大</button></div></div></div></div>
 <header class="hd"><div class="wrap hd-in">
 <a class="brand" href="#top">{MARK}<span><b>{E(SITE["name"])}</b><small>{E(SITE["sub"])}</small></span></a>
 <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="gnav">{ic("menu")}<span>メニュー</span></button>
@@ -420,7 +421,7 @@ def header():
 <a href="#flow">流れ・費用</a>
 <a href="#faq">よくある質問</a>
 <a href="#company">運営会社</a>
-<button type="button" class="nav-op" data-replay>オープニングを見る</button><a class="nav-op" href="kanri/" rel="nofollow" data-admin>管理者ログイン</a>
+<button type="button" class="nav-op" data-replay>オープニングを見る</button><a class="nav-op" href="/kanri/" rel="nofollow" data-admin>管理者ログイン</a>
 <a class="cta" href="#contact">{ic("pen")}相談内容をまとめる</a>
 </nav></div></header>'''
 
@@ -433,7 +434,7 @@ def footer():
 <details class="ftf" data-desk-open><summary><h4>窓口</h4></summary><ul><li><a href="#about">窓口について</a></li><li><a href="#flow">流れ・費用</a></li><li><a href="#faq">よくある質問</a></li><li><a href="#diagnosis">4つの質問で整理する</a></li><li><a href="#contact">相談内容をまとめる</a></li><li><a href="hojokin/">補助金・助成金を調べる</a></li><li><a href="#partner">士業・提携先の募集</a></li><li><a href="#company">運営会社</a></li><li><a href="#privacy">個人情報の取り扱い</a></li></ul></details>
 <details class="ftf" data-desk-open><summary><h4>サービス一覧</h4></summary><ul>{svc}</ul></details>
 <details class="ftf" data-desk-open><summary><h4>困りごとから探す</h4></summary><ul>{sit}</ul></details>
-</div><div class="ft-bottom"><div class="wrap"><span class="cp"><button type="button" class="replay" data-replay>オープニングをもう一度見る</button> <a class="replay" href="kanri/" rel="nofollow" data-admin>管理者ログイン</a>　© {E(SITE["company"])}</span></div></div></footer>'''
+</div><div class="ft-bottom"><div class="wrap"><span class="cp"><button type="button" class="replay" data-replay>オープニングをもう一度見る</button> <a class="replay" href="/kanri/" rel="nofollow" data-admin>管理者ログイン</a>　© {E(SITE["company"])}</span></div></div></footer>'''
 
 def build():
     css = open(os.path.join(os.path.dirname(__file__), "style.css"), encoding="utf-8").read()
@@ -456,7 +457,7 @@ def build():
 {header()}
 <main id="main">{"".join(pages)}</main>
 {footer()}
-<nav class="mbar" id="mbar" aria-label="相談の入り口"><a href="#contact" class="mb-p">{ic("pen")}相談内容をまとめる</a><a href="#diagnosis" class="mb-o">{ic("quiz")}質問で整理</a></nav>
+<nav class="mbar" id="mbar" aria-label="相談の入り口"><a href="#contact" class="mb-p">{ic("pen")}相談内容をまとめる</a><a href="#diagnosis" class="mb-o">{ic("quiz")}質問で整理</a><a href="tel:{SITE["tel"].replace("-","")}" class="mb-t" aria-label="電話で相談する（平日10:00〜18:00）">{ic("phone")}電話</a></nav>
 <script>const SITE_DATA={data};</script>
 <script>{js}</script>'''
     os.makedirs(os.path.join(os.path.dirname(__file__), "dist"), exist_ok=True)

@@ -440,7 +440,7 @@ function openCase(no, keep) {
     <div class="dr-body">
       ${c.lv ? `<div class="alertbar" style="margin:0;${c.lv === 1 ? "background:var(--yelbg);border-color:#F1D59A;color:#7A5210" : ""}"><span class="bell">${c.lv === 2 ? "🔔" : "△"}</span>${esc(c.why)}　受付から ${ago(c.ts)}・最終更新から ${ago(c.updated)}</div>` : ""}
       ${assistCard(c, cands)}
-      <div class="card"><h3>進み具合 <small>大分類を押すとその段階に進めます</small></h3>
+      <div class="card"><h3>進み具合 <small>大分類を押すとその段階に進めます</small></h3><p class="hint" style="margin:-4px 0 8px">「手数料入金」「分配」は、士業以外の提携事業者の案件だけで使います。士業（行政書士・税理士・社会保険労務士・司法書士・弁護士・弁理士）からは紹介料を受け取りません。</p>
         <div class="stepbtns">${st.map((s, j) => `<button data-step="${esc(s)}" class="${j < i ? "past" : j === i ? "cur" : ""}">${j + 1}. ${esc(s)}</button>`).join("")}
           <button data-step="${esc(D.stopped[c.kind])}" class="stop ${c.status === D.stopped[c.kind] ? "cur" : ""}">${esc(D.stopped[c.kind])}</button></div>
         <div class="grid2" style="margin-top:10px">

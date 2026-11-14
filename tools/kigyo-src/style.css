@@ -688,7 +688,7 @@ details[open]>summary .fold-k{background:var(--navy);color:var(--on-navy)}
 /* B-3 スマホで常に出る相談の帯 */
 .mbar{display:none}
 @media (max-width:900px){
-  .mbar{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:70;padding:8px max(12px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));background:rgba(255,255,255,.96);border-top:1px solid var(--line);box-shadow:0 -6px 18px rgba(13,26,51,.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .mbar{display:grid;grid-template-columns:1.5fr 1.1fr .8fr;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:70;padding:8px max(12px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));background:rgba(255,255,255,.96);border-top:1px solid var(--line);box-shadow:0 -6px 18px rgba(13,26,51,.1);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
   .mbar a{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border-radius:10px;font-weight:700;text-decoration:none;font-size:.98rem}
   .mbar .ic{font-size:1.3rem}
   .mb-p{background:var(--amber-b);color:#1C1205}.mb-p .ic .ac{stroke:#1C1205}
@@ -839,3 +839,8 @@ body.adm-on{overflow:hidden}
 
 .hj-box{margin-bottom:16px}
 .hj-box .btn{width:100%}
+
+.mbar .mb-t{background:var(--surface,#fff);color:var(--navy,#1E3460);border:1.5px solid var(--navy,#1E3460)}
+.mbar a{white-space:nowrap}
+@media (max-width:360px){.mbar a{font-size:.9rem;gap:4px}.mbar .ic{display:none}}
+.as-go .btn{flex:1 1 auto}

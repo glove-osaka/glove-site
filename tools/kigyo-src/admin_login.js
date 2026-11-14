@@ -10,7 +10,7 @@ adm.innerHTML = `<div class="adm-ov" id="admOv" hidden><div class="adm-box" role
     <label>パスワード<input type="password" id="admPw" autocomplete="current-password" required></label>
     <div class="adm-err" id="admErr" role="alert"></div>
     <button type="submit" class="btn btn-g" id="admGo">ログイン</button>
-    <a class="adm-link" href="kanri/" rel="nofollow">はじめての登録・パスワードを忘れたとき</a>
+    <a class="adm-link" href="/kanri/" rel="nofollow">はじめての登録・パスワードを忘れたとき</a>
   </form></div></div>`;
 document.body.appendChild(adm);
 const admOv = $('#admOv');
@@ -31,7 +31,7 @@ $('#admF').addEventListener('submit', async e => {
     if (!res || !res.ok) { er.textContent = (res && res.error) || 'ログインできませんでした。'; return; }
     try { sessionStorage.setItem('kg-token', res.token); } catch (x) {}
     $('#admPw').value = '';
-    location.href = 'kanri/';
+    location.href = '/kanri/';
   } catch (x) { er.textContent = '接続できませんでした。時間をおいてお試しください。'; }
   finally { b.disabled = false; b.textContent = 'ログイン'; }
 });

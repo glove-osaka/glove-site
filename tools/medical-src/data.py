@@ -21,7 +21,7 @@ SITE = dict(
     kobutsu="古物商許可 大阪府公安委員会 第62102R050377号",
     globe="https://glove-osaka.github.io/glove-site/",
     iejimai="https://glove-osaka.github.io/glove-site/iejimai/",
-    kigyo="https://glove-osaka.github.io/glove-site/kigyo/",
+    kigyo="https://bsd.osaka/",
     endpoint="https://script.google.com/macros/s/AKfycbzU1C8wBu3mJXKvhjKS3igb18I3Hsl21VB67PKALlxcU5QWebS2y_smhr_4oDA44PUt/exec",
 )
 

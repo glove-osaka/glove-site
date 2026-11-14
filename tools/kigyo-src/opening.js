@@ -233,6 +233,6 @@ addEventListener('keydown', e => {if (e.key === 'Escape' && !op.hidden){running 
 addEventListener('resize', () => {if (!op.hidden) size()});
 document.querySelectorAll('[data-replay]').forEach(b => b.addEventListener('click', e => {e.preventDefault(); const nav = document.getElementById('gnav'); if (nav) nav.classList.remove('open'); location.hash = 'top'; open()}));
 
-const atTop = !location.hash || location.hash === '#top';
+const atTop = document.body.dataset.page === 'top';
 if (!reduce && atTop && !store.get()) open();
 })();

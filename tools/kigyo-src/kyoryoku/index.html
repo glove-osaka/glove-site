@@ -161,7 +161,7 @@ function areaMatch(str, text) {
 const code = new URLSearchParams(location.search).get("t") || "";
 function stop(m) { $("#loading").hidden = true; $("#stop").hidden = false; $("#stopMsg").textContent = m; }
 (async () => {
-  if (!code) return stop("URLが正しくありません。送られてきたURLを、そのまま開いてください。");
+  if (!code) { stop("このページは、窓口からお送りした登録用のURLから開くページです。提携をご希望の方は、下の「士業・提携先の募集」からご相談ください。"); const a = document.createElement("a"); a.href = "/partner/"; a.textContent = "士業・提携先の募集を見る ›"; a.style.cssText = "display:inline-block;margin-top:14px;font-weight:700"; $("#stop").appendChild(a); return; }
   let r; try { r = await call("inviteInfo", code); } catch (e) { return stop("接続できませんでした。時間をおいて、もう一度開いてください。"); }
   if (!r.ok) return stop(r.error);
   $("#loading").hidden = true; $("#f").hidden = false;

@@ -10,7 +10,7 @@ const AKW = {
   ops: ['業務改善', '効率化', 'AI', 'システム', 'IT', 'DX', 'デジタル', '自動化', 'ペーパーレス', '在庫', '勤怠', 'クラウド', '手作業'],
   sales: ['集客', '売上', '営業', '販路', 'ホームページ', 'SNS', '広告', '顧客', '新規客', '問い合わせが少ない', 'ネット販売', 'EC'],
   newbiz: ['新規事業', '新しい事業', '商品開発', '新商品', '特許', '商標', '知的財産', 'ブランド', '試作', '起業', '創業', '事業計画'],
-  global: ['海外', '輸出', '輸入', '貿易', '越境', '外国', '展示会', '通関', 'インバウンド'],
+  global: ['在留資格', 'ビザ', '海外', '輸出', '輸入', '貿易', '越境', '外国', '展示会', '通関', 'インバウンド'],
   succession: ['事業承継', '後継者', '引退', '廃業', 'M&A', '売却', '相続', '株式', '世代交代', '会社の将来', '事業譲渡'],
   risk: ['トラブル', 'クレーム', '契約', '未払い', '債権', '訴訟', '災害', 'BCP', '事業継続', 'リスク', '情報漏えい', 'ハラスメント', '取引先']
 };
@@ -61,11 +61,12 @@ function asRun(){
     <ul class="as-cats">${pick.map((x, i) => `<li><a href="#svc-${x.c.id}"><span class="as-n">${i + 1}</span><span><b>${AE(x.c.name)}</b>${x.c.lead ? `<small>${AE(x.c.lead)}</small>` : ''}${x.hit.length ? `<small class="as-why">「${AE(x.hit.slice(0, 3).join('」「'))}」から</small>` : ''}</span><span aria-hidden="true">›</span></a></li>`).join('')}</ul></div>
     ${sits.length ? `<div class="as-sec"><b>近い相談場面</b><ul class="as-links">${sits.map(s => `<li><a href="#${s.id}">${AE(s.name)}</a></li>`).join('')}</ul></div>` : ''}
     ${faq.length ? `<div class="as-sec"><b>関係しそうな質問</b>${faq.map(f => `<details class="as-faq"><summary>${AE(f.q)}</summary><p>${AE(f.a)}</p></details>`).join('')}</div>` : ''}
-    <div class="as-go"><button type="button" class="btn btn-g" id="asGo">この内容で相談をまとめる</button><a class="btn btn-o" href="#diagnosis">4つの質問で整理する</a></div>`;
+    ${pick.some(x => ['subsidy', 'finance'].includes(x.c.id)) || /補助金|助成金/.test(t) ? `<div class="as-sec"><b>使える補助金・助成金を調べる</b><p class="as-note">会社の情報を入れると、対象となる可能性を理由付きで判定します（無料）。</p><a class="btn btn-o" href="/hojokin/">公的支援マッチで調べる</a></div>` : ''}
+    <div class="as-go"><button type="button" class="btn btn-g" id="asGo">この内容で相談をまとめる</button><a class="btn btn-o" href="#diagnosis">4つの質問で整理する</a><a class="btn btn-o" href="tel:${AE((D.tel || '').replace(/[^\d]/g, ''))}">電話で相談する</a></div>`;
   $('#asGo').addEventListener('click', () => {
     preselect(pick.map(x => x.c.id));
     const f = $('#cFree'); if (f && !f.value.includes(t)) { f.value = (f.value ? f.value + '\n' : '') + t; saveDraft(); }
     asOpen(false); location.hash = '#contact';
   });
-  $$('a[href^="#"]', asOut).forEach(a => a.addEventListener('click', () => { if (matchMedia('(max-width:900px)').matches) asOpen(false); }));
+  $$('a[href^="#"],a[href^="/"]', asOut).forEach(a => a.addEventListener('click', () => { if (matchMedia('(max-width:900px)').matches) asOpen(false); }));
 }
