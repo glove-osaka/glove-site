@@ -31,7 +31,7 @@ rep('</main>\n', '</main>\n<footer class="kg-foot"><div class="in">'
     '<b>公的支援マッチ</b>は、企業支援 総合相談窓口の機能です。運営：株式会社グローブ（大阪府大阪市生野区勝山南2-2-7）'
     '<ul><li>判定は、公開されている公式情報をもとにした「対象となる可能性」の目安です。受給や採択を保証するものではありません。最終的な要件は各制度の公募要領でご確認ください。</li>'
     '<li>申請書類の作成・提出は、提携する行政書士（雇用関係の助成金は社会保険労務士）が行います。窓口では制度のご案内と事業内容の整理をお手伝いします。</li></ul>'
-    '<div style="margin-top:10px"><a href="../#contact">窓口に相談する（初回無料）</a>　｜　<a href="../#privacy">個人情報の取り扱い</a>　｜　<a href="../#company">運営会社</a>　｜　電話 <a href="tel:0663550779">06-6355-0779</a>（平日10:00〜18:00）　｜　<a href="mailto:kigyosoudan@gmail.com">kigyosoudan@gmail.com</a></div>'
+    '<div style="margin-top:10px"><a href="../#contact">窓口に相談する（初回無料）</a>　｜　<a href="../#privacy">個人情報の取り扱い</a>　｜　<a href="../#company">運営会社</a>　｜　電話 <a href="tel:0663550779">06-6355-0779</a>（平日10:00〜18:00）　｜　<a href="mailto:info@bsd.osaka">info@bsd.osaka</a></div>'
     '</div></footer>\n')
 os.makedirs('sites/bsd.osaka/hojokin', exist_ok=True)
 open('sites/bsd.osaka/hojokin/index.html', 'w', encoding='utf-8').write(out)

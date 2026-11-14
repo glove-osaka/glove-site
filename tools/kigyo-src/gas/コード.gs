@@ -187,7 +187,7 @@ function doGet(e) {
 
 /* ============================== 相談管理の画面からの呼び出し ============================== */
 
-const API = { login, logout, requestCode, registerWithCode, changePassword, addUser, removeUser, adminData, updateCase, sendReport, savePartner, saveStages, createInvite, inviteInfo, partnerApply };
+const API = { login, logout, requestCode, registerWithCode, changePassword, changeId, addUser, removeUser, adminData, updateCase, sendReport, savePartner, saveStages, createInvite, inviteInfo, partnerApply };
 function api_(raw) {
   let req;
   try { req = JSON.parse(raw || '{}'); } catch (err) { return json_({ ok: false, error: 'bad_request' }); }
@@ -212,8 +212,8 @@ function saveUser_(u, pw) {
   list.push({ id: u.id, name: u.name || u.id, salt, hash: hash_(salt, pw) });
   PropertiesService.getScriptProperties().setProperty('ADMIN_USERS', JSON.stringify(list));
 }
-function pwOk_(pw) { return String(pw || '').length >= 10 && /[A-Za-z]/.test(pw) && /[0-9]/.test(pw); }
-const PW_RULE = 'パスワードは、英字と数字をまぜて10文字以上にしてください。';
+function pwOk_(pw) { return String(pw || '').length >= 8 && /[A-Za-z]/.test(pw) && /[0-9]/.test(pw); }
+const PW_RULE = 'パスワードは、英字と数字をまぜて8文字以上にしてください。';
 
 /** 画面から呼ぶ：ID とパスワードを確かめ、8時間有効の合い札を返す */
 function login(id, pw) {
@@ -280,6 +280,20 @@ function changePassword(token, oldPw, newPw) {
   if (!pwOk_(newPw)) return { ok: false, error: PW_RULE };
   saveUser_({ id: u.id, name: u.name }, String(newPw));
   return { ok: true };
+}
+/** 画面から呼ぶ：自分の ID・表示名を変える（今のパスワードで確認。パスワードはそのまま） */
+function changeId(token, pw, newId, newName) {
+  const me = auth_(token);
+  const list = users_();
+  const u = list.find(x => x.id === me.id);
+  if (!u || hash_(u.salt, String(pw || '')) !== u.hash) return { ok: false, error: '今のパスワードが違います。' };
+  newId = String(newId || '').trim(); newName = String(newName || '').trim() || u.name;
+  if (!/^[A-Za-z0-9_.-]{3,30}$/.test(newId)) return { ok: false, error: 'ID は半角の英字・数字で3〜30文字にしてください。' };
+  if (newId !== u.id && list.some(x => x.id === newId)) return { ok: false, error: 'その ID はほかの担当者が使っています。' };
+  u.id = newId; u.name = newName;
+  PropertiesService.getScriptProperties().setProperty('ADMIN_USERS', JSON.stringify(list));
+  CacheService.getScriptCache().put('tok_' + token, JSON.stringify({ id: u.id, name: u.name }), 8 * 3600);
+  return { ok: true, id: u.id, name: u.name, users: list.map(x => ({ id: x.id, name: x.name })) };
 }
 function addUser(token, id, name, pw) {
   auth_(token);

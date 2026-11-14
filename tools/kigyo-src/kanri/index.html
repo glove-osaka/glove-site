@@ -191,7 +191,7 @@ table.rt input{padding:7px 10px}
     <label class="f">確認コード（6桁）<input type="text" id="rg-code" inputmode="numeric" maxlength="6" autocomplete="one-time-code"></label>
     <label class="f">表示する名前<input type="text" id="rg-name" placeholder="例：藤原"></label>
     <label class="f">ログイン ID（半角の英字・数字）<input type="text" id="rg-id" autocomplete="username" autocapitalize="off" spellcheck="false"></label>
-    <label class="f">パスワード（英字と数字をまぜて10文字以上）<input type="password" id="rg-pw" autocomplete="new-password"></label>
+    <label class="f">パスワード（英字と数字をまぜて8文字以上）<input type="password" id="rg-pw" autocomplete="new-password"></label>
     <div class="err" id="rg-err" role="alert"></div>
     <button class="btn btn-navy" type="submit" id="rg-btn">登録する</button>
     <button class="lg-link" type="button" id="rg-back">ログインに戻る</button>
@@ -888,16 +888,23 @@ function renderUsers() {
   $("#main").innerHTML = `<div class="grid2">
     <div class="card"><h3>パスワードの変更</h3>
       <label class="f">今のパスワード<input type="password" id="pw-old" autocomplete="current-password"></label>
-      <label class="f">新しいパスワード（英字と数字をまぜて10文字以上）<input type="password" id="pw-new" autocomplete="new-password"></label>
+      <label class="f">新しいパスワード（英字と数字をまぜて8文字以上）<input type="password" id="pw-new" autocomplete="new-password"></label>
       <div class="err" id="pw-err"></div><div class="row"><button class="btn btn-navy btn-sm" id="pw-save">変更する</button></div></div>
+    <div class="card"><h3>ID・表示名の変更</h3>
+      <label class="f">新しいログイン ID（半角の英字・数字 3〜30文字）<input type="text" id="id-new" autocomplete="username" value="${esc(D.me.id)}"></label>
+      <label class="f">表示する名前<input type="text" id="id-name" value="${esc(D.me.name || "")}"></label>
+      <label class="f">今のパスワード（確認のため）<input type="password" id="id-pw" autocomplete="current-password"></label>
+      <div class="err" id="id-err"></div><div class="row"><button class="btn btn-navy btn-sm" id="id-save">変更する</button></div>
+      <p class="hint">パスワードは変わりません。次回から新しい ID でログインします。</p></div>
     <div class="card"><h3>担当者の追加</h3>
       <label class="f">表示する名前<input type="text" id="u-name" placeholder="例：山田"></label>
       <label class="f">ログイン ID（半角英数字）<input type="text" id="u-id" autocomplete="off"></label>
-      <label class="f">最初のパスワード（英字と数字をまぜて10文字以上）<input type="password" id="u-pw" autocomplete="new-password"></label>
+      <label class="f">最初のパスワード（英字と数字をまぜて8文字以上）<input type="password" id="u-pw" autocomplete="new-password"></label>
       <div class="err" id="u-err"></div><div class="row"><button class="btn btn-navy btn-sm" id="u-add">追加する</button></div></div>
   </div>
   <div class="card" style="margin-top:12px"><h3>登録されている担当者</h3><ul class="tl" id="u-list">${D.users.map(u => `<li>${esc(u.name)}（ID：${esc(u.id)}）${u.id !== D.me.id ? ` <button class="btn btn-sm" data-rm="${esc(u.id)}">削除</button>` : "　← あなた"}</li>`).join("")}</ul></div>`;
   $("#pw-save").onclick = async () => { $("#pw-err").textContent = ""; try { const r = await call("changePassword", TOKEN, $("#pw-old").value, $("#pw-new").value); if (!r.ok) { $("#pw-err").textContent = r.error; return; } $("#pw-old").value = $("#pw-new").value = ""; toast("パスワードを変更しました"); } catch (e) { $("#pw-err").textContent = "変更できませんでした"; } };
+  $("#id-save").onclick = async () => { $("#id-err").textContent = ""; try { const r = await call("changeId", TOKEN, $("#id-pw").value, $("#id-new").value, $("#id-name").value); if (!r.ok) { $("#id-err").textContent = r.error; return; } D.me.id = r.id; D.me.name = r.name; D.users = r.users; toast("ID・表示名を変更しました（新しい ID：" + r.id + "）"); renderUsers(); } catch (e) { $("#id-err").textContent = "変更できませんでした"; } };
   $("#u-add").onclick = async () => { $("#u-err").textContent = ""; try { const r = await call("addUser", TOKEN, $("#u-id").value, $("#u-name").value, $("#u-pw").value); if (!r.ok) { $("#u-err").textContent = r.error; return; } D.users = r.users; toast("追加しました"); renderUsers(); } catch (e) { $("#u-err").textContent = "追加できませんでした"; } };
   $$("[data-rm]").forEach(b => b.onclick = async () => { if (!confirm("この担当者を削除しますか？")) return; try { const r = await call("removeUser", TOKEN, b.dataset.rm); if (!r.ok) { toast(r.error); return; } D.users = r.users; renderUsers(); } catch (e) { toast("削除できませんでした"); } });
 }

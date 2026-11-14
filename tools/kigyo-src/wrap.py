@@ -26,7 +26,7 @@ head=f'''<!doctype html>
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary_large_image">
-<script type="application/ld+json">{{"@context":"https://schema.org","@type":"ProfessionalService","name":"{title}","alternateName":"Business Support Desk","url":"{url}","description":"{desc}","telephone":"06-6355-0779","email":"kigyosoudan@gmail.com","areaServed":"JP","address":{{"@type":"PostalAddress","addressRegion":"大阪府","addressLocality":"大阪市生野区","streetAddress":"勝山南2-2-7","addressCountry":"JP"}},"parentOrganization":{{"@type":"Organization","name":"株式会社グローブ","url":"https://glove-japan.com/"}}}}</script>
+<script type="application/ld+json">{{"@context":"https://schema.org","@type":"ProfessionalService","name":"{title}","alternateName":"Business Support Desk","url":"{url}","description":"{desc}","telephone":"06-6355-0779","email":"info@bsd.osaka","areaServed":"JP","address":{{"@type":"PostalAddress","addressRegion":"大阪府","addressLocality":"大阪市生野区","streetAddress":"勝山南2-2-7","addressCountry":"JP"}},"parentOrganization":{{"@type":"Organization","name":"株式会社グローブ","url":"https://glove-japan.com/"}}}}</script>
 <style>:root{{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}}body{{margin:0}}img{{max-width:100%}}</style>
 '''
 i=body.index('<div class="opn"')
