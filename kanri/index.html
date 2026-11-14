@@ -14,7 +14,7 @@
 </div></header>
 
 <nav class="tabs" id="tabs" hidden aria-label="管理画面の切り替え">
-<button type="button" data-v="dash" class="on adm-only">今やること</button><button type="button" data-v="home" class="stf-only">ホーム</button><button type="button" data-v="case" class="adm-only">お客様の相談</button><button type="button" data-v="ref" class="adm-only">取次ぎ</button><button type="button" data-v="apply" class="adm-only">提携・協業の申し込み</button><button type="button" data-v="partner" class="adm-only">提携先（会員）</button><button type="button" data-v="keiyaku" data-perm="contract">電子契約</button><button type="button" data-v="staff" class="adm-only">担当者</button><button type="button" data-v="log" class="adm-only">操作の記録</button><span class="who" id="whoAmI"></span><button type="button" id="helpBtn" class="acct">？ 使い方</button><button type="button" id="sound" class="acct adm-only" aria-pressed="true">🔔 音：オン</button><button type="button" data-v="acct" class="acct">パスワード変更</button><button type="button" id="logout" class="acct">ログアウト</button>
+<button type="button" data-v="dash" class="on adm-only">今やること</button><button type="button" data-v="home" class="stf-only">ホーム</button><button type="button" data-v="case" class="adm-only">お客様の相談</button><button type="button" data-v="cust" class="adm-only">お客様リスト</button><button type="button" data-v="ref" class="adm-only">取次ぎ</button><button type="button" data-v="apply" class="adm-only">提携・協業の申し込み</button><button type="button" data-v="partner" class="adm-only">提携先（会員）</button><button type="button" data-v="keiyaku" data-perm="contract">電子契約</button><button type="button" data-v="staff" class="adm-only">担当者</button><button type="button" data-v="log" class="adm-only">操作の記録</button><span class="who" id="whoAmI"></span><button type="button" id="helpBtn" class="acct">？ 使い方</button><button type="button" id="sound" class="acct adm-only" aria-pressed="true">🔔 音：オン</button><button type="button" data-v="acct" class="acct">パスワード変更</button><button type="button" id="logout" class="acct">ログアウト</button>
 </nav>
 
 <main>
@@ -106,6 +106,19 @@
 </div>
 
 <!-- 担当者 -->
+<div class="view" id="v-cust" hidden>
+<details class="howto"><summary>この画面の使い方（お客様リスト）</summary><ol>
+<li>これまでにご相談いただいたお客様を、人ごとにまとめた名簿です。メールアドレスか電話番号が同じ相談は、同じお客様としてまとめます。</li>
+<li>行を押すと、そのお客様の相談・契約書の一覧が開きます。「この相談を開く」で、相談の画面に移れます。</li>
+<li>「表計算ソフト用に書き出す」で、一覧をファイル（CSV）に保存できます。お客様の個人情報なので、取り扱いにご注意ください。</li>
+<li>この画面は管理者だけが見られます（担当者のアカウントには出ません）。</li></ol></details>
+<div class="bar"><input type="text" class="q" id="custQ" placeholder="お名前・電話・メール・地域で探す" aria-label="お客様を探す">
+<label>状態<select id="custF"><option value="">すべて</option><option value="open">対応中の相談がある</option><option value="done">対応が終わった</option><option value="signed">契約が済んだ</option></select></label>
+<label>分類<select id="custC"><option value="">すべて</option></select></label>
+<button type="button" class="small-btn" id="custCsv">表計算ソフト用に書き出す</button></div>
+<p class="hint" id="custSum"></p>
+<section class="card"><div class="tbl"><table class="list"><thead><tr><th>お名前</th><th>連絡先</th><th>地域</th><th>相談</th><th>分類</th><th>契約</th><th>担当</th><th>最後に動いた日</th></tr></thead><tbody id="custRows"><tr><td colspan="8">読み込み中…</td></tr></tbody></table></div></section>
+</div>
 <div class="view" id="v-staff" hidden>
 <details class="howto"><summary>この画面の使い方（担当者）</summary><ol>
 <li>窓口で対応する人の名簿です。ここに登録した人が、相談・申し込みの「担当者」で選べるようになります。</li>
@@ -325,7 +338,7 @@ var GUIDE_APPLY={'新規申込':'担当者を決め、申し込んだ方へ面�
 var VIEW='dash',TB={case:'case',ref:'ref',apply:'partner',partner:'partner',staff:'staff',home:'partner'};
 function go(v){VIEW=v;document.querySelectorAll('.view').forEach(function(x){x.hidden=x.id!=='v-'+v});
  document.querySelectorAll('#tabs button[data-v]').forEach(function(b){b.classList.toggle('on',b.dataset.v===v);b.setAttribute('aria-current',b.dataset.v===v?'page':'false')});
- if(v==='dash')dash();if(v==='home')home();if(TB[v]&&v!=='home'){closeEd(v);load(v)}if(v==='log')loadLog();if(v==='keiyaku')list();window.scrollTo(0,0)}
+ if(v==='dash')dash();if(v==='home')home();if(TB[v]&&v!=='home'){closeEd(v);load(v)}if(v==='log')loadLog();if(v==='cust')loadCust();if(v==='keiyaku')list();window.scrollTo(0,0)}
 $('tabs').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;if(b.id==='logout'){logout();return}if(b.id==='sound'){soundToggle();return}if(b.id==='helpBtn'){openHelp();return}if(b.dataset.v)go(b.dataset.v)});
 
 /* ---------- 今やること（管理者） ---------- */
@@ -400,7 +413,7 @@ function load(v){var t=TB[v],tb=document.querySelector('[data-list="'+v+'"] tbod
  if(v==='partner')p=Promise.all([p,api('admin.list').then(function(r){CONTRACTS=r.rows})]);
  if(v==='staff')p=Promise.all([p,api('kanri.list',{table:'case'}).then(function(r){DATA.case=r.rows})]);
  return p.then(function(){fillFilters();draw(v)}).catch(function(e){if(tb)tb.innerHTML='<tr><td colspan="7" class="err">'+esc(e.message)+'</td></tr>'})}
-document.querySelectorAll('.q').forEach(function(i){i.addEventListener('input',function(){i.dataset.q==='log'?drawLog():draw(i.dataset.q)})});
+document.querySelectorAll('.q').forEach(function(i){if(!i.dataset.q)return;i.addEventListener('input',function(){i.dataset.q==='log'?drawLog():draw(i.dataset.q)})});
 document.addEventListener('change',function(e){var f=e.target.closest('[data-f]');if(!f)return;var v=f.dataset.f;if(v==='log'){drawLog();return}
  if(f.dataset.k==='c1'&&v==='case')document.querySelector('[data-f="case"][data-k="c2"]').value='';if(f.dataset.k==='b1'){document.querySelector('[data-f="partner"][data-k="b2"]').value='';document.querySelector('[data-f="partner"][data-k="b3"]').value=''}if(f.dataset.k==='b2')document.querySelector('[data-f="partner"][data-k="b3"]').value='';
  fillFilters();draw(v)});
@@ -605,6 +618,24 @@ function myPartner(id){var d=$('myPDetail');d.hidden=false;d.innerHTML='<p>読�
   $('myPClose').addEventListener('click',function(){d.hidden=true;$('myPCard').scrollIntoView({block:'start'})})}).catch(function(e){d.innerHTML='<p class="err">'+esc(e.message)+'</p>'})}
 document.addEventListener('click',function(e){var t=e.target.closest('[data-myp]');if(t)myPartner(t.dataset.myp)});
 document.addEventListener('keydown',function(e){if(e.key==='Enter'){var t=e.target.closest&&e.target.closest('[data-myp]');if(t)myPartner(t.dataset.myp)}});
+
+/* ---------- お客様リスト ---------- */
+var CUST=[];
+function loadCust(){$('custRows').innerHTML='<tr><td colspan="8">読み込み中…</td></tr>';api('kanri.customers').then(function(r){CUST=r.rows||[];var cs={};CUST.forEach(function(c){c.cats.forEach(function(x){cs[x]=1})});var cur=$('custC').value;$('custC').innerHTML='<option value="">すべて</option>'+Object.keys(cs).map(function(x){return '<option'+(x===cur?' selected':'')+'>'+esc(x)+'</option>'}).join('');drawCust()}).catch(function(e){$('custRows').innerHTML='<tr><td colspan="8" class="err">'+esc(e.message)+'</td></tr>'})}
+function custView(){var q=$('custQ').value.trim().toLowerCase(),f=$('custF').value,c1=$('custC').value;return CUST.filter(function(c){if(q&&[c.name,c.phone,c.email,c.area,c.relation].join(' ').toLowerCase().indexOf(q)<0)return false;if(f==='open'&&!c.open)return false;if(f==='done'&&c.open)return false;if(f==='signed'&&!c.signed)return false;if(c1&&c.cats.indexOf(c1)<0)return false;return true})}
+function drawCust(){var L=custView();$('custSum').textContent='お客様 '+L.length+' 人（全体 '+CUST.length+' 人）';
+ $('custRows').innerHTML=L.length?L.map(function(c,i){return '<tr class="click" data-ci="'+CUST.indexOf(c)+'" tabindex="0"><td><b>'+esc(c.name||'（お名前なし）')+'</b>'+(c.relation?'<br><small>'+esc(c.relation)+'</small>':'')+'</td><td><small>'+esc(c.phone)+(c.email?'<br>'+esc(c.email):'')+'</small></td><td><small>'+esc(c.area)+'</small></td><td>'+c.cases.length+' 件'+(c.open?'<br><span class="tag">対応中 '+c.open+'</span>':'')+'</td><td><small>'+esc(c.cats.join('、'))+'</small></td><td>'+(c.contracts.length?c.contracts.length+' 件'+(c.signed?'<br><small>締結 '+c.signed+'</small>':''):'—')+'</td><td>'+esc(c.staff||'—')+'</td><td>'+day(c.last)+'</td></tr><tr class="cust-d" id="cd'+CUST.indexOf(c)+'" hidden><td colspan="8"></td></tr>'}).join(''):'<tr><td colspan="8">当てはまるお客様はいません</td></tr>'}
+function custDetail(i){var c=CUST[i],row=$('cd'+i);if(!row)return;if(!row.hidden){row.hidden=true;return}
+ row.firstChild.innerHTML='<div class="cust-box"><h3>相談の一覧</h3><table class="list"><thead><tr><th>受付日</th><th>分野</th><th>状況</th><th>担当</th><th>次にやること</th><th></th></tr></thead><tbody>'+c.cases.map(function(x){return '<tr><td>'+day(x.created)+'</td><td><small>'+esc([x.cat1,x.cat2].filter(Boolean).join(' › '))+'</small></td><td><span class="tag">'+esc(x.status)+'</span></td><td>'+esc(x.staff||'—')+'</td><td><small>'+esc(x.next_action)+(x.next_date?' '+day(x.next_date):'')+'</small></td><td><button type="button" class="small-btn" data-opencase="'+esc(x.id)+'">この相談を開く</button></td></tr>'}).join('')+'</tbody></table>'+
+ '<h3>契約書</h3>'+(c.contracts.length?'<ul class="ul">'+c.contracts.map(function(k){return '<li>'+esc(k.title)+'：<b>'+esc(k.status)+'</b>'+(k.signed?'（'+day(k.signed)+' 締結）':'')+'</li>'}).join('')+'</ul>':'<p class="hint">まだありません。</p>')+
+ '<p class="hint">取次ぎ：'+c.refs+' 件　はじめてのご相談：'+day(c.first)+(c.housing?'　住まい：'+esc(c.housing):'')+'</p></div>';row.hidden=false}
+$('custRows').addEventListener('click',function(e){var o=e.target.closest('[data-opencase]');if(o){go('case');setTimeout(function(){openEd('case',o.dataset.opencase)},300);return}var t=e.target.closest('[data-ci]');if(t)custDetail(+t.dataset.ci)});
+$('custRows').addEventListener('keydown',function(e){if(e.key==='Enter'){var t=e.target.closest('[data-ci]');if(t)custDetail(+t.dataset.ci)}});
+['custQ','custF','custC'].forEach(function(id){$(id).addEventListener(id==='custQ'?'input':'change',drawCust)});
+$('custCsv').addEventListener('click',function(){if(!confirm('お客様の個人情報を含むファイルを保存します。よろしいですか？'))return;var q=function(v){v=String(v==null?'':v);return '"'+v.replace(/"/g,'""')+'"'};
+ var L=custView(),h=['お名前','続柄など','電話','メール','地域','住まい','相談の件数','対応中の件数','分類','契約書の件数','締結の件数','取次ぎの件数','担当','はじめての相談','最後に動いた日'];
+ var lines=[h.map(q).join(',')].concat(L.map(function(c){return [c.name,c.relation,c.phone,c.email,c.area,c.housing,c.cases.length,c.open,c.cats.join('、'),c.contracts.length,c.signed,c.refs,c.staff,String(c.first).slice(0,10),String(c.last).slice(0,10)].map(q).join(',')}));
+ var blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='お客様リスト_'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)});
 
 /* ---------- 使い方 ---------- */
 function openHelp(){try{$('helpDlg').showModal()}catch(e){$('helpDlg').setAttribute('open','')}}
