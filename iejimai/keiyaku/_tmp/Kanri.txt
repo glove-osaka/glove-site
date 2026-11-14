@@ -1,0 +1,737 @@
+/**
+ * 家じまい相談窓口　管理画面（相談・取次ぎ・協力企業）
+ * 電子契約と同じプロジェクトに「Kanri」という名前のスクリプトファイルとして置きます。
+ * 台帳は電子契約と同じスプレッドシート（シート：案件／取次ぎ／協力企業）。
+ */
+var K_TABLES = {
+  case: {
+    sheet: '案件', prefix: 'C',
+    cols: ['id', 'created', 'source', 'name', 'relation', 'phone', 'email', 'contact_pref', 'area', 'housing', 'timing',
+      'fields', 'services', 'worries', 'detail', 'status', 'staff', 'next_action', 'next_date', 'memo', 'form_ref', 'updated', 'log',
+      'last_activity', 'last_report', 'reports', 'cat1', 'cat2', 'cat3', 'cat_note', 'referrer', 'checks']
+  },
+  ref: {
+    sheet: '取次ぎ', prefix: 'R',
+    cols: ['id', 'created', 'case_id', 'case_name', 'partner_id', 'partner_name', 'service', 'date', 'status', 'amount', 'memo', 'updated', 'cat1', 'cat2', 'cat3', 'sent_at', 'sent_to', 'log', 'pg1', 'pg2', 'pg3', 'pg_note', 'pg_next', 'pg_next_date', 'pg_updated', 'files']
+  },
+  partner: {
+    sheet: '協力企業', prefix: 'P',
+    cols: ['id', 'created', 'kind', 'name', 'person', 'phone', 'email', 'fields', 'area', 'memo', 'active', 'updated', 'address', 'license', 'web', 'intro', 'source', 'categories', 'meeting', 'meet_dates',
+      'apply_status', 'staff', 'meet_date', 'next_action', 'next_date', 'log', 'last_activity', 'checks', 'registered_by', 'login_id', 'pass_salt', 'pass_hash', 'reg_no', 'bank', 'last_login']
+  },
+  invoice: {
+    sheet: '請求書', prefix: 'INV',
+    cols: ['id', 'created', 'ref_id', 'case_id', 'partner_id', 'partner_name', 'to_name', 'to_email', 'subject', 'issue_date', 'due_date', 'items', 'subtotal', 'tax10', 'tax8', 'total', 'note', 'bank', 'reg_no', 'pdf_id', 'status', 'sent_at', 'paid_at', 'log']
+  },
+  staff: {
+    sheet: '担当者', prefix: 'S',
+    cols: ['id', 'created', 'name', 'role', 'phone', 'email', 'active', 'memo', 'updated', 'login_id', 'pass_salt', 'pass_hash', 'ref_code', 'perms']
+  }
+};
+var K_CASE_STATUS = ['新規', '連絡済み', '面談予定', '対応中', '取次ぎ中', '完了', '見送り'];
+var K_REF_STATUS = ['依頼済み', '見積もり中', '対応中（自社）', '成約', '完了', '不成約', '取り下げ'];
+var K_CLOSED = ['完了', '見送り'];
+// 提携・協業の申し込みの進み具合（お客様の相談とは別に管理。取次ぎはしない）
+var K_APPLY_STATUS = ['新規申込', '連絡済み', '面談日調整中', '面談予定', '面談済み・確認中', '契約書送付済み', '提携開始', '見送り'];
+var K_APPLY_DONE = ['提携開始', '見送り'];
+// ご相談の分野 → 大分類（ホームページの分類）
+var K_SVC_CAT = { '家財・持ち物の整理': ['家財整理・不用品買取', '生前整理', '遺品整理'], '暮らし・住み替え': ['次の住まい探し', '毎月の支出の見直し', '引越し・施設入居', '退去・住まいの整理'],
+  '住まい・不動産': ['空き家管理', '不動産の売却・活用', '自宅を活かした資金づくり', '修繕・建替え・解体'], '相続・各種手続き': ['相続・遺言', '各種手続き'],
+  'シニアライフサポート': ['身元保証・身元引受', '見守り・緊急連絡先代行', '死後事務の手配', '終活・生活支援'], '業者選び・家族のサポート': ['業者選び・連絡調整', 'ご家族への支援', '将来への備え', 'その他のご相談'] };
+function kCatOf_(svc) { for (var c in K_SVC_CAT) if (K_SVC_CAT[c].indexOf(svc) >= 0) return c; return ''; }
+// ホームページのご相談フォームでお客様が選ぶ「内容」（協力企業の対応分野にも使う）
+var K_SERVICES = ['家財整理・不用品買取', '生前整理', '遺品整理', '毎月の支出の見直し', '引越し・施設入居', '次の住まい探し', '退去・住まいの整理',
+  '空き家管理', '不動産の売却・活用', '自宅を活かした資金づくり', '修繕・建替え・解体', '相続・遺言', '各種手続き', '業者選び・連絡調整',
+  'ご家族への支援', '将来への備え', 'その他のご相談', '身元保証・身元引受', '見守り・緊急連絡先代行', '死後事務の手配', '終活・生活支援'];
+// 注意を出す目安
+// いつでも選べる取次ぎ先（協力企業の登録がなくても選べる）
+var K_BUILTIN = [
+  { id: 'SELF', name: '自社対応', kind: '自社', all: true },
+  { id: 'DAIKICHI', name: '買取大吉 大阪勝山南店', kind: '自社グループ', fields: ['家財整理・不用品買取', '生前整理', '遺品整理', '退去・住まいの整理', '空き家管理', '引越し・施設入居'] },
+  { id: 'PARTNER_TBD', name: '提携企業（これから選ぶ）', kind: '提携企業', all: true },
+  { id: 'SHIGYO_TBD', name: '士業（これから選ぶ）', kind: '士業', fields: ['相続・遺言', '各種手続き', '不動産の売却・活用', '自宅を活かした資金づくり', '死後事務の手配', '将来への備え'] },
+  { id: 'OTHER', name: 'その他', kind: 'その他', all: true }
+];
+function kBuiltin_(id) { return K_BUILTIN.filter(function (b) { return b.id === id; })[0] || null; }
+function kBuiltinFor_(s) { return K_BUILTIN.filter(function (b) { return b.id !== 'OTHER' && (b.all || (b.fields || []).indexOf(s) >= 0); }).map(function (b) { return { id: b.id, name: b.name, builtin: true }; }); }
+var K_RULE = { newHours: 24, idleWarn: 3, idleAlert: 7, reportWarn: 7, refWarn: 5, reportTooSoon: 2 };
+var FORM_SHEET = '相談受付';
+
+function kanriCall_(action, req) {
+  switch (action) {
+    case 'kanri.dash': kSync_(); return kDash_();
+    case 'kanri.list': if (req.table === 'case') kSync_(); return kList_(req.table);
+    case 'kanri.get': return kGet_(req);
+    case 'kanri.customers': kSync_(); return kCustomers_();
+    case 'kanri.refx': return ptRefDetail_(kFind_('ref', req.id), null);
+    case 'kanri.partnerpass': return ptPassSet_(req);
+    case 'kanri.file': return ptFileOut_(req.fid, null);
+    case 'kanri.invpdf': return ptInvPdfOut_(req.id, null);
+    case 'kanri.save': return kSave_(req);
+    case 'kanri.note': return kNote_(req);
+    case 'kanri.remove': return kRemove_(req);
+    case 'kanri.ref.draft': return kRefDraft_(req);
+    case 'kanri.ref.send': return kRefSend_(req);
+    case 'kanri.report.draft': return kReportDraft_(req);
+    case 'kanri.report.send': return kReportSend_(req);
+    default: return { ok: false, error: '不明な操作です' };
+  }
+}
+function kOpts_() {
+  var st = []; try { st = kRows_('staff').filter(function (s) { return String(s.active) !== '停止' && s.name; }).map(function (s) { return String(s.name); }); } catch (e) { }
+  return { caseStatus: K_CASE_STATUS, refStatus: K_REF_STATUS, applyStatus: K_APPLY_STATUS, services: K_SERVICES, svcCat: K_SVC_CAT, staff: st, rule: K_RULE, staffPerms: STAFF_PERMS };
+}
+
+/* ---------- 台帳の読み書き ---------- */
+function kSheet_(t) {
+  var T = K_TABLES[t]; if (!T) throw new Error('台帳の種類が正しくありません');
+  var ss = book_(), sh = ss.getSheetByName(T.sheet);
+  if (!sh) { sh = ss.insertSheet(T.sheet); sh.getRange(1, 1, sh.getMaxRows(), T.cols.length).setNumberFormat('@'); sh.appendRow(T.cols); sh.setFrozenRows(1); }
+  else if (sh.getLastColumn() < T.cols.length) { sh.getRange(1, 1, sh.getMaxRows(), T.cols.length).setNumberFormat('@'); sh.getRange(1, 1, 1, T.cols.length).setValues([T.cols]); }
+  return sh;
+}
+function kRows_(t) {
+  var T = K_TABLES[t], v = kSheet_(t).getDataRange().getValues(), out = [];
+  for (var i = 1; i < v.length; i++) { var o = { _row: i + 1 }; T.cols.forEach(function (c, j) { o[c] = v[i][j]; }); if (o.id) out.push(o); }
+  return out;
+}
+function kFind_(t, id) { return kRows_(t).filter(function (x) { return String(x.id) === String(id); })[0] || null; }
+function kPut_(t, o) {
+  var T = K_TABLES[t], sh = kSheet_(t), line = T.cols.map(function (c) { return o[c] === undefined || o[c] === null ? '' : o[c]; });
+  if (o._row) sh.getRange(o._row, 1, 1, T.cols.length).setValues([line]); else sh.appendRow(line);
+}
+function kId_(t) { return K_TABLES[t].prefix + '-' + Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyMMdd') + '-' + Math.floor(Math.random() * 9000 + 1000); }
+function kOut_(o) { var r = {}; Object.keys(o).forEach(function (k) { if (k === '_row') return; var v = o[k]; r[k] = v instanceof Date ? kDay_(v, k) : (typeof v === 'object' && v !== null ? v : String(v === null || v === undefined ? '' : v)); }); return r; }
+function kDay_(d, k) { return Utilities.formatDate(d, 'Asia/Tokyo', (k === 'date' || k === 'next_date') ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm'); }
+function kNow_() { return Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd HH:mm'); }
+function kTime_(v) {
+  if (v instanceof Date) return v.getTime();
+  var m = String(v || '').match(/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2}))?/);
+  return m ? new Date(m[1] + '-' + m[2] + '-' + m[3] + 'T' + (m[4] || '00') + ':' + (m[5] || '00') + ':00+09:00').getTime() : 0;
+}
+function kLogAdd_(o, text) {
+  var l = []; try { l = JSON.parse(o.log || '[]'); } catch (e) { }
+  l.push({ t: kNow_(), text: String(text).slice(0, 2000) }); o.log = JSON.stringify(l); o.last_activity = kNow_();
+}
+function kTel_(t) { t = String(t || '').trim(); return /^[1-9][0-9]{8,10}$/.test(t) ? '0' + t : t; }
+function kSplit_(s) { return String(s || '').split(/[、,，\n]+/).map(function (x) { return x.trim(); }).filter(String); }
+
+/* ---------- 相談フォームの受付を案件に取り込む ---------- */
+function kSync_() {
+  var sh = book_().getSheetByName(FORM_SHEET); if (!sh || sh.getLastRow() < 2) return 0;
+  var v0 = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0].map(String), c0 = v0.indexOf('案件番号');
+  if (c0 >= 0) { var col0 = sh.getRange(2, c0 + 1, sh.getLastRow() - 1, 1).getValues(); if (col0.every(function (r) { return r[0]; })) return 0; }
+  // 新しい受付があるときだけ、順番待ちをして取り込む（ほかの書き込みと重ならないように）
+  var lock = LockService.getScriptLock(); if (!lock.tryLock(5000)) return 0;
+  try { return kSyncRun_(sh); } finally { lock.releaseLock(); }
+}
+function kSyncRun_(sh) {
+  var v = sh.getDataRange().getValues(), head = v[0].map(String), col = head.indexOf('案件番号');
+  if (col < 0) { col = head.length; sh.getRange(1, col + 1).setValue('案件番号'); head.push('案件番号'); }
+  var g = function (row, k) { var i = head.indexOf(k); return i < 0 ? '' : String(row[i] || ''); }, n = 0;
+  for (var i = 1; i < v.length; i++) {
+    if (v[i][col]) continue;
+    var r = v[i], o = {
+      id: kId_('case'), created: r[0] instanceof Date ? kDay_(r[0]) : kNow_(), source: 'ホームページ', name: g(r, 'お名前'), relation: g(r, 'ご関係'),
+      phone: kTel_(g(r, '電話')), email: g(r, 'メール'), contact_pref: g(r, '連絡方法'), area: g(r, '場所'), housing: g(r, '住まい'), timing: g(r, '時期'),
+      fields: g(r, '分野'), services: g(r, '内容'), worries: g(r, 'お悩み'), detail: g(r, '自由記入'), status: '新規', staff: '', next_action: '最初のご連絡',
+      next_date: '', memo: '', form_ref: FORM_SHEET + ' ' + (i + 1) + '行目', updated: kNow_(), log: '[]', last_report: '', reports: '0'
+    };
+    var s1 = kSplit_(o.services)[0] || '', f1 = kSplit_(o.fields)[0] || '';
+    o.cat2 = s1; o.cat1 = kCatOf_(s1) || f1;
+    kLogAdd_(o, 'ホームページの相談フォームから受付');
+    o.last_activity = o.created;
+    kPut_('case', o); sh.getRange(i + 1, col + 1).setValue(o.id); n++;
+  }
+  return n;
+}
+
+/* ---------- 注意・放置日数・振分け先 ---------- */
+function kLastAct_(c) {
+  var t = kTime_(c.last_activity);
+  if (!t) { try { var l = JSON.parse(c.log || '[]'); if (l.length) t = kTime_(l[l.length - 1].t); } catch (e) { } }
+  return t || kTime_(c.created);
+}
+function kEnrich_(c, refs, partners) {
+  var now = Date.now(), H = 3600000, D = 86400000, st = String(c.status || '新規'), open = K_CLOSED.indexOf(st) < 0;
+  var last = kLastAct_(c), idle = Math.max(0, Math.floor((now - last) / D)), age = Math.floor((now - kTime_(c.created)) / H);
+  var al = [];
+  if (open) {
+    if (st === '新規') al.push({ lv: age >= K_RULE.newHours ? 'red' : 'yellow', text: '未対応 ' + (age < 24 ? age + '時間' : Math.floor(age / 24) + '日') });
+    else if (idle >= K_RULE.idleAlert) al.push({ lv: 'red', text: idle + '日 動きなし' });
+    else if (idle >= K_RULE.idleWarn) al.push({ lv: 'yellow', text: idle + '日 動きなし' });
+    var nd = kTime_(c.next_date);
+    if (nd && nd + D <= now) al.push({ lv: 'red', text: '期日を過ぎています' });
+    else if (nd && nd <= now + D && nd + D > now) al.push({ lv: 'yellow', text: '今日が期日' });
+    var lr = kTime_(c.last_report);
+    if (st !== '新規') { var since = Math.floor((now - (lr || kTime_(c.created))) / D); if (since >= K_RULE.reportWarn) al.push({ lv: 'yellow', text: 'お客様へ ' + since + '日 報告なし' }); }
+    (refs || []).forEach(function (r) {
+      if (['依頼済み', '見積もり中'].indexOf(String(r.status)) < 0 || String(r.partner_id) === 'SELF') return;
+      var d = Math.floor((now - kTime_(r.updated || r.created)) / D);
+      if (d >= K_RULE.refWarn) al.push({ lv: 'yellow', text: r.partner_name + 'から ' + d + '日 報告なし' });
+    });
+  }
+  var assigned = {}; (refs || []).forEach(function (r) { if (['不成約', '取り下げ'].indexOf(String(r.status)) < 0) assigned[String(r.service)] = String(r.partner_name); });
+  var suggest = kSplit_(c.services).map(function (s) {
+    var ps = (partners || []).filter(function (p) { return String(p.active) === '取引中' && kSplit_(p.fields).indexOf(s) >= 0; }).map(function (p) { return { id: String(p.id), name: String(p.name) }; });
+    return { service: s, assigned: assigned[s] || '', partners: ps, builtins: kBuiltinFor_(s) };
+  });
+  var o = kOut_(c);
+  if (!o.cat2) o.cat2 = kSplit_(c.services)[0] || '';
+  if (!o.cat1) o.cat1 = kCatOf_(o.cat2) || kSplit_(c.fields)[0] || '';
+  o.alerts = al; o.level = al.some(function (a) { return a.lv === 'red'; }) ? 'red' : al.length ? 'yellow' : '';
+  o.idle_days = idle; o.stage = K_CASE_STATUS.indexOf(st); o.suggest = suggest;
+  o.report_days = kTime_(c.last_report) ? Math.floor((now - kTime_(c.last_report)) / D) : -1;
+  delete o.log;
+  return o;
+}
+function kEnrichP_(p) {
+  var now = Date.now(), H = 3600000, D = 86400000, st = String(p.apply_status || ''), o = kOut_(p), al = [];
+  if (!st) st = String(p.active) === '審査中' ? '新規申込' : '提携開始';
+  o.apply_status = st;
+  var last = kTime_(p.last_activity) || kTime_(p.updated) || kTime_(p.created), idle = Math.max(0, Math.floor((now - last) / D)), age = Math.floor((now - kTime_(p.created)) / H);
+  if (K_APPLY_DONE.indexOf(st) < 0) {
+    if (st === '新規申込') al.push({ lv: age >= K_RULE.newHours ? 'red' : 'yellow', text: '未対応 ' + (age < 24 ? age + '時間' : Math.floor(age / 24) + '日') });
+    else if (idle >= K_RULE.idleAlert) al.push({ lv: 'red', text: idle + '日 動きなし' });
+    else if (idle >= K_RULE.idleWarn) al.push({ lv: 'yellow', text: idle + '日 動きなし' });
+    var md = kTime_(p.meet_date);
+    if (st === '面談予定' && md && md <= now + D && md + D > now) al.push({ lv: 'yellow', text: '面談が近い' });
+    var nd = kTime_(p.next_date);
+    if (nd && nd + D <= now) al.push({ lv: 'red', text: '期日を過ぎています' });
+    if (!p.staff) al.push({ lv: 'yellow', text: '担当者が決まっていない' });
+  }
+  o.alerts = al; o.level = al.some(function (a) { return a.lv === 'red'; }) ? 'red' : al.length ? 'yellow' : '';
+  o.idle_days = idle; o.stage = K_APPLY_STATUS.indexOf(st); delete o.log;
+  return o;
+}
+function kAllCases_() {
+  var refs = kRows_('ref'), partners = kRows_('partner'), by = {};
+  refs.forEach(function (r) { (by[r.case_id] = by[r.case_id] || []).push(r); });
+  return kRows_('case').map(function (c) { return kEnrich_(c, by[c.id], partners); })
+    .sort(function (a, b) { return kTime_(b.created) - kTime_(a.created); });
+}
+function kSafe_(o) { delete o.pass_salt; delete o.pass_hash; return o; }
+function kList_(t) {
+  if (t === 'case') return { ok: true, rows: kAllCases_(), opts: kOpts_() };
+  if (t === 'partner') return { ok: true, rows: kRows_('partner').map(kEnrichP_).map(kSafe_).sort(function (a, b) { return kTime_(b.created) - kTime_(a.created); }), opts: kOpts_() };
+  var rows = kRows_(t).map(kOut_).map(kSafe_).sort(function (a, b) { return kTime_(b.created) - kTime_(a.created); });
+  return { ok: true, rows: rows, opts: kOpts_() };
+}
+
+/* ---------- まとめ ---------- */
+function kDash_() {
+  var cases = kAllCases_(), refs = kRows_('ref'), contracts = rows_(), month = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM');
+  var open = cases.filter(function (c) { return K_CLOSED.indexOf(c.status) < 0; });
+  var apps = kRows_('partner').map(kEnrichP_), appOpen = apps.filter(function (p) { return K_APPLY_DONE.indexOf(p.apply_status) < 0; });
+  var stages = K_CASE_STATUS.map(function (s) { return { status: s, n: cases.filter(function (c) { return c.status === s; }).length }; });
+  var astages = K_APPLY_STATUS.map(function (s) { return { status: s, n: apps.filter(function (c) { return c.apply_status === s; }).length }; });
+  var lvSort = function (a, b) { return (a.level === 'red' ? 0 : 1) - (b.level === 'red' ? 0 : 1) || b.idle_days - a.idle_days; };
+  var unrouted = open.filter(function (c) { return c.status !== '新規' && (c.suggest || []).some(function (x) { return !x.assigned; }); });
+  return {
+    ok: true,
+    counts: {
+      newCase: cases.filter(function (c) { return c.status === '新規'; }).length,
+      red: open.filter(function (c) { return c.level === 'red'; }).length + appOpen.filter(function (p) { return p.level === 'red'; }).length,
+      yellow: open.filter(function (c) { return c.level === 'yellow'; }).length,
+      open: open.length,
+      refOpen: refs.filter(function (r) { return ['依頼済み', '見積もり中'].indexOf(String(r.status)) >= 0; }).length,
+      pendingPartner: appOpen.length,
+      newApply: apps.filter(function (p) { return p.apply_status === '新規申込'; }).length,
+      noStaff: open.filter(function (c) { return !c.staff; }).length,
+      unrouted: unrouted.length,
+      members: apps.filter(function (p) { return String(p.active) === '取引中'; }).length,
+      waiting: contracts.filter(function (x) { return ['送付済み', '確認中'].indexOf(String(x.status)) >= 0; }).length,
+      signedMonth: contracts.filter(function (x) { return x.signed instanceof Date && kDay_(x.signed).slice(0, 7) === month; }).length
+    },
+    stages: stages, astages: astages,
+    alerts: open.filter(function (c) { return c.level; }).sort(lvSort).slice(0, 50),
+    newest: cases.filter(function (c) { return c.status === '新規'; }).slice(0, 30),
+    apps: appOpen.sort(lvSort).slice(0, 30),
+    noStaff: open.filter(function (c) { return !c.staff; }).slice(0, 30),
+    unrouted: unrouted.slice(0, 30),
+    opts: kOpts_()
+  };
+}
+
+/* ---------- 1件を開く（関連する取次ぎ・契約も一緒に） ---------- */
+function kGet_(req) {
+  var o = kFind_(req.table, req.id); if (!o) throw new Error('見つかりません');
+  var r = { ok: true, opts: kOpts_() }, link = (req.table === 'case' ? 'case:' : 'partner:') + o.id, refs = kRows_('ref'), partners = kRows_('partner');
+  if (req.table === 'case') {
+    var mine = refs.filter(function (x) { return String(x.case_id) === String(o.id); });
+    r.row = kEnrich_(o, mine, partners); r.row.log = String(o.log || '[]'); r.refs = mine.map(kOut_);
+  } else if (req.table === 'partner') { r.row = kSafe_(kEnrichP_(o)); r.row.log = String(o.log || '[]'); r.row.has_login = o.pass_hash ? 'yes' : ''; } else r.row = kSafe_(kOut_(o));
+  if (req.table === 'partner') r.refs = refs.filter(function (x) { return String(x.partner_id) === String(o.id); }).map(kOut_);
+  r.contracts = rows_().filter(function (x) { return String(x.link || '') === link; }).map(function (x) { return { id: x.id, title: x.title, status: x.status, created: iso_(x.created), signed: iso_(x.signed) }; });
+  if (req.table === 'case' || req.table === 'ref') r.builtins = K_BUILTIN.map(function (b) { return { id: b.id, name: b.name, kind: b.kind }; });
+  if (req.table === 'case' || req.table === 'ref') r.partners = partners.filter(function (p) { return String(p.active) === '取引中'; }).map(function (p) { return { id: String(p.id), name: String(p.name), kind: String(p.kind), fields: String(p.fields) }; });
+  return r;
+}
+
+/* ---------- 保存 ---------- */
+function kSave_(req) {
+  var t = req.table, T = K_TABLES[t]; if (!T) throw new Error('台帳の種類が正しくありません');
+  var d = req.row || {}, o = d.id ? kFind_(t, d.id) : null, isNew = !o;
+  if (isNew) o = { id: kId_(t), created: kNow_(), log: '[]', reports: '0' };
+  var before = { status: o.status, staff: o.staff, next_action: o.next_action, apply: o.apply_status, meet: o.meet_date };
+  var fixed = ['id', 'created', 'updated', 'log', 'form_ref', 'last_activity', 'last_report', 'reports', 'pass_salt', 'pass_hash', 'ref_code', 'login_id', 'registered_by', 'perms', 'files', 'pg1', 'pg2', 'pg3', 'pg_note', 'pg_next', 'pg_next_date', 'pg_updated', 'reg_no', 'bank', 'last_login'];
+  T.cols.forEach(function (c) { if (fixed.indexOf(c) < 0 && d[c] !== undefined) o[c] = String(d[c]).slice(0, 5000); });
+  var changed = false;
+  if (t === 'case') {
+    if (!o.name) throw new Error('お名前を入れてください');
+    if (!o.status) o.status = '新規';
+    if (!o.source) o.source = '電話';
+    if (isNew) kLogAdd_(o, '登録（' + o.source + '）');
+    else {
+      if (before.status !== o.status) { kLogAdd_(o, '状態：' + (before.status || '') + ' → ' + o.status); changed = true; }
+      if (before.staff !== o.staff) kLogAdd_(o, '担当：' + (o.staff || '（なし）'));
+      if (before.next_action !== o.next_action && o.next_action) kLogAdd_(o, '次にやること：' + o.next_action);
+    }
+  }
+  var me = req._me || { r: 'admin' };
+  if (t === 'partner' && isNew && me.r === 'staff') { o.registered_by = me.n; o.apply_status = '新規申込'; o.active = '審査中'; o.source = '担当者が登録'; o.staff = me.n; }
+  if (t === 'partner') {
+    if (!o.name) throw new Error('会社名・お名前を入れてください'); if (!o.kind) o.kind = '協力企業';
+    if (!o.apply_status) o.apply_status = isNew ? '提携開始' : (String(o.active) === '審査中' ? '新規申込' : '提携開始');
+    if (o.apply_status === '提携開始' && (!o.active || o.active === '審査中')) o.active = '取引中';
+    if (o.apply_status === '見送り' && o.active !== '停止') o.active = '停止';
+    if (K_APPLY_DONE.indexOf(o.apply_status) < 0 && !o.active) o.active = '審査中';
+    if (!o.active) o.active = '取引中';
+    if (isNew) kLogAdd_(o, '登録（管理画面）');
+    else {
+      if (before.apply !== o.apply_status) kLogAdd_(o, '進み具合：' + (before.apply || '') + ' → ' + o.apply_status);
+      if (before.staff !== o.staff) kLogAdd_(o, '担当：' + (o.staff || '（なし）'));
+      if (before.meet !== o.meet_date && o.meet_date) kLogAdd_(o, '面談日を決定：' + o.meet_date + '（' + (o.meeting || '') + '）');
+      if (before.next_action !== o.next_action && o.next_action) kLogAdd_(o, '次にやること：' + o.next_action);
+    }
+  }
+  if (t === 'staff') { if (!o.name) throw new Error('担当者のお名前を入れてください'); if (!o.active) o.active = '在籍'; }
+  if (t === 'ref') {
+    if (!o.case_id || !o.partner_id) throw new Error('相談と取次ぎ先を選んでください');
+    var c = kFind_('case', o.case_id), bi = kBuiltin_(o.partner_id), p = bi ? { name: bi.id === 'OTHER' ? (String(d.partner_name || '').trim() || 'その他') : bi.name } : kFind_('partner', o.partner_id);
+    if (!c || !p) throw new Error('相談または取次ぎ先が見つかりません');
+    o.case_name = c.name; o.partner_name = p.name; if (!o.status) o.status = bi && bi.id === 'SELF' ? '対応中（自社）' : '依頼済み';
+    kLogAdd_(c, '取次ぎ：' + p.name + '（' + (o.service || '') + '）' + (isNew ? '依頼' : before.status !== o.status ? before.status + ' → ' + o.status : '内容を更新'));
+    if (isNew && K_CLOSED.indexOf(String(c.status)) < 0) c.status = bi && bi.id === 'SELF' ? '対応中' : '取次ぎ中';
+    c.updated = kNow_(); kPut_('case', c);
+    changed = isNew || before.status !== o.status;
+  }
+  o.updated = kNow_();
+  if (T.cols.indexOf('log') < 0) delete o.log;
+  kPut_(t, o);
+  return { ok: true, id: o.id, reportSuggested: changed, caseId: t === 'ref' ? o.case_id : o.id };
+}
+function kNote_(req) {
+  var t = req.table === 'partner' ? 'partner' : 'case', o = kFind_(t, req.id); if (!o) throw new Error('見つかりません');
+  if (!String(req.text || '').trim()) throw new Error('対応の内容を入れてください');
+  kLogAdd_(o, req.text); o.updated = kNow_(); kPut_(t, o); return { ok: true };
+}
+function kRemove_(req) {
+  var o = kFind_(req.table, req.id); if (!o) throw new Error('見つかりません');
+  if (req.table === 'case' && kRows_('ref').some(function (x) { return String(x.case_id) === String(o.id); })) throw new Error('取次ぎの記録がある相談は消せません。先に取次ぎを消すか、状態を「見送り」にしてください');
+  if (req.table === 'partner' && kRows_('ref').some(function (x) { return String(x.partner_id) === String(o.id); })) throw new Error('取次ぎの記録がある協力企業は消せません。「停止」にしてください');
+  kSheet_(req.table).deleteRow(o._row); return { ok: true };
+}
+
+/* ---------- お客様への進捗報告（文面をつくる → 担当者が送るか決める） ---------- */
+function kReportDraft_(req) {
+  var c = kFind_('case', req.id); if (!c) throw new Error('見つかりません');
+  var refs = kRows_('ref').filter(function (x) { return String(x.case_id) === String(c.id) && ['不成約', '取り下げ'].indexOf(String(x.status)) < 0; });
+  var st = String(c.status), nm = String(c.name || '').trim(), svc = kSplit_(c.services).join('、') || 'ご相談の件';
+  var nd = kTime_(c.next_date) ? Utilities.formatDate(new Date(kTime_(c.next_date)), 'Asia/Tokyo', 'M月d日') : '';
+  var lines = [], openers = ['いつもお世話になっております。', 'お世話になっております。', 'このたびはご相談いただき、ありがとうございます。'];
+  var n = +(c.reports || 0);
+  lines.push(nm + ' 様', '', '家じまい相談窓口でございます。' + (n === 0 ? openers[2] : openers[n % 2]));
+  lines.push('ご相談いただいている「' + svc + '」について、現在の状況をご報告いたします。', '');
+  var now = {
+    '新規': 'ご相談を確かに受け付けました。内容を確認し、担当者から改めてご連絡いたします。',
+    '連絡済み': 'ご状況をうかがい、内容を整理しております。ご希望に合う進め方を考え、改めてご提案いたします。',
+    '面談予定': nd ? nd + 'にお会いしてお話をうかがう予定です。当日はどうぞよろしくお願いいたします。' : 'お会いしてお話をうかがう日を調整しております。',
+    '対応中': 'ご希望に沿って、準備や手配を進めております。',
+    '取次ぎ中': 'ご相談の内容に合う、提携の専門事業者へおつなぎしております。',
+    '完了': 'ご相談いただいた件は、すべて完了いたしました。最後までお任せいただき、ありがとうございました。',
+    '見送り': '今回は、いったん見送りとさせていただきました。'
+  }[st] || 'ご相談の件を進めております。';
+  lines.push('■ 現在の状況', now);
+  var rs = refs.map(function (r) {
+    var s = String(r.service || 'ご依頼の件'), self = String(r.partner_id) === 'SELF' || String(r.partner_id) === 'DAIKICHI';
+    var m = self ? { '依頼済み': '当窓口で準備を進めております', '見積もり中': '当窓口でお見積もりを作っております', '対応中（自社）': '当窓口で対応しております', '成約': '作業の手配が整いました', '完了': '完了いたしました' }[String(r.status)]
+      : { '依頼済み': '専門事業者へ依頼し、ご連絡の準備をしております', '見積もり中': '専門事業者が見積もりを作っております', '成約': '作業の手配が整いました', '完了': '完了いたしました' }[String(r.status)];
+    return m ? '・' + s + '：' + m + (r.date && String(r.status) === '成約' ? '' : '') : '';
+  }).filter(String);
+  if (rs.length && K_CLOSED.indexOf(st) < 0) lines.push('', '■ 進み具合', rs.join('\n'));
+  if (c.next_action && K_CLOSED.indexOf(st) < 0 && st !== '新規') lines.push('', '■ 次の予定', String(c.next_action) + (nd && st !== '面談予定' ? '（' + nd + 'ごろ）' : ''));
+  if (req.extra) lines.push('', String(req.extra).trim());
+  lines.push('');
+  if (st === '完了') lines.push('この先、また気になることが出てきましたら、いつでもお気軽にご相談ください。');
+  else if (st === '見送り') lines.push('ご状況が変わりましたら、いつでもお気軽にご連絡ください。改めてお手伝いいたします。');
+  else lines.push('ご不明な点や、ご希望の変更がございましたら、どうぞお気軽にお知らせください。');
+  lines.push('', '家じまい相談窓口（運営：' + ISSUER.name + '）', '電話 ' + ISSUER.tel + '（受付 ' + ISSUER.hours + '）' + (c.staff ? '\n担当：' + c.staff : ''));
+  var lr = kTime_(c.last_report), days = lr ? Math.floor((Date.now() - lr) / 86400000) : -1;
+  return {
+    ok: true, subject: '【家じまい相談窓口】' + (st === '完了' ? 'ご相談完了のご報告' : 'ご相談の進み具合のご報告'), body: lines.join('\n'),
+    email: String(c.email || ''), phone: String(c.phone || ''), lastReportDays: days, reports: n,
+    tooSoon: days >= 0 && days < K_RULE.reportTooSoon
+  };
+}
+function kReportSend_(req) {
+  var c = kFind_('case', req.id); if (!c) throw new Error('見つかりません');
+  var ch = req.channel;
+  if (ch === 'skip') { kLogAdd_(c, '進捗報告：今回は送らない（担当者の判断）'); kPut_('case', c); return { ok: true }; }
+  var body = String(req.body || '').trim(); if (!body) throw new Error('報告の文章が空です');
+  if (ch === 'mail') {
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(c.email || ''))) throw new Error('この方のメールアドレスが登録されていません');
+    MailApp.sendEmail({ to: String(c.email), subject: String(req.subject || '【家じまい相談窓口】ご相談の進み具合のご報告').slice(0, 200), body: body, name: ISSUER.service, replyTo: REPLY_TO });
+    kLogAdd_(c, '進捗報告をメールで送信\n' + body.slice(0, 1500));
+  } else if (ch === 'phone') {
+    kLogAdd_(c, '進捗報告を電話で伝えた\n' + body.slice(0, 1500));
+  } else throw new Error('送り方を選んでください');
+  c.last_report = kNow_(); c.reports = String(+(c.reports || 0) + 1); c.updated = kNow_();
+  kPut_('case', c);
+  return { ok: true };
+}
+
+/* ---------- 取次ぎ先へ、相談の内容とお客様の情報を送る（確認してから。勝手には送らない） ---------- */
+function kRefDraft_(req) {
+  var r = kFind_('ref', req.id); if (!r) throw new Error('取次ぎが見つかりません');
+  var c = kFind_('case', r.case_id); if (!c) throw new Error('相談が見つかりません');
+  var p = kBuiltin_(r.partner_id) ? null : kFind_('partner', r.partner_id);
+  return {
+    ok: true, to: p ? String(p.email || '') : '', partner: String(r.partner_name || ''), person: p ? String(p.person || '') : '',
+    sent_at: String(r.sent_at || ''), sent_to: String(r.sent_to || ''),
+    ref: { id: r.id, service: String(r.service || ''), cat1: String(r.cat1 || ''), cat2: String(r.cat2 || ''), cat3: String(r.cat3 || ''), memo: String(r.memo || '') },
+    c: { id: c.id, name: String(c.name || ''), relation: String(c.relation || ''), phone: String(c.phone || ''), email: String(c.email || ''), contact_pref: String(c.contact_pref || ''),
+      area: String(c.area || ''), housing: String(c.housing || ''), timing: String(c.timing || ''), services: String(c.services || ''), worries: String(c.worries || ''), detail: String(c.detail || '') }
+  };
+}
+function kRefSend_(req) {
+  var r = kFind_('ref', req.id); if (!r) throw new Error('取次ぎが見つかりません');
+  if (!req.consent) throw new Error('お客様から、取次ぎ先へ情報を渡すことの同意をいただいたか確かめて、印を付けてください');
+  var to = String(req.to || '').trim(); if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)) throw new Error('送り先のメールアドレスをご確認ください');
+  var subject = String(req.subject || '').trim().slice(0, 200), body = String(req.body || '').trim().slice(0, 20000);
+  if (!subject || !body) throw new Error('件名と本文を入れてください');
+  var pp = kFind_('partner', r.partner_id); if (pp && pp.pass_hash) body += '\n\n――――――――――\nこの案件は、提携先ページでも確認・進捗の報告・お客様へのご連絡・請求書の作成ができます。\n' + (prop_('SITE_URL') || 'https://iejimai123.jp/') + 'partner/\n完了したときは、必ず提携先ページで結果をご報告ください。';
+  MailApp.sendEmail({ to: to, name: ISSUER.service, replyTo: REPLY_TO, subject: subject, body: body });
+  r.sent_at = kNow_(); ptLog_(r, '窓口', '取次ぎ', 'お客様の情報と相談の内容を送った（' + to + '）'); r.sent_to = to; if (String(r.status) === '依頼済み' || !r.status) r.status = '依頼済み'; r.updated = kNow_(); kPut_('ref', r);
+  var c = kFind_('case', r.case_id); if (c) { kLogAdd_(c, '取次ぎ先へ相談の内容を送信：' + r.partner_name + '（' + to + '）'); c.updated = kNow_(); kPut_('case', c); }
+  return { ok: true, sent_at: r.sent_at };
+}
+
+/* ---------- 協力企業の申し込み（登録用のページから。ログイン不要） ---------- */
+function kRefName_(c) { if (!/^[0-9a-f]{8}$/.test(c)) return ''; var s = kRows_('staff').filter(function (x) { return String(x.ref_code) === c; })[0]; return s ? String(s.name) : ''; }
+function kPartnerApply_(req) {
+  var d = req.form || {}, g = function (k, n) { return String(d[k] || '').trim().slice(0, n || 300); };
+  if (g('website')) return { ok: true }; // 迷惑投稿よけ（人には見えない欄）
+  var C = CacheService.getScriptCache(), hour = +(C.get('apply_n') || 0);
+  if (hour >= 30) throw new Error('ただいま申し込みが集中しています。時間をおいてお試しください');
+  var name = g('name', 100), person = g('person', 60), phone = g('phone', 30), email = g('email', 120);
+  if (!name || !person) throw new Error('会社名（事務所名）と、ご担当者のお名前を入れてください');
+  if (!phone) throw new Error('電話番号を入れてください');
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new Error('メールアドレスの形をご確認ください');
+  var fields = (d.fields || []).map(String).filter(function (x) { return K_SERVICES.indexOf(x) >= 0; });
+  var extra = kSplit_(g('fields_other', 200));
+  var kind = ['士業', '紹介・協業', '事業連携'].indexOf(g('kind', 20)) >= 0 ? g('kind', 20) : '協力企業';
+  var cats = (d.cats || []).map(function (x) { return String(x).trim().slice(0, 300); }).filter(String).slice(0, 30);
+  if (!cats.length && !fields.length && !extra.length) throw new Error('提携・協業の分野を1つ以上選んでください');
+  if (!g('area')) throw new Error('対応できる地域を入れてください');
+  if (!d.agree) throw new Error('個人情報の取り扱いと、秘密保持についての内容に同意してください');
+  var key = 'apply_' + email.toLowerCase();
+  if (C.get(key)) throw new Error('このメールアドレスからは、すでにお申し込みを受け付けています。しばらくお待ちください');
+  var dup = kRows_('partner').filter(function (p) { return String(p.email).toLowerCase() === email.toLowerCase() && String(p.active) !== '停止'; })[0];
+  var o = {
+    id: kId_('partner'), created: kNow_(), kind: kind, name: name, person: person, phone: kTel_(phone), email: email,
+    fields: fields.concat(extra).join('、'), area: g('area', 800), memo: (dup ? '※同じメールアドレスの登録あり（' + dup.id + '）\n' : ''),
+    active: '審査中', apply_status: '新規申込', next_action: '面談日の調整のご連絡', staff: '', updated: kNow_(), address: g('address', 200), license: g('license', 300), web: g('web', 200), intro: g('intro', 1500), source: '登録ページ', registered_by: kRefName_(g('ref', 20)), categories: cats.join('\n'), meeting: g('meeting', 40), meet_dates: (d.meet_dates || []).map(String).slice(0, 3).join('\n')
+  };
+  kLogAdd_(o, '申し込みページから受付（' + kind + '）');
+  kPut_('partner', o);
+  C.put(key, '1', 600); C.put('apply_n', String(hour + 1), 3600);
+  var to = prop_('NOTIFY_TO') || Session.getEffectiveUser().getEmail();
+  try {
+    MailApp.sendEmail({ to: to, name: ISSUER.service, replyTo: email, subject: '【家じまい 管理】提携・協業の申し込み（' + kind + '）：' + name,
+      body: '提携・協業の申し込みが届きました。管理画面の「協力企業・士業」で内容を確かめ、「承認する」を押すと取引中になります。\n\n' +
+        '種類：' + o.kind + '\n会社名：' + name + '\n担当：' + person + '\n電話：' + o.phone + '\nメール：' + email + '\n提携・協業の分野：\n' + (o.categories || 'なし') + '\n取次ぎの対象：' + (o.fields || 'なし') + '\n面談の方法：' + o.meeting + '\n面談の希望日：\n' + o.meet_dates + '\n地域：' + o.area +
+        '\n許認可・資格：' + o.license + '\nホームページ：' + o.web + '\n\n管理画面：https://iejimai123.jp/kanri/' });
+    MailApp.sendEmail({ to: email, name: ISSUER.service, replyTo: REPLY_TO, subject: '【家じまい相談窓口】提携・協業のお申し込みを受け付けました',
+      body: person + ' 様\n\n' + ISSUER.service + '（運営：' + ISSUER.name + '）です。\nこのたびは、提携・協業のお申し込みをいただき、ありがとうございます。\n\n' +
+        '内容を確認のうえ、担当者からご連絡いたします。提携の契約は、電子契約でお送りします。\n\n【お申し込み内容】\n会社名：' + name + '\n提携・協業の分野：\n' + (o.categories || o.fields) + '\n地域：' + o.area + '\n面談の方法：' + o.meeting + '\n面談の希望日：\n' + o.meet_dates +
+        '\n\nお心当たりのない場合は、このメールを破棄してください。\n\n' + ISSUER.service + '　' + ISSUER.tel + '（受付 ' + ISSUER.hours + '）' });
+  } catch (e) { console.error(e); }
+  return { ok: true };
+}
+
+/* ---------- 毎朝のお知らせメール（放置・未対応・期日の案件） ----------
+   最初に1回だけ、エディタで「setupAlerts」を選んで実行し、許可します。毎朝9時ごろに自動で動きます。
+   注意の案件が1件もない日は、メールを送りません。 */
+function dailyAlertMail() {
+  try { kSync_(); } catch (e) { console.error(e); }
+  var cases = kAllCases_(), open = cases.filter(function (c) { return K_CLOSED.indexOf(c.status) < 0 && c.level; });
+  var pend = kRows_('partner').filter(function (p) { return String(p.active) === '審査中'; });
+  if (!open.length && !pend.length) return 0;
+  open.sort(function (a, b) { return (a.level === 'red' ? 0 : 1) - (b.level === 'red' ? 0 : 1) || b.idle_days - a.idle_days; });
+  var red = open.filter(function (c) { return c.level === 'red'; }), yel = open.filter(function (c) { return c.level !== 'red'; });
+  var line = function (c) { return '・' + (c.name || '（お名前なし）') + '（' + c.id + '／' + c.status + '）　' + c.alerts.map(function (a) { return a.text; }).join('、'); };
+  var body = '家じまい相談窓口　今朝の確認リスト\n\n';
+  if (red.length) body += '■ すぐ対応が必要（' + red.length + '件）\n' + red.map(line).join('\n') + '\n\n';
+  if (yel.length) body += '■ 気をつける（' + yel.length + '件）\n' + yel.map(line).join('\n') + '\n\n';
+  if (pend.length) body += '■ 協力企業の申し込み　審査待ち（' + pend.length + '件）\n' + pend.map(function (p) { return '・' + p.name + '（' + p.id + '）'; }).join('\n') + '\n\n';
+  body += '管理画面：https://iejimai123.jp/kanri/\n\n※ このメールは毎朝自動で送られます。注意の案件がない日は送られません。';
+  MailApp.sendEmail(prop_('NOTIFY_TO'), '【家じまい相談窓口】今朝の確認 すぐ対応' + red.length + '件・注意' + yel.length + '件', body);
+  return open.length;
+}
+function setupAlerts() {
+  ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === 'dailyAlertMail') ScriptApp.deleteTrigger(t); });
+  ScriptApp.newTrigger('dailyAlertMail').timeBased().everyDays(1).atHour(9).inTimezone('Asia/Tokyo').create();
+  return '毎朝9時ごろのお知らせを設定しました';
+}
+
+
+/* ---------- お客様リスト（相談を、人ごとにまとめた名簿。メール・電話が同じなら同じ人） ---------- */
+function kCustomers_() {
+  var cases = kRows_('case'), refs = kRows_('ref'), ks = []; try { ks = rows_(); } catch (e) { }
+  var M = {}, alias = {}, list = [];
+  function keys(c) { var r = [], e = String(c.email || '').trim().toLowerCase(), p = String(c.phone || '').replace(/\D/g, ''); if (e) r.push('e:' + e); if (p.length >= 9) r.push('p:' + p); if (!r.length) r.push('n:' + String(c.name || '').replace(/\s/g, '')); return r; }
+  cases.forEach(function (c) {
+    var ky = keys(c), m = null;
+    for (var i = 0; i < ky.length && !m; i++) if (alias[ky[i]]) m = alias[ky[i]];
+    if (!m) { m = { name: '', phone: '', email: '', area: '', relation: '', housing: '', first: '', last: '', staff: '', cases: [], contracts: [], refs: 0, cats: {} }; list.push(m); }
+    ky.forEach(function (k) { alias[k] = m; });
+    var t = String(c.created || '');
+    if (!m.first || t < m.first) m.first = t;
+    var la = String(c.last_activity || c.updated || c.created || '');
+    if (!m.last || la > m.last) { m.last = la; m.name = String(c.name || m.name); m.staff = String(c.staff || m.staff); }
+    ['phone', 'email', 'area', 'relation', 'housing'].forEach(function (k) { if (c[k] && !m[k]) m[k] = String(c[k]); });
+    if (c.cat1) m.cats[String(c.cat1)] = 1;
+    m.cases.push({ id: c.id, created: t, status: String(c.status || ''), cat1: String(c.cat1 || ''), cat2: String(c.cat2 || ''), staff: String(c.staff || ''), next_action: String(c.next_action || ''), next_date: String(c.next_date || '') });
+    m.refs += refs.filter(function (r) { return String(r.case_id) === String(c.id); }).length;
+  });
+  list.forEach(function (m) {
+    var ids = m.cases.map(function (c) { return 'case:' + c.id; }), em = m.email.toLowerCase();
+    m.contracts = ks.filter(function (k) { return ids.indexOf(String(k.link || '')) >= 0 || (em && String(k.party_email || '').toLowerCase() === em); })
+      .map(function (k) { return { title: String(k.title || ''), status: String(k.draft === 'yes' && k.status !== '取り消し' ? '下書き' : k.status || ''), signed: iso_(k.signed) }; });
+    m.cases.sort(function (a, b) { return a.created < b.created ? 1 : -1; });
+    m.open = m.cases.filter(function (c) { return ['完了', '見送り'].indexOf(c.status) < 0; }).length;
+    m.cats = Object.keys(m.cats);
+    m.signed = m.contracts.filter(function (k) { return k.status === '締結済み'; }).length;
+  });
+  list.sort(function (a, b) { return a.last < b.last ? 1 : -1; });
+  return { ok: true, rows: list, opts: kOpts_() };
+}
+
+
+/* =====================================================================
+   提携先ページ（/partner/）：提携先が自分のIDとパスワードで入り、
+   取り次がれた案件の確認・進捗の報告・お客様への連絡・書類・契約・請求書を行う
+   ===================================================================== */
+var K_PROG = [
+  ['連絡・訪問', [['はじめのご連絡', ['電話でお話しした', 'メールを送った', 'つながらない（かけ直す）']], ['訪問日の調整', ['候補日を伝えた', '訪問日が決まった', '日程を変えた']], ['現地の確認', ['訪問して確認した', 'もう一度訪問が必要']]]],
+  ['見積り', [['見積りの作成', ['作成中', 'お客様に出した']], ['お客様のお返事', ['検討中', '直しを頼まれた', '承諾された', '断られた']]]],
+  ['契約', [['契約の手続き', ['契約書を送った', '契約した', '契約を取りやめた']]]],
+  ['作業', [['作業の日程', ['作業日が決まった', '作業日を変えた']], ['作業の状況', ['作業中', '作業を終えた', '追加の作業がある']]]],
+  ['完了・請求', [['請求', ['請求書を送った', '入金を確かめた']], ['完了の報告', ['作業が完了した', 'お客様に確認していただいた']]]],
+  ['見送り', [['理由', ['お客様のご都合', '条件が合わない', '当社で対応できない', '連絡が取れない']]]]
+];
+var PT_STATUS = ['依頼済み', '見積もり中', '成約', '完了', '不成約'];
+function ptMe_(req) {
+  var me = req._me || {}; if (me.r !== 'partner') throw new Error('提携先のアカウントで使う操作です');
+  var p = kFind_('partner', me.p); if (!p || !p.pass_hash || ['停止', '見送り'].indexOf(String(p.active)) >= 0) throw new Error('このアカウントは使えません。家じまい相談窓口にお問い合わせください');
+  return p;
+}
+function ptRefOf_(p, id) { var r = kFind_('ref', id); if (!r || String(r.partner_id) !== String(p.id)) throw new Error('この案件は見られません'); return r; }
+function ptLog_(o, by, type, text) { var l = []; try { l = JSON.parse(o.log || '[]'); } catch (e) { } l.push({ t: kNow_(), by: by, type: type, text: String(text || '').slice(0, 3000) }); o.log = JSON.stringify(l.slice(-300)); }
+function ptNotify_(subj, body) { try { var to = prop_('NOTIFY_TO'); if (to) MailApp.sendEmail({ to: to, subject: '【家じまい・提携先】' + subj, body: body + '\n\n管理画面：' + (prop_('SITE_URL') || 'https://iejimai123.jp/') + 'kanri/', name: ISSUER.service }); } catch (e) { } }
+function ptCust_(r) {
+  var c = kFind_('case', r.case_id) || {}, sent = !!r.sent_at, o = { area: String(c.area || ''), housing: String(c.housing || ''), timing: String(c.timing || ''), services: String(c.services || r.service || ''), sent: sent };
+  if (sent) { ['name', 'relation', 'phone', 'email', 'contact_pref', 'worries', 'detail'].forEach(function (k) { o[k] = String(c[k] || ''); }); }
+  return o;
+}
+function ptRefLite_(r) {
+  var c = ptCust_(r);
+  return { id: r.id, created: String(r.created || ''), date: String(r.date || ''), service: String(r.service || r.cat2 || ''), cat1: String(r.cat1 || ''), cat2: String(r.cat2 || ''), cat3: String(r.cat3 || ''), status: String(r.status || ''),
+    pg1: String(r.pg1 || ''), pg2: String(r.pg2 || ''), pg3: String(r.pg3 || ''), pg_next: String(r.pg_next || ''), pg_next_date: String(r.pg_next_date || ''), pg_updated: String(r.pg_updated || ''), area: c.area, sent: c.sent, cust: c.sent ? c.name : '' };
+}
+function ptRefDetail_(r, p) {
+  if (!r) throw new Error('取次ぎが見つかりません');
+  var out = ptRefLite_(r), lg = [], files = [];
+  try { lg = JSON.parse(r.log || '[]'); } catch (e) { } try { files = JSON.parse(r.files || '[]'); } catch (e) { }
+  out.pg_note = String(r.pg_note || ''); out.case = ptCust_(r); out.log = lg.slice().reverse(); out.files = files; out.partner_name = String(r.partner_name || '');
+  out.contracts = rows_().filter(function (k) { return String(k.link || '') === 'ref:' + r.id; }).map(function (k) { return { id: k.id, title: k.title, status: k.status, draft: k.draft, created: iso_(k.created), signed: iso_(k.signed), party: k.party_name, email: k.party_email, hasPdf: !!k.pdf_id }; }).reverse();
+  out.invoices = kRows_('invoice').filter(function (v) { return String(v.ref_id) === String(r.id); }).map(ptInvLite_).reverse();
+  return { ok: true, ref: out, prog: K_PROG, statuses: PT_STATUS };
+}
+function ptInvLite_(v) { return { id: v.id, created: String(v.created || ''), to_name: String(v.to_name || ''), subject: String(v.subject || ''), issue_date: String(v.issue_date || ''), due_date: String(v.due_date || ''), total: Number(v.total || 0), status: String(v.status || ''), sent_at: String(v.sent_at || ''), paid_at: String(v.paid_at || ''), ref_id: String(v.ref_id || '') }; }
+
+function ptDispatch_(a, req) {
+  var p = ptMe_(req);
+  switch (a) {
+    case 'pt.home': return ptHome_(p);
+    case 'pt.ref': return ptRefDetail_(ptRefOf_(p, req.id), p);
+    case 'pt.progress': return ptProgress_(p, req);
+    case 'pt.mail': return ptMail_(p, req);
+    case 'pt.upload': return ptUpload_(p, req);
+    case 'pt.file': return ptFileOut_(req.fid, p);
+    case 'pt.profile': return ptProfile_(p, req);
+    case 'pt.templates': return { ok: true, templates: templateList_(true), fields: FIELD_DEFS };
+    case 'pt.preview': ptRefOf_(p, req.ref_id); return adminPreview_(ptIssueReq_(p, req));
+    case 'pt.issue': return ptIssue_(p, req);
+    case 'pt.kview': ptK_(p, req.id); return adminView_({ id: req.id, _me: { r: 'admin' } });
+    case 'pt.kresend': var o1 = ptK_(p, req.id); if (o1.status === '締結済み' || o1.status === '取り消し') throw new Error('この契約書は送り直せません'); sendInvite_(o1); return { ok: true };
+    case 'pt.kcancel': var o2 = ptK_(p, req.id); if (o2.status === '締結済み') throw new Error('締結済みの契約書は取り消せません'); o2.status = '取り消し'; log_(o2, '取り消し（提携先）'); save_(o2); return { ok: true };
+    case 'pt.kpdf': var o3 = ptK_(p, req.id); if (!o3.pdf_id) throw new Error('まだ締結されていません'); return pdfOut_(o3);
+    case 'pt.invoice': return ptInvoice_(p, req);
+    case 'pt.invpdf': return ptInvPdfOut_(req.id, p);
+    case 'pt.invsend': return ptInvSend_(p, req.id);
+    case 'pt.invpaid': return ptInvPaid_(p, req.id);
+  }
+  throw new Error('不明な操作です');
+}
+function ptHome_(p) {
+  var refs = kRows_('ref').filter(function (r) { return String(r.partner_id) === String(p.id); }).map(ptRefLite_).reverse();
+  var inv = kRows_('invoice').filter(function (v) { return String(v.partner_id) === String(p.id); }).map(ptInvLite_).reverse();
+  return { ok: true, partner: { id: p.id, name: String(p.name), person: String(p.person || ''), email: String(p.email || ''), phone: String(p.phone || ''), address: String(p.address || ''), reg_no: String(p.reg_no || ''), bank: String(p.bank || '') },
+    refs: refs, invoices: inv, prog: K_PROG, statuses: PT_STATUS };
+}
+function ptProgress_(p, req) {
+  var r = ptRefOf_(p, req.id), v = function (k, n) { return String(req[k] || '').trim().slice(0, n || 200); };
+  var st = v('status'); if (st && PT_STATUS.indexOf(st) < 0) throw new Error('状況の選び方が正しくありません');
+  if (!v('pg1') && !v('note') && !st) throw new Error('分類を選ぶか、内容を書いてください');
+  var old = String(r.status || '');
+  r.pg1 = v('pg1'); r.pg2 = v('pg2'); r.pg3 = v('pg3'); r.pg_note = v('note', 2000); r.pg_next = v('next'); r.pg_next_date = v('next_date', 10);
+  if (st) r.status = st; r.pg_updated = kNow_(); r.updated = kNow_();
+  var txt = [r.pg1, r.pg2, r.pg3].filter(Boolean).join(' › ') + (st && st !== old ? '（状況：' + st + '）' : '') + (r.pg_note ? '\n' + r.pg_note : '') + (r.pg_next ? '\n次にやること：' + r.pg_next + (r.pg_next_date ? '（' + r.pg_next_date + '）' : '') : '');
+  ptLog_(r, String(p.name), '進捗', txt); kPut_('ref', r);
+  ptNotify_(p.name + ' から進捗の報告（' + r.id + '）', '取次ぎ：' + r.id + '（' + (r.service || '') + '）\n報告：' + txt);
+  return { ok: true };
+}
+function ptMail_(p, req) {
+  var r = ptRefOf_(p, req.id), c = ptCust_(r);
+  if (!c.sent) throw new Error('窓口からお客様の情報がまだ届いていません。届いてから連絡できます');
+  var to = String(req.to || c.email || '').trim(); if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)) throw new Error('お客様のメールアドレスがありません。お電話でご連絡ください');
+  if (to.toLowerCase() !== String(c.email || '').toLowerCase()) throw new Error('お客様として登録されているメールアドレスにだけ送れます');
+  var subj = String(req.subject || '').trim().slice(0, 150), body = String(req.body || '').trim().slice(0, 8000);
+  if (!subj || !body) throw new Error('件名と本文を入れてください');
+  var pe = String(p.email || '').trim(), sig = '\n\n――――――――――\n' + p.name + (p.person ? '　' + p.person : '') + (p.phone ? '\n電話 ' + p.phone : '') + (pe ? '\nメール ' + pe : '') + '\n（' + ISSUER.service + 'からご紹介した提携先です）\n' + ISSUER.service + '　' + ISSUER.tel + '（受付 ' + ISSUER.hours + '）\n';
+  var opt = { to: to, subject: '【' + ISSUER.service + '】' + subj, body: body + sig, name: ISSUER.service + '（' + p.name + '）', replyTo: REPLY_TO + (pe ? ',' + pe : '') };
+  if (pe) opt.cc = pe;
+  MailApp.sendEmail(opt);
+  ptLog_(r, String(p.name), 'メール', '件名：' + subj + '\n' + body); r.updated = kNow_(); kPut_('ref', r);
+  return { ok: true };
+}
+function ptFolder_(p) { return folder_('提携先の書類'); }
+function ptUpload_(p, req) {
+  var r = ptRefOf_(p, req.id), name = String(req.name || 'file').replace(/[\\\/:*?"<>|]/g, '_').slice(0, 80), mime = String(req.mime || '');
+  if (['application/pdf', 'image/jpeg', 'image/png', 'image/heic', 'image/webp'].indexOf(mime) < 0) throw new Error('PDFか写真（JPEG・PNG）を選んでください');
+  var bytes = Utilities.base64Decode(String(req.data || '')); if (bytes.length > 10 * 1024 * 1024) throw new Error('ファイルが大きすぎます（10MBまで）');
+  var kind = ['契約書', '見積書', '写真', 'その他'].indexOf(req.kind) >= 0 ? req.kind : 'その他';
+  var f = ptFolder_(p).createFile(Utilities.newBlob(bytes, mime, r.id + '_' + kind + '_' + name));
+  var files = []; try { files = JSON.parse(r.files || '[]'); } catch (e) { }
+  files.push({ fid: f.getId(), name: name, kind: kind, mime: mime, t: kNow_(), by: String(p.name), memo: String(req.memo || '').slice(0, 200) }); r.files = JSON.stringify(files);
+  ptLog_(r, String(p.name), '書類', kind + '「' + name + '」を登録' + (req.memo ? '（' + req.memo + '）' : '')); r.updated = kNow_(); kPut_('ref', r);
+  ptNotify_(p.name + ' が書類を登録（' + r.id + '）', kind + '「' + name + '」');
+  return { ok: true };
+}
+function ptFileOut_(fid, p) {
+  fid = String(fid || ''); var refs = kRows_('ref').filter(function (r) { return !p || String(r.partner_id) === String(p.id); }), hit = null;
+  refs.some(function (r) { var fs = []; try { fs = JSON.parse(r.files || '[]'); } catch (e) { } hit = fs.filter(function (x) { return x.fid === fid; })[0] || null; return !!hit; });
+  if (!hit) throw new Error('この書類は見られません');
+  var b = DriveApp.getFileById(fid).getBlob(); return { ok: true, filename: hit.name, mime: hit.mime, data: Utilities.base64Encode(b.getBytes()) };
+}
+function ptProfile_(p, req) {
+  if (req.reg_no !== undefined) { var rn = String(req.reg_no || '').trim().toUpperCase().replace(/[^T0-9]/g, ''); if (rn && !/^T\d{13}$/.test(rn)) throw new Error('登録番号は「T」と13けたの数字です'); p.reg_no = rn; }
+  if (req.bank !== undefined) p.bank = String(req.bank || '').trim().slice(0, 300);
+  p.updated = kNow_(); kPut_('partner', p); return { ok: true };
+}
+function ptPassSet_(req) {
+  if ((req._me || {}).r !== 'admin') throw new Error('管理者だけができる操作です');
+  var p = kFind_('partner', req.id); if (!p) throw new Error('提携先が見つかりません');
+  var id = String(req.login_id || '').trim(), n = String(req.pass || '');
+  if (!/^[A-Za-z0-9._-]{3,30}$/.test(id)) throw new Error('ログインIDは、半角の英字と数字で3〜30文字にしてください');
+  var used = id === PropertiesService.getScriptProperties().getProperty('ADMIN_ID') || kRows_('staff').some(function (x) { return String(x.login_id) === id; }) || kRows_('partner').some(function (x) { return String(x.login_id) === id && String(x.id) !== String(p.id); });
+  if (used) throw new Error('このログインIDは、ほかの人が使っています');
+  if (n.length < 8 || !/[A-Za-z]/.test(n) || !/[0-9]/.test(n)) throw new Error('パスワードは、英字と数字をまぜて8文字以上にしてください');
+  p.login_id = id; p.pass_salt = Utilities.getUuid(); p.pass_hash = hash_(n, p.pass_salt); p.updated = kNow_(); kPut_('partner', p);
+  return { ok: true };
+}
+/* 提携先が出す電子契約（甲＝提携先、乙＝お客様）。窓口の印は押さない */
+function ptIssuer_(p) { return { key: 'partner:' + p.id, label: String(p.name), company: String(p.name), shop: '', address: String(p.address || ''), rep: String(p.person || ''), license: String(p.license || ''), style: 'company', partner: true }; }
+function ptIssueReq_(p, req) {
+  var r = ptRefOf_(p, req.ref_id), tp = TEMPLATES[req.template]; if (!tp || !tp.partnerOnly) throw new Error('契約書の種類を選んでください');
+  var q = JSON.parse(JSON.stringify(req)); q.link = 'ref:' + r.id; q.issuerObj = ptIssuer_(p); q.issuedBy = 'partner:' + p.id; q._me = { r: 'admin' }; q.replaces = '';
+  return q;
+}
+function ptIssue_(p, req) {
+  var q = ptIssueReq_(p, req), res = adminIssue_(q), r = kFind_('ref', req.ref_id);
+  ptLog_(r, String(p.name), '契約', (req.draft ? '下書きの契約書' : '契約書') + '「' + TEMPLATES[req.template].title + '」を ' + ((req.party || {}).name || '') + ' 様に送った（' + res.id + '）'); r.updated = kNow_(); kPut_('ref', r);
+  ptNotify_(p.name + ' が契約書を送りました（' + r.id + '）', TEMPLATES[req.template].title + '／' + res.id);
+  return res;
+}
+function ptK_(p, id) { var o = find_('id', id); if (!o || String(o.issued_by) !== 'partner:' + p.id) throw new Error('この契約書は見られません'); return o; }
+/* 請求書 */
+function ptInvCalc_(items) {
+  var sub = 0, b10 = 0, b8 = 0;
+  var list = (items || []).filter(function (it) { return String(it.name || '').trim(); }).map(function (it) { var q = Math.max(0, Number(it.qty) || 0), u = Math.round(Number(it.price) || 0), rt = Number(it.rate) === 8 ? 8 : (Number(it.rate) === 0 ? 0 : 10), amt = Math.round(q * u); sub += amt; if (rt === 10) b10 += amt; if (rt === 8) b8 += amt; return { name: String(it.name || '').trim().slice(0, 100), qty: q, unit: String(it.unit || '').slice(0, 10), price: u, rate: rt, amount: amt }; });
+  var t10 = Math.floor(b10 * 0.1), t8 = Math.floor(b8 * 0.08);
+  return { items: list, subtotal: sub, b10: b10, b8: b8, tax10: t10, tax8: t8, total: sub + t10 + t8 };
+}
+function ptInvoice_(p, req) {
+  var r = ptRefOf_(p, req.ref_id), c = ptCust_(r), calc = ptInvCalc_(req.items);
+  if (!calc.items.length) throw new Error('明細を1行以上入れてください');
+  var to = String(req.to_name || c.name || '').trim(); if (!to) throw new Error('あて名を入れてください');
+  var d = function (k) { var x = String(req[k] || '').trim(); if (x && !/^\d{4}-\d{2}-\d{2}$/.test(x)) throw new Error('日付の形が正しくありません'); return x; };
+  var rn = String(req.reg_no || p.reg_no || '').trim().toUpperCase(); if (rn && !/^T\d{13}$/.test(rn)) throw new Error('登録番号は「T」と13けたの数字です');
+  var v = { id: kId_('invoice'), created: kNow_(), ref_id: r.id, case_id: String(r.case_id || ''), partner_id: p.id, partner_name: String(p.name), to_name: to, to_email: String(req.to_email || c.email || '').trim(),
+    subject: String(req.subject || '').trim().slice(0, 100) || (r.service || '作業') + 'の代金', issue_date: d('issue_date') || Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd'), due_date: d('due_date'),
+    items: JSON.stringify({ list: calc.items, b10: calc.b10, b8: calc.b8 }), subtotal: calc.subtotal, tax10: calc.tax10, tax8: calc.tax8, total: calc.total, note: String(req.note || '').slice(0, 1000),
+    bank: String(req.bank || p.bank || '').trim().slice(0, 300), reg_no: rn, pdf_id: '', status: '作成済み', sent_at: '', paid_at: '', log: '[]' };
+  v.pdf_id = ptInvPdf_(v, p);
+  kPut_('invoice', v);
+  if (req.saveDefaults) { if (rn) p.reg_no = rn; if (v.bank) p.bank = v.bank; p.updated = kNow_(); kPut_('partner', p); }
+  ptLog_(r, String(p.name), '請求', '請求書 ' + v.id + ' を作成（合計 ' + calc.total.toLocaleString('ja-JP') + '円）'); r.updated = kNow_(); kPut_('ref', r);
+  if (req.send) ptInvSend_(p, v.id);
+  return { ok: true, id: v.id, total: calc.total };
+}
+function yen_(n) { return '¥' + Number(n || 0).toLocaleString('ja-JP'); }
+function jd_(s) { if (!s) return ''; var m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? (+m[1]) + '年' + (+m[2]) + '月' + (+m[3]) + '日' : String(s); }
+function ptInvPdf_(v, p) {
+  var x = JSON.parse(v.items || '{}'), doc = DocumentApp.create(v.id + '_請求書'), b = doc.getBody();
+  b.setMarginTop(48).setMarginBottom(48).setMarginLeft(56).setMarginRight(56);
+  var st = {}; st[DocumentApp.Attribute.FONT_SIZE] = 10.5; st[DocumentApp.Attribute.FONT_FAMILY] = 'Noto Sans JP'; b.setAttributes(st);
+  b.appendParagraph('請　求　書').setHeading(DocumentApp.ParagraphHeading.HEADING1).setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+  b.appendParagraph('請求番号　' + v.id + '\n請求日　' + jd_(v.issue_date)).setAlignment(DocumentApp.HorizontalAlignment.RIGHT);
+  b.appendParagraph(v.to_name + '　様').setFontSize(14).setBold(true);
+  b.appendParagraph([p.name, p.address, p.phone ? '電話 ' + p.phone : '', p.email ? 'メール ' + p.email : '', v.reg_no ? '登録番号 ' + v.reg_no : ''].filter(Boolean).join('\n')).setAlignment(DocumentApp.HorizontalAlignment.RIGHT).setBold(false).setFontSize(10);
+  b.appendParagraph('件名　' + v.subject).setBold(false).setFontSize(10.5);
+  b.appendParagraph('下記のとおりご請求申し上げます。');
+  b.appendParagraph('ご請求金額（税込）　' + yen_(v.total)).setFontSize(16).setBold(true);
+  if (v.due_date) b.appendParagraph('お支払期限　' + jd_(v.due_date)).setFontSize(11).setBold(true);
+  var rows = [['品目', '数量', '単価', '税率', '金額']];
+  x.list.forEach(function (it) { rows.push([it.name, String(it.qty) + (it.unit || ''), yen_(it.price), it.rate === 0 ? '対象外' : it.rate + '%' + (it.rate === 8 ? '※' : ''), yen_(it.amount)]); });
+  var t = b.appendTable(rows); t.getRow(0).editAsText().setBold(true); t.setFontSize(10).setBold(false); t.getRow(0).editAsText().setBold(true);
+  var sum = [['小計（税抜）', yen_(v.subtotal)]];
+  if (x.b10) sum.push(['10%対象　' + yen_(x.b10), '消費税 ' + yen_(v.tax10)]);
+  if (x.b8) sum.push(['8%対象　' + yen_(x.b8), '消費税 ' + yen_(v.tax8)]);
+  sum.push(['合計（税込）', yen_(v.total)]);
+  var t2 = b.appendTable(sum); t2.setFontSize(10.5);
+  if (x.b8) b.appendParagraph('※は軽減税率（8%）の対象です。').setFontSize(9);
+  if (v.bank) b.appendParagraph('【お振込先】\n' + v.bank).setFontSize(10.5).setBold(false);
+  if (v.note) b.appendParagraph('【備考】\n' + v.note).setFontSize(10.5).setBold(false);
+  b.appendParagraph('').setFontSize(8);
+  b.appendParagraph('このご依頼は、' + ISSUER.service + 'からのご紹介によるものです。').setFontSize(8.5);
+  doc.saveAndClose();
+  var pdf = DriveApp.getFileById(doc.getId()).getAs('application/pdf').setName(v.id + '_請求書.pdf');
+  var f = folder_('請求書').createFile(pdf); DriveApp.getFileById(doc.getId()).setTrashed(true);
+  return f.getId();
+}
+function ptInvFind_(id, p) { var v = kFind_('invoice', id); if (!v || (p && String(v.partner_id) !== String(p.id))) throw new Error('この請求書は見られません'); return v; }
+function ptInvPdfOut_(id, p) { var v = ptInvFind_(id, p), b = DriveApp.getFileById(v.pdf_id).getBlob(); return { ok: true, filename: v.id + '_請求書.pdf', pdf: Utilities.base64Encode(b.getBytes()) }; }
+function ptInvSend_(p, id) {
+  var v = ptInvFind_(id, p), to = String(v.to_email || '').trim(); if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)) throw new Error('あて先のメールアドレスがありません。PDFを保存して、郵送か手渡しでお渡しください');
+  var pe = String(p.email || '').trim(), pdf = DriveApp.getFileById(v.pdf_id).getBlob().setName(v.id + '_請求書.pdf');
+  var body = v.to_name + ' 様\n\n' + ISSUER.service + 'からご紹介した ' + p.name + ' です。\nこのたびはご依頼いただき、ありがとうございました。\n「' + v.subject + '」の請求書をお送りします（添付のPDFをご覧ください）。\n\nご請求金額（税込）：' + yen_(v.total) + (v.due_date ? '\nお支払期限：' + jd_(v.due_date) : '') + '\n\nご不明な点は、このメールにご返信ください。\n\n――――――――――\n' + p.name + (p.phone ? '\n電話 ' + p.phone : '') + (pe ? '\nメール ' + pe : '') + '\n' + ISSUER.service + '　' + ISSUER.tel + '\n';
+  var opt = { to: to, subject: '【' + ISSUER.service + '】請求書のお知らせ（' + p.name + '）', body: body, attachments: [pdf], name: ISSUER.service + '（' + p.name + '）', replyTo: REPLY_TO + (pe ? ',' + pe : '') };
+  if (pe) opt.cc = pe; MailApp.sendEmail(opt);
+  v.status = v.status === '入金済み' ? v.status : '送付済み'; v.sent_at = kNow_(); kPut_('invoice', v);
+  var r = kFind_('ref', v.ref_id); if (r) { ptLog_(r, String(p.name), '請求', '請求書 ' + v.id + ' を ' + to + ' に送った'); kPut_('ref', r); }
+  return { ok: true };
+}
+function ptInvPaid_(p, id) { var v = ptInvFind_(id, p); v.status = '入金済み'; v.paid_at = kNow_(); kPut_('invoice', v); var r = kFind_('ref', v.ref_id); if (r) { ptLog_(r, String(p.name), '請求', '請求書 ' + v.id + ' の入金を確認'); kPut_('ref', r); } ptNotify_(p.name + ' が入金を確認（' + v.id + '）', '合計 ' + yen_(v.total)); return { ok: true }; }
