@@ -184,7 +184,7 @@
 <section class="card login" id="setBox" hidden><h2>ログインIDとパスワードの登録</h2>
 <p class="hint" id="setState"></p>
 <div class="fld"><label for="setId">ログインID（半角の英字と数字）</label><input type="text" id="setId" autocomplete="username" autocapitalize="off" spellcheck="false"></div>
-<div class="fld"><label for="setPw">パスワード（英字と数字をまぜて10文字以上）</label><input type="password" id="setPw" autocomplete="new-password"></div>
+<div class="fld"><label for="setPw">パスワード（英字と数字をまぜて8文字以上）</label><input type="password" id="setPw" autocomplete="new-password"></div>
 <div class="fld"><label for="setPw2">パスワード（確認のため、もう一度）</label><input type="password" id="setPw2" autocomplete="new-password">
 <label class="showpw"><input type="checkbox" id="setShow"> パスワードを表示する</label></div>
 <p class="err" id="errS" role="alert"></p>
@@ -192,7 +192,7 @@
 <p class="hint">登録したあとは、どの端末からでも <b>iejimai123.jp/kanri/</b> で、このIDとパスワードでログインできます。</p></section>
 <section class="card login" id="chgBox"><h2>パスワードを変える</h2>
 <div class="fld"><label for="pwNow">今のパスワード</label><input type="password" id="pwNow" autocomplete="current-password"></div>
-<div class="fld"><label for="pwNew">新しいパスワード（英字と数字をまぜて10文字以上）</label><input type="password" id="pwNew" autocomplete="new-password"></div>
+<div class="fld"><label for="pwNew">新しいパスワード（英字と数字をまぜて8文字以上）</label><input type="password" id="pwNew" autocomplete="new-password"></div>
 <div class="fld"><label for="pwNew2">新しいパスワード（確認のため、もう一度）</label><input type="password" id="pwNew2" autocomplete="new-password"></div>
 <p class="err" id="errP" role="alert"></p>
 <button class="btn" type="button" id="pwBtn">変更する</button></section>
@@ -511,7 +511,7 @@ function render(v,r){var o=r.row,isNew=!o.id,h='',t=TB[v];
  }
  if(!isNew&&(t==='case'||t==='partner')){var lg=[];try{lg=JSON.parse(o.log||'[]')}catch(e){}
   h+=sub('対応の記録','<div class="fld"><label for="eNote">対応したことを書く（例：電話でご連絡、来週訪問の約束）</label><textarea id="eNote"></textarea></div><button type="button" class="small-btn" id="eNoteBtn">記録に残す</button><ul class="log">'+lg.slice().reverse().map(function(x){return '<li><small>'+esc(x.t)+'</small>'+esc(x.text).replace(/\n/g,'<br>')+'</li>'}).join('')+'</ul>');}
- if(t==='staff'&&!isNew)h+=sub('ログインIDとパスワード（担当者のアカウント）','<p class="hint">'+(o.login_id?'今のログインID：<b>'+esc(o.login_id)+'</b>。パスワードを忘れたときは、ここで新しく決め直します。':'まだログインできません。ログインIDとパスワードを決めて「設定する」を押し、本人に伝えてください。')+'</p><div class="grid"><div class="fld"><label for="sLid">ログインID（半角の英字と数字）</label><input type="text" id="sLid" value="'+esc(o.login_id||'')+'" autocapitalize="off" spellcheck="false"></div><div class="fld"><label for="sPw">パスワード（英字と数字をまぜて10文字以上）</label><input type="text" id="sPw" autocomplete="off"></div></div><button type="button" class="small-btn" id="sSet">設定する</button>'+(o.ref_code?'<p class="hint">この担当者専用の申し込みページ：<b>'+esc((window.KEIYAKU_SITE_URL||'https://iejimai123.jp/')+'kyoryoku/?r='+o.ref_code)+'</b></p>':''));
+ if(t==='staff'&&!isNew)h+=sub('ログインIDとパスワード（担当者のアカウント）','<p class="hint">'+(o.login_id?'今のログインID：<b>'+esc(o.login_id)+'</b>。パスワードを忘れたときは、ここで新しく決め直します。':'まだログインできません。ログインIDとパスワードを決めて「設定する」を押し、本人に伝えてください。')+'</p><div class="grid"><div class="fld"><label for="sLid">ログインID（半角の英字と数字）</label><input type="text" id="sLid" value="'+esc(o.login_id||'')+'" autocapitalize="off" spellcheck="false"></div><div class="fld"><label for="sPw">パスワード（英字と数字をまぜて8文字以上）</label><input type="text" id="sPw" autocomplete="off"></div></div><button type="button" class="small-btn" id="sSet">設定する</button>'+(o.ref_code?'<p class="hint">この担当者専用の申し込みページ：<b>'+esc((window.KEIYAKU_SITE_URL||'https://iejimai123.jp/')+'kyoryoku/?r='+o.ref_code)+'</b></p>':''));
  if(!isNew&&isAdm()&&t!=='staff')h+='<div class="danger"><button type="button" class="small-btn warn" id="eDel">この記録を消す</button></div>';
  showEd(v,h);
  if(t==='partner'){var bx=$('e_partner_categories');pcats(o).forEach(function(x){bnRow(bx,x)});if(!bx.children.length)bnRow(bx)}
