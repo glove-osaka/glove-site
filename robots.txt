@@ -3,4 +3,5 @@ Allow: /
 Disallow: /kanri/
 Disallow: /keiyaku/
 Disallow: /kyoryoku/
+Disallow: /partner/
 Sitemap: https://iejimai123.jp/sitemap.xml

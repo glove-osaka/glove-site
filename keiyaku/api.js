@@ -9,14 +9,14 @@
   window.keiyakuHasSession = function () { return !!sess(); };
   // 通信は1つずつ順番に送る（同時に送ると、向こう側で順番待ちが長くなり失敗しやすいため）
   var QUEUE = Promise.resolve();
-  var READ = /^(client\.pdf|admin\.(templates|list|pdf|view|preview|login|logout)|kanri\.(dash|list|get|customers|report\.draft|ref\.draft)|staff\.(home|partner)|admin\.me)$/;
+  var READ = /^(client\.pdf|admin\.(templates|list|pdf|view|preview|login|logout)|kanri\.(dash|list|get|customers|report\.draft|ref\.draft)|staff\.(home|partner)|admin\.me|kanri\.(refx|file|invpdf)|pt\.(home|ref|templates|preview|kview|kpdf|file|invpdf))$/;
   function once(body) {
     return fetch(URL_, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: body, redirect: "follow" })
       .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.text(); })
       .then(function (t) { try { return JSON.parse(t); } catch (e) { throw new Error("bad json"); } });
   }
   function real(action, data) {
-    var extra = /^(admin|kanri)\./.test(action) && action !== "admin.login" ? { session: sess() } : {};
+    var extra = /^(admin|kanri|staff|pt)\./.test(action) && action !== "admin.login" ? { session: sess() } : {};
     var body = JSON.stringify(Object.assign({ action: action }, data || {}, extra));
     var run = function () {
       return once(body).catch(function (e) {
