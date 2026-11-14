@@ -141,6 +141,21 @@
 <h2>契約書を送る</h2>
 <p class="note" id="linkNote" hidden></p>
 <div class="fld"><label for="tpl">契約書の種類</label><select id="tpl"></select></div>
+<div class="fld"><label for="iss">契約の名義（当社側・甲）</label><select id="iss"></select>
+<p class="hint">契約書の「甲」に載る名前です。契約書の種類を選ぶと、よく使う名義に自動で切り替わります。</p>
+<button type="button" class="small-btn adm-only" id="issOpen">＋ 名義を追加・整理する</button>
+<div id="issBox" class="card" style="margin-top:10px;padding:14px" hidden>
+<p class="hint">追加した名義は、担当者も選べるようになります。最初からある3つは消せません。</p>
+<div id="issList"></div>
+<div class="fld"><label for="nLabel">一覧に出す名前<span class="req">必須</span></label><input type="text" id="nLabel" placeholder="例：買取大吉 ○○店"></div>
+<div class="fld"><label for="nCompany">会社名（契約の当事者）<span class="req">必須</span></label><input type="text" id="nCompany" value="株式会社グローブ"></div>
+<div class="fld"><label for="nShop">店名・屋号</label><input type="text" id="nShop" placeholder="例：買取大吉 ○○店"></div>
+<div class="fld"><label for="nAddr">住所（空なら本社の住所）</label><input type="text" id="nAddr"></div>
+<div class="fld"><label for="nRep">代表者（空なら本社の代表者）</label><input type="text" id="nRep"></div>
+<div class="fld"><label for="nLic">古物商許可（空なら本社の許可番号）</label><input type="text" id="nLic"></div>
+<p class="err" id="errN" role="alert"></p>
+<button type="button" class="btn" id="nSave">この名義を追加する</button>
+</div></div>
 <div class="fld"><label for="pName">相手のお名前<span class="req">必須</span></label><input type="text" id="pName"></div>
 <div class="fld" id="pCompanyBox"><label for="pCompany">会社名・屋号（協力企業・法人の場合）</label><input type="text" id="pCompany"></div>
 <div class="fld"><label for="pEmail">相手のメールアドレス<span class="req">必須</span></label><input type="email" id="pEmail" autocomplete="off"></div>
@@ -160,7 +175,6 @@
 <p class="err" id="errR" role="alert"></p>
 </section>
 </div>
-
 <div class="view" id="v-acct" hidden>
 <section class="card login" id="setBox" hidden><h2>ログインIDとパスワードの登録</h2>
 <p class="hint" id="setState"></p>
@@ -178,7 +192,6 @@
 <p class="err" id="errP" role="alert"></p>
 <button class="btn" type="button" id="pwBtn">変更する</button></section>
 </div>
-
 </main>
 <dialog id="rep" class="rep" aria-labelledby="repT">
 <h2 id="repT">お客様への進捗報告</h2>
@@ -537,7 +550,7 @@ document.addEventListener('click',function(e){var b=e.target.closest('button');i
 var SND=null,SPICK=[['name','お名前',1],['relation','ご関係',0],['phone','電話',1],['email','メール',0],['contact_pref','ご希望の連絡方法',1],['area','場所',1],['housing','住まい',1],['timing','時期',1],['services','ご相談の内容',1],['worries','お悩み',1],['detail','伝えておきたいこと',1]];
 function sendBody(){var r=SND.r,c=r.c,pk=[].filter.call($('sPick').querySelectorAll('input:checked'),function(i){return 1}).map(function(i){return i.value});
  var lines=SPICK.filter(function(x){return pk.indexOf(x[0])>=0&&c[x[0]]}).map(function(x){return '・'+x[1]+'：'+c[x[0]]});
- return (r.person?r.person+' 様\n':r.partner+' ご担当者様\n')+'\nいつもお世話になっております。家じまい相談窓口です。\n下記のご相談について、ご対応をお願いいたします。\n\n【お願いしたい内容】\n'+(r.ref.cat2||r.ref.service)+(r.ref.cat3?'（'+r.ref.cat3+'）':'')+(r.ref.memo?'\n'+r.ref.memo:'')+'\n\n【お客様の情報】\n'+lines.join('\n')+'\n\n※お客様から、このご連絡の同意をいただいています。いただいた情報は、このご相談の対応のためだけにお使いください。\n※ご対応の見込み（ご連絡の日・お見積りの日）を、この窓口までお知らせください。\n\n家じまい相談窓口　0120-933-496（受付 10:00〜19:00）\n取次ぎ番号：'+r.ref.id}
+ return (r.person?r.person+' 様\n':r.partner+' ご担当者様\n')+'\nいつもお世話になっております。家じまい相談窓口です。\n下記のご相談について、ご対応をお願いいたします。\n\n【お願いしたい内容】\n'+(r.ref.cat2||r.ref.service)+(r.ref.cat3?'（'+r.ref.cat3+'）':'')+(r.ref.memo?'\n'+r.ref.memo:'')+'\n\n【お客様の情報】\n'+lines.join('\n')+'\n\n※お客様から、このご連絡の同意をいただいています。いただいた情報は、このご相談の対応のためだけにお使いください。\n※ご対応の見込み（ご連絡の日・お見積りの日）を、この窓口までお知らせください。\n\n家じまい相談窓口　0120-933-496（受付 10:00〜18:00）\n取次ぎ番号：'+r.ref.id}
 function openSend(id){$('errSend').textContent='';$('sBody').value='読み込み中…';$('sOk').checked=false;try{$('sendDlg').showModal()}catch(e){$('sendDlg').setAttribute('open','')}
  api('kanri.ref.draft',{id:id}).then(function(r){SND={id:id,r:r,edited:false};$('sTo').value=r.to||'';
   $('sPick').innerHTML=SPICK.map(function(x){return '<label><input type="checkbox" value="'+x[0]+'"'+(x[2]&&r.c[x[0]]?' checked':'')+(r.c[x[0]]?'':' disabled')+'> '+x[1]+(r.c[x[0]]?'':'（なし）')+'</label>'}).join('');
@@ -596,16 +609,23 @@ $('repRegen').addEventListener('click',function(){openReport(REP.id)});
 function prefill(o){go('keiyaku');LINK=o.link;REPLACES='';$('linkNote').hidden=false;$('linkNote').innerHTML='この契約書は「'+esc(o.label)+'」の記録に紐づけて送ります。　<button type="button" class="small-btn" id="unlink">紐づけをやめる</button>';
  if(o.tpl&&TPL.some(function(x){return x.key===o.tpl})){$('tpl').value=o.tpl;onTpl()}$('pName').value=o.name||'';$('pCompany').value=o.company||'';$('pEmail').value=o.email||'';$('pName').focus()}
 document.addEventListener('click',function(e){if(e.target.id==='unlink'){LINK='';REPLACES='';$('linkNote').hidden=true}});
+var NAMES=[];
+function setNames(a){var cur=$('iss').value;NAMES=a;$('iss').innerHTML=a.map(function(n){return'<option value="'+esc(n.key)+'">'+esc(n.label)+(n.shop&&n.label.indexOf(n.company)<0?'（'+esc(n.company)+'）':'')+'</option>'}).join('');if(cur&&a.some(function(n){return n.key===cur}))$('iss').value=cur;
+ $('issList').innerHTML='<table class="list"><tbody>'+a.map(function(n){return'<tr><td>'+esc(n.label)+'<br><small>甲：'+esc(n.company+(n.shop?'（'+n.shop+'）':''))+'</small></td><td>'+(n.extra?'<button type="button" class="small-btn" data-ndel="'+esc(n.key)+'">消す</button>':'<small>最初からある名義</small>')+'</td></tr>'}).join('')+'</tbody></table>'}
+$('issOpen').addEventListener('click',function(){$('issBox').hidden=!$('issBox').hidden});
+$('nSave').addEventListener('click',function(){var b=this;$('errN').textContent='';b.disabled=true;
+ api('admin.namesAdd',{label:$('nLabel').value,company:$('nCompany').value,shop:$('nShop').value,address:$('nAddr').value,rep:$('nRep').value,license:$('nLic').value}).then(function(r){setNames(r.names);['nLabel','nShop','nAddr','nRep','nLic'].forEach(function(id){$(id).value=''});toast('名義を追加しました')}).catch(function(e){$('errN').textContent=e.message}).then(function(){b.disabled=false})});
+$('issList').addEventListener('click',function(e){var b=e.target.closest('[data-ndel]');if(!b)return;if(!confirm('この名義を一覧から消しますか？（すでに送った契約書はそのままです）'))return;api('admin.namesDel',{key:b.dataset.ndel}).then(function(r){setNames(r.names)}).catch(function(x){$('errN').textContent=x.message})});
 var NOTE={nda:'特記事項',kaitori:'特記事項（引渡しの日時・方法など）',chosei:'費用（例：無料／1件あたり〇〇円 など）',teikei:'その他の提携条件（業務分野・対応地域など）'};
 function onTpl(){var t=TPL.filter(function(x){return x.key===$('tpl').value})[0];if(!t)return;
  $('fieldChk').innerHTML=Object.keys(FIELDS).map(function(k){return'<label><input type="checkbox" value="'+k+'"'+(t.defaultFields.indexOf(k)>=0?' checked':'')+(k==='name'?' checked disabled':'')+'>'+esc(FIELDS[k].label)+'</label>'}).join('');
- $('reqId').checked=!!t.requireId;$('itemsBox').hidden=!t.items;if(t.items&&!$('items').children.length)addItem();$('noteLabel').textContent=NOTE[t.key]||'特記事項';$('pCompanyBox').hidden=false}
+ $('reqId').checked=!!t.requireId;$('itemsBox').hidden=!t.items;if(t.items&&!$('items').children.length)addItem();$('noteLabel').textContent=NOTE[t.key]||'特記事項';if(NAMES.some(function(n){return n.key===t.defName}))$('iss').value=t.defName;$('pCompanyBox').hidden=false}
 $('tpl').addEventListener('change',onTpl);
 function addItem(){var d=document.createElement('div');d.className='items-row';d.innerHTML='<input placeholder="品名（例：金の指輪）"><input type="number" min="1" value="1" aria-label="数量"><input type="number" min="0" placeholder="金額（円）" aria-label="金額"><input placeholder="特徴（例：18金・約5g）"><button type="button" aria-label="この行を消す">×</button>';d.querySelector('button').onclick=function(){d.remove()};$('items').appendChild(d)}
 $('addItem').addEventListener('click',addItem);
 /* 直して出し直す：前の内容を入れた状態で作り直す（送ると前の下書きは自動で取り消し） */
 function redo(x){go('keiyaku');REPLACES=x.id;LINK=x.link||'';$('linkNote').hidden=false;$('linkNote').innerHTML='「'+esc(x.id)+'」を直して出し直します。送ると、前の下書きは自動で取り消しになります。'+(x.draft_comment?'<br>お客様のご意見：「'+esc(x.draft_comment)+'」':'')+'　<button type="button" class="small-btn" id="unlink">やめる</button>';
- if(TPL.some(function(t){return t.key===x.template})){$('tpl').value=x.template;onTpl()}$('pName').value=x.party_name||'';$('pCompany').value=x.party_company||'';$('pEmail').value=x.party_email||'';$('note').value=x.note||'';
+ if(TPL.some(function(t){return t.key===x.template})){$('tpl').value=x.template;onTpl()}if(x.issuer&&NAMES.some(function(n){return n.key===x.issuer}))$('iss').value=x.issuer;$('pName').value=x.party_name||'';$('pCompany').value=x.party_company||'';$('pEmail').value=x.party_email||'';$('note').value=x.note||'';
  var fs=[];try{fs=JSON.parse(x.fields||'[]')}catch(e){}$('fieldChk').querySelectorAll('input').forEach(function(i){if(!i.disabled)i.checked=fs.indexOf(i.value)>=0});$('reqId').checked=x.require_id==='yes';
  var it=[];try{it=JSON.parse(x.items||'[]')}catch(e){}if(it.length){$('items').innerHTML='';it.forEach(function(r){addItem();var row=$('items').lastElementChild.querySelectorAll('input');row[0].value=r.name||'';row[1].value=r.qty||1;row[2].value=r.price||'';row[3].value=r.note||''})}
  $('draft').checked=false;$('pName').focus()}
@@ -615,14 +635,14 @@ $('doIssue').addEventListener('click',function(){var b=this,t=$('tpl').value;
  var tp=TPL.filter(function(x){return x.key===t})[0];
  if(tp&&tp.items&&!items.length&&!$('draft').checked){$('errI').textContent='買い取る物品を1つ以上入れてください。';return}
  b.disabled=true;$('errI').textContent='';$('issued').hidden=true;
- api('admin.issue',{template:t,party:{name:$('pName').value.trim(),company:$('pCompany').value.trim(),email:$('pEmail').value.trim()},fields:fields,requireId:$('reqId').checked,items:items,note:$('note').value.trim(),draft:$('draft').checked,link:LINK,replaces:REPLACES})
+ api('admin.issue',{template:t,issuer:$('iss').value,party:{name:$('pName').value.trim(),company:$('pCompany').value.trim(),email:$('pEmail').value.trim()},fields:fields,requireId:$('reqId').checked,items:items,note:$('note').value.trim(),draft:$('draft').checked,link:LINK,replaces:REPLACES})
  .then(function(r){$('issued').hidden=false;$('issued').innerHTML='送りました（契約番号 '+esc(r.id)+'）。<br>相手の画面：<a href="'+esc(r.url)+'" target="_blank" rel="noopener">'+esc(r.url)+'</a>';['pName','pCompany','pEmail','note'].forEach(function(id){$(id).value=''});$('items').innerHTML='';LINK='';REPLACES='';$('linkNote').hidden=true;onTpl();list()})
  .catch(function(e){$('errI').textContent=e.message}).then(function(){b.disabled=false})});
 function linkLabel(l){if(!l)return'';var m=l.split(':');return '<br><button type="button" class="lnk" data-open="'+m[0]+'" data-id="'+esc(m[1])+'">'+(m[0]==='case'?'相談 ':'協力企業 ')+esc(m[1])+'</button>'}
 function list(){api('admin.list').then(function(r){CONTRACTS=r.rows;if(!r.rows.length){$('rows').innerHTML='<tr><td colspan="6">まだありません</td></tr>';return}
  $('rows').innerHTML=r.rows.map(function(x){var cls=x.status==='締結済み'?'done':x.status==='取り消し'?'cancel':'';
   var dr=x.draft==='yes'&&x.status!=='取り消し';
-  return'<tr'+(dr&&x.draft_reply?' class="lv-yellow"':'')+'><td>'+esc(x.id)+(x.replaces?'<br><small>'+esc(x.replaces)+' の差し替え</small>':'')+'</td><td>'+esc(x.title)+(x.draft==='yes'?'<br><span class="tag">下書き</span>'+(x.draft_reply?' <span class="al al-'+(x.draft_reply==='問題なし'?'yellow':'red')+'">お返事：'+esc(x.draft_reply)+'</span>'+(x.draft_comment?'<br><small>「'+esc(short(x.draft_comment,60))+'」</small>':''):' <small>お返事待ち</small>'):'')+'</td><td>'+esc(x.party_company?x.party_company+' ':'')+esc(x.party_name)+'<br><small>'+esc(x.party_email)+'</small>'+linkLabel(x.link)+'</td><td><span class="tag '+cls+'">'+esc(x.status)+'</span></td><td>'+day(x.created)+(x.issued_by?'<br><small>'+esc(x.issued_by)+'</small>':'')+'</td><td>'+
+  return'<tr'+(dr&&x.draft_reply?' class="lv-yellow"':'')+'><td>'+esc(x.id)+(x.replaces?'<br><small>'+esc(x.replaces)+' の差し替え</small>':'')+'</td><td>'+esc(x.title)+(x.issuer_label?'<br><small>名義：'+esc(x.issuer_label)+'</small>':'')+(x.draft==='yes'?'<br><span class="tag">下書き</span>'+(x.draft_reply?' <span class="al al-'+(x.draft_reply==='問題なし'?'yellow':'red')+'">お返事：'+esc(x.draft_reply)+'</span>'+(x.draft_comment?'<br><small>「'+esc(short(x.draft_comment,60))+'」</small>':''):' <small>お返事待ち</small>'):'')+'</td><td>'+esc(x.party_company?x.party_company+' ':'')+esc(x.party_name)+'<br><small>'+esc(x.party_email)+'</small>'+linkLabel(x.link)+'</td><td><span class="tag '+cls+'">'+esc(x.status)+'</span></td><td>'+day(x.created)+(x.issued_by?'<br><small>'+esc(x.issued_by)+'</small>':'')+'</td><td>'+
   (x.status==='締結済み'?'<button class="small-btn" data-pdf="'+esc(x.id)+'">PDFを保存</button>':x.status==='取り消し'?'':(dr?'<button class="small-btn gold" data-final="'+esc(x.id)+'">この内容で本契約を送る</button><button class="small-btn" data-redo="'+esc(x.id)+'">直して出し直す</button>':'')+'<button class="small-btn" data-resend="'+esc(x.id)+'">もう一度送る</button><button class="small-btn" data-cancel="'+esc(x.id)+'">取り消す</button>')+'</td></tr>'}).join('')}).catch(function(e){$('errR').textContent=e.message})}
 $('rows').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;$('errR').textContent='';
  if(b.dataset.final){var cx=CONTRACTS.filter(function(x){return x.id===b.dataset.final})[0];if(!confirm('「'+(cx?cx.title:'')+'」を、下書きと同じ内容・同じリンクのまま、正式な契約書（締結できる状態）として '+(cx?cx.party_email:'')+' に送ります。よろしいですか？'+(cx&&cx.draft_reply==='修正の希望あり'?'\n\n※お客様から「直してほしい」とお返事があります。直さずに送ってよいか、よく確かめてください。':cx&&!cx.draft_reply?'\n\n※まだお返事がありません。電話などで確認が取れている場合だけ送ってください。':'')))return;
@@ -637,7 +657,7 @@ function start(){$('tabs').hidden=false;soundLabel();$('applyUrl').textContent=(
  api('admin.me').then(function(r){ME=r.me||ME;document.body.classList.toggle('role-staff',ME.r==='staff');$('whoAmI').textContent=(ME.n||'')+(ME.r==='staff'?'（担当者）':'（管理者）');
   var first=false;try{first=!localStorage.getItem('ij-help-'+ME.r);localStorage.setItem('ij-help-'+ME.r,'1')}catch(e){}
   go(ME.r==='staff'?'home':'dash');if(first)openHelp()}).catch(function(){go('dash')});
- api('admin.templates').then(function(r){TPL=r.templates;FIELDS=r.fields;$('tpl').innerHTML=TPL.map(function(t){return'<option value="'+t.key+'">'+esc(t.title)+'</option>'}).join('');onTpl()}).catch(function(e){$('errI').textContent=e.message});
+ api('admin.templates').then(function(r){TPL=r.templates;FIELDS=r.fields;setNames(r.names||[]);$('tpl').innerHTML=TPL.map(function(t){return'<option value="'+t.key+'">'+esc(t.title)+'</option>'}).join('');onTpl()}).catch(function(e){$('errI').textContent=e.message});
 }
 function showLogin(msg){$('tabs').hidden=true;document.querySelectorAll('.view').forEach(function(x){x.hidden=true});$('gate').hidden=false;$('errL').textContent=msg||'';$('lpw').value='';setTimeout(function(){$('lid').focus()},50)}
 $('lshow').addEventListener('change',function(){$('lpw').type=this.checked?'text':'password'});

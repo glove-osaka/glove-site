@@ -35,7 +35,7 @@
 
 
   /* ---- お試し表示 ---- */
-  var ISSUER = { name: "株式会社グローブ", service: "家じまい相談窓口", tel: "0120-933-496", hours: "10:00〜19:00" };
+  var ISSUER = { name: "株式会社グローブ", service: "家じまい相談窓口", tel: "0120-933-496", hours: "10:00〜18:00（年中無休）" };
   var FIELDS = { name: { label: "お名前", type: "text", required: true }, kana: { label: "ふりがな", type: "text" }, address: { label: "ご住所", type: "text" }, phone: { label: "お電話番号", type: "tel" }, birth: { label: "生年月日", type: "date" }, company: { label: "会社名・屋号", type: "text" }, title: { label: "役職", type: "text" }, bank: { label: "お振込先（銀行名・支店・口座番号・名義）", type: "textarea" } };
   var TPL = [
     { key: "nda", title: "秘密保持契約書", items: false, defaultFields: ["name", "address", "phone"], requireId: false },

@@ -27,7 +27,7 @@
   var navText = function () { return seen($('#menuBtn')) ? '「メニュー」を押すと、ほかのページの一覧が開きます。' : 'ほかのページへは、この上の帯から移動できます。'; };
   var common = [
     [function () { return first('.fs'); }, '文字が小さくて読みにくいときは、「大」か「特大」を押してください。文字が大きくなります。'],
-    [function () { return first('.telbar', '.util-tel'); }, 'お電話でのご相談はこちらです。受付は10:00〜19:00、通話料は無料です。'],
+    [function () { return first('.telbar', '.util-tel'); }, 'お電話でのご相談はこちらです。受付は10:00〜18:00（年中無休）、通話料は無料です。'],
     [nav, navText]
   ];
   var cta = [function () { return first('main a.btn[href*="contact/"]', '.cta-band .btn', '.hd .cta'); }, '「相談内容をまとめる」を押すと、質問に答えるだけでご相談の内容がまとまり、そのまま窓口に送れます。'];
@@ -52,7 +52,7 @@
     faq: { t: 'よくある質問', d: ['よくいただく質問と答えです。', '質問を押すと、答えが開きます。'],
       s: [[function () { return first('main .faq details', 'main details'); }, '質問を押すと、答えが開きます。もう一度押すと閉じます。'], common[1], cta] },
     contact: { t: '相談内容をまとめる', d: ['質問に順番に答えるだけで、ご相談の内容がまとまり、そのまま窓口に送れるページです。', '全部で7つの段階です。分からないところは空欄のまま進めても大丈夫です。', 'お電話（' + TEL + '）で話しながら入力することもできます。'],
-      s: [[function () { return first('#toiawase'); }, 'お電話・メール・ご来店でもご相談いただけます。'], [function () { return first('#steps'); }, 'いま何番目の段階かが、ここに出ます。'], [function () { return first('#f section:not([hidden])'); }, 'ここに答えを入れます。当てはまるものを押して選んでください。'], [function () { return first('#next'); }, '答えたら「次へ進む」を押します。前に戻りたいときは「前に戻る」を押します。']] },
+      s: [[function () { return first('#toiawase'); }, 'お電話・メールでもご相談いただけます。'], [function () { return first('#steps'); }, 'いま何番目の段階かが、ここに出ます。'], [function () { return first('#f section:not([hidden])'); }, 'ここに答えを入れます。当てはまるものを押して選んでください。'], [function () { return first('#next'); }, '答えたら「次へ進む」を押します。前に戻りたいときは「前に戻る」を押します。']] },
     cases: { t: '相談事例', d: ['窓口がどのようにお手伝いするかを、想定の事例でご紹介しています。', '事例を押すと、くわしい流れが開きます。'],
       s: [[function () { return first('main .pt-intro'); }, '窓口が大切にしていることです。'], [function () { return first('main .case'); }, '事例を押すと、くわしい流れが開きます。'], cta] },
     company: { t: '運営会社', d: ['家じまい相談窓口を運営する、株式会社グローブの代表のあいさつと会社の情報です。'], s: common.concat([cta]) },
@@ -120,7 +120,7 @@
       + (kind === 'kyoryoku' ? '' : '<button type="button" data-a="big">文字を大きくする</button>')
       + '<a href="' + TELL + '">お電話で聞く　' + TEL + '</a>'
       + (kind !== 'contact' && kind !== 'kyoryoku' && kind !== 'keiyaku' ? '<a href="' + ROOT + 'contact/index.html">相談内容をまとめる</a>' : '') + '</div>'
-      + '<h3>操作のこつ</h3><ul><li>「開く」と書かれた見出しは、押すと中身が開きます。</li><li>前のページに戻るときは、画面の「戻る」を押してください。</li><li>分からないときは、受付時間（10:00〜19:00）にお電話ください。</li></ul>';
+      + '<h3>操作のこつ</h3><ul><li>「開く」と書かれた見出しは、押すと中身が開きます。</li><li>前のページに戻るときは、画面の「戻る」を押してください。</li><li>分からないときは、受付時間（10:00〜18:00）にお電話ください。</li></ul>';
     panel = el('div', { 'class': 'ijg-panel', role: 'dialog', 'aria-modal': 'true', 'aria-label': G.t + 'の使い方' }, h);
     D.body.appendChild(ov); D.body.appendChild(panel);
     panel.querySelector('.ijg-x').onclick = closePanel;
@@ -175,7 +175,7 @@
     function upd() {
       var n = cur(), x = STEP[n] || STEP[0], left = STEP.length - 1 - n;
       box.innerHTML = '<b class="h">いまやること：' + x[0] + '<span class="left">' + (left ? 'あと' + left + '段階' : '最後の段階です') + '</span></b>' + x[1]
-        + '<br><small>分からないときは、お電話で話しながら入力することもできます（<a href="' + TELL + '">' + TEL + '</a>、10:00〜19:00）。</small>';
+        + '<br><small>分からないときは、お電話で話しながら入力することもできます（<a href="' + TELL + '">' + TEL + '</a>、10:00〜18:00）。</small>';
     }
     $$('#f section[data-step]').forEach(function (s) { new MutationObserver(upd).observe(s, { attributes: true, attributeFilter: ['hidden'] }); });
     upd();
@@ -184,6 +184,6 @@
     Object.keys(tips).forEach(function (id) { var f = $('#' + id); if (!f) return; if (!f.placeholder) f.placeholder = tips[id].replace(/（.*$/, ''); var p = el('small', { 'class': 'ijg-fh' }, tips[id]); f.parentNode.appendChild(p); });
     // 送信のあとの案内
     var msg = $('#copyMsg');
-    if (msg) new MutationObserver(function () { if (/送信しました/.test(msg.textContent) && !$('.ijg-after')) { var a = el('div', { 'class': 'ijg-help ijg-after' }, '<b class="h">送信できました。このあとの流れ</b><ul><li>受付時間（10:00〜19:00）に、窓口の担当者からご連絡します。</li><li>知らない番号からの電話は出にくい方は、先に ' + TEL + ' を登録しておくと安心です。</li><li>お急ぎのときは、お電話（<a href="' + TELL + '">' + TEL + '</a>）でお知らせください。</li></ul>'); msg.parentNode.insertBefore(a, msg.nextSibling); } }).observe(msg, { childList: true, characterData: true, subtree: true });
+    if (msg) new MutationObserver(function () { if (/送信しました/.test(msg.textContent) && !$('.ijg-after')) { var a = el('div', { 'class': 'ijg-help ijg-after' }, '<b class="h">送信できました。このあとの流れ</b><ul><li>受付時間（10:00〜18:00）に、窓口の担当者からご連絡します。</li><li>知らない番号からの電話は出にくい方は、先に ' + TEL + ' を登録しておくと安心です。</li><li>お急ぎのときは、お電話（<a href="' + TELL + '">' + TEL + '</a>）でお知らせください。</li></ul>'); msg.parentNode.insertBefore(a, msg.nextSibling); } }).observe(msg, { childList: true, characterData: true, subtree: true });
   }
 })();
