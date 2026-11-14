@@ -186,3 +186,10 @@ tr.click{cursor:pointer}tr.click:hover td,tr.click:focus td{background:#eef5f1}
 .cust-d>td{background:#f6faf7}
 .cust-box h3{margin:6px 0 8px;font-size:1.02rem}
 .cust-box .list{margin-bottom:12px}
+/* 契約書を見る */
+pre.kdoc{white-space:pre-wrap;font-family:"Hiragino Mincho ProN","Yu Mincho","BIZ UDPMincho",serif;font-size:1rem;line-height:1.9;background:#fff;border:1px solid #d9dfda;border-radius:10px;padding:18px 20px;max-height:55vh;overflow:auto;margin:10px 0}
+#viewDlg{max-width:860px;width:calc(100% - 24px)}
+#viewDlg h3{font-size:1.02rem;margin:14px 0 6px}
+.btn.ghost{background:#fff;color:#1D4A3D;border:2px solid #1D4A3D}
+textarea.kdoc{width:100%;height:40vh;max-height:40vh;resize:vertical;box-sizing:border-box}
+#viewDlg{max-height:92vh;overflow:auto}

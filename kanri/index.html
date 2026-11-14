@@ -185,7 +185,8 @@
 <div class="fld"><label for="note" id="noteLabel">特記事項</label><textarea id="note" placeholder="なければ空のまま"></textarea></div>
 <div class="fld"><label class="agree" for="draft" style="padding:12px"><input type="checkbox" id="draft"><span>下書き（確認用）として送る　※相手は内容を見るだけで、締結はできません</span></label></div>
 <p class="err" id="errI" role="alert"></p>
-<button class="btn" id="doIssue">メールで送る</button>
+<p class="note" id="customNote" hidden>契約書の文面を直しています。送ると、直した文面で届きます。　<button type="button" class="small-btn" id="customReset">直す前の文面に戻す</button></p>
+<button class="btn ghost" type="button" id="doPrev">送る前に契約書を見る・直す</button> <button class="btn" id="doIssue">メールで送る</button>
 <p id="issued" class="note" hidden></p>
 </section>
 
@@ -244,6 +245,15 @@
 <div class="fld"><label for="fMsg">ひとこと（なければ決まった文章が入ります）</label><textarea id="fMsg" rows="4" placeholder="例：本日はお時間をいただき、ありがとうございました。"></textarea></div>
 <p class="err" id="errForm" role="alert"></p>
 <div class="btns"><button class="btn" type="button" id="fGo">確認したので送る</button><button class="btn o" type="button" id="fCancel">送らずに閉じる</button></div>
+</dialog>
+<dialog id="viewDlg" class="rep" aria-labelledby="viewT">
+<h2 id="viewT">契約書</h2>
+<div id="viewMeta"></div>
+<pre class="kdoc" id="viewBody"></pre>
+<div id="viewEditBox" hidden><p class="hint">文面を直せます。締結の日付と署名の欄は、締結のときに自動で付きます。相手のお名前や金額を直した場合は、入力欄も合わせて直してください。</p><textarea id="viewEdit" class="kdoc" rows="18"></textarea></div>
+<div id="viewExtra"></div>
+<p class="err" id="errV" role="alert"></p>
+<div class="rep-btns"><button type="button" class="small-btn" id="viewEditBtn" hidden>文面を直す</button><button type="button" class="small-btn gold" id="viewEditOk" hidden>この文面で送る準備をする</button><button type="button" class="small-btn" id="viewPrint">印刷する</button><button type="button" class="small-btn" id="viewPdf" hidden>締結済みのPDFを保存</button><button type="button" class="btn" id="viewClose">閉じる</button></div>
 </dialog>
 <dialog id="helpDlg" class="rep" aria-labelledby="helpT">
 <h2 id="helpT">管理画面の使い方</h2><div class="stf-only">
@@ -685,29 +695,49 @@ $('tpl').addEventListener('change',onTpl);
 function addItem(){var d=document.createElement('div');d.className='items-row';d.innerHTML='<input placeholder="品名（例：金の指輪）"><input type="number" min="1" value="1" aria-label="数量"><input type="number" min="0" placeholder="金額（円）" aria-label="金額"><input placeholder="特徴（例：18金・約5g）"><button type="button" aria-label="この行を消す">×</button>';d.querySelector('button').onclick=function(){d.remove()};$('items').appendChild(d)}
 $('addItem').addEventListener('click',addItem);
 /* 直して出し直す：前の内容を入れた状態で作り直す（送ると前の下書きは自動で取り消し） */
-function redo(x){go('keiyaku');REPLACES=x.id;LINK=x.link||'';$('linkNote').hidden=false;$('linkNote').innerHTML='「'+esc(x.id)+'」を直して出し直します。送ると、前の下書きは自動で取り消しになります。'+(x.draft_comment?'<br>お客様のご意見：「'+esc(x.draft_comment)+'」':'')+'　<button type="button" class="small-btn" id="unlink">やめる</button>';
+function redo(x){go('keiyaku');REPLACES=x.id;setTimeout(function(){setCustom(x.body_custom||'')},50);LINK=x.link||'';$('linkNote').hidden=false;$('linkNote').innerHTML='「'+esc(x.id)+'」を直して出し直します。送ると、前の下書きは自動で取り消しになります。'+(x.draft_comment?'<br>お客様のご意見：「'+esc(x.draft_comment)+'」':'')+'　<button type="button" class="small-btn" id="unlink">やめる</button>';
  if(TPL.some(function(t){return t.key===x.template})){$('tpl').value=x.template;onTpl()}if(x.issuer&&NAMES.some(function(n){return n.key===x.issuer}))$('iss').value=x.issuer;var rs=document.querySelector('input[name=issStyle][value="'+(x.issuer_style==='shop'?'shop':'company')+'"]');if(rs)rs.checked=true;issPrev();$('pName').value=x.party_name||'';$('pCompany').value=x.party_company||'';$('pEmail').value=x.party_email||'';$('note').value=x.note||'';
  var fs=[];try{fs=JSON.parse(x.fields||'[]')}catch(e){}$('fieldChk').querySelectorAll('input').forEach(function(i){if(!i.disabled)i.checked=fs.indexOf(i.value)>=0});$('reqId').checked=x.require_id==='yes';
  var it=[];try{it=JSON.parse(x.items||'[]')}catch(e){}if(it.length){$('items').innerHTML='';it.forEach(function(r){addItem();var row=$('items').lastElementChild.querySelectorAll('input');row[0].value=r.name||'';row[1].value=r.qty||1;row[2].value=r.price||'';row[3].value=r.note||''})}
  $('draft').checked=false;$('pName').focus()}
+function formData(){var fields=[].map.call($('fieldChk').querySelectorAll('input:checked'),function(i){return i.value});var items=[].map.call($('items').children,function(r){var i=r.querySelectorAll('input');return{name:i[0].value.trim(),qty:+i[1].value||1,price:+i[2].value||0,note:i[3].value.trim()}}).filter(function(x){return x.name});
+ return {bodyCustom:CUSTOM,template:$('tpl').value,issuer:$('iss').value,issuerStyle:issStyle(),party:{name:$('pName').value.trim(),company:$('pCompany').value.trim(),email:$('pEmail').value.trim()},fields:fields,requireId:$('reqId').checked,items:items,note:$('note').value.trim(),draft:$('draft').checked}}
+var VIEWING=null,CUSTOM='',EDITABLE='';
+function setCustom(t){CUSTOM=t||'';$('customNote').hidden=!CUSTOM}
+$('customReset').addEventListener('click',function(){setCustom('');toast('直す前の文面に戻しました')});
+(function(){var box=$('tpl').closest('section');var warn=function(e){if(!CUSTOM||!e.target.closest('.fld'))return;if(e.target.closest('#customNote'))return;setCustom('');toast('入力を変えたので、直した文面は元に戻しました。必要なら、もう一度「契約書を見る・直す」で直してください')};box.addEventListener('change',warn)})();
+function showDoc(o,pre){VIEWING=o.id||null;$('viewT').textContent=(pre?'送る前の確認：':'')+o.title;$('errV').textContent='';
+ var st=pre?'<p class="note">まだ送っていません。相手には、このように見えます（締結の日付と署名の欄は、締結のときに付きます）。</p>':'<p class="hint">番号：'+esc(o.id)+'　状態：<b>'+esc(o.draft?'下書き（確認用）':o.status)+'</b>　相手：'+esc(o.party)+'（'+esc(o.email)+'）<br>送った日：'+esc(dt(o.created))+(o.viewed?'　開いた日：'+esc(dt(o.viewed)):'')+(o.signed?'　締結した日：'+esc(dt(o.signed)):'')+'</p>';
+ $('viewMeta').innerHTML=st;$('viewBody').textContent=o.body;
+ $('viewExtra').innerHTML=(o.filled&&o.filled.length?'<h3>相手が記入した内容</h3><dl class="kv">'+o.filled.map(function(f){return '<div><dt>'+esc(f.label)+'</dt><dd>'+esc(f.value)+'</dd></div>'}).join('')+'</dl>':'')+(o.log&&o.log.length?'<h3>これまでの記録</h3><ul class="log">'+o.log.slice().reverse().map(function(x){return '<li><small>'+esc(dt(x.t||x.at||''))+'</small>'+esc(x.ev||x.text||'')+'</li>'}).join('')+'</ul>':'');
+ $('viewPdf').hidden=!o.hasPdf;EDITABLE=pre?(o.editable||''):'';$('viewEditBtn').hidden=!pre;$('viewEditOk').hidden=true;$('viewEditBox').hidden=true;$('viewBody').hidden=false;try{$('viewDlg').showModal()}catch(e){$('viewDlg').setAttribute('open','')}}
+function dt(v){if(!v)return'';var d=new Date(v);return isNaN(d)?String(v):(d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2))}
+$('viewEditBtn').addEventListener('click',function(){$('viewEdit').value=CUSTOM||EDITABLE;$('viewBody').hidden=true;$('viewEditBox').hidden=false;this.hidden=true;$('viewEditOk').hidden=false;$('viewEdit').focus()});
+$('viewEditOk').addEventListener('click',function(){var t=$('viewEdit').value.trim();if(!t){$('errV').textContent='文面が空です';return}setCustom(t===EDITABLE.trim()?'':t);try{$('viewDlg').close()}catch(e){$('viewDlg').removeAttribute('open')}toast(CUSTOM?'直した文面にしました。このあと「メールで送る」で送れます':'文面は直していません')});
+$('viewClose').addEventListener('click',function(){try{$('viewDlg').close()}catch(e){$('viewDlg').removeAttribute('open')}});
+$('viewPrint').addEventListener('click',function(){var w=window.open('','_blank');if(!w){$('errV').textContent='印刷の画面を開けませんでした。ブラウザの設定で、新しい画面を開けるようにしてください。';return}w.document.write('<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>'+esc($('viewT').textContent)+'</title><style>body{font-family:"Hiragino Mincho ProN","Yu Mincho",serif;margin:40px;line-height:1.9;font-size:12pt}pre{white-space:pre-wrap;font:inherit}h1{font-size:16pt;text-align:center}</style></head><body><h1>'+esc($('viewT').textContent.replace('送る前の確認：',''))+'</h1><pre>'+esc($('viewBody').textContent)+'</pre></body></html>');w.document.close();w.focus();setTimeout(function(){w.print()},300)});
+$('viewPdf').addEventListener('click',function(){if(VIEWING)savePdf(VIEWING)});
+$('doPrev').addEventListener('click',function(){var b=this;b.disabled=true;$('errI').textContent='';api('admin.preview',formData()).then(function(r){showDoc(r,true)}).catch(function(e){$('errI').textContent=e.message}).then(function(){b.disabled=false})});
+function savePdf(id){api('admin.pdf',{id:id}).then(function(r){var bin=atob(r.pdf),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);var u=URL.createObjectURL(new Blob([a],{type:'application/pdf'}));var l=document.createElement('a');l.href=u;l.download=r.filename;document.body.appendChild(l);l.click();setTimeout(function(){URL.revokeObjectURL(u);l.remove()},2000)}).catch(function(x){$('errR').textContent=x.message;$('errV').textContent=x.message})}
 $('doIssue').addEventListener('click',function(){var b=this,t=$('tpl').value;
  var fields=[].map.call($('fieldChk').querySelectorAll('input:checked'),function(i){return i.value});
  var items=[].map.call($('items').children,function(r){var i=r.querySelectorAll('input');return{name:i[0].value.trim(),qty:+i[1].value||1,price:+i[2].value||0,note:i[3].value.trim()}}).filter(function(x){return x.name});
  var tp=TPL.filter(function(x){return x.key===t})[0];
  if(tp&&tp.items&&!items.length&&!$('draft').checked){$('errI').textContent='買い取る物品を1つ以上入れてください。';return}
  b.disabled=true;$('errI').textContent='';$('issued').hidden=true;
- api('admin.issue',{template:t,issuer:$('iss').value,issuerStyle:issStyle(),party:{name:$('pName').value.trim(),company:$('pCompany').value.trim(),email:$('pEmail').value.trim()},fields:fields,requireId:$('reqId').checked,items:items,note:$('note').value.trim(),draft:$('draft').checked,link:LINK,replaces:REPLACES})
- .then(function(r){$('issued').hidden=false;$('issued').innerHTML='送りました（契約番号 '+esc(r.id)+'）。<br>相手の画面：<a href="'+esc(r.url)+'" target="_blank" rel="noopener">'+esc(r.url)+'</a>';['pName','pCompany','pEmail','note'].forEach(function(id){$(id).value=''});$('items').innerHTML='';LINK='';REPLACES='';$('linkNote').hidden=true;onTpl();list()})
+ api('admin.issue',Object.assign(formData(),{link:LINK,replaces:REPLACES}))
+ .then(function(r){$('issued').hidden=false;$('issued').innerHTML='送りました（契約番号 '+esc(r.id)+'）。<br>相手の画面：<a href="'+esc(r.url)+'" target="_blank" rel="noopener">'+esc(r.url)+'</a>';['pName','pCompany','pEmail','note'].forEach(function(id){$(id).value=''});$('items').innerHTML='';LINK='';REPLACES='';setCustom('');$('linkNote').hidden=true;onTpl();list()})
  .catch(function(e){$('errI').textContent=e.message}).then(function(){b.disabled=false})});
 function linkLabel(l){if(!l)return'';var m=l.split(':');return '<br><button type="button" class="lnk" data-open="'+m[0]+'" data-id="'+esc(m[1])+'">'+(m[0]==='case'?'相談 ':'協力企業 ')+esc(m[1])+'</button>'}
 function list(){api('admin.list').then(function(r){CONTRACTS=r.rows;if(!r.rows.length){$('rows').innerHTML='<tr><td colspan="6">まだありません</td></tr>';return}
  $('rows').innerHTML=r.rows.map(function(x){var cls=x.status==='締結済み'?'done':x.status==='取り消し'?'cancel':'';
   var dr=x.draft==='yes'&&x.status!=='取り消し';
   return'<tr'+(dr&&x.draft_reply?' class="lv-yellow"':'')+'><td>'+esc(x.id)+(x.replaces?'<br><small>'+esc(x.replaces)+' の差し替え</small>':'')+'</td><td>'+esc(x.title)+(x.issuer_label?'<br><small>甲：'+esc(x.issuer_text||x.issuer_label)+'</small>':'')+(x.draft==='yes'?'<br><span class="tag">下書き</span>'+(x.draft_reply?' <span class="al al-'+(x.draft_reply==='問題なし'?'yellow':'red')+'">お返事：'+esc(x.draft_reply)+'</span>'+(x.draft_comment?'<br><small>「'+esc(short(x.draft_comment,60))+'」</small>':''):' <small>お返事待ち</small>'):'')+'</td><td>'+esc(x.party_company?x.party_company+' ':'')+esc(x.party_name)+'<br><small>'+esc(x.party_email)+'</small>'+linkLabel(x.link)+'</td><td><span class="tag '+cls+'">'+esc(x.status)+'</span></td><td>'+day(x.created)+(x.issued_by?'<br><small>'+esc(x.issued_by)+'</small>':'')+'</td><td>'+
-  (x.status==='締結済み'?'<button class="small-btn" data-pdf="'+esc(x.id)+'">PDFを保存</button>':x.status==='取り消し'?'':(dr?'<button class="small-btn gold" data-final="'+esc(x.id)+'">この内容で本契約を送る</button><button class="small-btn" data-redo="'+esc(x.id)+'">直して出し直す</button>':'')+'<button class="small-btn" data-resend="'+esc(x.id)+'">もう一度送る</button><button class="small-btn" data-cancel="'+esc(x.id)+'">取り消す</button>')+'</td></tr>'}).join('')}).catch(function(e){$('errR').textContent=e.message})}
+  '<button class="small-btn" data-view="'+esc(x.id)+'">契約書を見る</button>'+(x.status==='締結済み'?'<button class="small-btn" data-pdf="'+esc(x.id)+'">PDFを保存</button>':x.status==='取り消し'?'':(dr?'<button class="small-btn gold" data-final="'+esc(x.id)+'">この内容で本契約を送る</button><button class="small-btn" data-redo="'+esc(x.id)+'">直して出し直す</button>':'')+'<button class="small-btn" data-resend="'+esc(x.id)+'">もう一度送る</button><button class="small-btn" data-cancel="'+esc(x.id)+'">取り消す</button>')+'</td></tr>'}).join('')}).catch(function(e){$('errR').textContent=e.message})}
 $('rows').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;$('errR').textContent='';
  if(b.dataset.final){var cx=CONTRACTS.filter(function(x){return x.id===b.dataset.final})[0];if(!confirm('「'+(cx?cx.title:'')+'」を、下書きと同じ内容・同じリンクのまま、正式な契約書（締結できる状態）として '+(cx?cx.party_email:'')+' に送ります。よろしいですか？'+(cx&&cx.draft_reply==='修正の希望あり'?'\n\n※お客様から「直してほしい」とお返事があります。直さずに送ってよいか、よく確かめてください。':cx&&!cx.draft_reply?'\n\n※まだお返事がありません。電話などで確認が取れている場合だけ送ってください。':'')))return;
   b.disabled=true;api('admin.finalize',{id:b.dataset.final}).then(function(){toast('本契約として送りました');list()}).catch(function(x){$('errR').textContent=x.message;b.disabled=false});return}
+ if(b.dataset.view){b.disabled=true;api('admin.view',{id:b.dataset.view}).then(function(r){showDoc(r,false)}).catch(function(x){$('errR').textContent=x.message}).then(function(){b.disabled=false});return}
  if(b.dataset.redo){var dx=CONTRACTS.filter(function(x){return x.id===b.dataset.redo})[0];if(!dx)return;redo(dx);return}
  if(b.dataset.resend)api('admin.resend',{id:b.dataset.resend}).then(function(){$('errR').textContent='もう一度送りました。'}).catch(function(x){$('errR').textContent=x.message});
  if(b.dataset.cancel&&confirm('この契約書を取り消しますか？相手はもう開けなくなります。'))api('admin.cancel',{id:b.dataset.cancel}).then(list).catch(function(x){$('errR').textContent=x.message});
