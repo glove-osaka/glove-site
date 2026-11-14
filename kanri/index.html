@@ -182,6 +182,7 @@
 <div class="fld"><label>相手に記入してもらう項目</label><div class="chk" id="fieldChk"></div></div>
 <div class="fld"><label class="agree" for="reqId" style="padding:12px"><input type="checkbox" id="reqId"><span>本人確認書類の写真の添付を求める</span></label></div>
 <div class="fld" id="itemsBox" hidden><label>買い取る物品（品名・数量・金額・特徴）</label><div id="items"></div><button type="button" class="small-btn" id="addItem">＋ 行を足す</button></div>
+<div id="termsBox"></div>
 <div class="fld"><label for="note" id="noteLabel">特記事項</label><textarea id="note" placeholder="なければ空のまま"></textarea></div>
 <div class="fld"><label class="agree" for="draft" style="padding:12px"><input type="checkbox" id="draft"><span>下書き（確認用）として送る　※相手は内容を見るだけで、締結はできません</span></label></div>
 <p class="err" id="errI" role="alert"></p>
@@ -687,21 +688,23 @@ $('issOpen').addEventListener('click',function(){$('issBox').hidden=!$('issBox')
 $('nSave').addEventListener('click',function(){var b=this;$('errN').textContent='';b.disabled=true;
  api('admin.namesAdd',{label:$('nLabel').value,company:$('nCompany').value,shop:$('nShop').value,address:$('nAddr').value,rep:$('nRep').value,license:$('nLic').value}).then(function(r){setNames(r.names);['nLabel','nShop','nAddr','nRep','nLic'].forEach(function(id){$(id).value=''});toast('名義を追加しました')}).catch(function(e){$('errN').textContent=e.message}).then(function(){b.disabled=false})});
 $('issList').addEventListener('click',function(e){var b=e.target.closest('[data-ndel]');if(!b)return;if(!confirm('この名義を一覧から消しますか？（すでに送った契約書はそのままです）'))return;api('admin.namesDel',{key:b.dataset.ndel}).then(function(r){setNames(r.names)}).catch(function(x){$('errN').textContent=x.message})});
-var NOTE={nda:'特記事項',kaitori:'特記事項（引渡しの日時・方法など）',chosei:'費用（例：無料／1件あたり〇〇円 など）',teikei:'その他の提携条件（業務分野・対応地域など）'};
+var NOTE={nda:'特記事項',kaitori:'特記事項（引渡しの日時・方法など）',chosei:'費用（例：無料／1件あたり〇〇円 など）',teikei:'特記事項（対応地域など。なければ空のまま）'};
 function onTpl(){var t=TPL.filter(function(x){return x.key===$('tpl').value})[0];if(!t)return;
+ $('termsBox').innerHTML=(t.terms||[]).map(function(x){return '<div class="fld"><label for="tm_'+x.key+'">'+esc(x.label)+'</label><input type="text" id="tm_'+x.key+'" data-term="'+x.key+'" placeholder="'+esc(x.hint||'')+'"><p class="hint">空のままなら「'+esc(x.def)+'」と入ります。</p></div>'}).join('');
  $('fieldChk').innerHTML=Object.keys(FIELDS).map(function(k){return'<label><input type="checkbox" value="'+k+'"'+(t.defaultFields.indexOf(k)>=0?' checked':'')+(k==='name'?' checked disabled':'')+'>'+esc(FIELDS[k].label)+'</label>'}).join('');
  $('reqId').checked=!!t.requireId;$('itemsBox').hidden=!t.items;if(t.items&&!$('items').children.length)addItem();$('noteLabel').textContent=NOTE[t.key]||'特記事項';if(NAMES.some(function(n){return n.key===t.defName}))$('iss').value=t.defName;issPrev();$('pCompanyBox').hidden=false}
 $('tpl').addEventListener('change',onTpl);
 function addItem(){var d=document.createElement('div');d.className='items-row';d.innerHTML='<input placeholder="品名（例：金の指輪）"><input type="number" min="1" value="1" aria-label="数量"><input type="number" min="0" placeholder="金額（円）" aria-label="金額"><input placeholder="特徴（例：18金・約5g）"><button type="button" aria-label="この行を消す">×</button>';d.querySelector('button').onclick=function(){d.remove()};$('items').appendChild(d)}
 $('addItem').addEventListener('click',addItem);
 /* 直して出し直す：前の内容を入れた状態で作り直す（送ると前の下書きは自動で取り消し） */
-function redo(x){go('keiyaku');REPLACES=x.id;setTimeout(function(){setCustom(x.body_custom||'')},50);LINK=x.link||'';$('linkNote').hidden=false;$('linkNote').innerHTML='「'+esc(x.id)+'」を直して出し直します。送ると、前の下書きは自動で取り消しになります。'+(x.draft_comment?'<br>お客様のご意見：「'+esc(x.draft_comment)+'」':'')+'　<button type="button" class="small-btn" id="unlink">やめる</button>';
+function redo(x){go('keiyaku');REPLACES=x.id;setTimeout(function(){var tm={};try{tm=JSON.parse(x.terms||'{}')}catch(e){}Object.keys(tm).forEach(function(k){var i=document.querySelector('#termsBox [data-term="'+k+'"]');if(i)i.value=tm[k]});setCustom(x.body_custom||'')},50);LINK=x.link||'';$('linkNote').hidden=false;$('linkNote').innerHTML='「'+esc(x.id)+'」を直して出し直します。送ると、前の下書きは自動で取り消しになります。'+(x.draft_comment?'<br>お客様のご意見：「'+esc(x.draft_comment)+'」':'')+'　<button type="button" class="small-btn" id="unlink">やめる</button>';
  if(TPL.some(function(t){return t.key===x.template})){$('tpl').value=x.template;onTpl()}if(x.issuer&&NAMES.some(function(n){return n.key===x.issuer}))$('iss').value=x.issuer;var rs=document.querySelector('input[name=issStyle][value="'+(x.issuer_style==='shop'?'shop':'company')+'"]');if(rs)rs.checked=true;issPrev();$('pName').value=x.party_name||'';$('pCompany').value=x.party_company||'';$('pEmail').value=x.party_email||'';$('note').value=x.note||'';
  var fs=[];try{fs=JSON.parse(x.fields||'[]')}catch(e){}$('fieldChk').querySelectorAll('input').forEach(function(i){if(!i.disabled)i.checked=fs.indexOf(i.value)>=0});$('reqId').checked=x.require_id==='yes';
  var it=[];try{it=JSON.parse(x.items||'[]')}catch(e){}if(it.length){$('items').innerHTML='';it.forEach(function(r){addItem();var row=$('items').lastElementChild.querySelectorAll('input');row[0].value=r.name||'';row[1].value=r.qty||1;row[2].value=r.price||'';row[3].value=r.note||''})}
  $('draft').checked=false;$('pName').focus()}
 function formData(){var fields=[].map.call($('fieldChk').querySelectorAll('input:checked'),function(i){return i.value});var items=[].map.call($('items').children,function(r){var i=r.querySelectorAll('input');return{name:i[0].value.trim(),qty:+i[1].value||1,price:+i[2].value||0,note:i[3].value.trim()}}).filter(function(x){return x.name});
- return {bodyCustom:CUSTOM,template:$('tpl').value,issuer:$('iss').value,issuerStyle:issStyle(),party:{name:$('pName').value.trim(),company:$('pCompany').value.trim(),email:$('pEmail').value.trim()},fields:fields,requireId:$('reqId').checked,items:items,note:$('note').value.trim(),draft:$('draft').checked}}
+ var terms={};[].forEach.call(document.querySelectorAll('#termsBox [data-term]'),function(i){if(i.value.trim())terms[i.dataset.term]=i.value.trim()});
+ return {bodyCustom:CUSTOM,terms:terms,template:$('tpl').value,issuer:$('iss').value,issuerStyle:issStyle(),party:{name:$('pName').value.trim(),company:$('pCompany').value.trim(),email:$('pEmail').value.trim()},fields:fields,requireId:$('reqId').checked,items:items,note:$('note').value.trim(),draft:$('draft').checked}}
 var VIEWING=null,CUSTOM='',EDITABLE='';
 function setCustom(t){CUSTOM=t||'';$('customNote').hidden=!CUSTOM}
 $('customReset').addEventListener('click',function(){setCustom('');toast('直す前の文面に戻しました')});
