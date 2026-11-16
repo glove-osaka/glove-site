@@ -6,7 +6,8 @@ header('Content-Type: application/json; charset=utf-8');
 header('X-Robots-Tag: noindex, nofollow');
 header('Cache-Control: no-store');
 
-const KEY_HASH = '8973ff667fca84690b1bf98ae5d173de3721e930a2b6e38e4c4cfbd40ec19dc9';
+// 照合用の値（管理システム／相談受付フォーム）
+const KEY_HASHES = ['8973ff667fca84690b1bf98ae5d173de3721e930a2b6e38e4c4cfbd40ec19dc9', '4ddfa381378926950541884c4e25204b188ee6dc7684252157ec152b46fffca2'];
 const FROM     = 'info@bsd.osaka';
 const MAX_RCPT = 20;     // 1通あたりの宛先の上限
 const MAX_HOUR = 300;    // 1時間あたりの送信の上限
@@ -36,7 +37,9 @@ $raw = file_get_contents('php://input', false, null, 0, 25 * 1024 * 1024 + 1);
 if ($raw === false || strlen($raw) > 25 * 1024 * 1024) out(false, 'size', 413);
 $j = json_decode($raw, true);
 if (!is_array($j)) out(false, 'json', 400);
-if (strlen(KEY_HASH) !== 64 || !isset($j['key']) || !hash_equals(KEY_HASH, hash('sha256', (string)$j['key']))) {
+$okKey = false;
+if (isset($j['key'])) { $h = hash('sha256', (string)$j['key']); foreach (KEY_HASHES as $kh) { if (strlen($kh) === 64 && hash_equals($kh, $h)) { $okKey = true; } } }
+if (!$okKey) {
   usleep(400000);
   out(false, 'key', 403);
 }
