@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>提携先ページ｜企業支援 総合相談窓口</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../keiyaku/keiyaku.css">
+<style>
+.pt-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+.steps3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:700px){.steps3{grid-template-columns:1fr}}
+.inv-rows .ir{display:grid;grid-template-columns:minmax(0,2.4fr) 70px 64px minmax(0,1fr) 92px 34px;gap:6px;margin-bottom:6px;align-items:center}
+.inv-rows .ir input,.inv-rows .ir select{min-height:44px;padding:6px 8px}
+@media (max-width:700px){.inv-rows .ir{grid-template-columns:1fr 1fr;padding:10px;border:1px solid var(--line);border-radius:10px}.inv-rows .ir input:first-child{grid-column:1/-1}}
+.k-rows .kr{display:grid;grid-template-columns:minmax(0,2fr) 70px minmax(0,1fr) minmax(0,1.2fr) 34px;gap:6px;margin-bottom:6px}
+@media (max-width:700px){.k-rows .kr{grid-template-columns:1fr 1fr}.k-rows .kr input:first-child{grid-column:1/-1}}
+.sumbox{background:var(--pine-soft);border-radius:10px;padding:12px 16px;margin:10px 0;line-height:1.9}
+.sumbox b{font-size:1.2rem}
+.rowbtn{min-width:34px;min-height:40px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer}
+.sec-h3{font-size:1.15rem;margin:0 0 10px;display:flex;gap:10px;align-items:center;justify-content:space-between}
+.case-list tr{cursor:pointer}
+.badge-new{background:#C23B22;color:#fff;border-radius:999px;padding:1px 9px;font-size:.82rem;font-weight:700;margin-left:6px}
+.back{margin-bottom:14px}
+.k-rows input,.inv-rows input,.inv-rows select{min-width:0;width:100%;box-sizing:border-box}
+@media (max-width:700px){.k-rows .kr{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.inv-rows .ir{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ .tabs{position:static}.tabs button{min-height:44px;padding:0 12px;font-size:.95rem}.tabs .who{width:100%;order:-1;margin:0;padding:4px 8px}}
+.anchor-nav{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.anchor-nav a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1.5px solid var(--line);border-radius:999px;text-decoration:none;color:var(--pine);font-weight:700;background:#fff}
+</style>
+</head>
+<body class="adm">
+<div class="demo" id="demoBar" hidden>お試し表示です（この端末の中だけで動きます）</div>
+<header class="top"><div class="in"><span class="brand"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><circle cx="24" cy="24" r="22.5" stroke="currentColor" stroke-width="1.6"/><path d="M15 35V15h12v20M27 21h7v14M12 35h24M19 19h4M19 24h4M19 29h4M30 25h1M30 30h1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span><b>企業支援 総合相談窓口</b><small>提携先ページ</small></span></span></div></header>
+<nav class="tabs" id="tabs" hidden aria-label="画面の切り替え">
+<button type="button" data-v="home" class="on">案件の一覧</button><button type="button" data-v="inv">請求書</button><button type="button" data-v="set">登録番号・振込先</button>
+<span class="who" id="whoAmI"></span><button type="button" class="acct" id="helpBtn">？ 使い方</button><button type="button" class="acct" id="pwBtn">パスワード変更</button><button type="button" class="acct" id="logout">ログアウト</button>
+</nav>
+<main class="wrap" id="main">
+
+<section class="card login" id="gate" hidden>
+<h2>提携先ページにログイン</h2>
+<p class="hint">企業支援 総合相談窓口から届いたログインIDとパスワードを入れてください。</p>
+<form id="loginForm" autocomplete="on">
+<div class="fld"><label for="lid">ログインID</label><input type="text" id="lid" autocomplete="username" autocapitalize="off" spellcheck="false" required></div>
+<div class="fld"><label for="lpw">パスワード</label><input type="password" id="lpw" autocomplete="current-password" required>
+<label class="showpw"><input type="checkbox" id="lshow"> パスワードを表示する</label></div>
+<p class="err" id="errL" role="alert"></p>
+<button class="btn" type="submit" id="lbtn">ログイン</button>
+</form>
+<p class="hint">5回続けて間違えると、15分ほどログインできなくなります。パスワードを忘れたときは、企業支援 総合相談窓口（06-6355-0779）にご連絡ください。</p>
+</section>
+
+<!-- 案件の一覧 -->
+<div class="view" id="v-home" hidden>
+<section class="card todo"><h2 id="homeT">取り次がれた案件</h2><div id="todo"></div></section>
+<div class="bar"><input type="text" class="q2" id="hq" placeholder="案件番号・内容・地域で探す" aria-label="案件を探す">
+<label>状況<select id="hf"><option value="">すべて</option><option value="open">対応中</option><option value="done">完了・不成約</option></select></label></div>
+<section class="card"><div class="tbl"><table class="list case-list"><thead><tr><th>取次ぎ日</th><th>案件</th><th>地域</th><th>状況</th><th>最新の報告</th><th>次にやること</th></tr></thead><tbody id="refRows"><tr><td colspan="6">読み込み中…</td></tr></tbody></table></div>
+<p class="hint">行を押すと、案件の内容・進捗の報告・お客様への連絡・書類・契約書・請求書の画面が開きます。</p></section>
+</div>
+
+<!-- 案件の中身 -->
+<div class="view" id="v-ref" hidden>
+<p class="back"><button type="button" class="small-btn" data-v2="home">← 案件の一覧へ戻る</button></p>
+<section class="card"><h2 id="rT">案件</h2><div id="rHead"></div>
+<nav class="anchor-nav" aria-label="この案件の中の移動"><a href="#s-cust">お客様と相談の内容</a><a href="#s-prog">進捗を報告</a><a href="#s-mail">お客様に連絡</a><a href="#s-file">書類</a><a href="#s-k">電子契約</a><a href="#s-inv">請求書</a><a href="#s-log">これまでの記録</a></nav></section>
+
+<section class="card" id="s-cust"><h3 class="sec-h3">お客様と相談の内容</h3><div id="rCust"></div></section>
+
+<section class="card" id="s-prog"><h3 class="sec-h3">進捗を報告する</h3>
+<p class="hint">「大分類 → 中分類 → 小分類」の順に、今の段階を選びます。詳しいことは「内容」に書いてください。報告すると、企業支援 総合相談窓口にも届きます。</p>
+<div class="fld"><label for="pSt">状況</label><select id="pSt"></select></div>
+<div class="steps3"><div class="fld"><label for="pg1">大分類</label><select id="pg1"></select></div><div class="fld"><label for="pg2">中分類</label><select id="pg2"></select></div><div class="fld"><label for="pg3">小分類</label><select id="pg3"></select></div></div>
+<div class="fld"><label for="pNote">内容（自由に書けます）</label><textarea id="pNote" rows="4" placeholder="例：12月5日に訪問。家財は2部屋分。見積りは来週お出しする予定。"></textarea></div>
+<div class="grid"><div class="fld"><label for="pNext">次にやること</label><input type="text" id="pNext" list="nextList" placeholder="例：見積りを出す"><datalist id="nextList"><option>お客様に連絡する</option><option>訪問する</option><option>見積りを出す</option><option>お返事を待つ</option><option>契約書を送る</option><option>作業する</option><option>請求書を送る</option><option>入金を確かめる</option></datalist></div>
+<div class="fld"><label for="pNextD">予定日</label><input type="date" id="pNextD"></div></div>
+<p class="err" id="errP" role="alert"></p><button type="button" class="btn" id="pGo">報告する</button></section>
+
+<section class="card" id="s-mail"><h3 class="sec-h3">お客様に連絡する（メール）</h3>
+<p class="hint">企業支援 総合相談窓口の名前で送ります。<b>同じメールが、あなたのメールアドレスにも届きます。</b>お客様の返信は、あなたと企業支援 総合相談窓口の両方に届きます。</p>
+<div id="mailBox"></div></section>
+
+<section class="card" id="s-file"><h3 class="sec-h3">書類を登録する（契約書・見積書・写真など）</h3>
+<div class="grid"><div class="fld"><label for="fKind">書類の種類</label><select id="fKind"><option>契約書</option><option>見積書</option><option>写真</option><option>その他</option></select></div>
+<div class="fld"><label for="fFile">ファイル（PDF・写真、10MBまで）</label><input type="file" id="fFile" accept="application/pdf,image/jpeg,image/png,image/webp,image/heic"></div></div>
+<div class="fld"><label for="fMemo">メモ（あれば）</label><input type="text" id="fMemo" placeholder="例：署名済みの請負契約書"></div>
+<p class="err" id="errF" role="alert"></p><button type="button" class="btn" id="fGo">登録する</button>
+<div id="fList"></div></section>
+
+<section class="card" id="s-k"><h3 class="sec-h3">電子契約（お客様との契約）</h3>
+<p class="hint">お客様と、あなたの会社（甲）との契約書を、電子契約で送れます。お客様はメールのリンクから内容を確かめ、記入・押印・承認します。企業支援 総合相談窓口の印は押されません。</p>
+<div id="kForm"></div>
+<div id="kList"></div></section>
+
+<section class="card" id="s-inv"><h3 class="sec-h3">請求書を作る</h3>
+<div id="invForm"></div>
+<div id="invList"></div></section>
+
+<section class="card" id="s-log"><h3 class="sec-h3">これまでの記録</h3><ul class="log" id="rLog"></ul></section>
+</div>
+
+<!-- 請求書の一覧 -->
+<div class="view" id="v-inv" hidden>
+<section class="card"><h2>請求書の一覧</h2><p class="hint">請求書は、案件の画面の「請求書を作る」から作ります。</p>
+<div class="tbl"><table class="list"><thead><tr><th>番号</th><th>作った日</th><th>あて名・件名</th><th>合計（税込）</th><th>状態</th><th></th></tr></thead><tbody id="invAll"></tbody></table></div></section>
+</div>
+
+<!-- 登録番号・振込先 -->
+<div class="view" id="v-set" hidden>
+<section class="card"><h2>請求書に入れる情報</h2><p class="hint">ここに入れておくと、請求書を作るときに自動で入ります。</p>
+<div class="fld"><label for="sReg">適格請求書発行事業者の登録番号（Tから始まる13けたの番号。ない場合は空のまま）</label><input type="text" id="sReg" placeholder="T1234567890123" autocapitalize="characters"></div>
+<div class="fld"><label for="sBank">振込先（銀行名・支店名・種類・口座番号・名義）</label><textarea id="sBank" rows="3" placeholder="例：〇〇銀行 〇〇支店 普通 1234567 カ）〇〇"></textarea></div>
+<p class="err" id="errS" role="alert"></p><button type="button" class="btn" id="sGo">保存する</button>
+<h3 style="margin-top:22px">登録されている会社の情報</h3><dl class="kv" id="sInfo"></dl><p class="hint">会社名・住所・電話・メールを変えたいときは、企業支援 総合相談窓口にご連絡ください。</p></section>
+</div>
+
+<dialog id="pwDlg" class="rep" aria-labelledby="pwT"><h2 id="pwT">パスワードを変える</h2>
+<div class="fld"><label for="pwCur">今のパスワード</label><input type="password" id="pwCur" autocomplete="current-password"></div>
+<div class="fld"><label for="pwNew">新しいパスワード（英字と数字をまぜて8文字以上）</label><input type="password" id="pwNew" autocomplete="new-password"></div>
+<p class="err" id="errPw" role="alert"></p><div class="btns"><button class="btn" type="button" id="pwGo">変える</button><button class="btn o" type="button" id="pwClose">閉じる</button></div></dialog>
+
+<dialog id="helpDlg" class="rep" aria-labelledby="helpT"><h2 id="helpT">提携先ページの使い方</h2>
+<ol class="ul" style="line-height:1.9">
+<li>「案件の一覧」に、企業支援 総合相談窓口から取り次がれた案件が並びます。行を押すと中身が開きます。</li>
+<li>お客様のお名前・連絡先は、窓口がお客様の同意をいただいて送ったあとに表示されます。</li>
+<li>動きがあったら「進捗を報告する」で、大分類・中分類・小分類を選び、内容を書いて報告してください。窓口にも届きます。</li>
+<li>お客様へのメールは「お客様に連絡する」から。あなたにも同じメールが届きます。</li>
+<li>紙の契約書や見積書は「書類を登録する」でPDFや写真を登録できます。電子契約で結ぶこともできます。</li>
+<li>作業が終わったら「請求書を作る」で請求書（PDF）を作り、メールで送れます。入金を確かめたら「入金を確かめた」を押してください。</li>
+<li>完了したら、必ず「進捗を報告する」で結果を報告してください（業務提携契約書の報告義務）。</li></ol>
+<div class="btns"><button class="btn" type="button" id="helpClose">閉じる</button></div></dialog>
+
+<dialog id="viewDlg" class="rep" aria-labelledby="viewT"><h2 id="viewT">契約書</h2><div id="viewMeta"></div><pre class="kdoc" id="viewBody"></pre><p class="err" id="errV"></p>
+<div class="btns"><button class="btn" type="button" id="viewClose">閉じる</button></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</main>
+<script src="../keiyaku/config.js"></script>
+<script src="../keiyaku/api.js"></script>
+<script>
+(function(){
+var $=function(id){return document.getElementById(id)},api=window.keiyakuApi;
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function day(s){if(!s)return'';var m=String(s).match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)return(+m[2])+'/'+(+m[3]);var d=new Date(s);return isNaN(d)?esc(s):(d.getMonth()+1)+'/'+d.getDate()}
+function yen(n){return '¥'+Number(n||0).toLocaleString('ja-JP')}
+function toast(t){var e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){e.hidden=true},3000)}
+function dlg(id,open){try{open?$(id).showModal():$(id).close()}catch(e){open?$(id).setAttribute('open',''):$(id).removeAttribute('open')}}
+function today(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+function plus(n){var d=new Date();d.setDate(d.getDate()+n);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+function b64(file){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(String(r.result).split(',')[1])};r.onerror=rej;r.readAsDataURL(file)})}
+function dl(r,mime){var bin=atob(r.pdf||r.data),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);var u=URL.createObjectURL(new Blob([a],{type:mime||r.mime||'application/pdf'}));var l=document.createElement('a');l.href=u;l.download=r.filename;document.body.appendChild(l);l.click();setTimeout(function(){URL.revokeObjectURL(u);l.remove()},2000)}
+var H=null,CUR=null,PROG=[],STAT=[],TPL=[],FIELDS={};
+if(window.KEIYAKU_DEMO)$('demoBar').hidden=false;
+
+/* ---- ログイン ---- */
+$('lshow').addEventListener('change',function(){$('lpw').type=this.checked?'text':'password'});
+$('loginForm').addEventListener('submit',function(e){e.preventDefault();var b=$('lbtn');b.disabled=true;$('errL').textContent='';
+ api('admin.login',{id:$('lid').value.trim(),pass:$('lpw').value}).then(function(r){if(!r.me||r.me.r!=='partner'){keiyakuSession(r.session);location.href='../kanri/';return}keiyakuSession(r.session);$('lpw').value='';start()}).catch(function(x){$('errL').textContent=x.message}).then(function(){b.disabled=false})});
+document.addEventListener('ij-relogin',function(){showGate()});
+function showGate(){$('gate').hidden=false;$('tabs').hidden=true;document.querySelectorAll('.view').forEach(function(v){v.hidden=true})}
+$('logout').addEventListener('click',function(){api('admin.logout',{session:''}).catch(function(){});keiyakuSession('');showGate()});
+$('helpBtn').addEventListener('click',function(){dlg('helpDlg',true)});$('helpClose').addEventListener('click',function(){dlg('helpDlg',false)});
+$('pwBtn').addEventListener('click',function(){$('errPw').textContent='';dlg('pwDlg',true)});$('pwClose').addEventListener('click',function(){dlg('pwDlg',false)});
+$('pwGo').addEventListener('click',function(){api('admin.password',{current:$('pwCur').value,next:$('pwNew').value}).then(function(){dlg('pwDlg',false);$('pwCur').value=$('pwNew').value='';toast('パスワードを変えました')}).catch(function(e){$('errPw').textContent=e.message})});
+
+function go(v){document.querySelectorAll('.view').forEach(function(x){x.hidden=x.id!=='v-'+v});document.querySelectorAll('#tabs button[data-v]').forEach(function(b){b.classList.toggle('on',b.dataset.v===v||(v==='ref'&&b.dataset.v==='home'))});window.scrollTo(0,0);if(v==='home')home();if(v==='inv')home(true);if(v==='set')setView()}
+$('tabs').addEventListener('click',function(e){var b=e.target.closest('button[data-v]');if(b)go(b.dataset.v)});
+document.addEventListener('click',function(e){var b=e.target.closest('[data-v2]');if(b)go(b.dataset.v2)});
+
+function start(){$('gate').hidden=true;$('tabs').hidden=false;
+ api('admin.me').then(function(r){if(!r.me||r.me.r!=='partner'){location.href='../kanri/';return}$('whoAmI').textContent=r.me.n+'（提携先）';var f=false;try{f=!localStorage.getItem('ij-help-partner');localStorage.setItem('ij-help-partner','1')}catch(e){}go('home');if(f)dlg('helpDlg',true)}).catch(function(){showGate()});
+ api('pt.templates').then(function(r){TPL=r.templates||[];FIELDS=r.fields||{}}).catch(function(){})}
+
+/* ---- 一覧 ---- */
+var OPEN=['依頼済み','見積もり中','成約'];
+function home(invOnly){return api('pt.home').then(function(r){H=r;PROG=r.prog||[];STAT=r.statuses||[];$('homeT').textContent=r.partner.name+' さんに取り次がれた案件';drawHome();drawInvAll()}).catch(function(e){$('refRows').innerHTML='<tr><td colspan="6" class="err">'+esc(e.message)+'</td></tr>'})}
+function drawHome(){var q=$('hq').value.trim(),f=$('hf').value,t=today();
+ var L=H.refs.filter(function(r){if(q&&[r.id,r.service,r.cat1,r.cat2,r.area,r.cust].join(' ').indexOf(q)<0)return false;if(f==='open'&&OPEN.indexOf(r.status)<0)return false;if(f==='done'&&OPEN.indexOf(r.status)>=0)return false;return true});
+ var todo=[],nu=H.refs.filter(function(r){return !r.pg_updated&&OPEN.indexOf(r.status)>=0}),due=H.refs.filter(function(r){return r.pg_next_date&&r.pg_next_date<=t&&OPEN.indexOf(r.status)>=0});
+ if(nu.length)todo.push('まだ報告していない新しい案件が <b>'+nu.length+' 件</b>あります。お客様に連絡したら「進捗を報告する」で知らせてください。');
+ if(due.length)todo.push('予定日を過ぎた（または今日の）「次にやること」が <b>'+due.length+' 件</b>あります。');
+ var unpaid=(H.invoices||[]).filter(function(v){return v.status!=='入金済み'&&v.due_date&&v.due_date<t});if(unpaid.length)todo.push('支払期限を過ぎて入金の確認がない請求書が <b>'+unpaid.length+' 件</b>あります。');
+ $('todo').innerHTML=todo.length?'<ul class="ul">'+todo.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul>':'<p class="ok-msg">今すぐやることはありません。</p>';
+ $('refRows').innerHTML=L.length?L.map(function(r){return '<tr data-ref="'+esc(r.id)+'" tabindex="0"><td>'+day(r.date||r.created)+'</td><td><b>'+esc(r.service||r.cat2)+'</b>'+(!r.pg_updated&&OPEN.indexOf(r.status)>=0?'<span class="badge-new">新規</span>':'')+'<br><small>'+esc(r.id)+(r.cust?'／'+esc(r.cust)+' 様':'')+'</small></td><td><small>'+esc(r.area)+'</small></td><td><span class="tag">'+esc(r.status)+'</span></td><td><small>'+esc([r.pg1,r.pg2,r.pg3].filter(Boolean).join(' › ')||'—')+(r.pg_updated?'<br>'+day(r.pg_updated):'')+'</small></td><td><small>'+esc(r.pg_next||'')+(r.pg_next_date?'<br>'+day(r.pg_next_date):'')+'</small></td></tr>'}).join(''):'<tr><td colspan="6">'+(H.refs.length?'当てはまる案件はありません':'まだ取り次がれた案件はありません')+'</td></tr>'}
+$('hq').addEventListener('input',drawHome);$('hf').addEventListener('change',drawHome);
+$('refRows').addEventListener('click',function(e){var t=e.target.closest('[data-ref]');if(t)openRef(t.dataset.ref)});
+$('refRows').addEventListener('keydown',function(e){if(e.key==='Enter'){var t=e.target.closest('[data-ref]');if(t)openRef(t.dataset.ref)}});
+
+/* ---- 案件の中身 ---- */
+function openRef(id){go('ref');$('rT').textContent='読み込み中…';api('pt.ref',{id:id}).then(function(r){CUR=r.ref;PROG=r.prog||PROG;STAT=r.statuses||STAT;drawRef()}).catch(function(e){$('rT').textContent='開けませんでした';$('rHead').innerHTML='<p class="err">'+esc(e.message)+'</p>'})}
+function kv(k,v){return v?'<div><dt>'+esc(k)+'</dt><dd>'+esc(v).replace(/\n/g,'<br>')+'</dd></div>':''}
+function drawRef(){var r=CUR,c=r.case||{};
+ $('rT').textContent=(r.service||r.cat2||'案件')+'（'+r.id+'）';
+ $('rHead').innerHTML='<p>状況：<span class="tag">'+esc(r.status)+'</span>　取次ぎ日：'+day(r.date||r.created)+(r.pg_updated?'　最新の報告：'+day(r.pg_updated)+'（'+esc([r.pg1,r.pg2,r.pg3].filter(Boolean).join(' › '))+'）':'')+'</p>';
+ $('rCust').innerHTML=(c.sent?'':'<p class="note">お客様のお名前と連絡先は、窓口がお客様の同意をいただいて送ったあとに表示されます。しばらくお待ちください。</p>')+'<dl class="kv">'+kv('お名前',c.name?c.name+' 様':'')+kv('続柄など',c.relation)+kv('電話',c.phone)+kv('メール',c.email)+kv('ご希望の連絡方法',c.contact_pref)+kv('地域',c.area)+kv('業種',c.housing)+kv('時期',c.timing)+kv('ご相談の分野',[r.cat1,r.cat2,r.cat3].filter(Boolean).join(' › '))+kv('ご希望の内容',c.services)+kv('お悩み',c.worries)+kv('詳しい内容',c.detail)+'</dl>';
+ // 進捗
+ $('pSt').innerHTML=STAT.map(function(s){return '<option'+(s===r.status?' selected':'')+'>'+esc(s)+'</option>'}).join('');
+ fillSel('pg1',PROG.map(function(x){return x[0]}),r.pg1);onPg1(r.pg2,r.pg3);$('pNote').value='';$('pNext').value=r.pg_next||'';$('pNextD').value=r.pg_next_date||'';$('errP').textContent='';
+ // メール
+ $('mailBox').innerHTML=c.sent&&c.email?'<div class="fld"><label>あて先</label><p><b>'+esc(c.name)+' 様</b>（'+esc(c.email)+'）</p></div><div class="fld"><label for="mTpl">文面のひな形（選ぶと下に入ります）</label><select id="mTpl"><option value="">選ばない</option><option value="first">はじめてのご連絡</option><option value="visit">訪問日のご相談</option><option value="est">お見積りのご案内</option><option value="done">作業完了のご報告</option><option value="thanks">お礼</option></select></div><div class="fld"><label for="mSub">件名</label><input type="text" id="mSub"></div><div class="fld"><label for="mBody">本文</label><textarea id="mBody" rows="10"></textarea></div><p class="hint">本文の最後に、あなたの会社名・電話・メールと、企業支援 総合相談窓口の連絡先が自動で付きます。</p><p class="err" id="errM" role="alert"></p><button type="button" class="btn" id="mGo">送る</button>':
+  '<p class="hint">'+(c.sent?'お客様のメールアドレスが登録されていません。お電話（'+esc(c.phone||'窓口にお問い合わせください')+'）でご連絡ください。':'お客様の情報が窓口から届いたあとに、メールを送れるようになります。')+'</p>';
+ if($('mTpl'))$('mTpl').addEventListener('change',mailTpl);if($('mGo'))$('mGo').addEventListener('click',sendMail);
+ // 書類
+ $('fList').innerHTML=r.files&&r.files.length?'<h4 style="margin:18px 0 6px">登録した書類</h4><ul class="ul">'+r.files.slice().reverse().map(function(f){return '<li>'+esc(f.kind)+'「'+esc(f.name)+'」<small>（'+esc(f.t)+'）'+(f.memo?esc(f.memo):'')+'</small> <button type="button" class="small-btn" data-fid="'+esc(f.fid)+'">保存する</button></li>'}).join('')+'</ul>':'';
+ kForm();kList();invForm();invList();
+ $('rLog').innerHTML=(r.log||[]).length?r.log.map(function(x){return '<li><small>'+esc(x.t)+'　'+esc(x.by||'')+'　'+esc(x.type||'')+'</small>'+esc(x.text||x.ev||'').replace(/\n/g,'<br>')+'</li>'}).join(''):'<li>まだ記録はありません。</li>'}
+function fillSel(id,list,cur){$(id).innerHTML='<option value="">選んでください</option>'+list.map(function(x){return '<option'+(x===cur?' selected':'')+'>'+esc(x)+'</option>'}).join('')}
+function onPg1(c2,c3){var a=PROG.filter(function(x){return x[0]===$('pg1').value})[0];fillSel('pg2',a?a[1].map(function(x){return x[0]}):[],c2);onPg2(c3)}
+function onPg2(c3){var a=PROG.filter(function(x){return x[0]===$('pg1').value})[0],b=a?a[1].filter(function(x){return x[0]===$('pg2').value})[0]:null;fillSel('pg3',b?b[1]:[],c3)}
+var AUTO={'見積り':'見積もり中','見送り':'不成約'},AUTO3={'契約した':'成約','作業日が決まった':'成約','作業中':'成約','作業を終えた':'成約','入金を確かめた':'完了','作業が完了した':'完了','お客様に確認していただいた':'完了','断られた':'不成約','契約を取りやめた':'不成約'};
+$('pg1').addEventListener('change',function(){onPg1();var s=AUTO[$('pg1').value];if(s)$('pSt').value=s});
+$('pg2').addEventListener('change',function(){onPg2()});
+$('pg3').addEventListener('change',function(){var s=AUTO3[$('pg3').value];if(s)$('pSt').value=s});
+$('pGo').addEventListener('click',function(){var b=this;$('errP').textContent='';b.disabled=true;
+ api('pt.progress',{id:CUR.id,status:$('pSt').value,pg1:$('pg1').value,pg2:$('pg2').value,pg3:$('pg3').value,note:$('pNote').value,next:$('pNext').value,next_date:$('pNextD').value}).then(function(){toast('報告しました。企業支援 総合相談窓口にも届きました');openRef(CUR.id)}).catch(function(e){$('errP').textContent=e.message}).then(function(){b.disabled=false})});
+function mailTpl(){var c=CUR.case||{},n=(c.name||'')+' 様',me=H?H.partner.name:'',T={
+ first:['はじめてのご連絡','\n'+n+'\n\n企業支援 総合相談窓口からご紹介いただきました、'+me+'です。\nこのたびはご相談いただき、ありがとうございます。\n\nご依頼の内容を詳しくうかがいたく、ご連絡いたしました。\nご都合のよい日時を、いくつかお知らせいただけますでしょうか。\n\nどうぞよろしくお願いいたします。'],
+ visit:['ご訪問の日程について','\n'+n+'\n\n'+me+'です。\n現地を拝見するため、ご訪問の日程をご相談させてください。\n\n候補日\n・\n・\n\nご都合のよい日をお知らせください。'],
+ est:['お見積りのご案内','\n'+n+'\n\n'+me+'です。\n先日はありがとうございました。お見積りをお送りします。\n\n（お見積りの内容）\n\nご不明な点やご希望があれば、お気軽にお知らせください。'],
+ done:['作業完了のご報告','\n'+n+'\n\n'+me+'です。\n本日、ご依頼の作業が完了しましたので、ご報告いたします。\n\n（作業の内容）\n\nお気づきの点があれば、お知らせください。'],
+ thanks:['ありがとうございました','\n'+n+'\n\n'+me+'です。\nこのたびはご依頼いただき、誠にありがとうございました。\nまた何かございましたら、お気軽にご相談ください。']}[this.value];
+ if(T){$('mSub').value=T[0];$('mBody').value=T[1].replace(/^\n/,'')}}
+function sendMail(){var c=CUR.case||{};if(!$('mSub').value.trim()||!$('mBody').value.trim()){$('errM').textContent='件名と本文を入れてください';return}
+ if(!confirm(c.name+' 様（'+c.email+'）に、このメールを送ります。あなたにも同じメールが届きます。よろしいですか？'))return;
+ var b=$('mGo');b.disabled=true;$('errM').textContent='';api('pt.mail',{id:CUR.id,to:c.email,subject:$('mSub').value,body:$('mBody').value}).then(function(){toast('送りました');openRef(CUR.id)}).catch(function(e){$('errM').textContent=e.message}).then(function(){b.disabled=false})}
+$('fGo').addEventListener('click',function(){var f=$('fFile').files[0];$('errF').textContent='';if(!f){$('errF').textContent='ファイルを選んでください';return}if(f.size>10*1024*1024){$('errF').textContent='ファイルが大きすぎます（10MBまで）';return}
+ var b=this;b.disabled=true;b64(f).then(function(d){return api('pt.upload',{id:CUR.id,kind:$('fKind').value,name:f.name,mime:f.type,data:d,memo:$('fMemo').value})}).then(function(){toast('登録しました');$('fFile').value='';$('fMemo').value='';openRef(CUR.id)}).catch(function(e){$('errF').textContent=e.message}).then(function(){b.disabled=false})});
+document.addEventListener('click',function(e){var b=e.target.closest('[data-fid]');if(b)api('pt.file',{fid:b.dataset.fid}).then(function(r){dl(r,r.mime)}).catch(function(x){toast(x.message)})});
+
+/* ---- 電子契約 ---- */
+function kForm(){var c=CUR.case||{},t=TPL[0];if(!t){$('kForm').innerHTML='<p class="hint">契約書のひな形を読み込めませんでした。</p>';return}
+ if(!c.sent){$('kForm').innerHTML='<p class="hint">お客様の情報が窓口から届いたあとに、電子契約を送れます。</p>';return}
+ $('kForm').innerHTML='<div class="fld"><label for="kTpl">契約書の種類</label><select id="kTpl">'+TPL.map(function(x){return '<option value="'+x.key+'">'+esc(x.title)+'</option>'}).join('')+'</select></div>'+
+ '<div class="grid"><div class="fld"><label for="kName">お客様のお名前</label><input type="text" id="kName" value="'+esc(c.name||'')+'"></div><div class="fld"><label for="kEmail">お客様のメールアドレス</label><input type="email" id="kEmail" value="'+esc(c.email||'')+'"></div></div>'+
+ '<div class="fld"><label>作業の内容と代金（1行に1つ。金額は税込で入れてください）</label><div class="k-rows" id="kRows"></div><button type="button" class="small-btn" id="kAdd">＋ 行を足す</button></div>'+
+ '<div id="kTerms"></div><div class="fld"><label for="kNote">特記事項（なければ空のまま）</label><textarea id="kNote" rows="3"></textarea></div>'+
+ '<div class="fld"><label>お客様に記入してもらう項目</label><div class="chk" id="kFields"></div></div>'+
+ '<label class="agree"><input type="checkbox" id="kDraft"><span>まず下書き（確認用）として送る</span></label>'+
+ '<p class="hint">訪問販売などに当たる場合のクーリング・オフその他の法律で決められた記載は、あなたの会社の責任で「特記事項」に入れてください。</p>'+
+ '<p class="err" id="errK" role="alert"></p><button type="button" class="btn o" id="kPrev">送る前に契約書を見る</button> <button type="button" class="btn" id="kGo">電子契約を送る</button>';
+ kRow();kTerms();
+ $('kAdd').addEventListener('click',function(){kRow()});$('kTpl').addEventListener('change',kTerms);
+ $('kPrev').addEventListener('click',function(){$('errK').textContent='';api('pt.preview',kData()).then(function(r){$('viewT').textContent='送る前の確認：'+r.title;$('viewMeta').innerHTML='<p class="note">まだ送っていません。お客様には、このように見えます。</p>';$('viewBody').textContent=r.body;dlg('viewDlg',true)}).catch(function(e){$('errK').textContent=e.message})});
+ $('kGo').addEventListener('click',function(){var d=kData();if(!d.party.name||!d.party.email){$('errK').textContent='お客様のお名前とメールアドレスを入れてください';return}if(!d.items.length&&!d.draft){$('errK').textContent='作業の内容と代金を1行以上入れてください';return}
+  if(!confirm(d.party.name+' 様（'+d.party.email+'）に、電子契約を送ります。よろしいですか？'))return;var b=this;b.disabled=true;$('errK').textContent='';
+  api('pt.issue',d).then(function(r){toast('電子契約を送りました（'+r.id+'）');openRef(CUR.id)}).catch(function(e){$('errK').textContent=e.message}).then(function(){b.disabled=false})})}
+function kRow(){var d=document.createElement('div');d.className='kr';d.innerHTML='<input type="text" placeholder="作業の内容（例：家財整理 2部屋）" aria-label="作業の内容"><input type="number" min="1" value="1" aria-label="数量"><input type="number" min="0" step="1" placeholder="金額（その行の合計・円）" aria-label="金額"><input type="text" placeholder="メモ" aria-label="メモ"><button type="button" class="rowbtn" aria-label="この行を消す">×</button>';d.lastChild.addEventListener('click',function(){d.remove()});$('kRows').appendChild(d)}
+function kTerms(){var t=TPL.filter(function(x){return x.key===$('kTpl').value})[0]||TPL[0];$('kTerms').innerHTML=(t.terms||[]).map(function(x){return '<div class="fld"><label for="kt_'+x.key+'">'+esc(x.label)+'</label><input type="text" id="kt_'+x.key+'" data-term="'+x.key+'" placeholder="'+esc(x.hint||'')+'"><p class="hint">空のままなら「'+esc(x.def)+'」と入ります。</p></div>'}).join('');
+ var df=t.defaultFields||['name'];$('kFields').innerHTML=Object.keys(FIELDS).filter(function(k){return ['name','kana','address','phone','birth'].indexOf(k)>=0}).map(function(k){return '<label><input type="checkbox" value="'+k+'"'+(df.indexOf(k)>=0?' checked':'')+(k==='name'?' disabled':'')+'> '+esc(FIELDS[k].label)+'</label>'}).join('')}
+function kData(){var items=[].map.call($('kRows').children,function(r){var i=r.querySelectorAll('input');return{name:i[0].value.trim(),qty:+i[1].value||1,price:+i[2].value||0,note:i[3].value.trim()}}).filter(function(x){return x.name});
+ var terms={};[].forEach.call(document.querySelectorAll('#kTerms [data-term]'),function(i){if(i.value.trim())terms[i.dataset.term]=i.value.trim()});
+ var fields=['name'].concat([].map.call(document.querySelectorAll('#kFields input:checked:not([disabled])'),function(i){return i.value}));
+ return {ref_id:CUR.id,template:$('kTpl').value,party:{name:$('kName').value.trim(),email:$('kEmail').value.trim()},items:items,terms:terms,note:$('kNote').value.trim(),fields:fields,draft:$('kDraft').checked}}
+function kList(){var L=CUR.contracts||[];$('kList').innerHTML=L.length?'<h4 style="margin:18px 0 6px">この案件の契約書</h4><div class="tbl"><table class="list"><thead><tr><th>番号</th><th>契約書</th><th>状態</th><th></th></tr></thead><tbody>'+L.map(function(k){return '<tr><td>'+esc(k.id)+'<br><small>'+day(k.created)+'</small></td><td>'+esc(k.title)+'<br><small>'+esc(k.party)+' 様</small></td><td><span class="tag">'+esc(k.draft==='yes'&&k.status!=='取り消し'?'下書き':k.status)+'</span>'+(k.signed?'<br><small>'+day(k.signed)+' 締結</small>':'')+'</td><td><button type="button" class="small-btn" data-kv="'+esc(k.id)+'">見る</button>'+(k.hasPdf?'<button type="button" class="small-btn" data-kp="'+esc(k.id)+'">PDFを保存</button>':k.status!=='取り消し'?'<button type="button" class="small-btn" data-kr="'+esc(k.id)+'">もう一度送る</button><button type="button" class="small-btn" data-kc="'+esc(k.id)+'">取り消す</button>':'')+'</td></tr>'}).join('')+'</tbody></table></div>':''}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-kv],[data-kp],[data-kr],[data-kc]');if(!b)return;
+ if(b.dataset.kv)api('pt.kview',{id:b.dataset.kv}).then(function(r){$('viewT').textContent=r.title;$('viewMeta').innerHTML='<p class="hint">番号：'+esc(r.id)+'　状態：'+esc(r.status)+'</p>';$('viewBody').textContent=r.body;dlg('viewDlg',true)}).catch(function(x){toast(x.message)});
+ if(b.dataset.kp)api('pt.kpdf',{id:b.dataset.kp}).then(function(r){dl(r)}).catch(function(x){toast(x.message)});
+ if(b.dataset.kr)api('pt.kresend',{id:b.dataset.kr}).then(function(){toast('もう一度送りました')}).catch(function(x){toast(x.message)});
+ if(b.dataset.kc&&confirm('この契約書を取り消しますか？お客様はもう開けなくなります。'))api('pt.kcancel',{id:b.dataset.kc}).then(function(){toast('取り消しました');openRef(CUR.id)}).catch(function(x){toast(x.message)})});
+$('viewClose').addEventListener('click',function(){dlg('viewDlg',false)});
+
+/* ---- 請求書 ---- */
+function invForm(){var c=CUR.case||{},p=H?H.partner:{};
+ $('invForm').innerHTML='<p class="hint">単価は<b>税抜</b>で入れてください。消費税は税率ごとに自動で計算します（1円未満は切り捨て）。</p>'+
+ '<div class="grid"><div class="fld"><label for="iTo">あて名</label><input type="text" id="iTo" value="'+esc(c.name||'')+'" placeholder="お客様のお名前"></div><div class="fld"><label for="iMail">送り先のメールアドレス</label><input type="email" id="iMail" value="'+esc(c.email||'')+'"></div></div>'+
+ '<div class="fld"><label for="iSub">件名</label><input type="text" id="iSub" value="'+esc((CUR.service||'作業')+'の代金')+'"></div>'+
+ '<div class="grid"><div class="fld"><label for="iDate">請求日</label><input type="date" id="iDate" value="'+today()+'"></div><div class="fld"><label for="iDue">お支払期限</label><input type="date" id="iDue" value="'+plus(14)+'"></div></div>'+
+ '<div class="fld"><label>明細（品目・数量・単位・単価〈税抜〉・税率）</label><div class="inv-rows" id="iRows"></div><button type="button" class="small-btn" id="iAdd">＋ 行を足す</button></div>'+
+ '<div class="sumbox" id="iSum"></div>'+
+ '<div class="fld"><label for="iBank">振込先</label><textarea id="iBank" rows="2">'+esc(p.bank||'')+'</textarea></div>'+
+ '<div class="fld"><label for="iReg">登録番号（ない場合は空のまま）</label><input type="text" id="iReg" value="'+esc(p.reg_no||'')+'" placeholder="T1234567890123"></div>'+
+ '<div class="fld"><label for="iNote">備考</label><textarea id="iNote" rows="2" placeholder="例：お振込手数料はご負担ください"></textarea></div>'+
+ '<label class="agree"><input type="checkbox" id="iSave" checked><span>振込先と登録番号を、次の請求書でも使う</span></label>'+
+ '<label class="agree"><input type="checkbox" id="iSend"><span>作ったら、すぐにお客様へメールで送る（あなたにも届きます）</span></label>'+
+ '<p class="err" id="errI" role="alert"></p><button type="button" class="btn" id="iGo">請求書を作る</button>';
+ iRow();$('iAdd').addEventListener('click',function(){iRow()});$('iGo').addEventListener('click',makeInv);calc()}
+function iRow(){var d=document.createElement('div');d.className='ir';d.innerHTML='<input type="text" placeholder="品目（例：申請書類の作成 一式）" aria-label="品目"><input type="number" min="0" step="any" value="1" aria-label="数量"><input type="text" placeholder="単位" aria-label="単位"><input type="number" min="0" step="1" placeholder="単価（税抜）" aria-label="単価"><select aria-label="税率"><option value="10">10%</option><option value="8">8%（軽減）</option><option value="0">対象外</option></select><button type="button" class="rowbtn" aria-label="この行を消す">×</button>';
+ d.querySelector('button').addEventListener('click',function(){d.remove();calc()});d.addEventListener('input',calc);d.addEventListener('change',calc);$('iRows').appendChild(d)}
+function iItems(){return [].map.call($('iRows').children,function(r){var i=r.querySelectorAll('input'),s=r.querySelector('select');return{name:i[0].value.trim(),qty:+i[1].value||0,unit:i[2].value.trim(),price:Math.round(+i[3].value||0),rate:+s.value}}).filter(function(x){return x.name})}
+function calc(){var L=iItems(),b10=0,b8=0,sub=0;L.forEach(function(x){var a=Math.round(x.qty*x.price);sub+=a;if(x.rate===10)b10+=a;if(x.rate===8)b8+=a});var t10=Math.floor(b10*0.1),t8=Math.floor(b8*0.08);
+ $('iSum').innerHTML='小計（税抜）：'+yen(sub)+(b10?'<br>10%対象：'+yen(b10)+'　消費税：'+yen(t10):'')+(b8?'<br>8%対象：'+yen(b8)+'　消費税：'+yen(t8):'')+'<br>ご請求金額（税込）：<b>'+yen(sub+t10+t8)+'</b>'}
+function makeInv(){var items=iItems();$('errI').textContent='';if(!items.length){$('errI').textContent='明細を1行以上入れてください';return}if(!$('iTo').value.trim()){$('errI').textContent='あて名を入れてください';return}
+ var send=$('iSend').checked;if(send&&!confirm($('iTo').value+' 様（'+$('iMail').value+'）に、請求書をメールで送ります。よろしいですか？'))return;
+ var b=$('iGo');b.disabled=true;api('pt.invoice',{ref_id:CUR.id,to_name:$('iTo').value,to_email:$('iMail').value,subject:$('iSub').value,issue_date:$('iDate').value,due_date:$('iDue').value,items:items,bank:$('iBank').value,reg_no:$('iReg').value,note:$('iNote').value,saveDefaults:$('iSave').checked,send:send})
+ .then(function(r){toast('請求書を作りました（'+r.id+'）'+(send?'。お客様に送りました':''));openRef(CUR.id);home()}).catch(function(e){$('errI').textContent=e.message}).then(function(){b.disabled=false})}
+function invRows(L,withRef){return L.map(function(v){return '<tr><td>'+esc(v.id)+(withRef?'<br><small>'+esc(v.ref_id)+'</small>':'')+'</td><td>'+day(v.created)+'</td><td>'+esc(v.to_name)+' 様<br><small>'+esc(v.subject)+'</small></td><td><b>'+yen(v.total)+'</b>'+(v.due_date?'<br><small>期限 '+day(v.due_date)+'</small>':'')+'</td><td><span class="tag">'+esc(v.status)+'</span></td><td><button type="button" class="small-btn" data-ip="'+esc(v.id)+'">PDFを保存</button>'+(v.status==='作成済み'?'<button type="button" class="small-btn" data-is="'+esc(v.id)+'">メールで送る</button>':'')+(v.status!=='入金済み'?'<button type="button" class="small-btn" data-ipd="'+esc(v.id)+'">入金を確かめた</button>':'')+'</td></tr>'}).join('')}
+function invList(){var L=CUR.invoices||[];$('invList').innerHTML=L.length?'<h4 style="margin:18px 0 6px">この案件の請求書</h4><div class="tbl"><table class="list"><thead><tr><th>番号</th><th>作った日</th><th>あて名・件名</th><th>合計</th><th>状態</th><th></th></tr></thead><tbody>'+invRows(L)+'</tbody></table></div>':''}
+function drawInvAll(){var L=(H&&H.invoices)||[];$('invAll').innerHTML=L.length?invRows(L,true):'<tr><td colspan="6">まだ請求書はありません</td></tr>'}
+document.addEventListener('click',function(e){var b=e.target.closest('[data-ip],[data-is],[data-ipd]');if(!b)return;
+ if(b.dataset.ip)api('pt.invpdf',{id:b.dataset.ip}).then(function(r){dl(r)}).catch(function(x){toast(x.message)});
+ if(b.dataset.is&&confirm('この請求書を、お客様にメールで送ります。よろしいですか？'))api('pt.invsend',{id:b.dataset.is}).then(function(){toast('送りました');refresh()}).catch(function(x){toast(x.message)});
+ if(b.dataset.ipd&&confirm('入金を確かめた、として記録します。よろしいですか？'))api('pt.invpaid',{id:b.dataset.ipd}).then(function(){toast('入金済みにしました');refresh()}).catch(function(x){toast(x.message)})});
+function refresh(){home();if(CUR&&!$('v-ref').hidden)openRef(CUR.id)}
+
+/* ---- 設定 ---- */
+function setView(){var go2=function(){var p=H.partner;$('sReg').value=p.reg_no||'';$('sBank').value=p.bank||'';$('sInfo').innerHTML=kv('会社名',p.name)+kv('ご担当者',p.person)+kv('住所',p.address)+kv('電話',p.phone)+kv('メール',p.email)};if(H)go2();else home().then(go2)}
+$('sGo').addEventListener('click',function(){$('errS').textContent='';api('pt.profile',{reg_no:$('sReg').value,bank:$('sBank').value}).then(function(){toast('保存しました');home()}).catch(function(e){$('errS').textContent=e.message})});
+
+if(window.keiyakuHasSession&&keiyakuHasSession())start();else showGate();
+})();
+</script>
+</body>
+</html>

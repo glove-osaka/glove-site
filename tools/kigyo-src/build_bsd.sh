@@ -9,7 +9,7 @@ sed -i "s#open('/home/claude/kigyo/dist/kigyo-soudan.html'#open(os.path.join(os.
 python3 "$T/build.py" >/dev/null
 SITE_URL=https://bsd.osaka/ OUT_DIR="$R/sites/bsd.osaka" python3 "$T/wrap.py"
 python3 "$T/paths.py" "$R/sites/bsd.osaka" https://bsd.osaka/
-cp tools/kigyo-src/kanri/index.html sites/bsd.osaka/kanri/index.html
-cp tools/kigyo-src/kyoryoku/index.html sites/bsd.osaka/kyoryoku/index.html
+# 管理画面・提携の申込み・電子契約・提携先ページ（家じまいの仕組みを手本にした「企業支援 管理」につながる）
+for d in kanri kyoryoku keiyaku teikei api assets; do mkdir -p sites/bsd.osaka/$d; cp -r tools/kigyo-src/$d/. sites/bsd.osaka/$d/; done
 rm -rf "$T"
 echo "できあがり：sites/bsd.osaka"

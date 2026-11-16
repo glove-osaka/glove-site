@@ -1,4 +1,7 @@
 User-agent: *
 Disallow: /kanri/
 Disallow: /kyoryoku/
+Disallow: /keiyaku/
+Disallow: /teikei/
+Disallow: /api/
 Sitemap: https://bsd.osaka/sitemap.xml
