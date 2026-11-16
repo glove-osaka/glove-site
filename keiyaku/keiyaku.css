@@ -193,3 +193,5 @@ pre.kdoc{white-space:pre-wrap;font-family:"Hiragino Mincho ProN","Yu Mincho","BI
 .btn.ghost{background:#fff;color:#1D4A3D;border:2px solid #1D4A3D}
 textarea.kdoc{width:100%;height:40vh;max-height:40vh;resize:vertical;box-sizing:border-box}
 #viewDlg{max-height:92vh;overflow:auto}
+
+@media(max-width:480px){.tel{flex-wrap:wrap;gap:2px 8px;padding:6px 12px;max-width:100%;box-sizing:border-box}.tel small{white-space:normal}}
