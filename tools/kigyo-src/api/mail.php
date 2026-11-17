@@ -6,8 +6,8 @@ header('Content-Type: application/json; charset=utf-8');
 header('X-Robots-Tag: noindex, nofollow');
 header('Cache-Control: no-store');
 
-// 照合用の値（管理システム／相談受付フォーム）
-const KEY_HASHES = ['8973ff667fca84690b1bf98ae5d173de3721e930a2b6e38e4c4cfbd40ec19dc9', '4ddfa381378926950541884c4e25204b188ee6dc7684252157ec152b46fffca2'];
+// 照合用の値（管理システム。相談受付フォームのメールも管理システム経由で送る）
+const KEY_HASHES = ['8973ff667fca84690b1bf98ae5d173de3721e930a2b6e38e4c4cfbd40ec19dc9'];
 const FROM     = 'info@bsd.osaka';
 const MAX_RCPT = 20;     // 1通あたりの宛先の上限
 const MAX_HOUR = 300;    // 1時間あたりの送信の上限
