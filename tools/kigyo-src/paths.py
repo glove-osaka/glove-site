@@ -2,7 +2,7 @@
 """企業支援サイト：1つの index.html から、ページごとの本当の住所（/services/subsidy/ など）を書き出す。
 検索エンジンが分野・場面ごとのページを見つけられるようにするため。見た目と動きは同じ。
 使い方：python3 paths.py <出力先（sites/bsd.osaka）> <サイトの住所 https://bsd.osaka/>"""
-import sys, os, re, html, datetime
+import sys, os, re, html, datetime, json
 OUT, URL = sys.argv[1], sys.argv[2].rstrip('/')
 src = open(os.path.join(OUT, 'index.html'), encoding='utf-8').read()
 ids = re.findall(r'<section class="page" data-p="([^"]+)"', src)
@@ -19,7 +19,7 @@ for a, b in [('"hojokin/"', '"/hojokin/"'), ('"kanri/"', '"/kanri/"'), ("'kanri/
 # 2) ページへのリンクを本当の住所に（ページの中の見出しへのリンクはそのまま）
 s = re.sub(r'href="#([a-z0-9-]+)"', lambda m: f'href="{P[m.group(1)]}"' if m.group(1) in P else m.group(0), s)
 # 3) 住所で動かす合図
-s = s.replace('<script>const SITE_DATA=', '<script>window.KG_PATHS=1;</script>\n<script>const SITE_DATA=', 1)
+s = s.replace('<script>const SITE_DATA=', '<script>window.KG_PATHS=1;window.KG_ALL=' + json.dumps(P) + ';</script>\n<script>const SITE_DATA=', 1)
 assert 'window.KG_PATHS=1' in s
 # 各ページの説明文（見出しの下の文）
 def lead(i, sec):
@@ -46,6 +46,11 @@ for i in ids:
         t = t.replace(f'<meta name="description" content="{desc0}">', f'<meta name="description" content="{de}">', 1)
         t = t.replace(f'<meta property="og:description" content="{desc0}">', f'<meta property="og:description" content="{de}">', 1)
         t = re.sub(r'<meta property="og:title" content="[^"]*">', f'<meta property="og:title" content="{e}">', t, count=1)
+    # 検索サイトに「同じ内容のページ」と見られないよう、そのページの文章だけを残す（4つの質問と相談のまとめは、どのページからも使えるよう残す）
+    keep = {i, 'diagnosis', 'contact'}
+    def cut(m):
+        return m.group(0) if m.group(1) in keep else ''
+    t = re.sub(r'<section class="page" data-p="([^"]+)".*?</section><!--/page-->', cut, t, flags=re.S)
     u = URL + P[i]
     t = re.sub(r'<link rel="canonical" href="[^"]*">', f'<link rel="canonical" href="{u}">', t, count=1)
     t = re.sub(r'<meta property="og:url" content="[^"]*">', f'<meta property="og:url" content="{u}">', t, count=1)
@@ -59,3 +64,20 @@ extra = [URL + '/hojokin/'] if os.path.exists(os.path.join(OUT, 'hojokin', 'inde
 sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{u}</loc><lastmod>{today}</lastmod></url>\n' for u in urls + extra) + '</urlset>\n'
 open(os.path.join(OUT, 'sitemap.xml'), 'w', encoding='utf-8').write(sm)
 print('pages', len(urls) + len(extra))
+
+# 見つからないページ（住所の打ち間違いなど）：案内とボタンを出す。検索には出さない
+t = s
+t = re.sub(r'<section class="page" data-p="([^"]+)".*?</section><!--/page-->', lambda m: m.group(0) if m.group(1) in ('diagnosis', 'contact') else '', t, flags=re.S)
+nf = ('<section class="page" data-p="notfound" data-title="ページが見つかりません｜企業支援 総合相談窓口">'
+      '<section class="sec"><div class="wrap narrow" style="padding:56px 16px;text-align:center">'
+      '<h1>ページが見つかりません</h1><p>お探しのページは、住所が変わったか、なくなった可能性があります。<br>下のボタンからお進みください。</p>'
+      '<div class="btns" style="justify-content:center;margin-top:24px"><a class="btn btn-p" href="/">トップページへ</a>'
+      '<a class="btn btn-g" href="/contact/">相談内容をまとめる</a><a class="btn btn-o" href="/situations/">困りごとから探す</a></div>'
+      '</div></section></section><!--/page-->')
+t = t.replace('<section class="page" data-p="diagnosis"', nf + '<section class="page" data-p="diagnosis"', 1)
+assert 'data-p="notfound"' in t
+t = re.sub(r'<title>.*?</title>', '<title>ページが見つかりません｜企業支援 総合相談窓口</title>', t, count=1)
+t = re.sub(r'<link rel="canonical" href="[^"]*">', '', t, count=1)
+t = t.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<meta name="robots" content="noindex">', 1)
+open(os.path.join(OUT, '404.html'), 'w', encoding='utf-8').write(t)
+print('404.html')

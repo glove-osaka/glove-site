@@ -80,7 +80,7 @@ def fold(title, body, icon=None, sub="", cls="", open_=False, desk=False):
             f'<span class="fold-k" aria-hidden="true"></span></summary><div class="fold-b">{body}</div></details>')
 
 def page(pid, title, body):
-    return f'<section class="page" data-p="{pid}" data-title="{E(title)}" hidden>{body}</section>'
+    return f'<section class="page" data-p="{pid}" data-title="{E(title)}" hidden>{body}</section><!--/page-->'
 
 CTA = ('<section class="cta-band"><div class="wrap"><div><h2>会社の困りごとは、まずここへ。</h2>'
        '<p>分野が分からない段階でも構いません。内容を整理して、適切な専門家・提携先へおつなぎします。</p></div>'
@@ -115,7 +115,7 @@ def top():
 <span class="lbl">企業向けの総合相談窓口</span>
 <h1>許可、補助金、資金、人。<br><span>会社の困りごと</span>を、<br>ひとつの窓口で。</h1>
 <p class="lead">何から相談すればよいか分からない段階から、内容を整理し、提携行政書士をはじめとする専門家・提携事業者へおつなぎします。</p>
-<ul class="hero-tags"><li>初回相談無料</li><li>全国対応・Zoom相談可</li><li>平日10:00〜18:00</li><li>契約は電子契約で来社不要</li></ul>
+<ul class="hero-tags"><li>初回相談無料</li><li>全国対応・オンライン相談可</li><li>平日10:00〜18:00</li><li>契約は電子契約で来社不要</li></ul>
 <div class="btns"><a class="btn btn-g" href="#contact">{ic("pen")}相談内容をまとめる</a><a class="btn btn-w" href="#t-scenes">{ic("chat")}よくある相談場面を見る</a></div>
 </div></div></section>
 <section class="sec"><div class="wrap entry">
@@ -311,9 +311,9 @@ def faqp():
 
 def company():
     rows = [("窓口の名称", SITE["name"]), ("英語表記", f'{SITE["en"]}（BSD）'), ("運営会社", f'{SITE["company"]}（GLOVE）'), ("代表取締役", SITE["rep"]), ("設立", SITE["founded"]),
-            ("所在地", SITE["addr"]), ("電話", SITE["tel"]), ("FAX", SITE["fax"]), ("メール", SITE["mail"]),
+            ("所在地", SITE["addr"]), ("電話", SITE["tel"]), ("ファクス", SITE["fax"]), ("メール", SITE["mail"]),
             ("許認可", SITE["kobutsu"]),
-            ("受付時間", SITE["hours"]), ("対応地域", "全国（遠方の方はZoomによるWeb相談）"), ("相談料", "初回のご相談は無料")]
+            ("受付時間", SITE["hours"]), ("対応地域", "全国（遠方の方は画面越しのオンライン面談）"), ("相談料", "初回のご相談は無料")]
     def cell(k, v):
         if k == "電話": return f'<a href="tel:{v.replace("-","")}">{E(v)}</a>'
         if k == "メール": return f'<a href="mailto:{v}">{E(v)}</a>'
@@ -321,10 +321,8 @@ def company():
     tbl = ''.join(f'<tr><th scope="row">{E(k)}</th><td>{cell(k, v)}</td></tr>' for k, v in rows)
     body = ph("運営会社", f'{SITE["name"]}は、{SITE["company"]}が運営しています。', "building", [("運営会社", None)])
     body += f'''<section class="sec"><div class="wrap narrow"><div class="tbl-wrap"><table class="info"><tbody>{tbl}</tbody></table></div>
-<h2 class="h2s">グループの相談窓口</h2><div class="rel">
+<h2 class="h2s">運営会社の公式サイト</h2><div class="rel">
 <a href="https://glove-japan.com/" target="_blank" rel="noopener">{ic("building")}<b>{E(SITE["company"])}</b><span class="fine">会社の公式サイト（別の画面で開きます）</span></a>
-<a href="https://iejimai123.jp/" target="_blank" rel="noopener">{ic("hand")}<b>家じまい相談窓口</b><span class="fine">家財・住まい・相続・身元保証の相談（別の画面で開きます）</span></a>
-<a href="https://119cm.net/" target="_blank" rel="noopener">{ic("people")}<b>医療介護総合支援会</b><span class="fine">大阪・関西の医療・介護の総合窓口（別の画面で開きます）</span></a>
 </div></div></section>{CTA}'''
     return page("company", f'運営会社｜{SITE["name"]}', body)
 
@@ -349,7 +347,7 @@ def contact():
     catopts += '<label><input type="checkbox" name="c-cat" id="cc-partner" value="partner"><span>提携のご相談<small>士業・事業者として提携したい方</small></span></label>'
     body = ph("相談内容をまとめる", "質問に順番にお答えいただくと、窓口に伝える内容がまとまります。全部で6つの段階です。", "pen", [("相談内容をまとめる", None)])
     body += f'''<section class="sec"><div class="wrap narrow">
-<div class="cdirect">{ic("chat")}<p>お急ぎの方は、お電話かメールでもご相談いただけます。<br><b>電話 <a href="tel:{SITE["tel"].replace("-","")}">{E(SITE["tel"])}</a></b>　<b>メール <a href="mailto:{SITE["mail"]}">{E(SITE["mail"])}</a></b><br><span class="fine">受付時間 {E(SITE["hours"])}　全国対応（遠方の方はZoomによるWeb相談）　初回相談無料</span></p></div>
+<div class="cdirect">{ic("chat")}<p>お急ぎの方は、お電話かメールでもご相談いただけます。<br><b>電話 <a href="tel:{SITE["tel"].replace("-","")}">{E(SITE["tel"])}</a></b>　<b>メール <a href="mailto:{SITE["mail"]}">{E(SITE["mail"])}</a></b><br><span class="fine">受付時間 {E(SITE["hours"])}　全国対応（遠方の方は画面越しのオンライン面談）　初回相談無料</span></p></div>
 <ol class="steps" id="cSteps"><li>分野</li><li>内容</li><li>状況</li><li>自由記入</li><li>ご連絡先</li><li>確認</li></ol>
 <p class="restored" id="cRestored" hidden>前回の入力内容を復元しました。<button type="button" class="linkbtn" id="cClear">入力内容を消して最初から</button></p>
 <form class="form-card" id="cForm" novalidate>
@@ -391,7 +389,7 @@ def privacy():
      ("2. 取得する情報", "【ご相談】お名前、会社名・屋号、電話番号、メールアドレス、所在地（市区町村）、業種、従業員数、ご相談の内容、ご希望の連絡方法・時間帯。<br>【判定機能】ログインに使うメールアドレス、企業カルテに入力された会社の情報（所在地・業種・従業員数・資本金・事業内容・今後の取組など）、読み取りを依頼されたホームページの住所、送信された名刺の写真。<br>【協力企業のご登録】事業者名、種別、ご担当者のお名前、電話番号、メールアドレス、対応分野・対応地域、得意なこと、費用の扱い。"),
      ("3. 利用の目的", "ご相談内容の確認と整理、ご相談への回答と連絡、専門家・提携事業者の選定とおつなぎ、ご依頼後の進行の管理、判定機能でのログイン用の確認番号の送信、補助金・助成金の対象可能性の判定と結果の表示、ホームページ・名刺の写真からの会社情報の読み取り、サービスの改善（個人を特定しない形での集計を含む）、本窓口からのご案内（ご希望の方のみ）。判定機能の情報を、営業目的のご連絡に使うことはありません。協力企業のご登録の情報は、登録の審査、ご相談のおつなぎ、提携に関するご連絡に使います。"),
      ("4. 専門家・提携事業者への提供", "ご相談の解決に必要な場合に限り、提供する相手と範囲をご本人に確認し、同意をいただいたうえで、行政書士・税理士・社会保険労務士・司法書士・弁護士・弁理士・中小企業診断士その他の専門家、または提携事業者へ提供します。法令に基づく場合を除き、同意なく第三者へ提供することはありません。"),
-     ("5. 業務の委託と利用している外部のサービス", "業務の一部を外部へ委託する場合は、委託先を適切に選び、必要な監督を行います。現在、相談・判定機能の受付とデータの保管、メールの送信には Google LLC（アメリカ合衆国）のサービスを、本サイトの公開にはエックスサーバー株式会社（日本）のサービスを利用しています。"),
+     ("5. 業務の委託と利用している外部のサービス", "業務の一部を外部へ委託する場合は、委託先を適切に選び、必要な監督を行います。現在、相談・判定機能の受付とデータの保管には Google LLC（アメリカ合衆国）のサービスを、メールの送信と本サイトの公開にはエックスサーバー株式会社（日本）のサービスを利用しています。"),
      ("6. 判定機能でのAIの利用（外国にある第三者への提供）", f'判定機能では、判定への同意をいただいた企業に限り、企業カルテの内容（ホームページ・名刺の写真から読み取った内容を含みます）を、当社が利用する Anthropic, PBC（アメリカ合衆国）のAI「Claude」に送り、判定と会社情報の読み取りを行います。これは外国にある第三者への個人データの提供にあたる場合があるため、同意の前に次の情報をお知らせします。<br>（1）移転先の国：アメリカ合衆国<br>（2）その国の個人情報の保護に関する制度：連邦全体に適用される包括的な個人情報保護法はなく、分野ごとの法律や州法によって保護されています。詳しくは個人情報保護委員会の<a href="{PPC}" target="_blank" rel="noopener">「外国における個人情報の保護に関する制度等の調査（アメリカ合衆国）」</a>をご覧ください。<br>（3）移転先が講じる措置：Anthropic, PBC のプライバシーポリシー等に基づいて取り扱われます。当社は、名刺の写真は読み取りが終わりしだい削除し、名刺に書かれた個人の氏名・役職・携帯電話番号・個人のメールアドレスは記録しません。<br>同意しない場合も企業カルテの保存はできますが、判定は行いません。同意はカルテのチェックを外すことで、いつでも取りやめられます。'),
      ("7. 安全管理のために講じる措置", "取り扱う担当者の限定、アクセス権の管理、端末とアカウントの保護、従業者への教育など、漏えい・紛失・改ざんを防ぐための措置を講じます。上記5・6のとおり、個人データの一部はアメリカ合衆国の事業者のサービスで取り扱われるため、同国の個人情報の保護に関する制度を把握したうえで安全管理措置を講じています（外的環境の把握）。"),
      ("8. 保存の期間", "利用目的に必要な期間保存し、必要がなくなった情報は、法令で保存が求められる場合を除き、速やかに削除します。判定機能で「この企業を削除」を押した企業の情報は、画面に表示されなくなり、判定にも使いません。保存している情報の削除をご希望の場合は、下記の窓口へご連絡ください。"),
@@ -401,7 +399,7 @@ def privacy():
      ("12. 改定", "法令やサービスの変更に応じて本方針を改定することがあります。改定した場合はこのページでお知らせします。"),
     ]
     body = ph("個人情報の取り扱い", "ご相談と、補助金・助成金の判定機能でお預かりする情報を、必要な範囲で適切に取り扱います。", "lock", [("個人情報の取り扱い", None)])
-    body += '<section class="sec"><div class="wrap narrow"><p class="fine" style="margin-bottom:18px">項目をタップすると内容が表示されます。</p><div class="folds policy">' + ''.join(fold(h, f'<p>{t}</p>', cls="polf") for h, t in arts) + f'</div><p class="fine" style="margin-top:28px">制定日：2026年10月16日<br>改定日：2026年11月14日（判定機能・外部サービス・協力企業のご登録・アクセス解析の記載を追加）<br>{E(S["company"])}</p></div></section>'
+    body += '<section class="sec"><div class="wrap narrow"><p class="fine" style="margin-bottom:18px">項目をタップすると内容が表示されます。</p><div class="folds policy">' + ''.join(fold(h, f'<p>{t}</p>', cls="polf") for h, t in arts) + f'</div><p class="fine" style="margin-top:28px">制定日：2026年10月16日<br>改定日：2026年11月18日（メールの送信に使うサービスを変更）<br>{E(S["company"])}</p></div></section>'
     return page("privacy", f'個人情報の取り扱い｜{SITE["name"]}', body)
 
 # ---------- 共通部品 ----------
@@ -409,7 +407,7 @@ def header():
     dd = ''.join(f'<div><h4><a href="#svc-{g["cats"][0]}">{ic(g["icon"])}{E(g["name"])}</a></h4><ul>' + ''.join(f'<li><a href="#svc-{c}">{E(CAT[c]["name"])}</a></li>' for c in g["cats"]) + '</ul></div>' for g in GROUPS)
     return OPENING + f'''<a class="skip" href="#main">本文へ移動</a>
 <div class="util"><div class="wrap"><span class="op">運営：<b>{E(SITE["company"])}</b>　資格が必要な業務は提携の専門家が担当します</span>
-<div class="util-r"><a class="op-btn adm-btn" href="/kanri/" rel="nofollow" data-admin>{ic("lock")}管理者ログイン</a><button type="button" class="op-btn" data-replay><i aria-hidden="true"></i>オープニングを見る</button><div class="fs" role="group" aria-label="文字の大きさ">{ic("fs")}<span>文字の大きさ</span><button type="button" data-fs="" aria-pressed="true">標準</button><button type="button" data-fs="l" aria-pressed="false">大</button><button type="button" data-fs="xl" aria-pressed="false">特大</button></div></div></div></div>
+<div class="util-r"><button type="button" class="op-btn" data-replay><i aria-hidden="true"></i>オープニングを見る</button><div class="fs" role="group" aria-label="文字の大きさ">{ic("fs")}<span>文字の大きさ</span><button type="button" data-fs="" aria-pressed="true">標準</button><button type="button" data-fs="l" aria-pressed="false">大</button><button type="button" data-fs="xl" aria-pressed="false">特大</button></div></div></div></div>
 <header class="hd"><div class="wrap hd-in">
 <a class="brand" href="#top">{MARK}<span><b>{E(SITE["name"])}</b><small>{E(SITE["sub"])}</small></span></a>
 <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="gnav">{ic("menu")}<span>メニュー</span></button>
@@ -421,7 +419,7 @@ def header():
 <a href="#flow">流れ・費用</a>
 <a href="#faq">よくある質問</a>
 <a href="#company">運営会社</a>
-<button type="button" class="nav-op" data-replay>オープニングを見る</button><a class="nav-op" href="/kanri/" rel="nofollow" data-admin>管理者ログイン</a>
+<button type="button" class="nav-op" data-replay>オープニングを見る</button>
 <a class="cta" href="#contact">{ic("pen")}相談内容をまとめる</a>
 </nav></div></header>'''
 

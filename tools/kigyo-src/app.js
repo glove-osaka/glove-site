@@ -5,15 +5,17 @@ const store = {get(k){try{return localStorage.getItem(k)}catch(e){return null}},
 
 /* 画面の切り替え：bsd.osaka では本当の住所（/services/subsidy/ など）、それ以外は「#」で切り替える */
 const PM = !!window.KG_PATHS;
-const P2 = {}; pages.forEach(p => { const id = p.dataset.p; P2[id] = id === 'top' ? '/' : id.startsWith('svc-') ? '/services/' + id.slice(4) + '/' : id.startsWith('sit-') ? '/situations/' + id.slice(4) + '/' : '/' + id + '/'; });
+const P2 = Object.assign({}, window.KG_ALL || {}); pages.forEach(p => { const id = p.dataset.p; P2[id] = id === 'top' ? '/' : id.startsWith('svc-') ? '/services/' + id.slice(4) + '/' : id.startsWith('sit-') ? '/situations/' + id.slice(4) + '/' : '/' + id + '/'; });
 const R2 = {}; Object.keys(P2).forEach(k => R2[P2[k]] = k);
 D.paths = P2;
 function show(){
   let h = location.hash.slice(1), id = null, anchor = null;
   if (h === 'main') return;
+  if (PM && h && P2[h] && !ids.has(h)){ location.replace(P2[h]); return; }
   if (PM){
     if (h && ids.has(h)){ id = h; h = ''; history.replaceState(null, '', P2[id]); }
     else id = R2[location.pathname.replace(/index\.html$/, '')] || 'top';
+    if (!ids.has(id)) id = (pages.find(p => p.dataset.p !== 'diagnosis' && p.dataset.p !== 'contact') || pages[0]).dataset.p;
     if (h){ const el = document.getElementById(h); const pg = el && el.closest('.page'); if (pg){ anchor = el; if (pg.dataset.p !== id){ id = pg.dataset.p; history.replaceState(null, '', P2[id] + '#' + h); } } }
   } else {
     id = h || 'top';
@@ -36,9 +38,10 @@ if (PM){
     const a = e.target.closest && e.target.closest('a[href]'); if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download')) return;
     const u = new URL(a.getAttribute('href'), location.href); if (u.origin !== location.origin) return;
     let id = null;
-    if (u.hash && ids.has(u.hash.slice(1))) id = u.hash.slice(1);
+    if (u.hash && P2[u.hash.slice(1)]) id = u.hash.slice(1);
     else if (!u.hash && R2[u.pathname]) id = R2[u.pathname];
     if (!id) return;
+    if (!ids.has(id)){ if (u.hash){ e.preventDefault(); saveDraft(); location.href = P2[id]; } else saveDraft(); return; }
     e.preventDefault();
     if (location.pathname !== P2[id] || location.hash) history.pushState(null, '', P2[id]);
     show();
@@ -92,7 +95,7 @@ function dRender(){
     dres.innerHTML = `<p class="stepnow">整理の結果</p><h3>${CATN[cat]}</h3>
 <dl><dt>担当の目安</dt><dd>${WHO[cat]}</dd><dt>急ぎ具合</dt><dd>${pri === '高' ? '急ぎ。最初に期限を確認します' : pri === '低' ? '計画的に。準備の順番から整理します' : '通常。状況をうかがって順番を決めます'}</dd><dt>これまでの相談</dt><dd>${prev}</dd><dt>次にすること</dt><dd>${NEXT[want]}</dd></dl>
 <div class="btns"><a class="btn btn-p" href="#svc-${cat}">この分野を詳しく見る</a><a class="btn btn-g" href="#contact" id="dGo">この結果で相談をまとめる</a><button type="button" class="btn btn-o" id="dRe">最初からやり直す</button></div>`;
-    $('#dGo').addEventListener('click', () => {preselect([cat]); const t = $('#d5').value.trim(); if (t) $('#cFree').value = t; $('#cWhen').value = pri === '高' ? '1か月以内' : pri === '低' ? '時期は決まっていない' : ''});
+    $('#dGo').addEventListener('click', () => {preselect([cat]); const t = $('#d5').value.trim(); if (t) $('#cFree').value = t; $('#cWhen').value = pri === '高' ? '1か月以内' : pri === '低' ? '時期は決まっていない' : ''; saveDraft()});
     $('#dRe').addEventListener('click', () => {$$('#diag input').forEach(i => i.checked = false); $('#d5').value = ''; q = 1; dRender()});
   }
 }

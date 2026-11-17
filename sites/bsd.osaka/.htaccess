@@ -4,7 +4,7 @@ RewriteCond %{HTTPS} off [OR]
 RewriteCond %{HTTP_HOST} ^www\. [NC]
 RewriteRule ^(.*)$ https://bsd.osaka/$1 [R=301,L]
 
-# 管理画面・登録フォームは検索に出さない
+# 文字化け・なりすまし対策
 <IfModule mod_headers.c>
   <FilesMatch "\.(html)$">
     Header set X-Content-Type-Options "nosniff"
@@ -19,4 +19,4 @@ RewriteRule ^(.*)$ https://bsd.osaka/$1 [R=301,L]
   ExpiresByType text/html "access plus 0 seconds"
 </IfModule>
 
-ErrorDocument 404 /index.html
+ErrorDocument 404 /404.html

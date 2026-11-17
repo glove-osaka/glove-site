@@ -10,7 +10,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);li
 .brand b{font-family:var(--f-display);font-size:1.15rem;letter-spacing:.08em;display:block}
 .brand small{display:block;font-size:.8rem;color:var(--muted)}
 .tel{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 14px;border-radius:10px;background:var(--pine-soft);color:var(--pine);font-weight:700;text-decoration:none}
-.tel b{white-space:nowrap}.tel small{white-space:nowrap;font-weight:400;font-size:.82rem;color:var(--muted)}
+.tel{flex-wrap:wrap;max-width:100%;box-sizing:border-box;padding-top:6px;padding-bottom:6px}.tel b{white-space:nowrap}.tel small{white-space:normal;font-weight:400;font-size:.82rem;color:var(--muted)}
 main{max-width:880px;margin:0 auto;padding:24px 16px 80px}
 h1{font-family:var(--f-display);font-size:1.6rem;line-height:1.5;margin:8px 0 6px}
 h2{font-size:1.25rem;margin:0 0 12px}
