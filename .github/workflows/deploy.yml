@@ -6,7 +6,22 @@ on:
   workflow_dispatch:
 concurrency: iejimai123-deploy
 jobs:
+  check:
+    name: 管理画面の自動確認
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 確認用の道具を入れる
+        run: npm install --no-save --no-package-lock playwright@1.63.0 && npx playwright install --with-deps chromium
+      - name: 管理者の画面を確かめる
+        run: node tests/kanri-check.js . "" admin
+      - name: 担当者の画面を確かめる
+        run: node tests/kanri-check.js . "" staff
   deploy:
+    needs: check
     runs-on: ubuntu-latest
     steps:
       - name: 合言葉の確認
@@ -29,3 +44,5 @@ jobs:
             **/.git*
             **/.git*/**
             .github/**
+            tests/**
+            node_modules/**
