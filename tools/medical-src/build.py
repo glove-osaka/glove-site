@@ -818,7 +818,7 @@ def build_apply():
 <div class="fld" data-for="hojin" hidden><label for="sites">事業所の数</label><input id="sites" type="number" min="2" inputmode="numeric" placeholder="例：3"></div>
 <div class="fld" data-for="jigyosho hojin" hidden><label for="staff">職員の数（合計）</label><input id="staff" type="number" min="1" inputmode="numeric" placeholder="例：8"></div>
 </div>
-<div class="est note-box" id="est" hidden><b>会費の目安（税込）</b>　月払い <b id="estm"></b>／年間払い <b id="esty"></b><br><span class="fine" id="est1"></span><br><span class="fine">法人会員は、各事業所で5名を超える職員1名につき500円を加えます。正式な金額は電子契約でお知らせします。入会した月の会費はかかりません。</span></div>
+<div class="est note-box" id="est" hidden><b>会費の目安（税込）</b>　月払い <b id="estm"></b>／年間払い <b id="esty"></b><br><span class="fine" id="est1"></span><br><span class="fine">事業所会員・法人会員は、各事業所で5名を超える職員1名につき月500円を加えます。正式な金額は電子契約でお知らせします。入会した月の会費はかかりません。</span></div>
 <h2 style="font-size:1.15rem;margin:26px 0 12px">3. お申込者</h2>
 <div class="fld" data-for="jigyosho hojin kyosan" hidden><label for="org">事業所名・法人名・会社名</label><input id="org" type="text" autocomplete="organization" maxlength="80"></div>
 <div class="fld" data-for="jigyosho hojin kyosan" hidden><label for="rep">代表者のお名前</label><input id="rep" type="text" maxlength="40"></div>
@@ -1227,7 +1227,7 @@ def build_legal():
         ("3-2. 会員登録と電子契約でお預かりする情報", "会員登録と電子契約では、次の情報をお預かりします。\n・事業所・法人・協賛会員：事業所名・法人名、代表者と担当者のお名前、所在地、電話番号、メールアドレス、会員の種類、事業所と職員の数、お支払い方法、押印の画像、承認した日時と端末の情報\n・個人会員（営業協力者）：お名前・ふりがな、住所、電話番号、メールアドレス、生年月日、紹介料の振込口座、本人確認書類の写真、押印の画像、承認した日時と端末の情報\n利用の目的は、ご本人であることの確認、契約の締結と管理、会費の請求と入金の確認、紹介料の計算とお支払い、法令に基づく帳簿の保存です。本人確認書類は、マイナンバーカードは表面のみをお預かりします。裏面（個人番号）は撮影しないでください。"),
         ("4. 利用の目的", "・ご相談・要望・協力の申し出の内容の確認と、ご返信\n・対応できるかどうかの検討\n・ご本人の同意を得たうえでの、専門家・提携先へのおつなぎ\n・会員登録・電子契約の手続き、会費の請求と入金の確認、紹介料のお支払い\n・サービスの改善（個人を特定しない形での集計）"),
         ("5. 第三者への提供", "ご本人の同意がある場合、または法令に基づく場合を除き、第三者へ提供しません。専門家・提携先へおつなぎする際は、提供する相手・目的・範囲・費用を事前にご説明し、同意をいただいてから提供します。ご本人の同意なく、勤務先へ相談の内容を伝えることはありません。"),
-        ("6. 業務の委託と、使用しているサービス", "受付の内容と電子契約の書類（契約書・押印の画像・本人確認書類の写真）は、Google LLC（アメリカ合衆国）が提供するサービス（Google Apps Script、Google スプレッドシート、Google ドライブ、Gmail）を使って受信・保存しています。このサイトでは、文字の表示に Google Fonts を使用しています。\nアメリカ合衆国の個人情報の保護に関する制度は、個人情報保護委員会のウェブサイトでご確認いただけます。"),
+        ("6. 業務の委託と、使用しているサービス", "受付の内容と電子契約の書類（契約書・押印の画像・本人確認書類の写真）は、Google LLC（アメリカ合衆国）が提供するサービス（Google Apps Script、Google スプレッドシート、Google ドライブ、Gmail）を使って受信・保存しています。受付の控え・認証コード・請求書などの自動メールは、エックスサーバー株式会社（日本）のサーバーから info@119cm.net の名前で送信しています。このサイトでは、文字の表示に Google Fonts を使用しています。\nアメリカ合衆国の個人情報の保護に関する制度は、個人情報保護委員会のウェブサイトでご確認いただけます。"),
         ("7. 安全管理のための取り組み", "・取り扱う担当者を限定し、責任者を定めます（組織的な取り組み）\n・担当者に定期的な教育を行います（人的な取り組み）\n・書類は施錠できる場所で保管し、持ち出しを制限します（物理的な取り組み）\n・電子データは利用者を限定し、二段階の認証などで保護します（技術的な取り組み）\n・外国のサービスを利用する際は、その国の制度を把握したうえで対策を講じます（外的環境の把握）"),
         ("8. 保存の期間と削除", "受付の内容は、対応の完了から3年を目安に保存し、その後は削除します。会員の契約書と会費・紹介料の記録は、法令に基づき契約の終了から7年間保存します。本人確認書類の写真は、個人会員の登録が終わってから1年を目安に削除します。ご本人から削除のご請求があった場合は、法令で保存が必要なものを除き、速やかに削除します。"),
         ("9. 開示・訂正・利用停止などのご請求", "ご本人またはその代理人から、保有する個人情報の開示、訂正、追加、削除、利用の停止、第三者への提供の記録の開示などのご請求があった場合は、ご本人であることを確認したうえで、遅滞なく対応します。ご請求は、下記の窓口までご連絡ください。"),
@@ -1335,9 +1335,9 @@ function facNone(){return/まだどこにも/.test(v('facK'))}
 function syncFac(){var on=facOn();document.getElementById('facBox').hidden=!on;document.getElementById('facTtl').textContent=one('role')==='kazoku'?'ご本人がいま通っている・利用している病院や施設':'いま通っている・利用している病院や施設';document.getElementById('facNw').hidden=facNone();document.getElementById('facAw').hidden=facNone();var fn=document.getElementById('facN');fn.disabled=facNo();if(facNo())fn.value=''}
 function facNo(){return document.getElementById('facNx').checked}
 function facTxt(){return v('facK')+(facNone()?'':'／'+(facNo()?'（名前は分からない）':v('facN'))+(v('facA')?'（'+v('facA')+'）':''))}
-function rows(){var cr=C.rows();return [['立場',roleName()]].concat(facOn()?[['通っている病院・施設',facTxt()]]:[]).concat(cr.length?cr:[['相談の内容','（選択なし）']]).concat([['時期',v('when')],['都道府県',v('pref')],['希望する対応',v('want')],['そのほか伝えたいこと',v('memo')],['お名前の扱い',anon()?'伏せて相談':'伝えて相談'],['お名前',anon()?'（伏せる）':v('nm')],['事業所名',anon()?'（伏せる）':v('co')],['メール',v('mail')],['電話',v('tel')]])}
+function rows(){var cr=C.rows();return [['立場',roleName()]].concat(facOn()?[['通っている病院・施設',facTxt()]]:[]).concat(cr.length?cr:[['相談の内容','（選択なし）']]).concat([['時期',v('when')],['都道府県',v('pref')],['希望する対応',v('want')],['そのほか伝えたいこと',v('memo')],['お名前の扱い',anon()?'伏せて相談':'伝えて相談'],['お名前',anon()?'（伏せる）':v('nm')]].concat(facOn()?[]:[['事業所名',anon()?'（伏せる）':v('co')]]).concat([['メール',v('mail')],['電話',v('tel')]]))}
 function build6(){document.getElementById('sum').innerHTML=rows().map(function(r){return '<div><dt>'+r[0]+'</dt><dd style="white-space:pre-line">'+(r[1]?esc(r[1]):'<span class="fine">未入力</span>')+'</dd></div>'}).join('')}
-function syncAnon(){var a=anon();document.getElementById('nmwrap').hidden=a;document.getElementById('cowrap').hidden=a}
+function syncAnon(){var a=anon();document.getElementById('nmwrap').hidden=a;document.getElementById('cowrap').hidden=a||facOn()}
 f.addEventListener('change',function(e){if(e.target.name==='anon')syncAnon();if(e.target.id==='facK'||e.target.id==='facNx')syncFac()});
 var memo=document.getElementById('memo');memo.addEventListener('input',function(){document.getElementById('cnt').textContent=memo.value.length+' / 1,000文字';document.getElementById('sens').hidden=!SENS.test(memo.value)});
 function show(){secs.forEach(function(s,i){s.hidden=i!==st});lis.forEach(function(l,i){l.className=i<st?'done':i===st?'on':''});
@@ -1394,7 +1394,7 @@ def build_sitemap():
 
 if __name__ == "__main__":
     import json as _j
-    _gy = _j.load(open("/home/claude/gyakutai/gyakutai.json", encoding="utf-8"))
+    _gy = _j.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "gyakutai", "gyakutai.json"), encoding="utf-8"))
     os.makedirs(OUT + "/assets", exist_ok=True)
     shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), "guide.js"), OUT + "/assets/guide.js")
     open(OUT + "/assets/gyakutai.js", "w", encoding="utf-8").write("window.GYAKUTAI=" + _j.dumps(_gy, ensure_ascii=False, separators=(",", ":")) + ";\n")

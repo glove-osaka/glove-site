@@ -455,6 +455,10 @@ function forward_(d) {
 /* 1時間ごとに、遅れている案件を担当者へメールで知らせる（同じ案件は1日1回まで）。setupAlerts() を1回実行すると動き出す */
 function alertCheck() {
   var now = Date.now(), H = 36e5, list = [], pr = PropertiesService.getScriptProperties(), today = Utilities.formatDate(new Date(), "Asia/Tokyo", "yyyyMMdd");
+  // 以前は「知らせた記録」を受付ごと・日ごとに1つずつ残していたため、たまり続けていた。古い形の記録は消す
+  Object.keys(pr.getProperties()).forEach(function (k) { if (k.indexOf("al_") === 0) pr.deleteProperty(k); });
+  // 知らせた記録は1つにまとめ、今も遅れている受付の分だけ残す（たまらない）
+  var sent = parse_(pr.getProperty("ALERTED"), {}), keep = {};
   caseRows_().forEach(function (c) {
     if (isDone_(c)) return;
     var why = [];
@@ -463,9 +467,12 @@ function alertCheck() {
     if (idle >= 3) why.push("進捗の記録なし " + Math.floor(idle) + "日");
     if (c.next && new Date(c.next + "T23:59:59+09:00") < new Date()) why.push("対応予定日（" + c.next + "）を過ぎています");
     if (!why.length) return;
-    var key = "al_" + c.no + "_" + today; if (pr.getProperty(key)) return; pr.setProperty(key, "1");
+    keep[c.no] = sent[c.no] || "";
+    if (sent[c.no] === today) return;   // 同じ受付の知らせは1日1回まで
+    keep[c.no] = today;
     list.push("・" + c.no + "　" + (c.company ? c.company + " " : "") + c.name + "（" + c.status + "）\n　" + why.join("／"));
   });
+  var js = JSON.stringify(keep); if (js.length > 8500) js = "{}"; pr.setProperty("ALERTED", js);   // 1つの値は約9千文字まで
   if (list.length) sendMail_({ to: P("NOTIFY_TO"), name: ISSUER.service, subject: "［" + ISSUER.service + "］対応が遅れている受付が " + list.length + " 件あります", body: list.join("\n\n") + "\n\n管理画面：https://119cm.net/keiyaku/admin.html" });
 }
 function setupAlerts() {

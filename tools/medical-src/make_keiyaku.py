@@ -19,6 +19,7 @@ for a, b in {"#1D4A3D": "#0E5A63", "#163A30": "#0B4A52", "#E6EEE8": "#E3F0F0", "
     css = re.sub(re.escape(a), b, css, flags=re.I)
 css = css.replace("input[type=date],","input[type=date],input[type=number],input[type=month],")
 css += """
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 [hidden]{display:none!important}
 .tabs{display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap}.tab{min-height:50px;padding:0 20px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
 .tab.on{border-color:var(--pine);background:var(--pine);color:var(--on-pine)}.cnt{display:inline-block;margin-left:8px;min-width:24px;padding:0 7px;border-radius:12px;background:#B3261E;color:#fff;font-size:.85rem}
@@ -387,6 +388,7 @@ ADMIN_BODY = f'''
 <div class="demo" id="demoBar" hidden>お試し表示です（メールは送られず、この端末の中だけで動きます）</div>
 <header class="top"><div class="in"><span class="brand">{MARK}<span><b>医療介護総合支援会</b><small>管理画面（担当者用）</small></span></span></div></header>
 <main>
+<h1 class="sr">医療介護総合支援会 管理画面</h1>
 <section class="card" id="gate" hidden style="max-width:520px;margin:20px auto">
 <h2>ログイン（管理者・担当者）</h2>
 <p class="hint">電子契約と受付の管理画面です。管理者・担当者とも、<b>自分のログインIDとパスワード</b>を入れてください。</p>

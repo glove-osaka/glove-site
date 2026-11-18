@@ -846,9 +846,9 @@ function facNone(){return/まだどこにも/.test(v('facK'))}
 function syncFac(){var on=facOn();document.getElementById('facBox').hidden=!on;document.getElementById('facTtl').textContent=one('role')==='kazoku'?'ご本人がいま通っている・利用している病院や施設':'いま通っている・利用している病院や施設';document.getElementById('facNw').hidden=facNone();document.getElementById('facAw').hidden=facNone();var fn=document.getElementById('facN');fn.disabled=facNo();if(facNo())fn.value=''}
 function facNo(){return document.getElementById('facNx').checked}
 function facTxt(){return v('facK')+(facNone()?'':'／'+(facNo()?'（名前は分からない）':v('facN'))+(v('facA')?'（'+v('facA')+'）':''))}
-function rows(){var cr=C.rows();return [['立場',roleName()]].concat(facOn()?[['通っている病院・施設',facTxt()]]:[]).concat(cr.length?cr:[['相談の内容','（選択なし）']]).concat([['時期',v('when')],['都道府県',v('pref')],['希望する対応',v('want')],['そのほか伝えたいこと',v('memo')],['お名前の扱い',anon()?'伏せて相談':'伝えて相談'],['お名前',anon()?'（伏せる）':v('nm')],['事業所名',anon()?'（伏せる）':v('co')],['メール',v('mail')],['電話',v('tel')]])}
+function rows(){var cr=C.rows();return [['立場',roleName()]].concat(facOn()?[['通っている病院・施設',facTxt()]]:[]).concat(cr.length?cr:[['相談の内容','（選択なし）']]).concat([['時期',v('when')],['都道府県',v('pref')],['希望する対応',v('want')],['そのほか伝えたいこと',v('memo')],['お名前の扱い',anon()?'伏せて相談':'伝えて相談'],['お名前',anon()?'（伏せる）':v('nm')]].concat(facOn()?[]:[['事業所名',anon()?'（伏せる）':v('co')]]).concat([['メール',v('mail')],['電話',v('tel')]]))}
 function build6(){document.getElementById('sum').innerHTML=rows().map(function(r){return '<div><dt>'+r[0]+'</dt><dd style="white-space:pre-line">'+(r[1]?esc(r[1]):'<span class="fine">未入力</span>')+'</dd></div>'}).join('')}
-function syncAnon(){var a=anon();document.getElementById('nmwrap').hidden=a;document.getElementById('cowrap').hidden=a}
+function syncAnon(){var a=anon();document.getElementById('nmwrap').hidden=a;document.getElementById('cowrap').hidden=a||facOn()}
 f.addEventListener('change',function(e){if(e.target.name==='anon')syncAnon();if(e.target.id==='facK'||e.target.id==='facNx')syncFac()});
 var memo=document.getElementById('memo');memo.addEventListener('input',function(){document.getElementById('cnt').textContent=memo.value.length+' / 1,000文字';document.getElementById('sens').hidden=!SENS.test(memo.value)});
 function show(){secs.forEach(function(s,i){s.hidden=i!==st});lis.forEach(function(l,i){l.className=i<st?'done':i===st?'on':''});
