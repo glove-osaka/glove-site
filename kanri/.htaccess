@@ -1,0 +1,5 @@
+# 管理画面：プログラムは別ファイルからだけ読み込む（画面に混ぜ込まれた命令は動かない）
+<IfModule mod_headers.c>
+Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self'; connect-src 'self' https://script.google.com https://script.googleusercontent.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+Header always set Cache-Control "no-store"
+</IfModule>
