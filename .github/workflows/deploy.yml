@@ -31,6 +31,13 @@ jobs:
         run: if [ -n "$P" ]; then echo "ok=1" >> "$GITHUB_OUTPUT"; else echo "合言葉（FTP_PASSWORD）が未登録のため、今回は送りません"; fi
       - uses: actions/checkout@v4
         if: steps.chk.outputs.ok == '1'
+      - uses: actions/setup-node@v4
+        if: steps.chk.outputs.ok == '1'
+        with:
+          node-version: 20
+      - name: 文章の改行位置を整える
+        if: steps.chk.outputs.ok == '1'
+        run: node tools/wbr.js .
       - name: エックスサーバーへ送る
         if: steps.chk.outputs.ok == '1'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -45,4 +52,5 @@ jobs:
             **/.git*/**
             .github/**
             tests/**
+            tools/**
             node_modules/**
