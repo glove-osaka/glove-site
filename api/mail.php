@@ -1,5 +1,5 @@
 <?php
-// 家じまい相談窓口：電子契約・管理画面からのメールを info@iejimai123.jp から送る中継
+// 家じまい123：電子契約・管理画面からのメールを info@iejimai123.jp から送る中継
 // 合言葉そのものはここに置かず、照合用の値（SHA-256）だけを置く
 declare(strict_types=1);
 header('Content-Type: application/json; charset=utf-8');
@@ -51,7 +51,7 @@ $to = addrs($j['to'] ?? ''); $cc = addrs($j['cc'] ?? ''); $bcc = addrs($j['bcc']
 if (!$to) out(false, 'no recipient', 400);
 if (count($to) + count($cc) + count($bcc) > MAX_RCPT) out(false, 'too many recipients', 400);
 $reply = addrs($j['reply_to'] ?? FROM);
-$name  = (string)($j['name'] ?? '家じまい相談窓口');
+$name  = (string)($j['name'] ?? '家じまい123');
 $subj  = (string)($j['subject'] ?? '');
 $text  = str_replace(["\r\n", "\r"], "\n", (string)($j['body'] ?? ''));
 $html  = (string)($j['html'] ?? '');

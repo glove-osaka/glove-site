@@ -35,7 +35,7 @@
 
 
   /* ---- お試し表示 ---- */
-  var ISSUER = { name: "株式会社グローブ", service: "家じまい相談窓口", tel: "0120-933-496", hours: "10:00〜18:00（年中無休）" };
+  var ISSUER = { name: "株式会社グローブ", service: "家じまい123", tel: "0120-933-496", hours: "10:00〜18:00（年中無休）" };
   var FIELDS = { name: { label: "お名前", type: "text", required: true }, kana: { label: "ふりがな", type: "text" }, address: { label: "ご住所", type: "text" }, phone: { label: "お電話番号", type: "tel" }, birth: { label: "生年月日", type: "date" }, company: { label: "会社名・屋号", type: "text" }, title: { label: "役職", type: "text" }, bank: { label: "お振込先（銀行名・支店・口座番号・名義）", type: "textarea" } };
   var TPL = [
     { key: "nda", title: "秘密保持契約書", items: false, defaultFields: ["name", "address", "phone"], requireId: false },
@@ -43,7 +43,7 @@
     { key: "chosei", title: "相談・調整業務委託契約書", items: false, defaultFields: ["name", "address", "phone"], requireId: false },
     { key: "teikei", title: "業務提携契約書（秘密保持条項付き）", items: false, defaultFields: ["company", "name", "title", "address", "phone"], requireId: false }
   ];
-  var SAMPLE = "株式会社グローブ（以下「甲」という。）と 見本 太郎（以下「乙」という。）は、甲が運営する家じまい相談窓口でのご相談に関し、次のとおり秘密保持契約を結ぶ。\n\n第1条（秘密情報）\n本契約で秘密情報とは、ご相談の内容、乙およびその家族の氏名・住所・健康や介護の状況・資産・住まいに関する情報など、相談を通じて甲が知った一切の情報をいう。\n\n第2条（秘密の保持）\n甲は、秘密情報を厳重に管理し、乙の事前の同意なく第三者に開示・漏えいしない。\n\n（お試し表示のため、文面は一部だけを表示しています）";
+  var SAMPLE = "株式会社グローブ（以下「甲」という。）と 見本 太郎（以下「乙」という。）は、甲が運営する家じまい123でのご相談に関し、次のとおり秘密保持契約を結ぶ。\n\n第1条（秘密情報）\n本契約で秘密情報とは、ご相談の内容、乙およびその家族の氏名・住所・健康や介護の状況・資産・住まいに関する情報など、相談を通じて甲が知った一切の情報をいう。\n\n第2条（秘密の保持）\n甲は、秘密情報を厳重に管理し、乙の事前の同意なく第三者に開示・漏えいしない。\n\n（お試し表示のため、文面は一部だけを表示しています）";
   function load() { try { return JSON.parse(localStorage.getItem("ij-keiyaku-demo") || "[]"); } catch (e) { return []; } }
   function store(a) { try { localStorage.setItem("ij-keiyaku-demo", JSON.stringify(a)); } catch (e) { } }
   function wait(v) { return new Promise(function (r) { setTimeout(function () { r(v); }, 350); }); }

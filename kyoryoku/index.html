@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>提携・協業のお申し込み｜家じまい相談窓口</title>
+<title>提携・協業のお申し込み｜家じまい123（家じまい相談窓口）</title>
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDPMincho:wght@700&display=swap">
@@ -13,13 +13,13 @@
 <body>
 <div class="demo" id="demoBar" hidden>お試し表示です（入力した内容は送信されません）</div>
 <header class="top"><div class="in">
-<a class="brand" href="../index.html"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><circle cx="24" cy="24" r="22.5" stroke="currentColor" stroke-width="1.6"/><path d="M10 24 24 13l14 11" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 21.5V35h20V21.5" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M21 35v-7h6v7" stroke="#C99A45" stroke-width="2.4" stroke-linejoin="round"/></svg><span><b>家じまい相談窓口</b><small>提携・協業のお申し込み</small></span></a>
+<a class="brand" href="../index.html"><svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><circle cx="24" cy="24" r="22.5" stroke="currentColor" stroke-width="1.6"/><path d="M10 24 24 13l14 11" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 21.5V35h20V21.5" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M21 35v-7h6v7" stroke="#C99A45" stroke-width="2.4" stroke-linejoin="round"/></svg><span><b>家じまい123</b><small>提携・協業のお申し込み</small></span></a>
 <a class="tel" href="tel:0120933496">お問い合わせ <b>0120-933-496</b> <small>受付 10:00〜18:00（年中無休）</small></a>
 </div></header>
 <main>
 <div id="formBox">
 <h1>提携・協業のお申し込み</h1>
-<p>家じまい相談窓口は、ご高齢の方やそのご家族から、住まいの片付け・住み替え・相続などのご相談をお受けしています。ご相談の内容に合わせて、協力企業・士業の皆さまへおつなぎします。また、施設・病院・ケアマネジャー・金融機関など、ご相談者をご紹介いただける方との協業も受け付けています。</p>
+<p>家じまい123は、ご高齢の方やそのご家族から、住まいの片付け・住み替え・相続などのご相談をお受けしています。ご相談の内容に合わせて、協力企業・士業の皆さまへおつなぎします。また、施設・病院・ケアマネジャー・金融機関など、ご相談者をご紹介いただける方との協業も受け付けています。</p>
 <div class="note">
 <b>お申し込みの流れ</b><br>
 ① このページで申し込む　→　② 担当者が内容を確認し、面談の日時をご連絡　→　③ 面談　→　④ 業務提携契約を電子契約で結ぶ　→　⑤ おつなぎ・協業を始めます<br>
@@ -66,7 +66,7 @@ var $=function(id){return document.getElementById(id)};
 if(window.KEIYAKU_DEMO)$('demoBar').hidden=false;
 AreaPick.render($('area'),'');
 var REF=(location.search.match(/[?&]r=([0-9a-f]{8})/)||[])[1]||'';
-if(REF&&!window.KEIYAKU_DEMO)keiyakuApi('staff.formInfo',{r:REF}).then(function(r){if(r.name){var n=document.createElement('p');n.className='note';n.textContent='担当：'+r.name+'（家じまい相談窓口）からのご案内です。';$('f').insertBefore(n,$('f').firstChild)}}).catch(function(){});
+if(REF&&!window.KEIYAKU_DEMO)keiyakuApi('staff.formInfo',{r:REF}).then(function(r){if(r.name){var n=document.createElement('p');n.className='note';n.textContent='担当：'+r.name+'（家じまい123）からのご案内です。';$('f').insertBefore(n,$('f').firstChild)}}).catch(function(){});
 function opt(v,list,ph){return '<option value="">'+ph+'</option>'+list.map(function(x){return '<option'+(x===v?' selected':'')+'>'+x.replace(/</g,'&lt;')+'</option>'}).join('')}
 function addRow(){var r=document.createElement('div');r.className='bn-row';
  r.innerHTML='<label><span>大分類</span><select class="bn1">'+opt('',Bunrui.l1(),'選んでください')+'</select></label><label><span>中分類</span><select class="bn2" disabled>'+opt('',[],'先に大分類を選んでください')+'</select></label><label><span>小分類</span><select class="bn3" disabled>'+opt('',[],'先に中分類を選んでください')+'</select></label><label class="bn-d"><span>詳細</span><input type="text" class="bn4" placeholder="例：遺品整理は月10件まで。特殊清掃にも対応"></label><button type="button" class="bn-x" aria-label="この行を消す">この行を消す</button>';

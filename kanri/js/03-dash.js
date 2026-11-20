@@ -30,7 +30,7 @@ function dash(quiet){if(!quiet)$('errD').textContent='';return api('kanri.dash')
  $('tiles').innerHTML=t.map(function(x){return '<button type="button" class="tile'+(x[1]&&x[4]?' t-'+x[4]:'')+'" data-go="'+x[2]+'" data-filter="'+x[3]+'"><b>'+x[1]+'</b><span>'+x[0]+'</span></button>'}).join('');
  var bars=function(a){var mx=Math.max.apply(null,a.map(function(s){return s.n}).concat([1]));return a.map(function(s){return '<div class="stg"><span>'+esc(s.status)+'</span><i style="width:'+Math.round(s.n/mx*100)+'%"></i><b>'+s.n+'</b></div>'}).join('')};
  $('stages').innerHTML=bars(r.stages);$('astages').innerHTML=bars(r.astages||[]);
- document.title=(c.red?'('+c.red+') ':'')+'管理画面｜家じまい相談窓口';
+ document.title=(c.red?'('+c.red+') ':'')+'管理画面｜家じまい123';
  if(c.red&&(LASTRED<0||c.red>LASTRED))chime(c.red);LASTRED=c.red}).catch(function(e){if(!quiet)$('errD').textContent=e.message})}
 /* 注意の音 */
 var SOUND=true;try{SOUND=localStorage.getItem('ij-sound')!=='off'}catch(e){}
