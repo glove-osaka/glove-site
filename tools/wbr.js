@@ -27,7 +27,7 @@ function phrases(t){
  if(cur)out.push(cur);return out;
 }
 const JP=/[぀-ヿ一-鿿]/;
-function textWbr(t){if(!JP.test(t)||t.length<6)return t;return phrases(t).join('<wbr>')}
+function textWbr(t){let o=(!JP.test(t)||t.length<6)?t:phrases(t).join('<wbr>');return o.replace(/\u3000/g,'<span class="zs"> </span>')}
 function processHtml(h){
  // 対象外の範囲：script/style/svg/textarea/title/head
  const out=[];let i=0;const skipTags=['script','style','svg','textarea','title','head','pre','code','select','option'];
@@ -42,7 +42,7 @@ function processHtml(h){
  }
  out.push(h.slice(last));return out.join('');
 }
-const CSS='<style>body{word-break:keep-all;overflow-wrap:anywhere;line-break:strict}body *{text-wrap:pretty}@media (max-width:560px){td:first-child,th:first-child{min-width:5.5em}}h1,h2,h3,h4,dt,th{text-wrap:balance}</style>';
+const CSS='<link rel="stylesheet" href="/assets/type.css">';
 module.exports={phrases,processHtml};
 if(require.main===module){
  const root=process.argv[2];let n=0;

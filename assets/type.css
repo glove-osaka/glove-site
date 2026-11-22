@@ -1,0 +1,56 @@
+/* 家じまい123：文字組みの共通設定（全ページの最後に読み込む）
+   ・文章は、日本語の本と同じく行の両端をそろえ、句読点が行頭に来ないようにする
+   ・見出し・ボタン・短い項目だけ、言葉のまとまりで改行する
+   ・文字の大きさ・行の間隔・段落の間隔を、全ページでそろえる */
+:root{--fs-body:1.0625rem;--lh-body:1.85;--lh-prose:1.95;--ls-body:.04em;--measure:40em;--para:1em}
+@media (min-width:900px){:root{--fs-body:1.125rem}}
+
+html{font-size:100%}
+body{font-size:var(--fs-body);line-height:var(--lh-body);letter-spacing:var(--ls-body);
+  word-break:normal;overflow-wrap:anywhere;line-break:strict;font-feature-settings:"palt" 0;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+/* 文章：本文の段落だけ両端をそろえる（短い案内文や電話番号の行は左寄せのまま） */
+main p,main li,main dd,main td,main blockquote,main figcaption{word-break:normal;line-break:strict;text-wrap:pretty}
+.art-sec p,.detail main p,.faq .a p,.blk-b p,.tb-lead,.tb-help p,.case p,article p,.sec-h p,.hero .lead,.s123 p,.trust p span,.tb-3 li,.tb-c span,.art-sec li,.dots li{
+  text-align:justify;text-justify:inter-character}
+main p{max-width:var(--measure)}
+.fine,small,.note,p.fine{text-align:start}
+/* リンクだけの短い項目（目次など）は、言葉のまとまりで改行する */
+main li:has(>a:only-child){word-break:keep-all;overflow-wrap:anywhere;text-align:start}
+.art-sec p,.detail main p,.faq .a p,.blk-b p,.tb-lead,.tb-help p,.case p{line-height:var(--lh-prose)}
+
+/* 段落と段落のあいだ */
+.art-sec p+p,.detail main p+p,.faq .a p+p,.blk-b p+p,.tb-help p+p,article p+p,.case p+p{margin-top:var(--para)}
+.art-sec ul,.art-sec ol,.detail main ul.dots,.detail main ol{margin-block:.6em var(--para)}
+.art-sec li+li,.detail main ul.dots li+li{margin-top:.35em}
+
+/* 見出し：言葉のまとまりで改行し、行の長さをそろえる */
+h1,h2,h3,h4,summary,dt,th,button,.btn,label,nav,.crumbs,.lbl,.eyebrow,.more,.tb-c b,.tb-tt b,.trust p b,.s123 b{
+  word-break:keep-all;overflow-wrap:anywhere;text-align:inherit;text-wrap:balance}
+h1{line-height:1.4;letter-spacing:.05em}
+h2{line-height:1.5;letter-spacing:.05em}
+h3,h4{line-height:1.55;letter-spacing:.04em}
+.art-sec h2,.detail main h2{margin-top:0;margin-bottom:.8em}
+.art-sec{margin-bottom:3em}
+.art-sec h3{margin:1.6em 0 .5em;font-size:1.15em}
+
+/* 中央寄せの見出しの下の説明文は、長い文が読みにくくならないよう左右をそろえる */
+.sec-h p{max-width:36em}
+@media (max-width:700px){
+  .sec-h.c{text-align:left;justify-items:start}
+  .sec-h.c p{text-align:justify}
+  main p{max-width:none}
+}
+
+/* 小さな注記 */
+.fine,small{line-height:1.75;letter-spacing:.03em}
+
+/* 表の中の文章は左寄せ（細い列で両端そろえにすると字間が空きすぎるため） */
+main td,main th{text-align:left;text-justify:auto}
+
+/* 入力欄・ボタンの文字 */
+input,textarea,select,button{letter-spacing:.02em}
+@media (max-width:560px){main td:first-child,main th:first-child{min-width:5.5em}}
+/* 全角の空白：行の途中では1文字分あけ、行頭・行末に来たときは消す */
+.zs{word-spacing:.8em}
