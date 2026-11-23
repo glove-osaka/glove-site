@@ -797,7 +797,7 @@ function set(v){if(v)root.setAttribute('data-fs',v);else root.removeAttribute('d
 var saved='';try{saved=localStorage.getItem('iejimai-fs')||''}catch(e){}
 if(saved)set(saved);bs.forEach(function(x){x.addEventListener('click',function(){set(x.dataset.fs)})});
 var bg=document.getElementById('bgm'),bb=document.getElementById('bgmBtn'),fI=null,VOL=0.32;
-function pref(v){try{if(v===undefined)return localStorage.getItem('iejimai-bgm');localStorage.setItem('iejimai-bgm',v)}catch(e){return null}}
+function pref(v){try{if(v===undefined)return localStorage.getItem('iejimai-bgm2');localStorage.setItem('iejimai-bgm2',v)}catch(e){return null}}
 function ui(on){if(!bb)return;bb.setAttribute('aria-pressed',String(on));bb.querySelector('span').textContent=on?'音楽を止める':'音楽を流す'}
 function fade(to,ms,cb){clearInterval(fI);var from=bg.volume,st=Date.now();fI=setInterval(function(){var k=Math.min(1,(Date.now()-st)/ms);bg.volume=Math.max(0,Math.min(1,from+(to-from)*k));if(k>=1){clearInterval(fI);if(cb)cb()}},60)}
 window.startBGM=function(store){if(!bg)return;if(store!==false)pref('on');
@@ -825,7 +825,7 @@ var T=null,AT=null,shown=false,done=false,started=false,fadeI=null;
 function seen(){try{if(localStorage.getItem('iejimai-op-seen')==='1')return true}catch(e){}try{return sessionStorage.getItem('iejimai-op')==='1'}catch(e){return false}}
 function mark(){try{sessionStorage.setItem('iejimai-op','1')}catch(e){}try{localStorage.setItem('iejimai-op-seen','1')}catch(e){}}
 function fadeOut(){clearInterval(fadeI);if(au.paused)return;var vol=au.volume;fadeI=setInterval(function(){vol=Math.max(0,vol-0.06);au.volume=vol;if(vol<=0){clearInterval(fadeI);au.pause()}},90)}
-function close(){if(done)return;done=true;document.documentElement.classList.remove('op-on');clearTimeout(T);clearTimeout(AT);mark();var withSnd=started&&!au.muted;fadeOut();if(window.startBGM&&(withSnd||(function(){try{return localStorage.getItem('iejimai-bgm')==='on'}catch(e){return false}})()))setTimeout(function(){startBGM()},1400);op.classList.add('out');document.documentElement.style.overflow='';
+function close(){if(done)return;done=true;document.documentElement.classList.remove('op-on');clearTimeout(T);clearTimeout(AT);mark();fadeOut();if(window.pauseBGM)pauseBGM();op.classList.add('out');document.documentElement.style.overflow='';
  var hv=document.getElementById('heroV'),vc=document.getElementById('vctl');if(hv&&!(vc&&vc.classList.contains('paused'))){var p=hv.play();if(p&&p.catch)p.catch(function(){})}
  setTimeout(function(){op.hidden=true;try{v.pause()}catch(e){}},1700)}
 function showText(){if(shown)return;shown=true;op.classList.add('catch','text');T=setTimeout(close,11000);var b=document.getElementById('opGo');setTimeout(function(){try{b.focus({preventScroll:true})}catch(e){}},4400)}

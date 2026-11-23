@@ -671,7 +671,7 @@ function set(v){if(v)root.setAttribute('data-fs',v);else root.removeAttribute('d
 var saved='';try{saved=localStorage.getItem('iejimai-fs')||''}catch(e){}
 if(saved)set(saved);bs.forEach(function(x){x.addEventListener('click',function(){set(x.dataset.fs)})});
 var bg=document.getElementById('bgm'),bb=document.getElementById('bgmBtn'),fI=null,VOL=0.32;
-function pref(v){try{if(v===undefined)return localStorage.getItem('iejimai-bgm');localStorage.setItem('iejimai-bgm',v)}catch(e){return null}}
+function pref(v){try{if(v===undefined)return localStorage.getItem('iejimai-bgm2');localStorage.setItem('iejimai-bgm2',v)}catch(e){return null}}
 function ui(on){if(!bb)return;bb.setAttribute('aria-pressed',String(on));bb.querySelector('span').textContent=on?'音楽を止める':'音楽を流す'}
 function fade(to,ms,cb){clearInterval(fI);var from=bg.volume,st=Date.now();fI=setInterval(function(){var k=Math.min(1,(Date.now()-st)/ms);bg.volume=Math.max(0,Math.min(1,from+(to-from)*k));if(k>=1){clearInterval(fI);if(cb)cb()}},60)}
 window.startBGM=function(store){if(!bg)return;if(store!==false)pref('on');
