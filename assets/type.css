@@ -54,3 +54,4 @@ input,textarea,select,button{letter-spacing:.02em}
 @media (max-width:560px){main td:first-child,main th:first-child{min-width:5.5em}}
 /* 全角の空白：行の途中では1文字分あけ、行頭・行末に来たときは消す */
 .zs{word-spacing:.8em}
+footer li,footer a{word-break:keep-all;overflow-wrap:anywhere}
