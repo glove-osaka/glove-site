@@ -16,15 +16,15 @@ function put(file,html,before){let s=fs.readFileSync(file,'utf8');const i=s.inde
   if(i>=0&&j>i)s=s.slice(0,i)+A+html+Z+s.slice(j+Z.length);
   else{const d=s.indexOf('<div class="detail"><main>');const k=d>=0?s.indexOf(before,d):s.lastIndexOf(before);if(k<0)throw new Error('置き場所がない '+file);s=s.slice(0,k)+A+html+Z+s.slice(k)}
   fs.writeFileSync(file,s)}
-const CSS='<style>.gs{margin:0 0 3em}.gs h2{font-size:1.45rem;border-left:6px solid var(--pine);padding-left:14px;margin:0 0 .8em;line-height:1.5}.gs-g{display:grid;gap:14px;margin:1em 0}.gs-g>div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 18px}.gs-g b{display:block;color:var(--pine);margin-bottom:8px}.gs-c{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}.gs-c li{background:var(--pine-soft);border-radius:10px;padding:10px 14px;line-height:1.7;text-align:start}.gs-c li b{display:block;color:var(--ink,#16201B);font-size:1rem;margin:0 0 2px;word-break:keep-all}.gs-c li span{display:block;font-size:.95rem;color:#3B4740;text-align:start}.gs .more{color:var(--pine);font-weight:700}.gs-g .fine{margin-top:12px}</style>';
+const CSS='<style>.gs{margin:0 0 3.5em}.gs h2{font-size:1.45rem;border-left:6px solid var(--pine);padding-left:14px;margin:0 0 .9em;line-height:1.5}.gs-lead{font-size:1.05rem;margin:0 0 1em}.gs-pts{list-style:none;margin:0 0 1.2em;padding:0;display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}.gs-pts li{background:var(--pine-soft);border-radius:10px;padding:12px 16px;display:flex;gap:12px;align-items:center;line-height:1.6;text-align:start}.gs-pts em{font-style:normal;font-weight:700;color:#fff;background:var(--pine);border-radius:50%;width:2em;height:2em;flex:none;display:grid;place-items:center}.gs-toc{margin:2em 0 3em;padding:18px 20px;background:var(--surface);border:1px solid var(--line);border-radius:12px}.gs-toc .t{margin:0 0 .5em;font-weight:700;color:var(--pine)}.gs-toc ul{list-style:none;margin:0 0 1em;padding:0;display:flex;flex-wrap:wrap;gap:8px}.gs-toc ul:last-child{margin:0}.gs-toc a{display:inline-block;padding:6px 14px;border:1px solid var(--line);border-radius:99px;background:#fff;text-decoration:none;color:var(--pine);font-size:.95rem;line-height:1.5;word-break:keep-all}.gs-grp{margin:0 0 2.6em;scroll-margin-top:100px}.gs-grp h3{font-size:1.2rem;line-height:1.5;margin:0 0 .8em;padding:0 0 .4em;border-bottom:2px solid var(--pine-soft);color:var(--pine)}.gs-grp h3 small{font-size:.85rem;color:#5B6660;font-weight:400;margin-left:.6em}.gs-c{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}@media(max-width:400px){.gs-c{grid-template-columns:1fr}}.gs-c li{background:#fff;border:1px solid var(--line);border-left:4px solid var(--pine);border-radius:8px;padding:12px 16px;text-align:start}.gs-c li b{display:block;font-size:1.05rem;line-height:1.55;margin:0 0 6px;word-break:keep-all;color:var(--ink,#16201B)}.gs-c li span{display:block;font-size:.95rem;line-height:1.85;color:#3B4740;text-align:start}.gs-rel{margin:1em 0 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:.92rem;line-height:1.5}.gs-rel>span{color:#5B6660;width:100%}.gs-rel a{padding:5px 12px;border-radius:99px;background:var(--pine-soft);text-decoration:none;color:var(--pine);word-break:keep-all}.gs-top{font-size:.9rem;text-align:right;margin:.8em 0 0}.gs-top a{color:var(--pine)}.gs-note{font-size:.92rem;color:#5B6660;margin:0 0 1.5em}</style>';
 // サービスごとの業種
 const per={};
-for(const [big,kind,mids] of D)for(const [mid,smalls] of mids)for(const [sm,fields] of smalls)for(const f of fields){const s=SLUG[f];if(!s)continue;(per[s]=per[s]||{});const key=kind==='士業'?'専門家（'+(MIDL[mid]||mid)+'）':mid;(per[s][key]=per[s][key]||[]).push(sm)}
+for(const [big,kind,mids] of D)for(const [mid,smalls] of mids)for(const [sm,fields] of smalls)for(const f of fields){const s=SLUG[f];if(!s)continue;(per[s]=per[s]||{});const key=kind==='士業'?'資格を持つ専門家':mid;(per[s][key]=per[s][key]||[]).push(sm)}
 let n=0;
 for(const [slug,groups] of Object.entries(per)){
   const file=`services/${slug}.html`;if(!fs.existsSync(file))continue;
-  const body=Object.entries(groups).map(([g,items])=>`<div><b>${esc(g)}</b><ul class="gs-c">${items.map(item).join('')}</ul></div>`).join('');
-  const html=`${CSS}<section class="gs" id="gyoshu"><h2>この分野でお手伝いする業種</h2><p>「${esc(NAME[slug])}」のご相談では、内容に合わせて、次のような業種の提携先や専門家へおつなぎします。窓口が見積りの比較や日程の調整をまとめて行うため、それぞれに連絡する必要はありません。提携先は順次広げています。</p><div class="gs-g">${body}</div><p><a class="more" href="../renkei/index.html">連携する業種の一覧を見る</a></p></section>`;
+  const body=Object.entries(groups).sort((a,b)=>(a[0]==='資格を持つ専門家')-(b[0]==='資格を持つ専門家')).map(([g,items])=>`<div class="gs-grp"><h3>${esc(g)}<small>${items.length}業種</small></h3><ul class="gs-c">${items.map(item).join('')}</ul></div>`).join('');
+  const html=`${CSS}<section class="gs" id="gyoshu"><h2>この分野でお手伝いする業種</h2><p class="gs-lead">「${esc(NAME[slug])}」のご相談では、内容に合わせて次の業種へおつなぎします。</p><p class="gs-note">見積りの比較や日程の調整は窓口がまとめて行います。それぞれに連絡する必要はありません。</p>${body}<p><a class="more" href="../renkei/index.html">連携する業種の一覧を見る</a></p></section>`;
   put(file,html,'</main>');n++;
 }
 // 一覧に載らないサービスのページは、一覧への案内だけ
@@ -32,10 +32,11 @@ for(const slug of ['gyosha','kazoku','sonota']){const file=`services/${slug}.htm
   put(file,`${CSS}<section class="gs" id="gyoshu"><h2>連携する業種</h2><p>家じまい123は、片付け・引越し・不動産・工事・シニアライフサポート・葬儀や供養・暮らしの費用の事業者と、弁護士・司法書士・税理士・行政書士などの専門家と連携しています。ご相談の内容に合わせて、窓口がおつなぎします。</p><p><a class="more" href="../renkei/index.html">連携する業種の一覧を見る</a></p></section>`,'</main>');n++}
 // 全体の一覧ページ
 const tpl=fs.readFileSync('faq/index.html','utf8');
-let total=0;const secs=D.map(([big,kind,mids])=>{const head=kind==='士業'?'専門家（士業など）':'作業・サービスの事業者';
-  return `<section class="gs"><h2>${head}</h2><div class="gs-g">`+mids.map(([mid,smalls])=>{total+=smalls.length;
+let total=0,gi=0;const toc=[];const secs=D.map(([big,kind,mids])=>{const head=kind==='士業'?'資格を持つ専門家':'作業・サービスの事業者';const links=[];
+  const h=`<section class="gs"><h2>${head}</h2>`+mids.map(([mid,smalls])=>{total+=smalls.length;gi++;const nm=kind==='士業'?(MIDL[mid]||mid):mid;links.push(`<li><a href="#g${gi}">${esc(nm)}（${smalls.length}）</a></li>`);
    const rel=[...new Set(smalls.flatMap(s=>s[1]).filter(f=>SLUG[f]))];
-   return `<div><b>${esc(kind==='士業'?(MIDL[mid]||mid):mid)}</b><ul class="gs-c">${smalls.map(s=>item(s[0])).join('')}</ul><p class="fine">関係するご相談：${rel.map(f=>`<a href="../services/${SLUG[f]}.html">${esc(f)}</a>`).join('、')}</p></div>`}).join('')+'</div></section>'}).join('');
+   return `<div class="gs-grp" id="g${gi}"><h3>${esc(nm)}<small>${smalls.length}業種</small></h3><ul class="gs-c">${smalls.map(s=>item(s[0])).join('')}</ul><div class="gs-rel"><span>この業種が関わるご相談</span>${rel.map(f=>`<a href="../services/${SLUG[f]}.html">${esc(f)}</a>`).join('')}</div><p class="gs-top"><a href="#toc">▲ 目次へ戻る</a></p></div>`}).join('')+'</section>';
+  toc.push(`<p class="t">${head}</p><ul>${links.join('')}</ul>`);return h}).join('');
 const title='連携する専門家・事業者の業種一覧｜家じまい123（家じまい相談窓口）';
 const desc='家じまい123が連携する専門家・事業者の業種の一覧です。片付け・遺品整理・引越し・不動産・工事・身元保証・葬儀や供養・暮らしの費用の事業者と、弁護士・司法書士・税理士・行政書士などの専門家へ、ご相談の内容に合わせて窓口がおつなぎします。';
 let s=tpl.replace(/<title>[^<]*<\/title>/,`<title>${title}</title>`).replace(/https:\/\/iejimai123\.jp\/faq\//g,'https://iejimai123.jp/renkei/');
@@ -47,8 +48,10 @@ const a=s.indexOf('<main id="main">'),b=s.indexOf('</main>')+7;const old=s.slice
 const emb=(old.match(/<span class="emb lg">[\s\S]*?<\/span>/)||[''])[0];
 const main=`<main id="main"><section class="ph"><img class="bg" src="../assets/head-1.jpg" alt=""><div class="wrap">${emb}<div><nav aria-label="現在地"><ol class="crumbs"><li><a href="../index.html">トップ</a></li><li aria-current="page">連携する業種の一覧</li></ol></nav><h1>連携する専門家・事業者の業種</h1><p>家じまい123は、ひとつの窓口でご相談を受け、内容に合わせて次のような業種の提携先や専門家へおつなぎします。</p></div></div></section>
 <div class="wrap" style="padding-block:56px 88px;max-width:980px">
-<p>家じまいでは、片付け・住まい・お金・手続き・葬儀など、たくさんの業種が関わります。家じまい123では、窓口が状況を整理し、必要な業種だけを選んで、見積りの比較や日程の調整をまとめて行います。ご相談者が、それぞれの業者に一から連絡する必要はありません。</p>
-<p class="fine">いまの一覧は全${total}業種です。提携先は順次広げています。提携先へおつなぎするときは、相手と範囲をお伝えし、同意をいただいてからにします。</p>
+<p class="gs-lead">家じまいには、片付け・住まい・お金・手続き・葬儀など、たくさんの業種が関わります。窓口が次のことをまとめて行います。</p>
+<ul class="gs-pts"><li><em>1</em>ご状況をうかがって整理する</li><li><em>2</em>必要な業種だけを選んでおつなぎする</li><li><em>3</em>見積りの比較や日程の調整をする</li></ul>
+<p class="gs-note">全${total}業種。提携先は順次広げています。おつなぎする前に、相手と範囲をお伝えし、同意をいただきます。</p>
+<nav class="gs-toc" id="toc" aria-label="目次">${toc.join('')}</nav>
 ${secs}
 <p><a class="more" href="../partners/index.html">提携・協業をご希望の事業者・専門家の方はこちら</a></p>
 </div></main>`;
