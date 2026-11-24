@@ -150,7 +150,7 @@
     else ol.appendChild(h('li', null, [h('span', { text: '「家（実家）のこと」「持ち物のこと」「介護とこれからの住まい」の章を書くと、ここに次にやることが出ます。' })]));
     app.appendChild(h('h3', { class: 'tb-h3', text: 'これからやること' })); app.appendChild(ol);
     app.appendChild(h('aside', { class: 'tb-help' }, [h('b', { text: 'この先は、家じまい123にお任せください' }), h('p', { text: 'この手引き書を見ながらお話しいただければ、やることの順番と費用を整理してご案内します。ご相談とお見積りは無料です。' }),
-      h('a', { class: 'tb-ask', href: 'tel:0120933496', text: '電話で相談する 0120-933-496（通話無料・毎日10時〜18時）' }), h('a', { class: 'tb-ask tb-ask2', href: '../contact/index.html', target: '_blank', rel: 'noopener', text: '相談内容をまとめて送る' })]));
+      h('a', { class: 'tb-ask', href: 'tel:0120659470', text: '電話で相談する 0120-659-470（通話無料・毎日10時〜18時）' }), h('a', { class: 'tb-ask tb-ask2', href: '../contact/index.html', target: '_blank', rel: 'noopener', text: '相談内容をまとめて送る' })]));
     app.appendChild(h('h3', { class: 'tb-h3', text: '残す・印刷する' }));
     app.appendChild(h('div', { class: 'tb-nav' }, [h('button', { type: 'button', class: 'btn btn-g', text: '印刷する（紙やPDFに）', onclick: printAll }), h('button', { type: 'button', class: 'btn btn-o', text: 'ファイルに保存する', onclick: saveFile })]));
     app.appendChild(h('p', { class: 'tb-h', text: '印刷したものは、ご家族に置き場所を伝えておきましょう。この手引き書は遺言書の代わりにはなりません。' }));
@@ -183,7 +183,7 @@
     });
     var ns = nextSteps();
     if (ns.length) { p.appendChild(h('h2', { text: 'これからやること' })); var ol = h('ol'); ns.forEach(function (r) { ol.appendChild(h('li', { text: r.text })); }); p.appendChild(ol); }
-    p.appendChild(h('p', { class: 'pr-foot', text: '家じまい123（家じまい相談窓口）　0120-933-496　https://iejimai123.jp/' }));
+    p.appendChild(h('p', { class: 'pr-foot', text: '家じまい123（家じまい相談窓口）　0120-659-470　https://iejimai123.jp/' }));
     window.print();
   }
 

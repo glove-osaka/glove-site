@@ -7,7 +7,7 @@
   var D = document, W = window;
   var src = (D.currentScript && D.currentScript.src) || '';
   var ROOT = src.replace(/assets\/guide\.js.*$/, '');
-  var TEL = '0120-933-496', TELL = 'tel:0120933496';
+  var TEL = '0120-659-470', TELL = 'tel:0120659470';
   function $(s, r) { return (r || D).querySelector(s); }
   function $$(s, r) { return Array.prototype.slice.call((r || D).querySelectorAll(s)); }
   function el(t, a, h) { var e = D.createElement(t); if (a) for (var k in a) e.setAttribute(k, a[k]); if (h != null) e.innerHTML = h; return e; }
