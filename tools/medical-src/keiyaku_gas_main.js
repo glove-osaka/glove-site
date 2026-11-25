@@ -1,5 +1,5 @@
 /* =====================================================================
-   医療介護総合支援会　電子契約（Google Apps Script）
+   医療介護支援会　電子契約（Google Apps Script）
    ・お客様の画面（サイトの /medical/keiyaku/）からの通信を受ける doPost
    ・担当者の管理画面（このスクリプトのウェブアプリ ?admin=1）
    使い方は「設定のしかた.txt」を見てください。
@@ -15,12 +15,12 @@ function json(o) { return ContentService.createTextOutput(JSON.stringify(o)).set
 function setup() {
   var pr = PropertiesService.getScriptProperties();
   if (!P("SHEET_ID")) {
-    var ss = SpreadsheetApp.create("医療介護総合支援会 電子契約（台帳）");
+    var ss = SpreadsheetApp.create("医療介護支援会 電子契約（台帳）");
     var sh = ss.getActiveSheet(); sh.setName(SHEET); sh.appendRow(COLS); sh.setFrozenRows(1);
     pr.setProperty("SHEET_ID", ss.getId());
   }
   inboxSheet_();
-  if (!P("FOLDER_ID")) { var f = DriveApp.createFolder("医療介護総合支援会 電子契約"); pr.setProperty("FOLDER_ID", f.getId()); }
+  if (!P("FOLDER_ID")) { var f = DriveApp.createFolder("医療介護支援会 電子契約"); pr.setProperty("FOLDER_ID", f.getId()); }
   if (!P("ADMIN_EMAILS")) pr.setProperty("ADMIN_EMAILS", Session.getEffectiveUser().getEmail());
   if (!P("NOTIFY_TO")) pr.setProperty("NOTIFY_TO", Session.getEffectiveUser().getEmail());
   if (!P("SIGN_URL")) pr.setProperty("SIGN_URL", "https://119cm.net/keiyaku/index.html");
@@ -389,7 +389,7 @@ function doPost(e) {
 function doGet(e) {
   if (e && e.parameter && e.parameter.admin) {
     if (!isAdmin_()) return HtmlService.createHtmlOutput("<p style='font:16px sans-serif;padding:24px'>この画面は、登録された担当者の Google アカウントでのみ開けます。</p>");
-    return HtmlService.createHtmlOutputFromFile("admin").setTitle("電子契約の管理｜医療介護総合支援会").addMetaTag("viewport", "width=device-width,initial-scale=1");
+    return HtmlService.createHtmlOutputFromFile("admin").setTitle("電子契約の管理｜医療介護支援会").addMetaTag("viewport", "width=device-width,initial-scale=1");
   }
   return ContentService.createTextOutput("ok");
 }

@@ -1,4 +1,4 @@
-/* 使い方ガイドと入力サポート（医療介護総合支援会）。build.py が assets/guide.js に写します。 */
+/* 使い方ガイドと入力サポート（医療介護支援会）。build.py が assets/guide.js に写します。 */
 (function () {
   "use strict";
   var me = document.currentScript, src = me ? me.getAttribute("src") : "assets/guide.js";

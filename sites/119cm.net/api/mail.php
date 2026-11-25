@@ -1,6 +1,6 @@
 <?php
 /*
- * 医療介護総合支援会：自動メールの送信口（Apps Script → ここ → Xサーバーから info@119cm.net で送る）
+ * 医療介護支援会：自動メールの送信口（Apps Script → ここ → Xサーバーから info@119cm.net で送る）
  * 送れるのは、Google が発行した「本人確認の札（IDトークン）」を持つ、決められたアカウント（Apps Script の持ち主）だけ。
  * 合言葉（パスワード）をここに置かないので、公開の GitHub に載っても安全。
  */
@@ -9,7 +9,7 @@ header('Content-Type: application/json; charset=utf-8');
 header('X-Robots-Tag: noindex');
 
 const FROM_ADDR   = 'info@119cm.net';
-const FROM_NAME   = '医療介護総合支援会';
+const FROM_NAME   = '医療介護支援会';
 const ALLOWED     = ['ikshienkai@gmail.com'];          // Apps Script を動かしている Google アカウント
 const MAX_TO      = 5;                                // 1通あたりのあて先の上限（to/cc/bcc の合計）
 const MAX_BYTES   = 12 * 1024 * 1024;                 // 添付を含めた大きさの上限

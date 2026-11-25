@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""医療介護総合支援会サイトの生成。家じまい相談窓口と同じ設計（CSS・部品）を使い、色だけ医療向けに替える。"""
+"""医療介護支援会サイトの生成。家じまい相談窓口と同じ設計（CSS・部品）を使い、色だけ医療向けに替える。"""
 import os, re, json, html, shutil
 from data import REGION_ORDER, zone_tree, SITE, ROLES, STATUS, CATS, SUP, PURPOSES, FAQ, ROLE_FAQ, ROLE_CASES, HOUSING, NEWS, PARTNER_TAX, CONTACT_SUB, CONTACT_SPECIAL, CONTACT_GROUPS, SOFT_SUP, SOFT_BADGE
 # フォームの送り先：支援会専用の受付（keiyaku_config.js の KEIYAKU_API_URL）が設定されたら、そちらへ切り替える
@@ -131,7 +131,7 @@ EXTRA_CSS = r"""
 .opn.text .op-foot{bottom:max(9vh,32px)}
 @media print{.opn{display:none!important}}
 
-/* 医療介護総合支援会：追加の部品 */
+/* 医療介護支援会：追加の部品 */
 .badge{display:inline-flex;align-items:center;gap:6px;font-size:.92rem;font-weight:700;border-radius:99px;padding:3px 14px;line-height:1.6;white-space:nowrap;font-family:var(--f-body);letter-spacing:.04em}
 .badge.open{background:var(--pine);color:var(--on-pine)}
 .badge.refer{background:var(--pine-soft);color:var(--pine);box-shadow:inset 0 0 0 1px var(--pine)}
@@ -352,7 +352,7 @@ def page(path, title, desc, body, cur="", extra_js="", full_title=None, ld=None)
 <meta property="og:title" content="{E(t)}">
 <meta property="og:description" content="{E(desc)}">
 <meta property="og:url" content="{url}">
-<meta property="og:image" content="{SITE["base"]}assets/ogp.jpg">
+<meta property="og:image" content="{SITE["base"]}assets/ogp.jpg?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="ja_JP">
@@ -434,13 +434,13 @@ def build_top():
     cats_acc = "".join(acc(c["icon"], c["name"], f'{len(c["items"])}項目', '<p>' + c["lead"] + '</p><div class="chips">' + "".join(f'<a href="{{p}}support/{k}.html">{ic(SUP_ICON[k])}{SUP[k]["name"]}</a>' for k in c["items"]) + '</div>') for c in CATS)
     body = f'''<main id="main">
 <div class="opn" id="op" hidden role="dialog" aria-label="オープニング映像" aria-modal="true">
-<video id="opV" muted playsinline preload="metadata" aria-hidden="true"><source src="{{p}}assets/opening.mp4?v=2" type="video/mp4"><source src="{{p}}assets/opening.webm?v=2" type="video/webm"></video>
+<video id="opV" muted playsinline preload="metadata" aria-hidden="true"><source src="{{p}}assets/opening.mp4?v=3" type="video/mp4"><source src="{{p}}assets/opening.webm?v=3" type="video/webm"></video>
 <img class="still" src="{{p}}assets/opening-clean.jpg" alt="" aria-hidden="true" loading="lazy">
 <div class="op-cap" id="opCap1" aria-hidden="true"><p>立場は、それぞれ。</p><p>抱える悩みも、それぞれ。</p></div>
 <div class="op-cap" id="opCap2" aria-hidden="true"><p>この扉の向こうに、</p><p>解決への道があります。</p></div>
-<div class="op-title" aria-hidden="true"><b>医療介護総合支援会</b><i></i><span>医療と介護の未来を、つなぐ。</span></div>
+<div class="op-title" aria-hidden="true"><b>医療介護支援会</b><i></i><span>医療と介護の未来を、つなぐ。</span></div>
 <p class="op-co" aria-hidden="true">運営　株式会社グローブ</p>
-<div class="op-start" id="opStart"><div class="op-start-in">{ic("plus")}<p class="op-start-t">医療介護総合支援会</p><p class="op-start-s">はじめに、短い映像（約11秒）をご覧ください。</p>
+<div class="op-start" id="opStart"><div class="op-start-in">{ic("plus")}<p class="op-start-t">医療介護支援会</p><p class="op-start-s">はじめに、短い映像（約11秒）をご覧ください。</p>
 <div class="op-start-b"><button type="button" class="op-sb on" id="opSound">音ありで見る</button><button type="button" class="op-sb" id="opMute">音なしで見る</button></div>
 <button type="button" class="op-sk" id="opSkip0">映像をとばして、ホームページへ</button>
 <a class="op-sk op-sos" href="{{p}}soudan/index.html">急ぎのとき・緊急の相談窓口はこちら</a></div></div>
@@ -451,7 +451,7 @@ def build_top():
 <section class="hero">
 <div class="hero-media"><picture><source srcset="{{p}}assets/hero.webp" type="image/webp"><img src="{{p}}assets/hero.jpg" alt="" width="1920" height="1072" fetchpriority="high" decoding="async"></picture></div>
 <div class="wrap hero-in"><div class="hero-copy">
-<span class="lbl">みんなで使い、みんなで育てる総合支援会</span>
+<span class="lbl">みんなで使い、みんなで育てる支援会</span>
 <h1>医療・介護に関わる<br>すべての人を、<br><span class="h-nb">応援し、</span><span class="h-nb">支え、</span><span class="h-nb">つなぐ。</span></h1>
 <p class="lead">困ったときだけではありません。経営をよくしたい、働きやすくしたい、暮らしを便利にしたい、家族を支えたい。皆さまの声から、求められる支援を増やしていきます。</p>
 <div class="btns"><a class="btn btn-g" href="{{p}}contact/index.html">{ic("chat")}相談を送る</a><a class="btn btn-w" href="{{p}}roles/index.html">{ic("users")}自分の立場から選ぶ</a></div>
@@ -524,18 +524,18 @@ def build_top():
 
 # ---------- 支援会について ----------
 def build_about():
-    body = ph("支援会とは", "医療介護総合支援会が大切にしていることと、できること・できないことをご説明します。", [("支援会とは", None)], "head-5.jpg", "plus") + f'''
+    body = ph("支援会とは", "医療介護支援会が大切にしていることと、できること・できないことをご説明します。", [("支援会とは", None)], "head-5.jpg", "plus") + f'''
 <section class="sec"><div class="wrap stmt">
 <div class="stmt-img vt-l"><img src="{{p}}assets/minna.jpg" alt="木のぬくもりのある明るい部屋で、医療・介護の職員、医師、事業者、ご家族が一つのテーブルを囲んで話し合っている様子" loading="lazy"><span class="vt">みんなで使い、<br>みんなで育てる。</span></div>
 <div><span class="eyebrow">私たちの考え</span><h2>医療・介護に関わる人が、<br>ひとりで抱えこまないために。</h2>
-<div class="body"><p>医療・介護の現場には、経営する方、働く方、医療や介護を受ける方、支えるご家族がいます。立場は違っても、「どこに相談すればよいか分からない」という困りごとは共通しています。</p><p>医療介護総合支援会は、4つの立場の声をひとつの窓口で受け止め、いまある支援へつなぎ、足りない支援を協力者とつくっていく会です。</p></div></div>
+<div class="body"><p>医療・介護の現場には、経営する方、働く方、医療や介護を受ける方、支えるご家族がいます。立場は違っても、「どこに相談すればよいか分からない」という困りごとは共通しています。</p><p>医療介護支援会は、4つの立場の声をひとつの窓口で受け止め、いまある支援へつなぎ、足りない支援を協力者とつくっていく会です。</p></div></div>
 </div></section>
 <section class="sec"><div class="wrap greet" style="max-width:860px">
 {sec_h("事務局より", "ひとりで抱えこまず、<br>まずは声を聞かせてください。")}
 <p>医療や介護の現場で働く方、事業所を営む方、医療や介護を受ける方、支えるご家族。立場は違っても、「どこに相談すればよいか分からない」という声を多く聞いてきました。</p>
 <p>この支援会は、そうした声をひとつの窓口で受け止め、いまある支援へつなぎ、足りない支援は協力者と一緒につくっていくために生まれました。</p>
 <p>医療や法律の判断が必要なことは、必ず資格を持つ専門家へおつなぎします。ご本人の同意なく、相談の内容を外部へ伝えることはありません。相談内容が決まっていなくても大丈夫です。どうぞ気軽にお声がけください。</p>
-<p class="sign">医療介護総合支援会 事務局</p>
+<p class="sign">医療介護支援会 事務局</p>
 </div></section>
 <section class="sec band"><div class="wrap">
 {sec_h("育つ仕組み", "声を集め、支援を育て、みんなへ還元する")}
@@ -550,7 +550,7 @@ def build_about():
 <div class="tiers"><div class="tier">{ic("chat")}<span class="k">1　支援会の窓口</span><h3>受付と整理</h3><p>相談・要望・協力の申し出を受け付け、目的と優先順位を整理し、対応先を検討します。家財の買取査定は運営会社が直接対応します。</p></div><div class="tier">{ic("hands")}<span class="k">2　提携事業者</span><h3>サービスの提供</h3><p>引越し・片付け・研修・共同購入などは、内容と地域に合う提携先へおつなぎします。契約はお客様と提携先の間で結ばれます。</p></div><div class="tier">{ic("shield")}<span class="k">3　有資格者・専門機関</span><h3>専門的な判断</h3><p>診断・治療、法律、税務、労務、許認可の判断や書類の作成は、医療機関や弁護士・税理士・社会保険労務士・行政書士が担当します。</p></div></div>
 </div></section>
 <section class="sec"><div class="wrap"><p class="fine">運営会社や連携している窓口は、<a href="{{p}}company/index.html">運営会社</a>のページでご案内しています。</p></div></section>'''
-    page("about/index.html", "支援会とは", "医療介護総合支援会の考え方と、声を集めて支援を育てる仕組み、窓口ができること・できないこと、だれが何を担当するかの体制をご説明します。大阪・関西の医療・介護に関わる方の総合窓口です。", "<main id=\"main\">" + body + "</main>", cur="about")
+    page("about/index.html", "支援会とは", "医療介護支援会の考え方と、声を集めて支援を育てる仕組み、窓口ができること・できないこと、だれが何を担当するかの体制をご説明します。大阪・関西の医療・介護に関わる方の総合窓口です。", "<main id=\"main\">" + body + "</main>", cur="about")
 
 # ---------- 立場 ----------
 ROLE_PHOTO = {
@@ -599,7 +599,7 @@ def build_roles():
 <aside class="side"><nav aria-label="立場"><h3>{ic("users")}立場から選ぶ</h3><ul>{"".join(f'<li><a href="{o["id"]}.html"{" aria-current=\"page\"" if o["id"] == r["id"] else ""}>{o["name"]}</a></li>' for o in ROLES)}</ul><p style="margin-top:8px"><a class="more" href="index.html">立場の一覧へ</a></p></nav>
 <div class="box"><p>{r["name"]}として、相談を送れます。</p><a class="btn btn-g" href="{contact_link(r["id"])}">{ic("chat")}相談を送る</a></div></aside>
 </div></div>'''
-        page(f"roles/{r['id']}.html", {"kigyo":"企業・事業者の方へ","hataraku":"医療・介護で働く方へ","honnin":"利用者・ご本人へ","kazoku":"ご家族へ"}[r["id"]], r["lead"] + "大阪・関西の医療介護総合支援会がお手伝いします。", "<main id=\"main\">" + body + "</main>", cur="roles")
+        page(f"roles/{r['id']}.html", {"kigyo":"企業・事業者の方へ","hataraku":"医療・介護で働く方へ","honnin":"利用者・ご本人へ","kazoku":"ご家族へ"}[r["id"]], r["lead"] + "大阪・関西の医療介護支援会がお手伝いします。", "<main id=\"main\">" + body + "</main>", cur="roles")
 
 # ---------- 支援メニュー ----------
 SUP_PHOTO = {
@@ -646,7 +646,7 @@ def build_support():
 <aside class="side"><nav aria-label="{c["name"]}"><h3>{ic(c["icon"])}{c["name"]}</h3><ul>{"".join(f'<li><a href="{x}.html"{" aria-current=\"page\"" if x == k else ""}>{SUP[x]["name"]}</a></li>' for x in c["items"])}</ul><p style="margin-top:8px"><a class="more" href="index.html">支援メニューへ</a></p></nav>
 <div class="box"><p>「{s["name"]}」について、{"ご要望" if st == "prep" else "ご相談"}を送れます。</p><a class="btn btn-g" href="{"{p}kyoryoku/youbou.html?s=" + k if st == "prep" else contact_link(s["roles"][0], "soudan", k)}">{ic("chat")}{"要望を送る" if st == "prep" else "相談を送る"}</a></div></aside>
 </div></div>'''
-        page(f"support/{k}.html", s["name"], f"{s['name']}のご相談を受け付けます。{s['short']}。大阪・関西の医療・介護に関わる方の総合窓口、医療介護総合支援会の支援メニューです（{STATUS[st][0]}）。", "<main id=\"main\">" + body + "</main>", cur="support")
+        page(f"support/{k}.html", s["name"], f"{s['name']}のご相談を受け付けます。{s['short']}。大阪・関西の医療・介護に関わる方の総合窓口、医療介護支援会の支援メニューです（{STATUS[st][0]}）。", "<main id=\"main\">" + body + "</main>", cur="support")
 
 # ---------- 提供状況 ----------
 def build_status():
@@ -661,7 +661,7 @@ def build_status():
     body = ph("提供状況", "いまできることと、これから育てることを正しくお示しします。", [("提供状況", None)], "head-3.jpg", "check") + f'''
 <section class="sec"><div class="wrap"><div class="stat3">{cols}</div>
 <p style="margin-top:26px"><a class="btn btn-o" href="{{p}}kyoryoku/youbou.html">導入してほしい支援を伝える</a></p></div></section>'''
-    page("status/index.html", "提供状況", "医療介護総合支援会の支援ごとの提供状況です。いま受け付けている支援、相談後に対応できるかを確認する支援、準備中の支援を正しくお示しします。ほしい支援の要望も受け付けています。", "<main id=\"main\">" + body + "</main>", cur="")
+    page("status/index.html", "提供状況", "医療介護支援会の支援ごとの提供状況です。いま受け付けている支援、相談後に対応できるかを確認する支援、準備中の支援を正しくお示しします。ほしい支援の要望も受け付けています。", "<main id=\"main\">" + body + "</main>", cur="")
 
 # ---------- 会員制度 ----------
 MEMBER_TYPES = [
@@ -734,7 +734,7 @@ def build_member():
 <p class="fine" style="margin-top:12px">詳しい決まりごとは、<a href="kiyaku.html#kojin">個人会員規約</a>で定めています。個人会員として登録が済むと、ご自身の<b>紹介コード</b>をメールでお送りします。紹介先には、申込みの「紹介者」欄にそのコードを書いてもらってください。</p>
 <div class="btns" style="margin-top:28px"><a class="btn btn-g" href="apply.html">{ic("users")}会員登録を申し込む</a><a class="btn btn-o" href="{contact_link(None, "nyukai")}">{ic("chat")}まず相談する</a><a class="btn btn-o" href="{{p}}status/index.html">提供状況を見る</a></div>
 </div></section>'''
-    page("member/index.html", "会員制度", "医療介護総合支援会の会員制度です。事業所月5,500円〜・法人月5,500円〜・協賛月33,000円と、営業協力者の個人会員（無料）、月払いと年間払い（12か月分を10か月分の会費で）、電子契約での入会の流れと、創設会員（入会金免除）をご案内します。", "<main id=\"main\">" + body + "</main>", cur="")
+    page("member/index.html", "会員制度", "医療介護支援会の会員制度です。事業所月5,500円〜・法人月5,500円〜・協賛月33,000円と、営業協力者の個人会員（無料）、月払いと年間払い（12か月分を10か月分の会費で）、電子契約での入会の流れと、創設会員（入会金免除）をご案内します。", "<main id=\"main\">" + body + "</main>", cur="")
 
 
 # ---------- 会員登録 ----------
@@ -839,7 +839,7 @@ def build_apply():
 <div id="adone" hidden tabindex="-1" class="note-box"><h2 style="font-size:1.3rem;margin-bottom:10px">お申込みを受け付けました</h2><p>受付番号：<b id="ano"></b></p><p id="adoneMsg">担当者から、ご入力のメールアドレスへ電子契約のご案内をお送りします。届かない場合は、迷惑メールの設定をご確認ください。</p></div>
 </div></section>'''
     js = "<script>window.FORM_HELP={\"sites\": {\"t\": \"運営している事業所の数を入れます（2以上）。\", \"ex\": \"例：3　1か所だけのときは、上で「事業所会員」を選んでください\", \"req\": true}, \"staff\": {\"t\": \"職員の数を、すべての事業所の合計で入れます。\", \"ex\": \"例：8　入れると、すぐ下に会費の目安が出ます\", \"req\": true}, \"org\": {\"t\": \"事業所名・法人名・会社名を、正式な名前で入れます。\", \"ex\": \"例：株式会社○○　○○デイサービス\", \"req\": true}, \"rep\": {\"t\": \"代表者のお名前を入れます。\", \"ex\": \"例：山田 太郎\", \"req\": true}, \"nm\": {\"t\": \"お名前を入れます。法人などの場合は、手続きをするご担当者のお名前です。\", \"ex\": \"例：山田 花子\", \"req\": true}, \"addr\": {\"t\": \"所在地（住所）を、都道府県から入れます。\", \"ex\": \"例：大阪府大阪市○○区○○1-2-3\", \"req\": true}, \"tel\": {\"t\": \"日中につながる電話番号を入れます。\", \"ex\": \"例：06-1234-5678\", \"req\": true}, \"mail\": {\"t\": \"このアドレスに、6けたの認証コードと押印済みの契約書が届きます。\", \"ex\": \"例：yamada@example.jp　よく使うアドレスを入れてください\", \"req\": true}, \"ref\": {\"t\": \"紹介を受けた方だけ入れます（空のままでも申し込めます）。\", \"ex\": \"例：SK-7KQ2M、または紹介者のお名前\", \"req\": false}, \"note\": {\"t\": \"伝えておきたいことがあれば書きます（空のままでも申し込めます）。\", \"req\": false}};window.FORM_GROUPS=[{name:'mt',label:'会員の種類'},{name:'pay',label:'お支払い方法'}];window.FORM_CHECKS=['agree'];window.FORM_SCOPE='#af';window.FORM_SUBMIT='#asend';window.FORM_DONE_LABEL='申込みボタンへ ›';</script>" + '<script src="../keiyaku/config.js"></script><script src="../keiyaku/api.js"></script>' + APPLY_JS.replace("__EP__", json.dumps(SITE["endpoint"])).replace("__SITE__", json.dumps(SITE["name"])).replace("__MAIL__", json.dumps(SITE["mail"]).replace('"', "'"))
-    page("member/apply.html", "会員登録の申込み", "医療介護総合支援会の会員登録です。会員の種類と支払い方法を選んで1画面で申し込むと、そのまま電子契約の画面に移り、記入・押印・承認まで進めます。", "<main id=\"main\">" + body + "</main>", cur="", extra_js=js)
+    page("member/apply.html", "会員登録の申込み", "医療介護支援会の会員登録です。会員の種類と支払い方法を選んで1画面で申し込むと、そのまま電子契約の画面に移り、記入・押印・承認まで進めます。", "<main id=\"main\">" + body + "</main>", cur="", extra_js=js)
 
 
 # ---------- 会員規約の全文 ----------
@@ -861,7 +861,7 @@ def build_kiyaku():
 <article class="card" id="kojin" style="margin-top:26px"><h2 style="font-size:1.4rem;margin-bottom:10px">個人会員（営業協力者）規約</h2>{kiyaku_html(KOJIN_KIYAKU)}</article>
 <div class="btns" style="margin-top:28px"><a class="btn btn-g" href="apply.html">{ic("users")}会員登録を申し込む</a><a class="btn btn-o" href="index.html">会員制度のページへ戻る</a></div>
 </div></section>'''
-    page("member/kiyaku.html", "会員規約", "医療介護総合支援会の会員規約（事業所・法人・協賛会員）と個人会員（営業協力者）規約の全文です。会費、支払い、契約期間と更新、解約、効果が出なかった場合の途中解約などを定めています。", "<main id=\"main\">" + body + "</main>", cur="")
+    page("member/kiyaku.html", "会員規約", "医療介護支援会の会員規約（事業所・法人・協賛会員）と個人会員（営業協力者）規約の全文です。会費、支払い、契約期間と更新、解約、効果が出なかった場合の途中解約などを定めています。", "<main id=\"main\">" + body + "</main>", cur="")
 
 # ---------- 特定商取引法に基づく表記 ----------
 def build_tokushoho():
@@ -888,7 +888,7 @@ def build_tokushoho():
     body = ph("特定商取引法に基づく表記", "会員制度の販売条件です。", [("会員制度", "member/index.html"), ("特定商取引法に基づく表記", None)], "head-2.jpg", "doc") + f'''
 <section class="sec"><div class="wrap" style="max-width:960px"><div class="tbl-wrap"><table class="info"><tbody>{trs}</tbody></table></div>
 <p class="fine" style="margin-top:14px">会員規約の全文は<a href="kiyaku.html">会員規約のページ</a>をご覧ください。</p></div></section>'''
-    page("member/tokushoho.html", "特定商取引法に基づく表記", "医療介護総合支援会の会員制度の特定商取引法に基づく表記です。販売事業者、所在地、連絡先、会費、支払い方法と時期、提供時期、契約期間、解約と返金について記載しています。", "<main id=\"main\">" + body + "</main>", cur="")
+    page("member/tokushoho.html", "特定商取引法に基づく表記", "医療介護支援会の会員制度の特定商取引法に基づく表記です。販売事業者、所在地、連絡先、会費、支払い方法と時期、提供時期、契約期間、解約と返金について記載しています。", "<main id=\"main\">" + body + "</main>", cur="")
 
 # ---------- 流れ・費用 ----------
 def build_flow():
@@ -908,14 +908,14 @@ def build_flow():
 <tr><th>受け付けない内容</th><td>緊急の対応、診断・治療、法律・税務・労務の専門的な判断、申請書類の作成、職業紹介</td></tr>
 </tbody></table></div>
 </div></section>'''
-    page("flow/index.html", "相談の流れ・費用", "医療介護総合支援会の相談の流れ、費用の考え方、返信の目安、対応地域、名前を伏せた相談についてご説明します。受付から、同意のうえで専門家・提携先へおつなぎするまでの6つの段階です。", "<main id=\"main\">" + body + "</main>", cur="flow")
+    page("flow/index.html", "相談の流れ・費用", "医療介護支援会の相談の流れ、費用の考え方、返信の目安、対応地域、名前を伏せた相談についてご説明します。受付から、同意のうえで専門家・提携先へおつなぎするまでの6つの段階です。", "<main id=\"main\">" + body + "</main>", cur="flow")
 
 def build_faq():
     body = ph("よくある質問", "はじめての方からよくいただくご質問です。", [("よくある質問", None)], "head-5.jpg", "chat") + f'''
 <section class="sec"><div class="wrap" style="max-width:900px">{faq_html(FAQ)}
 <p style="margin-top:26px"><a class="btn btn-g" href="{{p}}contact/index.html">{ic("chat")}相談を送る</a></p></div></section>'''
     ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in FAQ]}
-    page("faq/index.html", "よくある質問", "医療介護総合支援会へのよくある質問です。費用、名前を伏せた相談、勤務先への秘密、緊急時の連絡先、仕事の紹介、補助金の申請、対応地域、返信の目安などにお答えします。", "<main id=\"main\">" + body + "</main>", cur="faq", ld=ld)
+    page("faq/index.html", "よくある質問", "医療介護支援会へのよくある質問です。費用、名前を伏せた相談、勤務先への秘密、緊急時の連絡先、仕事の紹介、補助金の申請、対応地域、返信の目安などにお答えします。", "<main id=\"main\">" + body + "</main>", cur="faq", ld=ld)
 
 REQ_SPAN = ' <span class="req">※必須</span>'
 def build_kyoryoku():
@@ -925,7 +925,7 @@ def build_kyoryoku():
 <div class="card"><h2 style="font-size:1.5rem;margin-bottom:12px">{ic("chat")} 要望の窓口</h2><p>「こんな支援があれば助かる」「ここを改善してほしい」という声を、どの立場の方からも受け付けています。多く寄せられた声は、協力者と一緒に新しい支援にします。</p><p class="fine" style="margin-top:10px">名前を書かずに送れます。返信がほしいときだけ、メールアドレスを入れてください。</p><p style="margin-top:18px"><a class="btn btn-o" href="youbou.html">{ic("chat")}要望を送るフォーム</a></p></div>
 </div>
 <p class="fine" style="margin-top:22px">困りごとのご相談は、<a href="{{p}}contact/index.html">相談の受付</a>からお送りください。</p></div></section>'''
-    page("kyoryoku/index.html", "提携・協業・要望", "医療介護総合支援会では、医療・介護に関わる方へのサービスを提供する事業者や専門家の提携・協業の申し込みと、「こんな支援がほしい」という要望を、それぞれ専用のフォームで受け付けています。", "<main id=\"main\">" + body + "</main>", cur="")
+    page("kyoryoku/index.html", "提携・協業・要望", "医療介護支援会では、医療・介護に関わる方へのサービスを提供する事業者や専門家の提携・協業の申し込みと、「こんな支援がほしい」という要望を、それぞれ専用のフォームで受け付けています。", "<main id=\"main\">" + body + "</main>", cur="")
     build_teikei(); build_youbou()
 
 def radios(name, items, req=True):
@@ -1050,7 +1050,7 @@ def build_teikei():
         help_[f"z{n}d"] = {"t": "対応の条件などがあれば書きます（空のままでも送れます）。", "ex": "例：訪問は市内のみ、オンラインは全国"}
     help_.update({"mtgNote": {"t": "面談の方法について伝えたいことがあれば書きます。", "ex": "例：ビデオ通話はZoomを使えます"}, "d1": {"t": "面談を希望する日を選びます（空のままでも送れます）。"}, "d2": {"t": "ほかに都合のよい日があれば選びます。"}, "d3": {"t": "ほかに都合のよい日があれば選びます。"}, "dnote": {"t": "日程について伝えたいことがあれば書きます。", "ex": "例：平日の午後ならいつでも可"}})
     js = "<script>window.FORM_HELP=" + json.dumps(help_, ensure_ascii=False) + ";window.FORM_GROUPS=[{name:'kind',label:'申し込みの種類'}];window.FORM_CHECKS=['agree'];window.FORM_SCOPE='#sf';window.FORM_SUBMIT='#ssend';window.FORM_DONE_LABEL='申し込むボタンへ ›';</script>" + CASCADE_JS + "<script>(function(){var A=makeCascade({tree:" + json.dumps(PARTNER_TAX, ensure_ascii=False) + ",box:'areas',add:'addArea',prefix:'a',title:'分野',max:5,labels:['大分類','中分類','小分類','詳細'],ph:'例：介護施設向けの電気料金の見直し'}),Z=makeCascade({tree:" + json.dumps(zone_tree(), ensure_ascii=False) + ",box:'zones',add:'addZone',prefix:'z',title:'地域',max:10,labels:['地方','都道府県','市区町村','詳細'],ph:'例：訪問は市内のみ、オンラインは全国'});window.teikeiCheck=function(){return A.check()||Z.check()};window.teikeiRows=function(){return A.rows().concat(Z.rows())};window.teikeiFields=function(){return A.firsts().map(function(x){return '提携：'+x})};var d=new Date();d.setDate(d.getDate()+1);var mn=d.toISOString().slice(0,10);['d1','d2','d3'].forEach(function(i){var e=document.getElementById(i);if(e)e.min=mn})})();</script>" + SIMPLE_JS.replace("__CFG__", json.dumps(cfg, ensure_ascii=False))
-    page("kyoryoku/teikei.html", "提携・協業の申し込み", "医療介護総合支援会への提携・協業の申し込みフォームです。医療・介護に関わる方へのサービスを提供する事業者、弁護士・税理士・社会保険労務士・行政書士などの専門家の方の協力を募集しています。", "<main id=\"main\">" + body + "</main>", cur="", extra_js=js)
+    page("kyoryoku/teikei.html", "提携・協業の申し込み", "医療介護支援会への提携・協業の申し込みフォームです。医療・介護に関わる方へのサービスを提供する事業者、弁護士・税理士・社会保険労務士・行政書士などの専門家の方の協力を募集しています。", "<main id=\"main\">" + body + "</main>", cur="", extra_js=js)
 
 def build_youbou():
     kinds = [("ほしい支援・サービスがある", "こんな支援があれば助かる"), ("今の支援を改善してほしい", "使ってみて気になったこと"), ("サイトの使いやすさ", "分かりにくい・見づらいところ"), ("その他のご意見", "")]
@@ -1083,7 +1083,7 @@ def build_youbou():
     js_pre = "<script>(function(){var P=" + json.dumps(pre, ensure_ascii=False) + ",s=new URLSearchParams(location.search).get('s');if(s&&P[s]){var o=document.getElementById('sup');if(o){o.value=P[s]}var t=document.getElementById('preNote');if(t){t.hidden=false;t.textContent='「'+P[s]+'」についての要望として送ります。'}}})();</script>"
     help_ = {"memo": {"t": "ほしい支援や、改善してほしいことを自由に書きます。", "ex": "例：夜勤明けでも相談できるよう、夜の時間帯にも受付をしてほしい", "req": True}, "sup": {"t": "関係する支援があれば選びます（なくても送れます）。"}, "nm": {"t": "返信の宛名に使います（空でも送れます）。", "ex": "例：山田 花子"}, "mail": {"t": "返信を受け取るメールアドレスです。", "ex": "例：yamada@example.jp", "req": True}}
     js = "<script>window.FORM_HELP=" + json.dumps(help_, ensure_ascii=False) + ";window.FORM_GROUPS=[{name:'kind',label:'要望の種類'},{name:'reply',label:'返信'}];window.FORM_CHECKS=['agree'];window.FORM_SCOPE='#sf';window.FORM_SUBMIT='#ssend';window.FORM_DONE_LABEL='送るボタンへ ›';</script>" + SIMPLE_JS.replace("__CFG__", json.dumps(cfg, ensure_ascii=False)) + js_pre
-    page("kyoryoku/youbou.html", "要望の窓口", "医療介護総合支援会への要望・ご意見のフォームです。ほしい支援、今の支援の改善、サイトの使いやすさなど、どの立場の方からも名前なしで送れます。", "<main id=\"main\">" + body + "</main>", cur="", extra_js=js)
+    page("kyoryoku/youbou.html", "要望の窓口", "医療介護支援会への要望・ご意見のフォームです。ほしい支援、今の支援の改善、サイトの使いやすさなど、どの立場の方からも名前なしで送れます。", "<main id=\"main\">" + body + "</main>", cur="", extra_js=js)
 
 def build_soudan():
     cards = [
@@ -1191,7 +1191,7 @@ window.addEventListener('hashchange',function(){if(location.hash==='#op')open()}
 })();</script>"""
 
 def build_company():
-    body = ph("運営会社", f"医療介護総合支援会は、{SITE['company']}が運営しています。", [("運営会社", None)], "head-2.jpg", "building") + f'''
+    body = ph("運営会社", f"医療介護支援会は、{SITE['company']}が運営しています。", [("運営会社", None)], "head-2.jpg", "building") + f'''
 <section class="sec"><div class="wrap" style="max-width:960px">
 {sec_h("会社概要", SITE["company"], "リユース・買取事業を中心に、家じまい・不動産支援、シニアライフサポート、医療・介護支援などに取り組んでいます。")}
 <div class="tbl-wrap"><table class="info"><tbody>
@@ -1211,7 +1211,7 @@ def build_company():
 <a class="svc-card" href="{SITE["kigyo"]}">{emb("doc")}<b>企業支援 総合相談窓口</b><span class="fine">許認可・補助金・経営の悩みを提携の専門家へ</span></a>
 <a class="svc-card" href="{SITE["globe"]}">{emb("building")}<b>株式会社グローブ</b><span class="fine">運営会社の公式サイト</span></a>
 </div></div></section>'''
-    page("company/index.html", "運営会社", f"医療介護総合支援会の運営会社の概要です。所在地、設立、許認可、支援会へのお問い合わせ方法、対応地域と、連携している家じまい相談窓口・企業支援 総合相談窓口をご案内します。", "<main id=\"main\">" + body + "</main>", cur="company")
+    page("company/index.html", "運営会社", f"医療介護支援会の運営会社の概要です。所在地、設立、許認可、支援会へのお問い合わせ方法、対応地域と、連携している家じまい相談窓口・企業支援 総合相談窓口をご案内します。", "<main id=\"main\">" + body + "</main>", cur="company")
 
 def doc_page(path, title, lead, img, icon, cards, desc):
     h = "".join(acc(icon, t, "", f'<p style="white-space:pre-line">{b}</p>') for t, b in cards)
@@ -1244,7 +1244,7 @@ def build_legal():
         ("禁止事項", "このサイトの運営を妨げる行為、ほかの利用者や第三者に不利益を与える行為、法令や公序良俗に反する行為を禁止します。"),
         ("内容の変更", "このサイトの内容や、この利用規約は、予告なく変更することがあります。"),
         ("準拠法", "この利用規約は、日本の法律に基づいて解釈します。"),
-    ], "医療介護総合支援会のサイトとウェブ受付の利用規約・免責事項です。情報の扱い、緊急時のご利用、提携事業者・専門家のサービス、支援会が行わないこと、著作権、禁止事項をご説明します。")
+    ], "医療介護支援会のサイトとウェブ受付の利用規約・免責事項です。情報の扱い、緊急時のご利用、提携事業者・専門家のサービス、支援会が行わないこと、著作権、禁止事項をご説明します。")
 
 # ---------- 受付フォーム ----------
 def build_contact():
@@ -1371,14 +1371,14 @@ document.getElementById('copy').addEventListener('click',function(){var m=docume
  try{navigator.clipboard.writeText(txt()).then(function(){m.textContent='写し取りました（コピーしました）。'},fb)}catch(e){fb()}});
 if(preR){st=1}show();
 })();</script>"""
-    page("contact/index.html", "相談を送る", "医療介護総合支援会のウェブ総合受付。立場を選び、相談の内容を大分類・中分類・小分類から選ぶだけで送れます。名前を伏せた相談もできます。",
+    page("contact/index.html", "相談を送る", "医療介護支援会のウェブ総合受付。立場を選び、相談の内容を大分類・中分類・小分類から選ぶだけで送れます。名前を伏せた相談もできます。",
          "<main id=\"main\">" + body + "</main>", cur="", extra_js=js)
 
 def build_404():
     body = ph("ページが見つかりません", "お探しのページは、移動または削除された可能性があります。", [("ページが見つかりません", None)], "head-5.jpg", "search") + '''
 <section class="sec"><div class="wrap" style="max-width:900px"><div class="btns"><a class="btn btn-g" href="{p}index.html">トップへ戻る</a><a class="btn btn-o" href="{p}support/index.html">支援メニュー</a><a class="btn btn-o" href="{p}contact/index.html">相談を送る</a></div></div></section>'''
     # 404は配置場所が深さ0（medical/404.html）。GitHub Pagesはリポジトリ直下の404を使うため、ここは案内用。
-    page("404.html", "ページが見つかりません", "お探しのページは見つかりませんでした。移動または削除された可能性があります。医療介護総合支援会のトップ、支援メニュー、ウェブ受付からお探しください。", "<main id=\"main\">" + body + "</main>")
+    page("404.html", "ページが見つかりません", "お探しのページは見つかりませんでした。移動または削除された可能性があります。医療介護支援会のトップ、支援メニュー、ウェブ受付からお探しください。", "<main id=\"main\">" + body + "</main>")
     # 絶対パスに置き換え（どの深さで表示されても動くように）
     pth = os.path.join(OUT, "404.html"); s = open(pth, encoding="utf-8").read()
     s = s.replace('href="index.html', f'href="{SITE["base"]}index.html').replace('href="assets/', f'href="{SITE["base"]}assets/').replace('src="assets/', f'src="{SITE["base"]}assets/')

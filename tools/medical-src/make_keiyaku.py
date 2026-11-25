@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""医療介護総合支援会の電子契約（/medical/keiyaku/）と Apps Script 一式を作る"""
+"""医療介護支援会の電子契約（/medical/keiyaku/）と Apps Script 一式を作る"""
 import json, os, re, shutil
 from keiyaku_text import KIYAKU, KOJIN_KIYAKU, NDA, TEIKEI
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -93,7 +93,7 @@ HEAD = lambda title: f'''<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <meta name="referrer" content="no-referrer">
-<title>{title}｜医療介護総合支援会</title>
+<title>{title}｜医療介護支援会</title>
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDPMincho:wght@700&display=swap">
@@ -156,19 +156,19 @@ API = "/* 電子契約：通信と、設定前のお試し表示（この端末�
     if (action === "admin.list") return wait({ ok: true, rows: ME.role === "admin" ? list : list.filter(function (x) { return x.issuer === ME.name; }) });
     if (action === "admin.cases") { var now = Date.now(), dd = function (h) { return new Date(now - h * 36e5).toISOString(); }; var rt = {}; FIELD_LIST.forEach(function (f) { rt[f] = ""; }); rt["経営・業務の改善"] = "見本コンサルティング株式会社"; rt["採用・定着・研修"] = "見本人材サービス、見本社労士事務所";
       return wait({ ok: true, routes: rt, staff: ["中嶋", "見本 担当"], partners: PTL, rows: [
-        { no: "IKT-261101-1000TKY", ts: dd(5), label: "医療介護総合支援会：提携・協業の申し込み／提携企業として、会員へサービスを提供したい", name: "見本 三郎", company: "見本エネルギー株式会社", email: "saburo@example.jp", tel: "06-2222-3333", body: "【医療介護総合支援会 提携・協業の申し込み】\n分野 1：固定費の見直し ＞ エネルギー ＞ 電気\n地域 1：近畿 ＞ 大阪府 ＞ 全域", status: "新規受付", memo: "", fields: "提携・協業の申し込み、提携：固定費の見直し", partner: "", staff: "", updated: dd(5), contacted: "", next: "" },
-        { no: "IKY-261101-1100YBO", ts: dd(8), label: "医療介護総合支援会：要望・ご意見／ほしい支援・サービスがある", name: "（名前なしの要望）", company: "", email: "", tel: "", body: "【医療介護総合支援会 要望・ご意見】\n内容：夜も受付してほしい", status: "新規受付", memo: "", fields: "要望・ご意見", partner: "", staff: "", updated: dd(8), contacted: "", next: "" },
-        { no: "IK-261113-2210HNN", ts: dd(3), label: "医療介護総合支援会：利用者・ご本人／医療・介護サービスのこと", name: "見本 四郎", company: "", email: "shiro@example.jp", tel: "090-0000-1111", body: "【医療介護総合支援会 受付内容】\n立場：利用者・ご本人\n通っている病院・施設：クリニック・診療所／見本内科クリニック（大阪市北区）\n相談の内容 1：医療・介護サービスのこと ＞ 医療・介護サービスを探す ＞ 訪問診療", status: "内容確認中", memo: "", fields: "医療・介護サービスを探す", partner: "", staff: "中嶋", updated: dd(2), contacted: "", next: "", fac: "" },
-        { no: "IK-261112-1600KZK", ts: dd(20), label: "医療介護総合支援会：ご家族／介護のこと", name: "見本 五月", company: "", email: "satsuki@example.jp", tel: "", body: "【医療介護総合支援会 受付内容】\n立場：ご家族\n通っている病院・施設：デイサービス・訪問介護などの事業所／見本デイサービス（大阪市淀川区）\n相談の内容 1：介護のこと ＞ 介護の困りごと ＞ 施設入居の相談", status: "新規受付", memo: "", fields: "介護の困りごと", partner: "", staff: "", updated: dd(20), contacted: "", next: "", fac: JSON.stringify({ m: "会員の病院・施設", kind: "デイサービス・訪問介護などの事業所", name: "見本デイサービス", addr: "大阪市淀川区", member: "見本デイサービス", auto: 1 }) },
-        { no: "IK-261030-0912ABC", ts: dd(30), label: "医療介護総合支援会：企業・事業者／経営・運営のこと", name: "見本 一郎", company: "見本クリニック", email: "sample@example.jp", tel: "06-0000-0000", body: "【医療介護総合支援会 受付内容】\n立場：企業・事業者\n相談の内容 1：経営・運営のこと ＞ 経営・業務の改善 ＞ 収支を改善したい", status: "新規受付", memo: "", fields: "経営・業務の改善", partner: "見本コンサルティング株式会社", staff: "", updated: dd(30), contacted: "", next: "" },
-        { no: "IKM-261029-1530XYZ", ts: dd(50), label: "医療介護総合支援会：会員登録／事業所会員", name: "見本 花子", company: "見本デイサービス", email: "hanako@example.jp", tel: "06-1111-2222", body: "【会員登録の申込み】\n会員の種類：事業所会員", status: "提携先対応中", memo: "電子契約 締結済み", fields: "会員登録（事業所会員）", partner: "", staff: "中嶋", updated: dd(200), contacted: dd(200), next: "" },
-        { no: "IK-261020-1010QWE", ts: dd(240), label: "医療介護総合支援会：医療・介護で働く方／採用・定着・研修", name: "見本 次郎", company: "見本訪問看護", email: "jiro@example.jp", tel: "", body: "【受付内容】\n内容：採用・定着・研修", status: "完了", memo: "紹介済み", fields: "採用・定着・研修", partner: "見本人材サービス", staff: "中嶋", updated: dd(100), contacted: dd(100), next: "" }] }); }
+        { no: "IKT-261101-1000TKY", ts: dd(5), label: "医療介護支援会：提携・協業の申し込み／提携企業として、会員へサービスを提供したい", name: "見本 三郎", company: "見本エネルギー株式会社", email: "saburo@example.jp", tel: "06-2222-3333", body: "【医療介護支援会 提携・協業の申し込み】\n分野 1：固定費の見直し ＞ エネルギー ＞ 電気\n地域 1：近畿 ＞ 大阪府 ＞ 全域", status: "新規受付", memo: "", fields: "提携・協業の申し込み、提携：固定費の見直し", partner: "", staff: "", updated: dd(5), contacted: "", next: "" },
+        { no: "IKY-261101-1100YBO", ts: dd(8), label: "医療介護支援会：要望・ご意見／ほしい支援・サービスがある", name: "（名前なしの要望）", company: "", email: "", tel: "", body: "【医療介護支援会 要望・ご意見】\n内容：夜も受付してほしい", status: "新規受付", memo: "", fields: "要望・ご意見", partner: "", staff: "", updated: dd(8), contacted: "", next: "" },
+        { no: "IK-261113-2210HNN", ts: dd(3), label: "医療介護支援会：利用者・ご本人／医療・介護サービスのこと", name: "見本 四郎", company: "", email: "shiro@example.jp", tel: "090-0000-1111", body: "【医療介護支援会 受付内容】\n立場：利用者・ご本人\n通っている病院・施設：クリニック・診療所／見本内科クリニック（大阪市北区）\n相談の内容 1：医療・介護サービスのこと ＞ 医療・介護サービスを探す ＞ 訪問診療", status: "内容確認中", memo: "", fields: "医療・介護サービスを探す", partner: "", staff: "中嶋", updated: dd(2), contacted: "", next: "", fac: "" },
+        { no: "IK-261112-1600KZK", ts: dd(20), label: "医療介護支援会：ご家族／介護のこと", name: "見本 五月", company: "", email: "satsuki@example.jp", tel: "", body: "【医療介護支援会 受付内容】\n立場：ご家族\n通っている病院・施設：デイサービス・訪問介護などの事業所／見本デイサービス（大阪市淀川区）\n相談の内容 1：介護のこと ＞ 介護の困りごと ＞ 施設入居の相談", status: "新規受付", memo: "", fields: "介護の困りごと", partner: "", staff: "", updated: dd(20), contacted: "", next: "", fac: JSON.stringify({ m: "会員の病院・施設", kind: "デイサービス・訪問介護などの事業所", name: "見本デイサービス", addr: "大阪市淀川区", member: "見本デイサービス", auto: 1 }) },
+        { no: "IK-261030-0912ABC", ts: dd(30), label: "医療介護支援会：企業・事業者／経営・運営のこと", name: "見本 一郎", company: "見本クリニック", email: "sample@example.jp", tel: "06-0000-0000", body: "【医療介護支援会 受付内容】\n立場：企業・事業者\n相談の内容 1：経営・運営のこと ＞ 経営・業務の改善 ＞ 収支を改善したい", status: "新規受付", memo: "", fields: "経営・業務の改善", partner: "見本コンサルティング株式会社", staff: "", updated: dd(30), contacted: "", next: "" },
+        { no: "IKM-261029-1530XYZ", ts: dd(50), label: "医療介護支援会：会員登録／事業所会員", name: "見本 花子", company: "見本デイサービス", email: "hanako@example.jp", tel: "06-1111-2222", body: "【会員登録の申込み】\n会員の種類：事業所会員", status: "提携先対応中", memo: "電子契約 締結済み", fields: "会員登録（事業所会員）", partner: "", staff: "中嶋", updated: dd(200), contacted: dd(200), next: "" },
+        { no: "IK-261020-1010QWE", ts: dd(240), label: "医療介護支援会：医療・介護で働く方／採用・定着・研修", name: "見本 次郎", company: "見本訪問看護", email: "jiro@example.jp", tel: "", body: "【受付内容】\n内容：採用・定着・研修", status: "完了", memo: "紹介済み", fields: "採用・定着・研修", partner: "見本人材サービス", staff: "中嶋", updated: dd(100), contacted: dd(100), next: "" }] }); }
     if (action === "admin.partnerSet") return wait({ ok: true, partners: savePt(d.rows) });
     if (action === "admin.log") { var nw = Date.now(), ag = function (h) { return new Date(nw - h * 36e5).toISOString(); }; return wait({ ok: true, rows: [
       { ts: ag(0.2), no: "IK-261113-2210HNN", kind: "更新", text: "状態：内容確認中 → 会員施設の確認\n会員施設の確認：会員の病院・施設（見本内科クリニック）", staff: "中嶋", actor: "中嶋", area: "案件" },
       { ts: ag(1), no: "IKK-DEMO-0001", kind: "入金を確認した（登録完了のメールを送信）", text: "事業所会員 申込書\n見本デイサービス 見本 花子", staff: "", actor: "見本 担当", area: "電子契約" },
       { ts: ag(3), no: "", kind: "提携先の登録・変更", text: "登録：見本コンサルティング株式会社", staff: "", actor: "中嶋", area: "設定" },
-      { ts: ag(5), no: "IKT-261101-1000TKY", kind: "受付", text: "医療介護総合支援会：提携・協業の申し込み\n見本エネルギー株式会社 見本 三郎", staff: "", actor: "サイト", area: "受付" },
+      { ts: ag(5), no: "IKT-261101-1000TKY", kind: "受付", text: "医療介護支援会：提携・協業の申し込み\n見本エネルギー株式会社 見本 三郎", staff: "", actor: "サイト", area: "受付" },
       { ts: ag(6), no: "", kind: "ログイン", text: "管理画面にログインしました", staff: "", actor: "", area: "ログイン" },
       { ts: ag(30), no: "IKK-DEMO-0001", kind: "相手が承認した（締結）", text: "事業所会員 申込書\n見本デイサービス 見本 花子", staff: "", actor: "相手", area: "電子契約" }] }); }
     if (action === "admin.forward") return wait({ ok: true, fwd: JSON.stringify([{ ts: new Date().toISOString(), name: d.partner }]) });
@@ -212,7 +212,7 @@ shutil.copy(os.path.join(HERE, "keiyaku_config.js"), os.path.join(OUT, "config.j
 CLIENT = HEAD("電子契約") + f'''
 <div class="demo" id="demoBar" hidden>お試し表示です（入力した内容は送信されません。認証コードは 123456）</div>
 <header class="top"><div class="in">
-<a class="brand" href="../index.html">{MARK}<span><b>医療介護総合支援会</b><small>電子契約</small></span></a>
+<a class="brand" href="../index.html">{MARK}<span><b>医療介護支援会</b><small>電子契約</small></span></a>
 <a class="tel" href="tel:{TELR}">分からないときは <b>{TEL}</b> <small>受付 {HRS}</small></a>
 </div></header>
 <main>
@@ -386,9 +386,9 @@ open(os.path.join(OUT, "index.html"), "w", encoding="utf-8").write(CLIENT.replac
 # ---------- 管理画面（サイト版：お試し表示と、Googleアカウントでの入口） ----------
 ADMIN_BODY = f'''
 <div class="demo" id="demoBar" hidden>お試し表示です（メールは送られず、この端末の中だけで動きます）</div>
-<header class="top"><div class="in"><span class="brand">{MARK}<span><b>医療介護総合支援会</b><small>管理画面（担当者用）</small></span></span></div></header>
+<header class="top"><div class="in"><span class="brand">{MARK}<span><b>医療介護支援会</b><small>管理画面（担当者用）</small></span></span></div></header>
 <main>
-<h1 class="sr">医療介護総合支援会 管理画面</h1>
+<h1 class="sr">医療介護支援会 管理画面</h1>
 <section class="card" id="gate" hidden style="max-width:520px;margin:20px auto">
 <h2>ログイン（管理者・担当者）</h2>
 <p class="hint">電子契約と受付の管理画面です。管理者・担当者とも、<b>自分のログインIDとパスワード</b>を入れてください。</p>
@@ -743,9 +743,9 @@ function fwBody(x,p){var g=segOf(x),inc={};document.querySelectorAll('#fwd [data
  var skip=/^(【|お名前|事業所名|メール|電話|通っている病院・施設)/,lines=String(x.body||'').split('\n').filter(function(l){return l.trim()&&!skip.test(l)}),info=[];
  if(inc.name){if(x.name)info.push('お名前：'+x.name);if(x.company)info.push('会社・事業所：'+x.company)}if(inc.email&&x.email)info.push('メール：'+x.email);if(inc.tel&&x.tel&&x.tel!=='（未入力）')info.push('電話：'+x.tel);
  if(inc.fac&&isFacSeg(x)){var f=facOf(x);if(f.member||f.name)info.push('通っている病院・施設：'+(f.member||f.name)+(f.addr?'（'+f.addr+'）':''))}
- return p.name+'\n'+(p.person?p.person.replace(/\s*様$/,'')+' 様':'ご担当者様')+'\n\nいつもお世話になっております。医療介護総合支援会です。\n下記のご相談について、ご対応をお願いできますでしょうか。\n'+(info.length?'お客様からは、貴社へ情報をお伝えすることのご了承をいただいております。\n':'')+
+ return p.name+'\n'+(p.person?p.person.replace(/\s*様$/,'')+' 様':'ご担当者様')+'\n\nいつもお世話になっております。医療介護支援会です。\n下記のご相談について、ご対応をお願いできますでしょうか。\n'+(info.length?'お客様からは、貴社へ情報をお伝えすることのご了承をいただいております。\n':'')+
  '\n■受付番号：'+x.no+'\n■種別：'+g.name+'\n\n■ご相談の内容\n'+(lines.join('\n')||'（内容の記入なし）')+'\n\n■お客様の情報\n'+(info.length?info.join('\n'):'（ご連絡先はお伝えしていません。当会が間に入ってご連絡します）')+
- '\n\nご対応の可否と今後の進め方を、このメールへのご返信でお知らせください。\nお伝えした個人情報は、このご相談への対応のためだけにお使いください。\n\n――――――――――――――――\n医療介護総合支援会（運営 株式会社グローブ）\n'+(x.staff?'担当：'+x.staff+'\n':'')+'電話 0120-933-496（受付 10:00〜19:00）\nメール info@119cm.net\n――――――――――――――――'}
+ '\n\nご対応の可否と今後の進め方を、このメールへのご返信でお知らせください。\nお伝えした個人情報は、このご相談への対応のためだけにお使いください。\n\n――――――――――――――――\n医療介護支援会（運営 株式会社グローブ）\n'+(x.staff?'担当：'+x.staff+'\n':'')+'電話 0120-933-496（受付 10:00〜19:00）\nメール info@119cm.net\n――――――――――――――――'}
 function openFwd(x,name){$('errB').textContent='';
  if(!name||name==='自社'){$('errB').textContent='先に「振分け先」で提携先を選んでください。';return}
  var p=PARTNERS.filter(function(z){return z.name===name&&z.state!=='確認待ち'})[0];if(!p){$('errB').textContent='「'+name+'」は提携先一覧に登録されていない（または確認待ちの）ため送れません。設定の「提携先の登録」で登録すると送れます。';return}
@@ -756,7 +756,7 @@ function openFwd(x,name){$('errB').textContent='';
  var fl=fwdLog(x);if(fl.length)w.push('この案件は、'+fl.map(function(z){return dt(z.ts)+' '+z.name}).join('、')+' に送ったことがあります。');
  $('fwdWarn').hidden=!w.length;$('fwdWarn').innerHTML=w.map(esc).join('<br>');$('fwIncFac').hidden=!isFacSeg(x);
  document.querySelectorAll('#fwd [data-inc]').forEach(function(c){c.checked=true});
- $('fwdS').value='【医療介護総合支援会】ご相談のご依頼（受付番号 '+x.no+'）';$('fwdB').value=fwBody(x,p);
+ $('fwdS').value='【医療介護支援会】ご相談のご依頼（受付番号 '+x.no+'）';$('fwdB').value=fwBody(x,p);
  $('fwdOk').checked=false;$('fwSend').disabled=true;$('fwdSt').checked=!!FW.st;$('fwdSt').parentNode.hidden=!FW.st;$('fwdStL').textContent='送ったら、状態を「'+FW.st+'」にする';$('errFw').textContent='';$('fwd').hidden=false;$('fwdB').scrollTop=0;$('fwdOk').focus()}
 document.querySelectorAll('#fwd [data-inc]').forEach(function(c){c.addEventListener('change',function(){if(FW)$('fwdB').value=fwBody(FW.x,FW.p)})});
 $('fwdOk').addEventListener('change',function(){$('fwSend').disabled=!this.checked||!FW||!FW.p.email});
@@ -915,7 +915,7 @@ function cardHtml(x){var g=segOf(x),SS=stepsOf(x),si=SS.indexOf(x.status),stop=x
   '<div class="ib-m">'+(x.email?'<a href="mailto:'+esc(x.email)+'">'+esc(x.email)+'</a>':'')+(x.tel?'　<a href="tel:'+esc(String(x.tel).replace(/[^0-9+]/g,''))+'">'+esc(x.tel)+'</a>':'')+'</div>'+
   '<div class="ib-m"><span class="kd '+(SEGC[g.key]||'')+'">'+esc(g.name)+'</span> '+esc(g.note)+'</div>'+
   '<details><summary>受付の内容を見る</summary><pre>'+esc(x.body)+'</pre></details>'+ctHtml(x)+
-  facHtml(x)+(g.route==='self'?'<div class="pt-box"><label>振分け先</label><p class="self-pt">自社（医療介護総合支援会）で対応します（'+esc(g.name)+'は提携先へ振り分けません）</p><input type="hidden" data-k="partner" value="自社"></div>':ptHtml(x))+'<div class="grid2"><div><label>状態</label><select data-k="status">'+SS.map(function(s){return'<option'+(s===x.status?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div>'+
+  facHtml(x)+(g.route==='self'?'<div class="pt-box"><label>振分け先</label><p class="self-pt">自社（医療介護支援会）で対応します（'+esc(g.name)+'は提携先へ振り分けません）</p><input type="hidden" data-k="partner" value="自社"></div>':ptHtml(x))+'<div class="grid2"><div><label>状態</label><select data-k="status">'+SS.map(function(s){return'<option'+(s===x.status?' selected':'')+'>'+s+'</option>'}).join('')+'</select></div>'+
   '<div><label>担当</label><select data-k="staff">'+staffOpts(x.staff)+'</select></div><div><label>次の対応予定日</label><input type="date" data-k="next" value="'+esc(x.next)+'"></div></div>'+
   (x.memo?'<div class="ib-m" style="margin-top:8px">前回のメモ：'+esc(x.memo)+'</div>':'')+'<div class="ib-a"><span class="memo2"><select data-mk aria-label="対応の種類"><option value="">対応の種類を選ぶ</option>'+g.mk.map(function(k){return'<option>'+k+'</option>'}).join('')+'</select><input type="text" data-mt placeholder="対応メモ（何をしたか・次に何をするか）"></span><input type="hidden" data-k="memo" value="'+esc(x.memo)+'"><button type="button" class="small-btn" data-save>保存</button><button type="button" class="small-btn" data-rep>お客様へ報告を作る</button><button type="button" class="small-btn" data-his>対応の履歴</button>'+(g.route==='partner'?'<button type="button" class="small-btn fw-b" data-fw>提携先へ送る</button>':'')+(g.key==='teikei'?'<button type="button" class="small-btn" data-reg>提携先一覧に登録する</button>':'')+'</div><div class="hist-box"></div></div>'}
 $('sum').addEventListener('click',function(e){var b=e.target.closest('[data-st]');if(!b)return;var o=$('fSt');if(![].some.call(o.options,function(op){return op.value===b.dataset.st}))o.insertAdjacentHTML('beforeend','<option>'+b.dataset.st+'</option>');o.value=b.dataset.st;drawIn()});
@@ -1003,7 +1003,7 @@ $('inbox').addEventListener('click',function(e){var card=e.target.closest('.ib')
  if(e.target.closest('[data-his]')){var hb=card.querySelector('.hist-box');hb.innerHTML='<p class="hint">読み込み中…</p>';api('admin.history',{no:no}).then(function(r){hb.innerHTML=r.rows.length?'<ul class="hist">'+r.rows.map(function(h){var t=String(h.text||''),f=t.split('\n')[0].slice(0,120),who=h.actor||h.staff;return'<li>'+dt(h.ts)+'　<b>'+esc(h.kind)+'</b>'+(who?'（'+esc(who)+'）':'')+'　'+(t.indexOf('\n')>=0||t.length>120?'<details style="display:inline"><summary>'+esc(f)+'</summary><pre class="lg-pre">'+esc(t)+'</pre></details>':esc(t))+'</li>'}).join('')+'</ul>':'<p class="hint">履歴はまだありません</p>'}).catch(function(er){hb.textContent=er.message})}});
 /* 進捗報告の文章を作る（担当者が直して、送るかどうかを決める） */
 var RP=null,ALT=0;
-var TX={'受付':['このたびは、医療介護総合支援会にご相談いただき、ありがとうございます。ご相談を受け付けました。\n担当者が内容を確認し、あらためてご連絡いたします。','ご相談をお寄せいただき、ありがとうございます。内容を拝見し、担当者から追ってご連絡いたします。今しばらくお待ちください。'],
+var TX={'受付':['このたびは、医療介護支援会にご相談いただき、ありがとうございます。ご相談を受け付けました。\n担当者が内容を確認し、あらためてご連絡いたします。','ご相談をお寄せいただき、ありがとうございます。内容を拝見し、担当者から追ってご連絡いたします。今しばらくお待ちください。'],
 '内容確認中':['いただいたご相談の内容を、担当者が確認しております。\n確認のためにお伺いしたいことがある場合は、こちらからご連絡いたします。','ご相談の内容を確認しているところです。進め方の見通しが立ちましたら、あらためてご報告いたします。'],
 '振分け済み':['ご相談の内容に合わせて、対応できる提携先・専門家を選びました。\nお客様の情報を提携先へお伝えする前に、あらためてご了承の確認をさせていただきます。','ご相談に対応できる提携先・専門家の候補が決まりました。今後の進め方について、追ってご案内いたします。'],
 '提携先対応中':['現在、提携先・専門家とともに、具体的な進め方を検討しております。\n進み具合に応じて、あらためてご報告いたします。','提携先・専門家との間で、ご相談への対応を進めております。次の段階に進みましたら、ご報告いたします。'],
@@ -1011,15 +1011,15 @@ var TX={'受付':['このたびは、医療介護総合支援会にご相談い�
 '完了':['このたびのご相談につきまして、対応が完了いたしましたのでご報告いたします。\nご相談いただき、ありがとうございました。今後もお困りのことがあれば、いつでもご相談ください。','ご相談への対応が完了いたしました。ご協力いただき、ありがとうございました。また何かございましたら、お気軽にお声がけください。'],
 '見送り':['ご相談の内容を検討いたしましたが、誠に恐れ入りますが、今回は当会および提携先でのお手伝いが難しいとの結論になりました。\nご期待に沿えず申し訳ございません。状況が変わった際は、あらためてご相談ください。','慎重に検討いたしましたが、今回のご相談は、当会と提携先での対応が難しい状況です。申し訳ございません。別のご相談がございましたら、いつでもお声がけください。']};
 var RTX={_:{'会員施設の確認':['ご確認のお願い','ご相談にお応えするため、いま通っている（ご利用中の）病院・クリニック・介護施設などを確認させていただいております。\n確認のため、こちらからお電話・メールでお伺いすることがあります。'],'ヒアリング・面談':['ヒアリングのお願い','ご相談の内容について、詳しくお話を伺いたく存じます。\nお電話・オンライン・ご訪問のいずれかで、ご都合のよい日時をお知らせいただけますでしょうか。'],'契約・導入の準備中':['導入準備のご報告','ご契約・導入に向けて、提携先とともに準備を進めております。\n日程などが決まりしだい、あらためてご案内いたします。'],'お話を伺っている':['ご相談についてのご連絡','ご相談の内容を、引き続き伺っております。\nお話しいただいた内容を、ご本人の同意なく勤務先などへお伝えすることはありません。'],'専門家・窓口へつないだ':['ご相談先のご案内','ご相談の内容に合わせて、対応できる専門家・窓口をご案内いたします。\n詳しい内容は、このあと担当者からお伝えします。'],'継続して相談中':['進捗のご報告','引き続き、ご相談に対応しております。気になることがあれば、いつでもお知らせください。'],'状況の聞き取り':['お話を伺うお願い','ご相談にお応えするため、いまの状況を詳しく伺いたく存じます。\nご都合のよい日時をお知らせいただけますでしょうか。'],'利用・手続きの準備中':['お手続き準備のご報告','サービスのご利用・お手続きに向けて、準備を進めております。\n必要な書類や日程が決まりしだい、ご案内いたします。']},
-self:{'受付':['受付のお知らせ','このたびは、医療介護総合支援会にご連絡いただき、ありがとうございます。受け付けました。\n担当者が内容を確認し、あらためてご連絡いたします。'],'内容確認中':['内容確認のご報告','いただいた内容を、担当者が確認しております。\n確認のためにお伺いしたいことがある場合は、こちらからご連絡いたします。']},
-teikei:{'受付':['お申し込み受付のお知らせ','このたびは、医療介護総合支援会へ提携・協業のお申し込みをいただき、ありがとうございます。お申し込みを受け付けました。\n担当者が内容を確認し、面談の日程についてあらためてご連絡いたします。'],'内容確認中':['内容確認のご報告','いただいた提携・協業のお申し込み内容を、担当者が確認しております。\n確認のためにお伺いしたいことがある場合は、こちらからご連絡いたします。'],'面談日の調整中':['面談日程のご相談','提携・協業について、面談の機会をいただきたく存じます。\n面談は、当会の打ち合わせ専用事務所（大阪市北区）またはオンラインで行います。ご都合のよい日時をいくつかお知らせください。'],'面談済み':['面談のお礼','先日はお時間をいただき、ありがとうございました。\nお伺いした内容をもとに、当会で検討いたします。結果は、あらためてご連絡いたします。'],'社内で検討中':['検討状況のご報告','提携・協業のお申し込みについて、現在、当会で検討しております。\n結果がまとまりしだい、ご連絡いたします。'],'契約の手続き中':['ご契約手続きのご案内','提携・協業について、ぜひ進めさせていただきたく存じます。\n提携の契約書をお送りしますので、内容のご確認をお願いいたします。'],'提携開始':['提携開始のお知らせ','このたびは、医療介護総合支援会との提携をお引き受けいただき、ありがとうございます。\n今後、ご相談の内容に合わせてご紹介させていただきます。どうぞよろしくお願いいたします。'],'見送り':['お申し込みへのご回答','提携・協業のお申し込みについて慎重に検討いたしましたが、誠に恐れ入りますが、今回は見送らせていただくこととなりました。\nご期待に沿えず申し訳ございません。状況が変わりましたら、あらためてご相談させてください。']},
-youbou:{'受付':['ご意見受付のお知らせ','このたびは、医療介護総合支援会へご要望・ご意見をお寄せいただき、ありがとうございます。\nいただいた内容は担当者が確認し、今後の運営に役立ててまいります。'],'内容確認中':['内容確認のご報告','いただいたご要望・ご意見を、担当者が確認しております。'],'社内で検討中':['検討状況のご報告','いただいたご要望について、当会で対応を検討しております。\n方針が決まりましたら、あらためてお知らせいたします。'],'対応を決めた':['対応のご報告','いただいたご要望をもとに、対応を進めることにいたしました。\n実施しましたら、あらためてお知らせいたします。'],'対応済み':['対応完了のご報告','いただいたご要望をもとに、対応いたしました。\n貴重なご意見をお寄せいただき、ありがとうございました。'],'見送り':['ご意見へのご回答','いただいたご要望について検討いたしましたが、誠に恐れ入りますが、現時点では対応が難しいとの結論になりました。\n今後の参考にさせていただきます。貴重なご意見をありがとうございました。']},
-kaiin:{'受付':['お申し込み受付のお知らせ','このたびは、医療介護総合支援会の会員登録にお申し込みいただき、ありがとうございます。お申し込みを受け付けました。'],'内容確認中':['内容確認のご報告','会員登録のお申し込み内容を、担当者が確認しております。'],'契約書を送った':['契約書送付のお知らせ','会員規約（契約書）を電子契約でお送りしました。\n届いたメールのご案内に沿って、内容のご確認と承認をお願いいたします。'],'入金待ち':['お振込みのお願い','ご契約ありがとうございます。お送りした請求書の内容で、お支払い期日までにお振込みをお願いいたします。'],'登録完了':['会員登録完了のお知らせ','ご入金を確認し、会員登録が完了いたしました。今後ともどうぞよろしくお願いいたします。'],'見送り':['お申し込みへのご回答','会員登録のお申し込みについて、誠に恐れ入りますが、今回はお受けすることが難しい状況です。\nご期待に沿えず申し訳ございません。']}};
+self:{'受付':['受付のお知らせ','このたびは、医療介護支援会にご連絡いただき、ありがとうございます。受け付けました。\n担当者が内容を確認し、あらためてご連絡いたします。'],'内容確認中':['内容確認のご報告','いただいた内容を、担当者が確認しております。\n確認のためにお伺いしたいことがある場合は、こちらからご連絡いたします。']},
+teikei:{'受付':['お申し込み受付のお知らせ','このたびは、医療介護支援会へ提携・協業のお申し込みをいただき、ありがとうございます。お申し込みを受け付けました。\n担当者が内容を確認し、面談の日程についてあらためてご連絡いたします。'],'内容確認中':['内容確認のご報告','いただいた提携・協業のお申し込み内容を、担当者が確認しております。\n確認のためにお伺いしたいことがある場合は、こちらからご連絡いたします。'],'面談日の調整中':['面談日程のご相談','提携・協業について、面談の機会をいただきたく存じます。\n面談は、当会の打ち合わせ専用事務所（大阪市北区）またはオンラインで行います。ご都合のよい日時をいくつかお知らせください。'],'面談済み':['面談のお礼','先日はお時間をいただき、ありがとうございました。\nお伺いした内容をもとに、当会で検討いたします。結果は、あらためてご連絡いたします。'],'社内で検討中':['検討状況のご報告','提携・協業のお申し込みについて、現在、当会で検討しております。\n結果がまとまりしだい、ご連絡いたします。'],'契約の手続き中':['ご契約手続きのご案内','提携・協業について、ぜひ進めさせていただきたく存じます。\n提携の契約書をお送りしますので、内容のご確認をお願いいたします。'],'提携開始':['提携開始のお知らせ','このたびは、医療介護支援会との提携をお引き受けいただき、ありがとうございます。\n今後、ご相談の内容に合わせてご紹介させていただきます。どうぞよろしくお願いいたします。'],'見送り':['お申し込みへのご回答','提携・協業のお申し込みについて慎重に検討いたしましたが、誠に恐れ入りますが、今回は見送らせていただくこととなりました。\nご期待に沿えず申し訳ございません。状況が変わりましたら、あらためてご相談させてください。']},
+youbou:{'受付':['ご意見受付のお知らせ','このたびは、医療介護支援会へご要望・ご意見をお寄せいただき、ありがとうございます。\nいただいた内容は担当者が確認し、今後の運営に役立ててまいります。'],'内容確認中':['内容確認のご報告','いただいたご要望・ご意見を、担当者が確認しております。'],'社内で検討中':['検討状況のご報告','いただいたご要望について、当会で対応を検討しております。\n方針が決まりましたら、あらためてお知らせいたします。'],'対応を決めた':['対応のご報告','いただいたご要望をもとに、対応を進めることにいたしました。\n実施しましたら、あらためてお知らせいたします。'],'対応済み':['対応完了のご報告','いただいたご要望をもとに、対応いたしました。\n貴重なご意見をお寄せいただき、ありがとうございました。'],'見送り':['ご意見へのご回答','いただいたご要望について検討いたしましたが、誠に恐れ入りますが、現時点では対応が難しいとの結論になりました。\n今後の参考にさせていただきます。貴重なご意見をありがとうございました。']},
+kaiin:{'受付':['お申し込み受付のお知らせ','このたびは、医療介護支援会の会員登録にお申し込みいただき、ありがとうございます。お申し込みを受け付けました。'],'内容確認中':['内容確認のご報告','会員登録のお申し込み内容を、担当者が確認しております。'],'契約書を送った':['契約書送付のお知らせ','会員規約（契約書）を電子契約でお送りしました。\n届いたメールのご案内に沿って、内容のご確認と承認をお願いいたします。'],'入金待ち':['お振込みのお願い','ご契約ありがとうございます。お送りした請求書の内容で、お支払い期日までにお振込みをお願いいたします。'],'登録完了':['会員登録完了のお知らせ','ご入金を確認し、会員登録が完了いたしました。今後ともどうぞよろしくお願いいたします。'],'見送り':['お申し込みへのご回答','会員登録のお申し込みについて、誠に恐れ入りますが、今回はお受けすることが難しい状況です。\nご期待に沿えず申し訳ございません。']}};
 var TT={'受付':'受付のお知らせ','内容確認中':'内容確認のご報告','振分け済み':'今後の進め方のご報告','提携先対応中':'進捗のご報告','提案・見積り中':'ご提案準備のご報告','完了':'対応完了のご報告','見送り':'ご相談へのご回答'};
-var RG=['いつもお世話になっております。医療介護総合支援会です。','お世話になっております。医療介護総合支援会でございます。','医療介護総合支援会です。このたびはありがとうございます。'],RC=['ご不明な点は、このメールにご返信いただくか、お電話でお問い合わせください。','ご質問などがございましたら、このメールへのご返信、またはお電話でお気軽にお知らせください。','気になることがございましたら、どうぞ遠慮なくこのメールにご返信ください。お電話でも承ります。'];
+var RG=['いつもお世話になっております。医療介護支援会です。','お世話になっております。医療介護支援会でございます。','医療介護支援会です。このたびはありがとうございます。'],RC=['ご不明な点は、このメールにご返信いただくか、お電話でお問い合わせください。','ご質問などがございましたら、このメールへのご返信、またはお電話でお気軽にお知らせください。','気になることがございましたら、どうぞ遠慮なくこのメールにご返信ください。お電話でも承ります。'];
 function makeRpt(x,kind){var g=segOf(x),who=(x.company?x.company+'\n':'')+(x.name&&x.name.indexOf('伏せ')<0?x.name+' 様':(g.route==='self'?'ご担当者様':'ご相談者様'));var r=(RTX[g.key]||{})[kind]||(g.route==='partner'?RTX._[kind]:null),t,tt;
  if(r){t=[r[1]];tt=r[0]}else if(g.route==='self'&&RTX.self[kind]){t=[RTX.self[kind][1]];tt=RTX.self[kind][0]}else{t=TX[kind]||[g.route==='self'?'いただいた'+g.word+'について、引き続き対応を進めております。進み具合に応じて、あらためてご報告いたします。':'ご相談について、引き続き対応を進めております。進み具合に応じて、あらためてご報告いたします。'];tt=TT[kind]}
- return{s:'【医療介護総合支援会】'+(tt||'進捗のご報告')+'（受付番号 '+x.no+'）',b:who+'\n\n'+RG[ALT%RG.length]+'\n\n'+t[ALT%t.length]+'\n\n受付番号：'+x.no+(x.staff?'\n担当：'+x.staff:'')+'\n\n'+RC[ALT%RC.length]+'\n\n――――――――――――――――\n医療介護総合支援会（運営 株式会社グローブ）\n電話 0120-933-496（受付 10:00〜19:00）\nメール info@119cm.net\n――――――――――――――――'}}
+ return{s:'【医療介護支援会】'+(tt||'進捗のご報告')+'（受付番号 '+x.no+'）',b:who+'\n\n'+RG[ALT%RG.length]+'\n\n'+t[ALT%t.length]+'\n\n受付番号：'+x.no+(x.staff?'\n担当：'+x.staff:'')+'\n\n'+RC[ALT%RC.length]+'\n\n――――――――――――――――\n医療介護支援会（運営 株式会社グローブ）\n電話 0120-933-496（受付 10:00〜19:00）\nメール info@119cm.net\n――――――――――――――――'}}
 function openRpt(x,kind){RP={x:x,kind:kind};ALT=0;var r=makeRpt(x,kind);$('rptS').value=r.s;$('rptB').value=r.b;$('errRp').textContent='';
  $('rptInfo').textContent=(x.company?x.company+'　':'')+x.name+'（'+x.no+'）への報告です。送るかどうかは、担当者が判断してください。';
  var w='';if(!x.email)w='この案件にはメールアドレスがありません。電話で伝えた場合は「電話で伝えた」で記録してください。';else if(x.contacted&&Date.now()-new Date(x.contacted)<48*H)w='前回の連絡（'+dt(x.contacted)+'）から48時間たっていません。連絡が多すぎないか、確かめてから送ってください。';
@@ -1081,7 +1081,7 @@ window.makeZones=function(box,max){var Z=window.ZONE_TREE||{},el=document.getEle
 PARTNER_PAGE = HEAD("提携先の登録") + f"""
 <div class="demo" id="demoBar" hidden>お試し表示です（入力した内容は送信されません）</div>
 <header class="top"><div class="in">
-<a class="brand" href="../index.html">{MARK}<span><b>医療介護総合支援会</b><small>提携先の登録</small></span></a>
+<a class="brand" href="../index.html">{MARK}<span><b>医療介護支援会</b><small>提携先の登録</small></span></a>
 <a class="tel" href="tel:{TELR}">分からないときは <b>{TEL}</b> <small>受付 {HRS}</small></a>
 </div></header>
 <main>
@@ -1090,7 +1090,7 @@ PARTNER_PAGE = HEAD("提携先の登録") + f"""
 <section class="card" id="pf" hidden>
 <h1 style="font-size:1.5rem;margin:0 0 6px">提携先のご登録</h1>
 <p id="pTo"></p>
-<p class="hint">医療介護総合支援会に寄せられるご相談のうち、貴社の分野に合うものをご紹介するために使います。<span class="req">※必須</span> の欄は必ずご記入ください。</p>
+<p class="hint">医療介護支援会に寄せられるご相談のうち、貴社の分野に合うものをご紹介するために使います。<span class="req">※必須</span> の欄は必ずご記入ください。</p>
 <div class="fld"><label for="pName">会社名・事務所名 <span class="req">※必須</span></label><input type="text" id="pName" maxlength="100" autocomplete="organization"></div>
 <div class="fld"><label for="pPerson">ご担当者のお名前</label><input type="text" id="pPerson" maxlength="60" autocomplete="name"></div>
 <div class="fld"><label for="pA">大分類（得意な分野） <span class="req">※必須</span></label><select id="pA"></select></div>
