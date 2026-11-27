@@ -27,10 +27,10 @@
   var navText = function () { return seen($('#menuBtn')) ? '「メニュー」を押すと、ほかのページの一覧が開きます。' : 'ほかのページへは、この上の帯から移動できます。'; };
   var common = [
     [function () { return first('.fs'); }, '文字が小さくて読みにくいときは、「大」か「特大」を押してください。文字が大きくなります。'],
-    [function () { return first('.telbar', '.util-tel'); }, 'お電話でのご相談はこちらです。受付は10:00〜18:00（年中無休）、通話料は無料です。'],
+    [function () { return first('.telbar', '.util-tel'); }, 'ご相談はここから送れます。お名前と困りごとだけで送れ、24時間受け付けています。'],
     [nav, navText]
   ];
-  var cta = [function () { return first('main a.btn[href*="contact/"]', '.cta-band .btn', '.hd .cta'); }, '「相談内容をまとめる」を押すと、質問に答えるだけでご相談の内容がまとまり、そのまま窓口に送れます。'];
+  var cta = [function () { return first('main a.btn[href*="contact/"]', '.cta-band .btn', '.hd .cta'); }, '「かんたん相談」を押すと、お名前と困りごとだけでご相談を送れます。24時間受け付けています。'];
   var P = {
     top: { t: 'トップページ', d: ['家じまいのご相談を、どこから始めればよいかを選べるページです。', '迷ったときは「困りごとから探す」から選ぶのがおすすめです。'],
       s: common.slice(0, 2).concat([
@@ -51,8 +51,8 @@
       s: [[function () { return first('main .flow'); }, 'ご相談の流れです。上から順に進みます。'], [function () { return first('main .tiers', 'main .tbl-wrap'); }, '費用がかかるもの・かからないものの説明です。'], [function () { return first('#keiyaku'); }, 'スマホやパソコンで結べる、電子契約の説明です。'], cta] },
     faq: { t: 'よくある質問', d: ['よくいただく質問と答えです。', '質問を押すと、答えが開きます。'],
       s: [[function () { return first('main .faq details', 'main details'); }, '質問を押すと、答えが開きます。もう一度押すと閉じます。'], common[1], cta] },
-    contact: { t: '相談内容をまとめる', d: ['質問に順番に答えるだけで、ご相談の内容がまとまり、そのまま窓口に送れるページです。', '全部で7つの段階です。分からないところは空欄のまま進めても大丈夫です。', 'お電話（' + TEL + '）で話しながら入力することもできます。'],
-      s: [[function () { return first('#toiawase'); }, 'お電話・メールでもご相談いただけます。'], [function () { return first('#steps'); }, 'いま何番目の段階かが、ここに出ます。'], [function () { return first('#f section:not([hidden])'); }, 'ここに答えを入れます。当てはまるものを押して選んでください。'], [function () { return first('#next'); }, '答えたら「次へ進む」を押します。前に戻りたいときは「前に戻る」を押します。']] },
+    contact: { t: 'かんたん相談フォーム', d: ['いちばん上の「かんたん相談」は、お名前とご返信先だけで送れます。', '困りごとは、選ぶか書くだけで大丈夫です。分からないところは空欄のままで構いません。', 'くわしく整理して伝えたい方は、その下の7つの段階の質問をお使いください。'],
+      s: [[function () { return first('#kantan'); }, 'ここに入力して「この内容で送る」を押すだけです。ご返信は、メールなどご希望の方法でお届けします。'], [function () { return first('#steps'); }, 'いま何番目の段階かが、ここに出ます。'], [function () { return first('#f section:not([hidden])'); }, 'ここに答えを入れます。当てはまるものを押して選んでください。'], [function () { return first('#next'); }, '答えたら「次へ進む」を押します。前に戻りたいときは「前に戻る」を押します。']] },
     cases: { t: '相談事例', d: ['窓口がどのようにお手伝いするかを、想定の事例でご紹介しています。', '事例を押すと、くわしい流れが開きます。'],
       s: [[function () { return first('main .pt-intro'); }, '窓口が大切にしていることです。'], [function () { return first('main .case'); }, '事例を押すと、くわしい流れが開きます。'], cta] },
     company: { t: '運営会社', d: ['家じまい123を運営する、株式会社グローブの代表のあいさつと会社の情報です。'], s: common.concat([cta]) },
@@ -63,7 +63,7 @@
     terms: { t: '利用規約・免責事項', d: ['このサイトをご利用いただく際のお約束です。', '見出しを押すと、内容が開きます。'], s: [[function () { return first('main .blk', 'main details'); }, '見出しを押すと内容が開きます。']] },
     kyoryoku: { t: '提携・協業のお申し込み', d: ['事業者・専門家・医療介護の関係者の方の申し込みページです。', '上から順に入力し、最後に「この内容で申し込む」を押してください。'],
       s: [[function () { return first('#bn'); }, 'まず「大分類」を選ぶと「中分類」が、「中分類」を選ぶと「小分類」が選べるようになります。くわしい内容は「詳細」に書いてください。'], [function () { return first('#bnAdd'); }, '分野が複数あるときは、ここで行を増やせます。'], [function () { return first('#area'); }, '地域は、1回押すと「✓ 対応」、もう1回で「✕ 除外」になります。'], [function () { return first('#meetWay'); }, '面談の方法を選びます。'], [function () { return first('#meetDates'); }, '面談の希望日を、日にちと時間帯から選びます。第1希望は必ず選んでください。'], [function () { return first('#send'); }, '最後に、同意の欄に印を付けて、ここを押します。']] },
-    other: { t: 'このページ', d: ['分からないことがあれば、お電話（' + TEL + '）でお気軽にお尋ねください。'], s: common.concat([cta]) }
+    other: { t: 'このページ', d: ['分からないことがあれば、かんたん相談フォームからお気軽にお尋ねください。'], s: common.concat([cta]) }
   };
   var G = P[kind] || P.other;
 
@@ -118,9 +118,8 @@
       + '<h3>このページでできること</h3>' + G.d.map(function (x) { return '<p>' + x + '</p>'; }).join('')
       + '<div class="ijg-acts">' + (steps.length ? '<button type="button" class="p" data-a="tour">画面で順番に案内する（' + steps.length + 'か所）</button>' : '')
       + (kind === 'kyoryoku' ? '' : '<button type="button" data-a="big">文字を大きくする</button>')
-      + '<a href="' + TELL + '">お電話で聞く　' + TEL + '</a>'
-      + (kind !== 'contact' && kind !== 'kyoryoku' && kind !== 'keiyaku' ? '<a href="' + ROOT + 'contact/index.html">相談内容をまとめる</a>' : '') + '</div>'
-      + '<h3>操作のこつ</h3><ul><li>「開く」と書かれた見出しは、押すと中身が開きます。</li><li>前のページに戻るときは、画面の「戻る」を押してください。</li><li>分からないときは、受付時間（10:00〜18:00）にお電話ください。</li></ul>';
+            + (kind !== 'contact' && kind !== 'kyoryoku' && kind !== 'keiyaku' ? '<a href="' + ROOT + 'contact/index.html">かんたん相談フォーム</a>' : '') + '</div>'
+      + '<h3>操作のこつ</h3><ul><li>「開く」と書かれた見出しは、押すと中身が開きます。</li><li>前のページに戻るときは、画面の「戻る」を押してください。</li><li>分からないときは、かんたん相談フォームからお尋ねください。</li></ul>';
     panel = el('div', { 'class': 'ijg-panel', role: 'dialog', 'aria-modal': 'true', 'aria-label': G.t + 'の使い方' }, h);
     D.body.appendChild(ov); D.body.appendChild(panel);
     panel.querySelector('.ijg-x').onclick = closePanel;
@@ -166,7 +165,7 @@
       ['お悩みを選ぶ', '近いものがあれば押してください。<b>なければ、何も選ばずに「次へ進む」で大丈夫です。</b>'],
       ['状況を入れる', '分かる範囲で構いません。<b>空欄のままでも進めます。</b>住まいの場所は、市区町村まで（例：大阪市生野区）で十分です。'],
       ['伝えておきたいことを書く', '書かなくても進めます。ご家族の事情や、急ぎのことがあれば、短くてもよいので書いてください。'],
-      ['ご連絡先を入れる', '<b>お名前</b>と、<b>電話番号かメールアドレスのどちらか</b>が必要です。電話番号は「-」なしでも大丈夫です。最後に、同意の欄に印を付けてください。'],
+      ['ご連絡先を入れる', '<b>お名前</b>と、<b>メールアドレスか電話番号のどちらか</b>が必要です。ご返信の方法も選んでください。最後に、同意の欄に印を付けてください。'],
       ['内容を確かめて送る', '内容を確かめて、<b>「この内容で送信する」</b>を押すと窓口に届きます。ご家族にも見てもらいたいときは、下の「メールで送る」「LINEで送る」が使えます。']
     ];
     var box = el('div', { 'class': 'ijg-help', 'aria-live': 'polite' });
@@ -175,7 +174,7 @@
     function upd() {
       var n = cur(), x = STEP[n] || STEP[0], left = STEP.length - 1 - n;
       box.innerHTML = '<b class="h">いまやること：' + x[0] + '<span class="left">' + (left ? 'あと' + left + '段階' : '最後の段階です') + '</span></b>' + x[1]
-        + '<br><small>分からないときは、お電話で話しながら入力することもできます（<a href="' + TELL + '">' + TEL + '</a>、10:00〜18:00）。</small>';
+        ;
     }
     $$('#f section[data-step]').forEach(function (s) { new MutationObserver(upd).observe(s, { attributes: true, attributeFilter: ['hidden'] }); });
     upd();
@@ -184,6 +183,6 @@
     Object.keys(tips).forEach(function (id) { var f = $('#' + id); if (!f) return; if (!f.placeholder) f.placeholder = tips[id].replace(/（.*$/, ''); var p = el('small', { 'class': 'ijg-fh' }, tips[id]); f.parentNode.appendChild(p); });
     // 送信のあとの案内
     var msg = $('#copyMsg');
-    if (msg) new MutationObserver(function () { if (/送信しました/.test(msg.textContent) && !$('.ijg-after')) { var a = el('div', { 'class': 'ijg-help ijg-after' }, '<b class="h">送信できました。このあとの流れ</b><ul><li>受付時間（10:00〜18:00）に、窓口の担当者からご連絡します。</li><li>知らない番号からの電話は出にくい方は、先に ' + TEL + ' を登録しておくと安心です。</li><li>お急ぎのときは、お電話（<a href="' + TELL + '">' + TEL + '</a>）でお知らせください。</li></ul>'); msg.parentNode.insertBefore(a, msg.nextSibling); } }).observe(msg, { childList: true, characterData: true, subtree: true });
+    if (msg) new MutationObserver(function () { if (/送信しました/.test(msg.textContent) && !$('.ijg-after')) { var a = el('div', { 'class': 'ijg-help ijg-after' }, '<b class="h">送信できました。このあとの流れ</b><ul><li>窓口の担当者が内容を確認し、ご希望の方法（メールなど）でご返信します。</li><li>メールが届かないときは、迷惑メールのフォルダーもご確認ください。</li></ul>'); msg.parentNode.insertBefore(a, msg.nextSibling); } }).observe(msg, { childList: true, characterData: true, subtree: true });
   }
 })();
